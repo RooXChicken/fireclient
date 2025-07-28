@@ -1,0 +1,173 @@
+package org.loveroo.fireclient.modules;
+
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.data.ModuleData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ArmorDisplay extends ModuleBase {
+
+    private Identifier cooldownTexture = Identifier.of(FireClient.MOD_ID, "textures/armor_display/cooldown.png");
+    private boolean locked = true;
+
+    private int ticks = 0;
+    private int flashColor = 0xFFFF5656;
+
+    public ArmorDisplay() {
+        super(new ModuleData("Armor Display", "armor_display"));
+
+        getData().setWidth(20);
+        getData().setHeight(40);
+    }
+
+    @Override
+    public void update(MinecraftClient client) {
+        if(++ticks % 8 == 0) {
+            ticks = 0;
+
+            if(flashColor == 0xFFFFFFFF) {
+                flashColor = 0xFFFF5656;
+            }
+            else {
+                flashColor = 0xFFFFFFFF;
+            }
+        }
+
+        if(locked) {
+            getData().setPosX(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()));
+            getData().setPosY(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale()));
+        }
+    }
+
+    @Override
+    public void draw(DrawContext context, RenderTickCounter ticks) {
+        if(!getData().isVisible()) {
+            return;
+        }
+
+        transform(context.getMatrices());
+
+        var client = MinecraftClient.getInstance();
+        var text = client.textRenderer;
+
+        var items = new ArrayList<ItemStack>();
+        items.add(client.player.getEquippedStack(EquipmentSlot.HEAD));
+        items.add(client.player.getEquippedStack(EquipmentSlot.CHEST));
+        items.add(client.player.getEquippedStack(EquipmentSlot.LEGS));
+        items.add(client.player.getEquippedStack(EquipmentSlot.FEET));
+
+        var offset = 10;
+        for(var i = 0; i < 4; i++) {
+            var item = items.get(i);
+
+            if(item != ItemStack.EMPTY) {
+                var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickDelta(true));
+                var cooldown = (int)Math.ceil(progress * 10);
+
+                // TODO: method is named fill :3
+                context.drawTexture(RenderLayer::getGuiTexturedOverlay, cooldownTexture, 0, offset*i + 2 - cooldown + 9, 0, 0, 20, cooldown, 20, cooldown);
+                context.drawCenteredTextWithShadow(text, (item.getMaxDamage() - item.getDamage()) + "", 10, offset*i + 2, getColor(item));
+            }
+        }
+
+        endTransform(context.getMatrices());
+    }
+
+    private int getColor(ItemStack item) {
+        var percentage = (item.getMaxDamage() - item.getDamage() + 0.0) / item.getMaxDamage();
+
+        var color = 0xFF2BEE00;
+
+        if(item.getDamage() == 0) {
+            color = 0xFF099A00;
+        }
+        if(percentage <= 0.7) {
+            color = 0xFFFF8022;
+        }
+        if(percentage <= 0.5) {
+            color = 0xFFFFFC36;
+        }
+        if(percentage <= 0.2) {
+            color = 0xFFD50000;
+        }
+        if(percentage <= 0.1) {
+            color = 0xFF970000;
+        }
+        if(percentage <= 0.05) {
+            color = flashColor;
+        }
+
+        return color;
+    }
+
+    @Override
+    public void handleTransformation(int mouseState, int mouseX, int mouseY, int oldMouseX, int oldMouseY) {
+        if(locked) {
+            return;
+        }
+
+        super.handleTransformation(mouseState, mouseX, mouseY, oldMouseX, oldMouseY);
+    }
+
+    @Override
+    public void loadJson(JSONObject json) throws JSONException {
+        getData().setPosX(json.optDouble("pos_x", 0));
+        getData().setPosY(json.optDouble("pos_y", 0));
+        getData().setScale(json.optDouble("scale", 2.0/3.0));
+        getData().setVisible(json.optBoolean("visible", true));
+        getData().setEnabled(json.optBoolean("enabled", true));
+
+        locked = json.optBoolean("locked", true);
+    }
+
+    @Override
+    public JSONObject saveJson() throws JSONException {
+        var json = new JSONObject();
+
+        json.put("pos_x", getData().getPosX());
+        json.put("pos_y", getData().getPosY());
+        json.put("scale", getData().getScale());
+        json.put("locked", locked);
+        json.put("enabled", getData().isEnabled());
+
+        return json;
+    }
+
+    @Override
+    public List<ClickableWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<ClickableWidget>();
+
+        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 + 10));
+        widgets.add(ButtonWidget.builder(Text.of("Locked: " + locked), this::lockedButtonPressed)
+                .dimensions(base.width/2 - 60, base.height/2 - 20, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button")))
+                .build());
+
+        return widgets;
+    }
+
+    public void lockedButtonPressed(ButtonWidget button) {
+        locked = !locked;
+        button.setMessage(Text.of("Locked: " + locked));
+    }
+}

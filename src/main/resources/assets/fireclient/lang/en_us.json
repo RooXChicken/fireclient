@@ -1,0 +1,8 @@
+{
+  "key.category.fireclient": "Fireclient",
+  "key.fireclient.module_config": "Open Module Config",
+  "fireclient.module.generic.visibility_toggle": "Sets whether this module is visible",
+  "fireclient.module.armor_display.lock_button": "Sets whether the position is locked to the hotbar",
+  "fireclient.module.generic.enabled_toggle": "Sets whether this module is enabled",
+  "key.fireclient.toggle_toggle_sneak": "Toggles Toggle Sneak"
+}

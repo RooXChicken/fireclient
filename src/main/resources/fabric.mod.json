@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "fireclient",
+  "version": "${version}",
+  "name": "fireclient",
+  "description": "Not a client. Helps with smps [ made with love by roo ]",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/fireclient/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "org.loveroo.fireclient.client.FireClientside"
+    ],
+    "main": [
+      "org.loveroo.fireclient.FireClient"
+    ]
+  },
+  "mixins": [
+    "fireclient.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
