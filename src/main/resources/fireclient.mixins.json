@@ -8,6 +8,7 @@
   "client": [
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
+    "PreventUntoggleKeysMixin",
     "RenderBrandingMixin"
   ],
   "injectors": {

@@ -1,0 +1,88 @@
+//package org.loveroo.fireclient.modules;
+//
+//import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.gui.DrawContext;
+//import net.minecraft.client.render.RenderTickCounter;
+//import net.minecraft.entity.ai.brain.MemoryModuleType;
+//import net.minecraft.entity.passive.VillagerEntity;
+//import net.minecraft.text.Text;
+//import org.loveroo.fireclient.FireClient;
+//import org.loveroo.fireclient.data.ModuleData;
+//import org.loveroo.fireclient.data.VillagerWorkStore;
+//
+//import java.util.HashMap;
+//import java.util.UUID;
+//
+//public class VillagerWorkstationModule extends ModuleBase {
+//
+//    private static final HashMap<UUID, VillagerWorkStore> villagerWork = new HashMap<>();
+//    private static long currentDay = 0;
+//
+//    public VillagerWorkstationModule() {
+//        super(new ModuleData("Villager Workstation Display", "villager_workstation"));
+//    }
+//
+//    @Override
+//    public void update(MinecraftClient client) {
+//        if(client.player == null) {
+//            return;
+//        }
+//
+//        var time = client.player.clientWorld.getTime();
+//        var dayTime = client.player.clientWorld.getTimeOfDay();
+//
+//        if(time / 24000L > currentDay) {
+//            currentDay = time/24000L;
+//
+//            for(var entry : villagerWork.entrySet()) {
+//                var current = entry.getValue();
+//
+//                entry.setValue(new VillagerWorkStore(current.tick(), currentDay, 0));
+//            }
+//        }
+//
+////        for(var entity : client.world.getEntities()) {
+////            if(!(entity instanceof VillagerEntity villager)) {
+////                continue;
+////            }
+////
+////            var job = villager.getBrain().getOptionalRegisteredMemory(MemoryModuleType.POTENTIAL_JOB_SITE);
+////            if(job.isEmpty()) {
+////                continue;
+////            }
+////
+////            FireClient.LOGGER.info("{}", job.get());
+////        }
+//    }
+//
+//    @Override
+//    public void draw(DrawContext context, RenderTickCounter ticks) {
+//        var client = MinecraftClient.getInstance();
+//        var text = client.textRenderer;
+//
+//        var y = 0;
+//        for(var entity : client.world.getEntities()) {
+//            if(!(entity instanceof VillagerEntity villager)) {
+//                continue;
+//            }
+//
+//            var data = villagerWork.get(villager.getUuid());
+//            if(data == null) {
+//                continue;
+//            }
+//
+//            var msg = "" + data.tick() + " | " + data.day() + " | " + data.count();
+//            context.drawText(text, Text.of(msg), 4, 20 + (y * 20), 0xFFFFFFFF, true);
+//            y++;
+//        }
+//    }
+//
+//    public static void storeWork(VillagerEntity villager) {
+//        var currentWork = villagerWork.getOrDefault(villager.getUuid(), new VillagerWorkStore(0, 0, 0));
+//
+//        var time = villager.getEntityWorld().getTime();
+//        var worldTime = villager.getEntityWorld().getTimeOfDay();
+//
+//        villagerWork.put(villager.getUuid(), new VillagerWorkStore(time, worldTime / 24000L, currentWork.count() + 1));
+//    }
+//}

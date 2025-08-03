@@ -1,21 +1,15 @@
 package org.loveroo.fireclient.client;
 
-import it.unimi.dsi.fastutil.Hash;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.modules.ArmorDisplay;
-import org.loveroo.fireclient.modules.CoordinatesModule;
-import org.loveroo.fireclient.modules.ModuleBase;
-import org.loveroo.fireclient.modules.ToggleToggleSneakModule;
+import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
@@ -48,9 +42,12 @@ public class FireClientside implements ClientModInitializer {
     }
 
     private void initModules() {
-        modules.add(new ArmorDisplay());
+        modules.add(new ArmorDisplayModule());
         modules.add(new CoordinatesModule());
         modules.add(new ToggleToggleSneakModule());
+        modules.add(new FPSDisplayModule());
+        modules.add(new FireTickDislayModule());
+//        modules.add(new VillagerWorkstationModule());
     }
 
     private void loadConfig() {

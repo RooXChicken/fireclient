@@ -41,7 +41,7 @@ public class ModuleBase implements HudLayerRegistrationCallback {
 
     @Override
     public void register(LayeredDrawerWrapper layeredDrawer) {
-        layeredDrawer.attachLayerAfter(IdentifiedLayer.MISC_OVERLAYS, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
+        layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
     }
 
     public void update(MinecraftClient client) { }
@@ -102,10 +102,11 @@ public class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void loadJson(JSONObject json) throws JSONException {
-        getData().setPosX(json.optDouble("pos_x", 0));
-        getData().setPosY(json.optDouble("pos_y", 0));
-        getData().setScale(json.optDouble("scale", 1.0));
-        getData().setEnabled(json.optBoolean("enabled", true));
+        getData().setPosX(json.optDouble("pos_x", getData().getPosX()));
+        getData().setPosY(json.optDouble("pos_y", getData().getPosY()));
+        getData().setScale(json.optDouble("scale", getData().getScale()));
+        getData().setVisible(json.optBoolean("visible", getData().isVisible()));
+        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
 
     public JSONObject saveJson() throws JSONException {
@@ -126,7 +127,7 @@ public class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public List<ClickableWidget> getConfigScreen(Screen base) {
-        return new ArrayList<>();
+        return List.of(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {

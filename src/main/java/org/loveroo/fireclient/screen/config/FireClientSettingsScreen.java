@@ -3,6 +3,7 @@ package org.loveroo.fireclient.screen.config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.FireClient;
@@ -28,11 +29,12 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         for(var i = 0; i < FireClientOption.values().length; i++) {
             var option = FireClientOption.values()[i];
 
-            var x = ((i % 3) - 1) * 150;
+            var x = ((i % 3) - 1) * 145;
             var y = (i / 3) * 30;
 
             settingsButtons.add(ButtonWidget.builder(getOptionLabel(option), (button) -> handleSettings(button, option))
-                    .dimensions(width/2 - 70 + x, height/2 - 20 + y, 140, 20)
+                    .dimensions(width/2 - 65 + x, height/2 - 20 + y, 130, 20)
+                    .tooltip(Tooltip.of(Text.of(option.getDescription())))
                     .build());
 
             addSelectableChild(settingsButtons.get(i));

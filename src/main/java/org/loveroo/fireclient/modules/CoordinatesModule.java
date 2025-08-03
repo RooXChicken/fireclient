@@ -42,6 +42,9 @@ public class CoordinatesModule extends ModuleBase {
         super(new ModuleData("Coordinates", "coordinates"));
 
         getData().setHeight(8);
+
+        getData().setPosX(4);
+        getData().setPosY(6);
     }
 
     @Override

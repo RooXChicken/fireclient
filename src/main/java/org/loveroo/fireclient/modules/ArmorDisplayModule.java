@@ -1,11 +1,6 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
-import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
-import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -25,7 +20,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArmorDisplay extends ModuleBase {
+public class ArmorDisplayModule extends ModuleBase {
 
     private Identifier cooldownTexture = Identifier.of(FireClient.MOD_ID, "textures/armor_display/cooldown.png");
     private boolean locked = true;
@@ -33,11 +28,13 @@ public class ArmorDisplay extends ModuleBase {
     private int ticks = 0;
     private int flashColor = 0xFFFF5656;
 
-    public ArmorDisplay() {
+    public ArmorDisplayModule() {
         super(new ModuleData("Armor Display", "armor_display"));
 
         getData().setWidth(20);
         getData().setHeight(40);
+
+        getData().setScale(2.0/3.0);
     }
 
     @Override
@@ -131,24 +128,15 @@ public class ArmorDisplay extends ModuleBase {
 
     @Override
     public void loadJson(JSONObject json) throws JSONException {
-        getData().setPosX(json.optDouble("pos_x", 0));
-        getData().setPosY(json.optDouble("pos_y", 0));
-        getData().setScale(json.optDouble("scale", 2.0/3.0));
-        getData().setVisible(json.optBoolean("visible", true));
-        getData().setEnabled(json.optBoolean("enabled", true));
+        super.loadJson(json);
 
         locked = json.optBoolean("locked", true);
     }
 
     @Override
     public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("pos_x", getData().getPosX());
-        json.put("pos_y", getData().getPosY());
-        json.put("scale", getData().getScale());
+        var json = super.saveJson();
         json.put("locked", locked);
-        json.put("enabled", getData().isEnabled());
 
         return json;
     }

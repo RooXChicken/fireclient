@@ -1,0 +1,4 @@
+package org.loveroo.fireclient.data;
+
+//public record VillagerWorkStore(long tick, long day, int count) {
+//}

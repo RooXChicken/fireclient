@@ -53,10 +53,17 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
 
         if(moduleSelected) {
-            module.handleTransformation(mouseState, mouseX, mouseY, oldMouseX, oldMouseY);
+            module.handleTransformation(mouseState, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
         }
 
         module.drawScreen(this, context);
         module.drawOutline(context);
+
+        var tooltip = "";
+        if(module.isPointInside(this.mouseX, this.mouseY)) {
+            tooltip = module.getData().getName();
+        }
+
+        setTooltip(Text.of(tooltip));
     }
 }

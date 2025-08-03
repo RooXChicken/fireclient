@@ -1,36 +1,32 @@
 package org.loveroo.fireclient.data;
 
-public class Color {
-    public int r = 255;
-    public int g = 255;
-    public int b = 255;
-    public int a = 255;
+public record Color(int r, int g, int b, int a) {
 
-    public Color() { }
+    public static Color fromARGB(int argb) {
+        var a = (byte)argb >> 24;
+        var r = (byte)argb >> 16;
+        var g = (byte)argb >> 8;
+        var b = (byte)argb;
 
-    public Color(int r, int g, int b, int a) {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
+        return new Color(r, g, b, a);
     }
 
-    public Color(int argb) {
-        this.a = argb >> 24;
-        this.r = argb >> 16;
-        this.g = argb >> 8;
-        this.b = argb;
+    public static Color fromRGBA(int argb) {
+        var r = (byte)argb >> 24;
+        var g = (byte)argb >> 16;
+        var b = (byte)argb >> 8;
+        var a = (byte)argb;
+
+        return new Color(r, g, b, a);
     }
 
     public Color blend(Color other, double amount) {
-        var newColor = new Color();
+        var r = blendPoints(this.r, other.r, amount);
+        var g = blendPoints(this.g, other.g, amount);
+        var b = blendPoints(this.b, other.b, amount);
+        var a = blendPoints(this.a, other.a, amount);
 
-        newColor.r = blendPoints(this.r, other.r, amount);
-        newColor.g = blendPoints(this.g, other.g, amount);
-        newColor.b = blendPoints(this.b, other.b, amount);
-        newColor.a = blendPoints(this.a, other.a, amount);
-
-        return newColor;
+        return new Color(r, g, b, a);
     }
 
     private int blendPoints(int p1, int p2, double amount) {

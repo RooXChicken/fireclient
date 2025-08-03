@@ -12,5 +12,6 @@ public class FireClient implements ModInitializer {
 
     @Override
     public void onInitialize() {
+
     }
 }

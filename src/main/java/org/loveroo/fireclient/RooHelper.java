@@ -21,6 +21,4 @@ public class RooHelper {
 
         return text;
     }
-
-//    public static String colorToHex
 }

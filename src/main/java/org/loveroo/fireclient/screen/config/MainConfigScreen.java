@@ -81,6 +81,16 @@ public class MainConfigScreen extends ConfigScreenBase {
             module.drawOutline(context);
         }
 
+        var tooltip = "";
+        for(var module : FireClientside.getModules()) {
+            if(module.isPointInside(mouseX, mouseY)) {
+                tooltip = module.getData().getName();
+                break;
+            }
+        }
+
+        setTooltip(Text.of(tooltip));
+
         modulesButton.render(context, mouseX, mouseY, delta);
         settingsButton.render(context, mouseX, mouseY, delta);
     }
