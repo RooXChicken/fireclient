@@ -46,9 +46,6 @@ public class ToggleToggleSneakModule extends ModuleBase {
     private final MutableText onText = RooHelper.gradientText("Sneak Toggled: On", onColor1, onColor2);
     private final MutableText offText = RooHelper.gradientText("Sneak Toggled: Off", offColor1, offColor2);
 
-    private AbstractTexture xrayTexture;
-    private AbstractTexture vanillaTex;
-
     private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
             new KeyBinding("key.fireclient.toggle_toggle_sneak", GLFW.GLFW_KEY_L, FireClient.KEYBIND_CATEGORY));
 
@@ -75,16 +72,8 @@ public class ToggleToggleSneakModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(Text.of("Enabled: " + getData().isEnabled()), this::enableButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
-                .build());
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;
-    }
-
-    public void enableButtonPressed(ButtonWidget button) {
-        getData().setEnabled(!getData().isEnabled());
-        button.setMessage(Text.of("Enabled: " + getData().isEnabled()));
     }
 }

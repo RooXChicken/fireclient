@@ -137,6 +137,18 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
                 .build();
     }
 
+    public ButtonWidget getToggleEnableButton(int x, int y) {
+        return ButtonWidget.builder(Text.of("Enabled: " + getData().isEnabled()), this::enableButtonPressed)
+                .dimensions(x, y, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
+                .build();
+    }
+
+    public void enableButtonPressed(ButtonWidget button) {
+        getData().setEnabled(!getData().isEnabled());
+        button.setMessage(Text.of("Enabled: " + getData().isEnabled()));
+    }
+
     public void visibleButtonPressed(ButtonWidget button) {
         getData().setVisible(!getData().isVisible());
         button.setMessage(Text.of("Visible: " + getData().isVisible()));

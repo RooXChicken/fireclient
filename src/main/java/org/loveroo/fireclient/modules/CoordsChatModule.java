@@ -133,10 +133,7 @@ public class CoordsChatModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(Text.of("Enabled: " + getData().isEnabled()), this::enableButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
-                .build());
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
         playerField.setText(playerList.getOrDefault(getIp(), ""));
@@ -155,11 +152,6 @@ public class CoordsChatModule extends ModuleBase {
         else {
             return "__local";
         }
-    }
-
-    public void enableButtonPressed(ButtonWidget button) {
-        getData().setEnabled(!getData().isEnabled());
-        button.setMessage(Text.of("Enabled: " + getData().isEnabled()));
     }
 
     public void playerFieldChanged(String text) {
