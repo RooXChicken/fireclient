@@ -8,5 +8,6 @@
   "fireclient.module.coordinates.other_dimension": "Sets whether the other dimension (Overworld/Nether)'s scaled coordinates are shown",
   "key.fireclient.toggle_xray": "Toggles Xray",
   "key.fireclient.toggle_render_world": "Toggles RenderWorld",
-  "fireclient.module.coordinates.window_mode": "Shows a separate window for coordinates. Useful for streaming/screenshares!"
+  "fireclient.module.coordinates.window_mode": "Shows a separate window for coordinates. Useful for streaming/screenshares!",
+  "key.fireclient.run_coords_chat": "Use Coordinates Chat"
 }

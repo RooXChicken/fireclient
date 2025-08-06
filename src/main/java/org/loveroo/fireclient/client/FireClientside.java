@@ -49,7 +49,7 @@ public class FireClientside implements ClientModInitializer {
         modules.add(new FPSDisplayModule());
         modules.add(new LocalDifficultyFinderModule());
         modules.add(new RenderWorldModule());
-//        modules.add(new VillagerWorkstationModule());
+        modules.add(new CoordsChatModule());
     }
 
     private void loadConfig() {

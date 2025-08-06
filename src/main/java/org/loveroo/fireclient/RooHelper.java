@@ -1,11 +1,9 @@
 package org.loveroo.fireclient;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.*;
-import net.minecraft.util.Formatting;
 import org.loveroo.fireclient.data.Color;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class RooHelper {
 
@@ -20,5 +18,27 @@ public class RooHelper {
         }
 
         return text;
+    }
+
+    public static ClientPlayNetworkHandler getNetworkHandler() {
+        return MinecraftClient.getInstance().getNetworkHandler();
+    }
+
+    public static void sendChatCommand(String msg) {
+        var handler = getNetworkHandler();
+        if(handler == null) {
+            return;
+        }
+
+        handler.sendChatCommand(msg);
+    }
+
+    public static void sendChatMessage(String msg) {
+        var handler = getNetworkHandler();
+        if(handler == null) {
+            return;
+        }
+
+        handler.sendChatMessage(msg);
     }
 }

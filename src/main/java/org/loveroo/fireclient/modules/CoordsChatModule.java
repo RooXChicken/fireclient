@@ -1,0 +1,222 @@
+package org.loveroo.fireclient.modules;
+
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.Text;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+public class CoordsChatModule extends ModuleBase {
+
+    private String playerList = "";
+
+    private final String splitRegex = "[ ,|]+";
+    private String lastSuggestion = "";
+
+    private boolean keyPressed = false;
+
+    @Nullable
+    private TextFieldWidget playerField;
+
+    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
+            new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
+
+    public CoordsChatModule() {
+        super(new ModuleData("Coords Chat", "coords_chat"));
+
+        getData().setSelectable(false);
+    }
+
+    @Override
+    public void update(MinecraftClient client) {
+        if(toggleButton.isPressed()) {
+            if(!keyPressed) {
+                sendMessages();
+                keyPressed = true;
+            }
+        }
+        else {
+            keyPressed = false;
+        }
+    }
+
+    private void sendMessages() {
+        if(!getData().isEnabled()) {
+            return;
+        }
+
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+
+        var coordsBuilder = new StringBuilder();
+        coordsBuilder.append(String.format("X: %.2f ", client.player.getPos().getX()));
+        coordsBuilder.append(String.format("Y: %.2f ", client.player.getPos().getY()));
+        coordsBuilder.append(String.format("Z: %.2f ", client.player.getPos().getZ()));
+
+        var coords = coordsBuilder.toString();
+
+        if(playerList.isEmpty()) {
+            RooHelper.sendChatMessage(coords);
+        }
+        else {
+            var handler = RooHelper.getNetworkHandler();
+            var players = getPlayerList();
+
+            for(var player : players) {
+                var found = false;
+
+                for(var entry : handler.getPlayerList()) {
+                    if(entry.getProfile().getName().equalsIgnoreCase(player)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if(!found) {
+                    continue;
+                }
+
+                RooHelper.sendChatCommand("msg " + player.trim() + " " + coords);
+            }
+        }
+    }
+
+    @Override
+    public JSONObject saveJson() throws JSONException {
+        var json = new JSONObject();
+
+        json.put("enabled", getData().isEnabled());
+        json.put("player_list", playerList);
+
+        return json;
+    }
+
+    @Override
+    public void loadJson(JSONObject json) throws JSONException {
+        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
+
+        playerList = json.optString("player_list", playerList);
+    }
+
+    @Override
+    public List<ClickableWidget> getConfigScreen(Screen base) {
+        var client = MinecraftClient.getInstance();
+        var widgets = new ArrayList<ClickableWidget>();
+
+        widgets.add(ButtonWidget.builder(Text.of("Enabled: " + getData().isEnabled()), this::enableButtonPressed)
+                .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
+                .build());
+
+        playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
+        playerField.setText(playerList);
+        playerField.setChangedListener(this::playerFieldChanged);
+        playerField.setMaxLength(512);
+
+        widgets.add(playerField);
+        return widgets;
+    }
+
+    public void enableButtonPressed(ButtonWidget button) {
+        getData().setEnabled(!getData().isEnabled());
+        button.setMessage(Text.of("Enabled: " + getData().isEnabled()));
+    }
+
+    public void playerFieldChanged(String text) {
+        if(!lastSuggestion.isEmpty() && text.matches(".*" + splitRegex)) {
+            playerList = playerList + lastSuggestion + text.substring(text.length()-1);
+            lastSuggestion = "";
+
+            playerField.setText(playerList);
+            return;
+        }
+
+        playerList = text;
+        var list = getPlayerList();
+        var suggestion = "";
+
+        if(playerField != null) {
+            String currentEntry = "";
+
+            if(list.length > 0) {
+                currentEntry = list[list.length-1].toLowerCase();
+            }
+
+            suggestion = "";
+
+            for(var entry : filterProfiles(list)) {
+                if(entry.toLowerCase().startsWith(currentEntry)) {
+                    suggestion = entry.substring(currentEntry.length());
+                }
+            }
+
+            playerField.setSuggestion(suggestion);
+        }
+
+        lastSuggestion = suggestion;
+    }
+
+    private List<String> filterProfiles(String[] list) {
+        var names = new ArrayList<String>();
+
+        var client = MinecraftClient.getInstance();
+        var handler = RooHelper.getNetworkHandler();
+
+        if(handler == null) {
+            return names;
+        }
+
+        for(var entry : handler.getPlayerList()) {
+            if(entry.getProfile().getName().equalsIgnoreCase(client.player.getGameProfile().getName())) {
+                continue;
+            }
+
+            var shown = false;
+
+            for(var name : list) {
+                if(name.equalsIgnoreCase(entry.getProfile().getName())) {
+                    shown = true;
+                    break;
+                }
+            }
+
+            if(!shown) {
+                names.add(entry.getProfile().getName());
+            }
+        }
+
+        return names;
+    }
+
+    private String[] getPlayerList() {
+        return playerList.split(splitRegex);
+    }
+
+    @Override
+    public void closeScreen(Screen screen) {
+        FireClientside.saveConfig();
+    }
+}
