@@ -1,0 +1,148 @@
+package org.loveroo.fireclient.modules;
+
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.Identifier;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.lwjgl.glfw.GLFW;
+
+import java.util.ArrayList;
+
+public class ToggleXrayModule extends ModuleBase {
+
+    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
+            new KeyBinding("key.fireclient.toggle_xray", GLFW.GLFW_KEY_J, FireClient.KEYBIND_CATEGORY));
+
+    public static final ArrayList<Identifier> shownBlocks = new ArrayList<>();
+
+    private boolean toggled = false;
+
+    public ToggleXrayModule() {
+        super(new ModuleData("Toggle Xray", "toggle_xray"));
+
+        getData().setSkip(true);
+    }
+
+    @Override
+    public void update(MinecraftClient client) {
+        if(!getData().isEnabled()) {
+            return;
+        }
+
+        if(toggleButton.wasPressed()) {
+            toggled = !toggled;
+            client.worldRenderer.reload();
+        }
+    }
+
+    @Override
+    public void loadJson(JSONObject json) throws JSONException {
+        super.loadJson(json);
+
+        toggled = json.optBoolean("toggled", false);
+
+        var blocks = json.optJSONArray("blocks");
+        if(blocks == null) {
+            blocks = new JSONArray();
+
+            blocks.put("grass_block");
+            blocks.put("gravel");
+            blocks.put("dirt");
+            blocks.put("sand");
+            blocks.put("sandstone");
+            blocks.put("stone");
+            blocks.put("granite");
+            blocks.put("andesite");
+            blocks.put("diorite");
+            blocks.put("deepslate");
+            blocks.put("netherrack");
+            blocks.put("tuff");
+            blocks.put("water");
+            blocks.put("podzol");
+            blocks.put("snow");
+            blocks.put("snow_layer");
+
+//            blocks.put("coal_ore");
+//            blocks.put("deepslate_coal_ore");
+//
+//            blocks.put("iron_ore");
+//            blocks.put("deepslate_iron_ore");
+//
+//            blocks.put("copper_ore");
+//            blocks.put("deepslate_copper_ore");
+//
+//            blocks.put("gold_ore");
+//            blocks.put("deepslate_gold_ore");
+//
+//            blocks.put("redstone_ore");
+//            blocks.put("deepslate_redstone_ore");
+//
+//            blocks.put("emerald_ore");
+//            blocks.put("deepslate_emerald_ore");
+//
+//            blocks.put("lapis_ore");
+//            blocks.put("deepslate_lapis_ore");
+//
+//            blocks.put("diamond_ore");
+//            blocks.put("deepslate_diamond_ore");
+//
+//            blocks.put("nether_gold_ore");
+//            blocks.put("nether_quartz_ore");
+//
+//            blocks.put("ancient_debris");
+        }
+
+        for(int i = 0; i < blocks.length(); i++) {
+            var block = blocks.optString(i, "air");
+            shownBlocks.add(Identifier.ofVanilla(block));
+        }
+    }
+
+    @Override
+    public JSONObject saveJson() throws JSONException {
+        var json = super.saveJson();
+
+        json.put("toggled", toggled);
+
+        var blocks = new JSONArray();
+        for(var block : shownBlocks) {
+            blocks.put(block.getPath());
+        }
+
+        json.put("blocks", blocks);
+
+        return json;
+    }
+
+    //    @Override
+//    public void draw(DrawContext context, RenderTickCounter ticks) {
+//        if(!getData().isVisible()) {
+//            return;
+//        }
+//
+//        transform(context.getMatrices());
+//
+//        var client = MinecraftClient.getInstance();
+//        var text = client.textRenderer;
+//
+//        var msg = client.getCurrentFps() + " FPS";
+//        var fpsText = RooHelper.gradientText(msg, color1, color2);
+//
+//        getData().setWidth(text.getWidth(fpsText));
+//
+//        context.drawText(text, fpsText, 0, 0, 0xFFFFFFFF, true);
+//
+//        endTransform(context.getMatrices());
+//    }
+
+
+    public boolean isToggled() {
+        return toggled;
+    }
+}

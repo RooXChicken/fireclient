@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.data.Color;
@@ -46,7 +47,8 @@ public class FireClientside implements ClientModInitializer {
         modules.add(new CoordinatesModule());
         modules.add(new ToggleToggleSneakModule());
         modules.add(new FPSDisplayModule());
-        modules.add(new FireTickDislayModule());
+        modules.add(new LocalDifficultyFinderModule());
+        modules.add(new RenderWorldModule());
 //        modules.add(new VillagerWorkstationModule());
     }
 
@@ -136,6 +138,17 @@ public class FireClientside implements ClientModInitializer {
 
     public static List<ModuleBase> getModules() {
         return modules;
+    }
+
+    @Nullable
+    public static ModuleBase getModule(String id) {
+        for(var module : getModules()) {
+            if(module.getData().getId().equals(id)) {
+                return module;
+            }
+        }
+
+        return null;
     }
 
     private static HashMap<FireClientOption, Integer> getSettings() {

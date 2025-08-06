@@ -1,0 +1,36 @@
+package org.loveroo.fireclient;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.client.MinecraftClient;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.modules.ToggleXrayModule;
+
+public class FilterBlocksHelper {
+
+    public static boolean isDrawing = false;
+
+    public static boolean xrayEnabled() {
+        if(!isDrawing) {
+            return false;
+        }
+
+        var xray = (ToggleXrayModule) FireClientside.getModule("toggle_xray");
+        if(xray == null || !xray.isToggled()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean filter(BlockState block) {
+//        if(MinecraftClient.getInstance().worldRenderer.isRenderingReady())
+
+        for(var id : ToggleXrayModule.shownBlocks) {
+            if(block.getRegistryEntry().matchesId(id)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

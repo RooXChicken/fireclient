@@ -8,8 +8,10 @@
   "client": [
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
+    "HazeliModeMixin",
     "PreventUntoggleKeysMixin",
-    "RenderBrandingMixin"
+    "RenderBrandingMixin",
+    "SkipWorldRenderingMixin"
   ],
   "injectors": {
     "defaultRequire": 1

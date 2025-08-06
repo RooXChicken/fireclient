@@ -1,0 +1,147 @@
+package org.loveroo.fireclient.mixin;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.profiler.Profiler;
+import net.minecraft.world.chunk.ArrayPalette;
+import net.minecraft.world.chunk.BiMapPalette;
+import net.minecraft.world.chunk.IdListPalette;
+import net.minecraft.world.chunk.SingularPalette;
+import org.joml.Matrix4f;
+import org.loveroo.fireclient.FilterBlocksHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.modules.ToggleXrayModule;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+//@Mixin(targets = "net.minecraft.client.render.chunk.RenderedChunk")
+//abstract class HideCertainBlocksMixin {
+//
+//    @Inject(method = "getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;", at = @At("RETURN"), cancellable = true)
+//    private void makeAir(BlockPos pos, CallbackInfoReturnable<BlockState> info) {
+//        var xray = (ToggleXrayModule) FireClientside.getModule("toggle_xray");
+//        if(xray == null || !xray.isToggled()) {
+//            return;
+//        }
+//
+//        var block = info.getReturnValue();
+//
+//        for(var id : ToggleXrayModule.shownBlocks) {
+//            if(block.getRegistryEntry().matchesId(id)) {
+//                info.setReturnValue(Blocks.AIR.getDefaultState());
+//            }
+//        }
+//    }
+//}
+
+@Mixin(ArrayPalette.class)
+abstract class HideCertainBlocksArrayMixin<T> {
+
+    @Inject(method = "get(I)Ljava/lang/Object;", at = @At(value = "RETURN"), cancellable = true)
+    public void getValue(int index, CallbackInfoReturnable<T> info) {
+        if(!FilterBlocksHelper.xrayEnabled()) {
+            return;
+        }
+
+        var data = info.getReturnValue();
+        if(!(data instanceof BlockState block)) {
+            return;
+        }
+
+        var client = MinecraftClient.getInstance();
+
+        if(FilterBlocksHelper.filter(block)) {
+            info.setReturnValue((T) Blocks.AIR.getDefaultState());
+        }
+    }
+}
+
+@Mixin(IdListPalette.class)
+abstract class HideCertainBlocksIDMixin<T> {
+
+    @Inject(method = "get(I)Ljava/lang/Object;", at = @At(value = "RETURN"), cancellable = true)
+    public void getValue(int index, CallbackInfoReturnable<T> info) {
+        if(!FilterBlocksHelper.xrayEnabled()) {
+            return;
+        }
+
+        var data = info.getReturnValue();
+        if(!(data instanceof BlockState block)) {
+            return;
+        }
+
+        if(FilterBlocksHelper.filter(block)) {
+            info.setReturnValue((T) Blocks.AIR.getDefaultState());
+        }
+    }
+}
+
+@Mixin(SingularPalette.class)
+abstract class HideCertainBlocksSingleMixin<T> {
+
+    @Inject(method = "get(I)Ljava/lang/Object;", at = @At(value = "RETURN"), cancellable = true)
+    public void getValue(int index, CallbackInfoReturnable<T> info) {
+        if(!FilterBlocksHelper.xrayEnabled()) {
+            return;
+        }
+
+        var data = info.getReturnValue();
+        if(!(data instanceof BlockState block)) {
+            return;
+        }
+
+        if(FilterBlocksHelper.filter(block)) {
+            info.setReturnValue((T) Blocks.AIR.getDefaultState());
+        }
+    }
+}
+
+@Mixin(BiMapPalette.class)
+abstract class HideCertainBlocksBiMixin<T> {
+
+    @Inject(method = "get(I)Ljava/lang/Object;", at = @At(value = "RETURN"), cancellable = true)
+    public void getValue(int index, CallbackInfoReturnable<T> info) {
+        if(!FilterBlocksHelper.xrayEnabled()) {
+            return;
+        }
+
+        var data = info.getReturnValue();
+        if(!(data instanceof BlockState block)) {
+            return;
+        }
+
+        if(FilterBlocksHelper.filter(block)) {
+            info.setReturnValue((T) Blocks.AIR.getDefaultState());
+        }
+    }
+}
+
+@Mixin(WorldRenderer.class)
+abstract class SetRenderStateMixin {
+
+    @Inject(method = "renderMain", at = @At("HEAD"))
+    private void enableRendering(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, Fog fog, boolean renderBlockOutline, boolean renderEntityOutlines, RenderTickCounter renderTickCounter, Profiler profiler, CallbackInfo ci) {
+        FilterBlocksHelper.isDrawing = true;
+    }
+
+    @Inject(method = "renderMain", at = @At("TAIL"))
+    private void disableRendering(FrameGraphBuilder frameGraphBuilder, Frustum frustum, Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, Fog fog, boolean renderBlockOutline, boolean renderEntityOutlines, RenderTickCounter renderTickCounter, Profiler profiler, CallbackInfo ci) {
+        FilterBlocksHelper.isDrawing = false;
+    }
+
+//    @Inject(method = "renderLayer(Lnet/minecraft/client/render/RenderLayer;DDDLorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", at = @At("HEAD"))
+//    private void enableRendering(RenderLayer renderLayer, double x, double y, double z, Matrix4f viewMatrix, Matrix4f positionMatrix, CallbackInfo info) {
+//        FilterBlocksHelper.isDrawing = true;
+//    }
+//
+//    @Inject(method = "renderLayer(Lnet/minecraft/client/render/RenderLayer;DDDLorg/joml/Matrix4f;Lorg/joml/Matrix4f;)V", at = @At("TAIL"))
+//    private void disableRendering(RenderLayer renderLayer, double x, double y, double z, Matrix4f viewMatrix, Matrix4f positionMatrix, CallbackInfo info) {
+//        FilterBlocksHelper.isDrawing = false;
+//    }
+}

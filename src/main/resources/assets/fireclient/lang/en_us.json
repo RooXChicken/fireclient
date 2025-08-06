@@ -5,5 +5,8 @@
   "fireclient.module.armor_display.lock_button": "Sets whether the position is locked to the hotbar",
   "fireclient.module.generic.enabled_toggle": "Sets whether this module is enabled",
   "key.fireclient.toggle_toggle_sneak": "Toggles Toggle Sneak",
-  "fireclient.module.coordinates.other_dimension": "Sets whether the other dimension (Overworld/Nether)'s scaled coordinates are shown"
+  "fireclient.module.coordinates.other_dimension": "Sets whether the other dimension (Overworld/Nether)'s scaled coordinates are shown",
+  "key.fireclient.toggle_xray": "Toggles Xray",
+  "key.fireclient.toggle_render_world": "Toggles RenderWorld",
+  "fireclient.module.coordinates.window_mode": "Shows a separate window for coordinates. Useful for streaming/screenshares!"
 }

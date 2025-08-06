@@ -1,17 +1,15 @@
 package org.loveroo.fireclient.modules;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.registry.Registries;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
-import net.minecraft.world.dimension.DimensionType;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
@@ -21,6 +19,9 @@ import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class CoordinatesModule extends ModuleBase {
 
@@ -37,6 +38,19 @@ public class CoordinatesModule extends ModuleBase {
     private final Color netherColor2 = new Color(152, 33, 149, 255);
 
     private boolean showOther = false;
+    private boolean windowMode = false;
+
+    private final int windowSizeX = 480;
+    private final int windowSizeY = 80;
+
+    @Nullable
+    private JFrame window;
+
+    @Nullable
+    private Font font;
+
+    @Nullable
+    private JLabel coordinatesText;
 
     public CoordinatesModule() {
         super(new ModuleData("Coordinates", "coordinates"));
@@ -45,6 +59,24 @@ public class CoordinatesModule extends ModuleBase {
 
         getData().setPosX(4);
         getData().setPosY(6);
+
+        try {
+            System.setProperty("java.awt.headless", "false");
+            System.setProperty("awt.useSystemAAFontSettings", "off");
+            System.setProperty("swing.aatext", "false");
+
+            var fontStream = getClass().getResourceAsStream("/assets/fireclient/font/font.ttf");
+            if(fontStream != null) {
+                font = Font.createFonts(fontStream)[0];
+                GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(font);
+            }
+            else {
+                FireClient.LOGGER.info("Failed to load Coordinates Module's font! Stream is null!");
+            }
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.info("Failed to load Coordinates Module's font!", e);
+        }
     }
 
     @Override
@@ -59,7 +91,7 @@ public class CoordinatesModule extends ModuleBase {
 
     @Override
     public void draw(DrawContext context, RenderTickCounter ticks) {
-        if(!getData().isVisible()) {
+        if(!getData().isVisible() && (window == null || !window.isVisible())) {
             return;
         }
 
@@ -82,6 +114,12 @@ public class CoordinatesModule extends ModuleBase {
         var xText = String.format("X: %.2f ", client.player.getX());
         var yText = String.format("Y: %.2f ", client.player.getY());
         var zText = String.format("Z: %.2f", client.player.getZ());
+
+        setCoordinatesText(xText, yText, zText);
+
+        if(!getData().isVisible()) {
+            return;
+        }
 
         var x = RooHelper.gradientText(xText, xColor1, xColor2);
         var y = RooHelper.gradientText(yText, yColor1, yColor2);
@@ -128,11 +166,17 @@ public class CoordinatesModule extends ModuleBase {
         var otherYText = String.format("Y: %.2f ", yPos);
         var otherZText = String.format("Z: %.2f", zPos);
 
-        MutableText normal;
-        MutableText other;
-
         var finalNormal = xText + yText + zText;
         var finalOther = otherXText + otherYText + otherZText;
+
+        setCoordinatesText(finalNormal, finalOther);
+
+        if(!getData().isVisible()) {
+            return;
+        }
+
+        MutableText normal;
+        MutableText other;
 
         if(dimension.equals("minecraft:overworld")) {
             normal = RooHelper.gradientText(finalNormal, yColor1, yColor2);
@@ -153,6 +197,7 @@ public class CoordinatesModule extends ModuleBase {
     public JSONObject saveJson() throws JSONException {
         var json = super.saveJson();
         json.put("show_other", showOther);
+        json.put("window_mode", windowMode);
 
         return json;
     }
@@ -160,7 +205,8 @@ public class CoordinatesModule extends ModuleBase {
     @Override
     public void loadJson(JSONObject json) throws JSONException {
         super.loadJson(json);
-        showOther = json.optBoolean("show_other", false);
+        showOther = json.optBoolean("show_other", showOther);
+        windowMode = json.optBoolean("show_other", windowMode);
     }
 
     @Override
@@ -173,11 +219,104 @@ public class CoordinatesModule extends ModuleBase {
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension")))
                 .build());
 
+        widgets.add(ButtonWidget.builder(Text.of("Windowed Mode: " + windowMode), this::windowModeButtonPressed)
+                .dimensions(base.width/2 - 60,base.height / 2 + 40, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.window_mode")))
+                .build());
+
         return widgets;
     }
 
     public void showOtherButtonPressed(ButtonWidget button) {
         showOther = !showOther;
         button.setMessage(Text.of("Other Dimension: " + showOther));
+    }
+
+    public void windowModeButtonPressed(ButtonWidget button) {
+        windowMode = !windowMode;
+        button.setMessage(Text.of("Windowed Mode: " + windowMode));
+
+        if(windowMode) {
+            openCoordsWindow();
+        }
+        else {
+            closeCoordsWindow();
+        }
+    }
+
+    public void openCoordsWindow() {
+        window = new JFrame();
+        window.setTitle("Coordinates");
+        window.setLayout(null);
+        window.setBounds(0, 0, windowSizeX, windowSizeY);
+        window.getContentPane().setBackground(new java.awt.Color(43, 43, 43));
+
+        coordinatesText = new JLabel();
+        coordinatesText.setFont(font);
+
+        window.add(coordinatesText);
+        window.setVisible(true);
+    }
+
+    public void closeCoordsWindow() {
+        if(window == null) {
+            return;
+        }
+
+        window.setVisible(false);
+    }
+
+    // do not ask me whose idea it was
+    // to have html be used in something like this
+    // please don't hate me forever :c
+
+    // (kinda cool tho :P)
+
+    private void setCoordinatesText(String normal, String other) {
+        if(coordinatesText == null || window == null || !window.isVisible()) {
+            return;
+        }
+
+        var text = new StringBuilder();
+        text.append("<html> <head> <style type=\"text/css\">body { font-size: 14px; } </style> </head> <body>");
+        text.append("<p style=\"color: rgb(47, 216, 39);\">");
+        text.append(normal);
+        text.append("</p>");
+
+        text.append("<p style=\"color: rgb(199, 57, 202);\">");
+        text.append(other);
+        text.append("</p>");
+
+        text.append("</body> </html>");
+        coordinatesText.setText(text.toString());
+        coordinatesText.setBounds(4, -18, windowSizeX, windowSizeY);
+
+        Toolkit.getDefaultToolkit().sync();
+    }
+
+    private void setCoordinatesText(String x, String y, String z) {
+        if(coordinatesText == null || window == null || !window.isVisible()) {
+            return;
+        }
+
+        var text = new StringBuilder();
+        text.append("<html> <head> <style type=\"text/css\">body { font-size: 14px; } </style> </head> <body> <p>");
+        text.append("<span style=\"color: rgb(247, 33, 33);\">");
+        text.append(x);
+        text.append("</span>");
+
+        text.append("<span style=\"color: rgb(47, 216, 39);\">");
+        text.append(y);
+        text.append("</span>");
+
+        text.append("<span style=\"color: rgb(76, 194, 224);\">");
+        text.append(z);
+        text.append("</span>");
+
+        text.append("</p> </body> </html>");
+        coordinatesText.setBounds(4, -30, windowSizeX, windowSizeY);
+        coordinatesText.setText(text.toString());
+
+        Toolkit.getDefaultToolkit().sync();
     }
 }
