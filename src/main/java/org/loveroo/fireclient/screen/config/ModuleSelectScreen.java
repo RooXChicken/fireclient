@@ -5,10 +5,12 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.ModuleBase;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class ModuleSelectScreen extends ConfigScreenBase {
 
@@ -24,8 +26,16 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         moduleButtons = new ArrayList<>();
 
         var skips = 0;
-        for(var i = 0; i < FireClientside.getModules().size(); i++) {
-            var module = FireClientside.getModules().get(i);
+        var modules = new ArrayList<String>();
+
+        for(var module : FireClientside.getModules()) {
+            modules.add(module.getData().getId());
+        }
+
+        modules.sort(Comparator.naturalOrder());
+
+        for(var i = 0; i < modules.size(); i++) {
+            var module = FireClientside.getModule(modules.get(i));
 
             if(module.getData().isSkip()) {
                 skips++;
@@ -45,7 +55,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 60, height/2 + - 20 +  (FireClientside.getModules().size() / 3 + 1) * 30, 120, 20)
+                .dimensions(width/2 - 60, height/2 + - 20 +  (modules.size() / 3 + 1) * 30, 120, 20)
                 .build();
 
         addSelectableChild(backButton);

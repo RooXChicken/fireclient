@@ -30,7 +30,7 @@ public class FireClientside implements ClientModInitializer {
     private static final String FIRECLIENT_CONFIG_PATH = "fireclient.json";
     private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
 
-    private static final ArrayList<ModuleBase> modules = new ArrayList<>();
+    private static final HashMap<String, ModuleBase> modules = new HashMap<>();
     private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
             new KeyBinding("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
 
@@ -43,13 +43,18 @@ public class FireClientside implements ClientModInitializer {
     }
 
     private void initModules() {
-        modules.add(new ArmorDisplayModule());
-        modules.add(new CoordinatesModule());
-        modules.add(new ToggleToggleSneakModule());
-        modules.add(new FPSDisplayModule());
-        modules.add(new LocalDifficultyFinderModule());
-        modules.add(new RenderWorldModule());
-        modules.add(new CoordsChatModule());
+        registerModule(new ArmorDisplayModule());
+        registerModule(new CoordinatesModule());
+        registerModule(new ToggleToggleSneakModule());
+        registerModule(new FPSDisplayModule());
+        registerModule(new LocalDifficultyFinderModule());
+        registerModule(new RenderWorldModule());
+        registerModule(new CoordsChatModule());
+        registerModule(new NametagModule());
+    }
+
+    private void registerModule(ModuleBase module) {
+        modules.put(module.getData().getId(), module);
     }
 
     private void loadConfig() {
@@ -131,24 +136,18 @@ public class FireClientside implements ClientModInitializer {
             client.setScreen(new MainConfigScreen());
         }
 
-        for(ModuleBase module : modules) {
+        for(var module : modules.values()) {
             module.update(client);
         }
     }
 
     public static List<ModuleBase> getModules() {
-        return modules;
+        return modules.values().stream().toList();
     }
 
     @Nullable
     public static ModuleBase getModule(String id) {
-        for(var module : getModules()) {
-            if(module.getData().getId().equals(id)) {
-                return module;
-            }
-        }
-
-        return null;
+        return modules.getOrDefault(id, null);
     }
 
     private static HashMap<FireClientOption, Integer> getSettings() {

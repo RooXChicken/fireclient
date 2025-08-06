@@ -12,6 +12,7 @@
     "HazeliModeMixin",
     "PreventUntoggleKeysMixin",
     "RenderBrandingMixin",
+    "ShowOwnNametagMixin",
     "SkipWorldRenderingMixin"
   ],
   "injectors": {

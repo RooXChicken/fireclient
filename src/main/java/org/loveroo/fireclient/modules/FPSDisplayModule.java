@@ -13,7 +13,7 @@ public class FPSDisplayModule extends ModuleBase {
     private final Color color2 = Color.fromARGB(0xE8EBE6);
 
     public FPSDisplayModule() {
-        super(new ModuleData("FPSDisplay", "fps_display"));
+        super(new ModuleData("\uD83D\uDCCA FPSDisplay", "fps_display"));
 
         getData().setHeight(8);
 

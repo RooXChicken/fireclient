@@ -21,6 +21,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         super(Text.of(module.getData().getName() + " Config"));
 
         this.module = module;
+        this.module.openScreen(this);
     }
 
     @Override
@@ -30,6 +31,12 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         for(var widget : widgets) {
             addDrawableChild(widget);
         }
+    }
+
+    @Override
+    public void close() {
+        this.module.closeScreen(this);
+        super.close();
     }
 
     @Override
@@ -44,6 +51,8 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Override
     protected boolean escapePressed() {
+        this.module.closeScreen(this);
+
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
         return true;
     }
@@ -59,11 +68,12 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         module.drawScreen(this, context);
         module.drawOutline(context);
 
-        var tooltip = "";
-        if(module.isPointInside(this.mouseX, this.mouseY)) {
-            tooltip = module.getData().getName();
-        }
+        
+//        var tooltip = "";
+//        if(module.isPointInside(this.mouseX, this.mouseY)) {
+//            tooltip = module.getData().getName();
+//        }
 
-        setTooltip(Text.of(tooltip));
+//        setTooltip(Text.of(tooltip));
     }
 }

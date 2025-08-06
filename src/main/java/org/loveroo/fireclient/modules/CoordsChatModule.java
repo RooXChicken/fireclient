@@ -44,7 +44,7 @@ public class CoordsChatModule extends ModuleBase {
             new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
 
     public CoordsChatModule() {
-        super(new ModuleData("Coords Chat", "coords_chat"));
+        super(new ModuleData("\uD83D\uDCE8 Coords Chat", "coords_chat"));
 
         getData().setSelectable(false);
     }
@@ -106,16 +106,6 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-        json.put("player_list", playerList);
-
-        return json;
-    }
-
-    @Override
     public void loadJson(JSONObject json) throws JSONException {
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
 
@@ -126,6 +116,16 @@ public class CoordsChatModule extends ModuleBase {
             var entry = (String)iter.next();
             list.put(entry, json.optString(entry, ""));
         }
+    }
+
+    @Override
+    public JSONObject saveJson() throws JSONException {
+        var json = new JSONObject();
+
+        json.put("enabled", getData().isEnabled());
+        json.put("player_list", playerList);
+
+        return json;
     }
 
     @Override

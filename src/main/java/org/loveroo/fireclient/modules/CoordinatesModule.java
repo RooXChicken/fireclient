@@ -59,7 +59,7 @@ public class CoordinatesModule extends ModuleBase {
     private ButtonWidget windowModeButton;
 
     public CoordinatesModule() {
-        super(new ModuleData("Coordinates", "coordinates"));
+        super(new ModuleData("\uD83E\uDDED Coordinates", "coordinates"));
 
         getData().setHeight(8);
 
