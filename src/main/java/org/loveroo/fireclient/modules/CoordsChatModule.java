@@ -24,12 +24,13 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class CoordsChatModule extends ModuleBase {
 
-    private String playerList = "";
+    private HashMap<String, String> playerList = new HashMap<>();
 
     private final String splitRegex = "[ ,|]+";
     private String lastSuggestion = "";
@@ -118,7 +119,13 @@ public class CoordsChatModule extends ModuleBase {
     public void loadJson(JSONObject json) throws JSONException {
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
 
-        playerList = json.optString("player_list", playerList);
+        var list = json.optJSONObject("player_list");
+
+        var iter = list.keys();
+        while(iter.hasNext()) {
+            var entry = (String)iter.next();
+            list.put(entry, json.optString(entry, ""));
+        }
     }
 
     @Override
@@ -132,12 +139,22 @@ public class CoordsChatModule extends ModuleBase {
                 .build());
 
         playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
-        playerField.setText(playerList);
+        playerField.setText(playerList.getOrDefault(getIp(), ""));
         playerField.setChangedListener(this::playerFieldChanged);
         playerField.setMaxLength(512);
 
         widgets.add(playerField);
         return widgets;
+    }
+
+    private String getIp() {
+        var client = MinecraftClient.getInstance();
+        if(client.getCurrentServerEntry() != null) {
+            return client.getCurrentServerEntry().address;
+        }
+        else {
+            return "__local";
+        }
     }
 
     public void enableButtonPressed(ButtonWidget button) {
@@ -146,15 +163,20 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     public void playerFieldChanged(String text) {
-        if(!lastSuggestion.isEmpty() && text.matches(".*" + splitRegex)) {
-            playerList = playerList + lastSuggestion + text.substring(text.length()-1);
-            lastSuggestion = "";
+        var playerListEntry = playerList.getOrDefault(getIp(), "");
 
-            playerField.setText(playerList);
+        if(!lastSuggestion.isEmpty() && text.matches(".*" + splitRegex)) {
+            playerListEntry = playerListEntry + lastSuggestion + text.substring(text.length()-1);
+            playerList.put(getIp(), playerListEntry);
+
+            lastSuggestion = "";
+            playerField.setText(playerListEntry);
             return;
         }
 
-        playerList = text;
+        playerListEntry = text;
+        playerList.put(getIp(), playerListEntry);
+
         var list = getPlayerList();
         var suggestion = "";
 
@@ -212,7 +234,7 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     private String[] getPlayerList() {
-        return playerList.split(splitRegex);
+        return playerList.getOrDefault(getIp(), "").split(splitRegex);
     }
 
     @Override
