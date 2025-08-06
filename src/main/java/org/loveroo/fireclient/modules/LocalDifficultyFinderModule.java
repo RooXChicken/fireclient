@@ -28,7 +28,7 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 //    private float ldDiff = 0;
 
     public LocalDifficultyFinderModule() {
-        super(new ModuleData("LocalDifficultyFinder", "local_difficulty_finder"));
+        super(new ModuleData("Local Difficulty Finder", "local_difficulty_finder"));
 
         getData().setHeight(16);
 

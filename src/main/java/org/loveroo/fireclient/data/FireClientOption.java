@@ -4,7 +4,8 @@ public enum FireClientOption {
     FIX_TRIDENT_RIPTIDE("Fix Riptide Shields", "Fixes shields obstructing the view when riptiding with a trident", 0, FireClientOptionType.TOGGLE),
     BRANDING("Branding", "Optional branding message that shows in menus", 1, FireClientOptionType.TOGGLE),
     PREVENT_UNTOGGLE_STICKY("Untoggling Keys Fix", "Prevents untoggling sticky keys (Sprint & Sneak) when respawning", 0, FireClientOptionType.TOGGLE),
-    HAZELI_MODE("Hazeli Mode", "...", 0, FireClientOptionType.TOGGLE);
+    HAZELI_MODE("Hazeli Mode", "...", 0, FireClientOptionType.TOGGLE),
+    DARKER_NAMETAGS("Darker Nametags", "Makes nametags darker and easier to see", 0, FireClientOptionType.TOGGLE);
 //    FORCE_CENTER_CURSOR("Force Cursor Centering", 0, FireClientOptionType.TOGGLE);
 
     private final String name;

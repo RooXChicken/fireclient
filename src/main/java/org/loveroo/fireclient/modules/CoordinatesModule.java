@@ -43,6 +43,9 @@ public class CoordinatesModule extends ModuleBase {
     private final int windowSizeX = 480;
     private final int windowSizeY = 80;
 
+//    private int lastWindowX = windowSizeX/2;
+//    private int lastWindowY = windowSizeY/2;
+
     @Nullable
     private JFrame window;
 
@@ -51,6 +54,9 @@ public class CoordinatesModule extends ModuleBase {
 
     @Nullable
     private JLabel coordinatesText;
+
+    @Nullable
+    private ButtonWidget windowModeButton;
 
     public CoordinatesModule() {
         super(new ModuleData("Coordinates", "coordinates"));
@@ -86,6 +92,15 @@ public class CoordinatesModule extends ModuleBase {
         }
         else {
             getData().setHeight(8);
+        }
+
+        if(windowMode && (window == null || !window.isVisible())) {
+            windowMode = false;
+            closeCoordsWindow();
+
+            if(windowModeButton != null) {
+                windowModeButton.setMessage(Text.of("Windowed Mode: " + false));
+            }
         }
     }
 
@@ -219,12 +234,18 @@ public class CoordinatesModule extends ModuleBase {
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension")))
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("Windowed Mode: " + windowMode), this::windowModeButtonPressed)
+        windowModeButton = ButtonWidget.builder(Text.of("Windowed Mode: " + windowMode), this::windowModeButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 40, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.window_mode")))
-                .build());
+                .build();
 
+        widgets.add(windowModeButton);
         return widgets;
+    }
+
+    @Override
+    public void closeScreen(Screen screen) {
+        windowModeButton = null;
     }
 
     public void showOtherButtonPressed(ButtonWidget button) {
@@ -247,9 +268,11 @@ public class CoordinatesModule extends ModuleBase {
     public void openCoordsWindow() {
         window = new JFrame();
         window.setTitle("Coordinates");
-        window.setLayout(null);
-        window.setBounds(0, 0, windowSizeX, windowSizeY);
         window.getContentPane().setBackground(new java.awt.Color(43, 43, 43));
+        window.setLayout(null);
+
+        window.setBounds(0, 0, windowSizeX, windowSizeY);
+//        window.setLocation(lastWindowX, lastWindowY);
 
         coordinatesText = new JLabel();
         coordinatesText.setFont(font);
@@ -262,6 +285,10 @@ public class CoordinatesModule extends ModuleBase {
         if(window == null) {
             return;
         }
+
+//        var position = window.getLocation();
+//        lastWindowX = position.x;
+//        lastWindowY = position.y;
 
         window.setVisible(false);
     }

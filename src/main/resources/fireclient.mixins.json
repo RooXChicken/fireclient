@@ -6,6 +6,7 @@
   "mixins": [
   ],
   "client": [
+    "DarkerNametagMixin",
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
     "HazeliModeMixin",

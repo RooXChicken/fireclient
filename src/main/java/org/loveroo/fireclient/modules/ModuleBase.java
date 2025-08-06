@@ -24,7 +24,7 @@ import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModuleBase implements HudLayerRegistrationCallback {
+public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     private ModuleData data;
     protected int padding = 2;
@@ -147,4 +147,7 @@ public class ModuleBase implements HudLayerRegistrationCallback {
 
         context.drawCenteredTextWithShadow(text, getData().getName() + " Configuration", base.width/2, base.height/2 - 40, 0xFFFFFFFF);
     }
+
+    public void openScreen(Screen screen) { }
+    public void closeScreen(Screen screen) { }
 }
