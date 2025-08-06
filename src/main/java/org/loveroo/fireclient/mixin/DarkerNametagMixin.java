@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityRenderer.class)
-public class DarkerNametagMixin<T extends Entity, S extends EntityRenderState> {
+public abstract class DarkerNametagMixin {
 
     @ModifyConstant(method = "renderLabelIfPresent", constant = @Constant(intValue = -2130706433))
     private int changeColor(int original) {

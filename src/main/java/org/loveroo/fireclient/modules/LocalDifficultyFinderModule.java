@@ -5,6 +5,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.Color;
@@ -89,6 +91,20 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 
             fireTicks = 0;
         }
+    }
+
+    @Override
+    public void loadJson(JSONObject json) throws JSONException {
+        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
+    }
+
+    @Override
+    public JSONObject saveJson() throws JSONException {
+        var json = new JSONObject();
+
+        json.put("enabled", getData().isEnabled());
+
+        return json;
     }
 
     @Override

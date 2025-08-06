@@ -31,7 +31,7 @@ public class AutoMessageModule extends ModuleBase {
     private String lastMessage = "";
 
     public AutoMessageModule() {
-        super(new ModuleData("AutoMessage", "auto_message"));
+        super(new ModuleData("\uD83D\uDDE8 AutoMessage", "auto_message"));
 
         getData().setSelectable(false);
 
@@ -69,7 +69,7 @@ public class AutoMessageModule extends ModuleBase {
 
     @Override
     public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("show_own", getData().isEnabled()));
+        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
 
     @Override

@@ -25,17 +25,17 @@ import java.awt.*;
 
 public class CoordinatesModule extends ModuleBase {
 
-    private final Color xColor1 = new Color(247, 33, 33, 255);
-    private final Color xColor2 = new Color(176, 18, 18, 255);
+    public static final Color xColor1 = new Color(247, 33, 33, 255);
+    public static final Color xColor2 = new Color(176, 18, 18, 255);
 
-    private final Color yColor1 = new Color(47, 216, 39, 255);
-    private final Color yColor2 = new Color(28, 158, 21, 255);
+    public static final Color yColor1 = new Color(47, 216, 39, 255);
+    public static final Color yColor2 = new Color(28, 158, 21, 255);
 
-    private final Color zColor1 = new Color(76, 194, 224, 255);
-    private final Color zColor2 = new Color(40, 131, 180, 255);
+    public static final Color zColor1 = new Color(76, 194, 224, 255);
+    public static final Color zColor2 = new Color(40, 131, 180, 255);
 
-    private final Color netherColor1 = new Color(199, 57, 202, 255);
-    private final Color netherColor2 = new Color(152, 33, 149, 255);
+    public static final Color netherColor1 = new Color(199, 57, 202, 255);
+    public static final Color netherColor2 = new Color(152, 33, 149, 255);
 
     private boolean showOther = false;
     private boolean windowMode = false;

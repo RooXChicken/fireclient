@@ -52,6 +52,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new CoordsChatModule());
         registerModule(new NametagModule());
         registerModule(new AutoMessageModule());
+        registerModule(new DeathInfoModule());
     }
 
     private void registerModule(ModuleBase module) {
