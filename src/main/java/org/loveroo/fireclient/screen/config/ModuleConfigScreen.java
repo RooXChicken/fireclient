@@ -2,6 +2,8 @@ package org.loveroo.fireclient.screen.config;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.FireClient;
@@ -27,10 +29,14 @@ public class ModuleConfigScreen extends ConfigScreenBase {
     @Override
     public void init() {
         var widgets = module.getConfigScreen(this);
-
         for(var widget : widgets) {
             addDrawableChild(widget);
         }
+
+        addDrawableChild(ButtonWidget.builder(Text.of("About"), (button) -> {})
+                .dimensions(width - 125, height - 25, 120, 20)
+                .tooltip(Tooltip.of(Text.of(module.getData().getDescription())))
+                .build());
     }
 
     @Override

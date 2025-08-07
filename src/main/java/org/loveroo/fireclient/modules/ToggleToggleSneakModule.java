@@ -50,7 +50,7 @@ public class ToggleToggleSneakModule extends ModuleBase {
             new KeyBinding("key.fireclient.toggle_toggle_sneak", GLFW.GLFW_KEY_L, FireClient.KEYBIND_CATEGORY));
 
     public ToggleToggleSneakModule() {
-        super(new ModuleData("\uD83D\uDC5F Toggle ToggleSneak", "toggle_toggle_sneak"));
+        super(new ModuleData("toggle_toggle_sneak", "\uD83D\uDC5F Toggle ToggleSneak", "Allows you to toggle the toggle sneak option"));
         getData().setSelectable(false);
     }
 

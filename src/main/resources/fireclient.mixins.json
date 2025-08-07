@@ -4,6 +4,7 @@
   "package": "org.loveroo.fireclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ModifyFlightMoveSpeedMixin"
   ],
   "client": [
     "DarkerNametagMixin",
@@ -12,6 +13,7 @@
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
     "HazeliModeMixin",
+    "ModifyFlightVerticalSpeedMixin",
     "PreventUntoggleKeysMixin",
     "RenderBrandingMixin",
     "ShowOwnNametagMixin",

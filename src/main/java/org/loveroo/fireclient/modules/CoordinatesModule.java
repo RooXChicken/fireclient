@@ -59,9 +59,10 @@ public class CoordinatesModule extends ModuleBase {
     private ButtonWidget windowModeButton;
 
     public CoordinatesModule() {
-        super(new ModuleData("\uD83E\uDDED Coordinates", "coordinates"));
+        super(new ModuleData("coordinates", "\uD83E\uDDED Coordinates", "Shows your in game coordinates, coordinates for the other dimension, and supports a separate window"));
 
         getData().setHeight(8);
+        getData().setWidth(110);
 
         getData().setPosX(4);
         getData().setPosY(6);
@@ -141,8 +142,8 @@ public class CoordinatesModule extends ModuleBase {
         var z = RooHelper.gradientText(zText, zColor1, zColor2);
 
         var coordsText = x.append(y).append(z);
-
         getData().setWidth(text.getWidth(xText + yText + zText));
+
         context.drawText(text, coordsText, 0, 0, 0xFFFFFFFF, true);
     }
 

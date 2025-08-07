@@ -2,6 +2,8 @@ package org.loveroo.fireclient.modules;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.Difficulty;
@@ -11,6 +13,9 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalDifficultyFinderModule extends ModuleBase {
 
@@ -30,9 +35,10 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 //    private float ldDiff = 0;
 
     public LocalDifficultyFinderModule() {
-        super(new ModuleData("\uD83D\uDD25 Local Difficulty", "local_difficulty_finder"));
+        super(new ModuleData("local_difficulty_finder", "\uD83D\uDD25 Local Difficulty", "A local difficulty calculator based on Zombie Fire Ticks"));
 
         getData().setHeight(16);
+        getData().setWidth(60);
 
         getData().setPosX(4);
         getData().setPosY(42);
@@ -108,6 +114,15 @@ public class LocalDifficultyFinderModule extends ModuleBase {
     }
 
     @Override
+    public List<ClickableWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<ClickableWidget>();
+
+        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
+
+        return widgets;
+    }
+
+    @Override
     public void draw(DrawContext context, RenderTickCounter ticks) {
         if(!getData().isVisible()) {
             return;
@@ -124,7 +139,7 @@ public class LocalDifficultyFinderModule extends ModuleBase {
         var fireText = RooHelper.gradientText(fireMsg, color1, color2);
         var approxText = RooHelper.gradientText(approxMsg, color1, color2);
 
-        getData().setWidth(text.getWidth(fireText));
+        getData().setWidth(text.getWidth(approxText));
 
         context.drawText(text, fireText, 0, 0, 0xFFFFFFFF, true);
         context.drawText(text, approxText, 0, 10, 0xFFFFFFFF, true);

@@ -127,7 +127,11 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public List<ClickableWidget> getConfigScreen(Screen base) {
-        return List.of(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
+        var widgets = new ArrayList<ClickableWidget>();
+
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
+
+        return widgets;
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {

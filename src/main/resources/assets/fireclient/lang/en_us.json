@@ -11,5 +11,6 @@
   "fireclient.module.coordinates.window_mode": "Shows a separate window for coordinates. Useful for streaming/screenshares!",
   "key.fireclient.run_coords_chat": "Use Coordinates Chat",
   "fireclient.module.nametag.darker_background": "Toggles whether the nametag has a darker background, making it easier to see",
-  "fireclient.module.nametag.show_own": "Toggles whether you can see your own nametag"
+  "fireclient.module.nametag.show_own": "Toggles whether you can see your own nametag",
+  "fireclient.module.config.about": "Shows information about this module"
 }

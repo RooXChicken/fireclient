@@ -3,11 +3,11 @@ package org.loveroo.fireclient.mixin;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DeathScreen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import net.minecraft.util.math.Vec3d;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.CoordinatesModule;
 import org.loveroo.fireclient.modules.DeathInfoModule;
@@ -28,14 +28,33 @@ public abstract class DeathInfoMixin {
     @Unique
     private int textWidth = 0;
 
+    @Unique
+    private boolean sentMessage = false;
+
+    @Unique
+    private final Color deathColor1 = new Color(171, 12, 12, 255);
+
+    @Unique
+    private final Color deathColor2 = new Color(184, 48, 48, 255);
+
     @Inject(method = "init", at = @At("TAIL"))
     private void storeLocation(CallbackInfo info) {
+        if(sentMessage) {
+            return;
+        }
+
+        sentMessage = true;
+
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var xText = String.format("X: %.2f ", client.player.getPos().getX());
-        var yText = String.format("Y: %.2f ", client.player.getPos().getY());
-        var zText = String.format("Z: %.2f", client.player.getPos().getZ());
+        var xPos = String.format("%.2f ", client.player.getPos().getX());
+        var yPos = String.format("%.2f ", client.player.getPos().getY());
+        var zPos = String.format("%.2f ", client.player.getPos().getZ());
+
+        var xText = String.format("X: " + xPos);
+        var yText = String.format("Y: " + yPos);
+        var zText = String.format("Z: " + zPos);
 
         var x = RooHelper.gradientText(xText, CoordinatesModule.xColor1, CoordinatesModule.xColor2);
         var y = RooHelper.gradientText(yText, CoordinatesModule.yColor1, CoordinatesModule.yColor2);
@@ -43,6 +62,20 @@ public abstract class DeathInfoMixin {
 
         positionText = x.append(y).append(z);
         textWidth = text.getWidth(positionText) / 2;
+
+        var deathInfo = (DeathInfoModule) FireClientside.getModule("death_info");
+        if(deathInfo == null || !deathInfo.getData().isEnabled()) {
+            return;
+        }
+
+        var command = "/tp " + xPos + yPos + zPos;
+        var click = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command);
+        var hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of(command));
+
+        var posClickable = positionText.copy().setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
+
+        var deathText = RooHelper.gradientText("You died at: ", deathColor1, deathColor2).append(posClickable);
+        client.player.sendMessage(deathText, false);
     }
 
     @Inject(method = "render", at = @At("TAIL"))

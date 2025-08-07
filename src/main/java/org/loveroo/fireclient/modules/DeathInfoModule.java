@@ -23,7 +23,7 @@ import java.util.List;
 public class DeathInfoModule extends ModuleBase {
 
     public DeathInfoModule() {
-        super(new ModuleData("☠ Death Info", "death_info"));
+        super(new ModuleData("death_info", "☠ Death Info", "Shows your death location in the screen and in chat"));
 
         getData().setSelectable(false);
     }

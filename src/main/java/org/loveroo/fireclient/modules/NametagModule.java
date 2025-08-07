@@ -20,7 +20,7 @@ public class NametagModule extends ModuleBase {
     private boolean darkerBackground = false;
 
     public NametagModule() {
-        super(new ModuleData("\uD83C\uDFF7 Nametag", "nametag"));
+        super(new ModuleData("nametag", "\uD83C\uDFF7 Nametag", "Allows the modification of vanilla nametags"));
 
         getData().setSelectable(false);
     }

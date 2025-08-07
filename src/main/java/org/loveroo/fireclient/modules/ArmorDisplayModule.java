@@ -29,7 +29,7 @@ public class ArmorDisplayModule extends ModuleBase {
     private int flashColor = 0xFFFF5656;
 
     public ArmorDisplayModule() {
-        super(new ModuleData("\uD83D\uDEE1 Armor Display", "armor_display"));
+        super(new ModuleData("armor_display", "\uD83D\uDEE1 Armor Display", "Shows your armor durability and cooldown"));
 
         getData().setWidth(20);
         getData().setHeight(40);

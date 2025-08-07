@@ -31,7 +31,7 @@ public class RenderWorldModule extends ModuleBase {
             new KeyBinding("key.fireclient.toggle_render_world", GLFW.GLFW_KEY_J, FireClient.KEYBIND_CATEGORY));
 
     public RenderWorldModule() {
-        super(new ModuleData("\uD83C\uDF0D Render World", "render_world"));
+        super(new ModuleData("render_world", "\uD83C\uDF0D Render World", "[CHEAT] Allows the toggling of the world rendering"));
 
         getData().setSelectable(false);
     }

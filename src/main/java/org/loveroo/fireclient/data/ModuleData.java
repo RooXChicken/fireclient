@@ -1,8 +1,10 @@
 package org.loveroo.fireclient.data;
 
 public class ModuleData {
-    private final String name;
     private final String id;
+
+    private final String name;
+    private final String description;
 
     private double posX = 0;
     private double posY = 0;
@@ -17,9 +19,11 @@ public class ModuleData {
     private boolean enabled = true;
     private boolean selectable = true;
 
-    public ModuleData(String name, String id) {
-        this.name = name;
+    public ModuleData(String id, String name, String description) {
         this.id = id;
+
+        this.name = name;
+        this.description = description;
     }
 
     public String getName() {
@@ -100,5 +104,9 @@ public class ModuleData {
 
     public void setSelectable(boolean selectable) {
         this.selectable = selectable;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

@@ -44,7 +44,7 @@ public class CoordsChatModule extends ModuleBase {
             new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
 
     public CoordsChatModule() {
-        super(new ModuleData("\uD83D\uDCE8 Coords Chat", "coords_chat"));
+        super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players (names split by space  , comma , , or pipe | )"));
 
         getData().setSelectable(false);
     }
