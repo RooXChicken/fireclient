@@ -6,9 +6,13 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.potion.Potions;
+import net.minecraft.registry.Registries;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.NametagModule;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -16,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(LivingEntityRenderer.class)
 public class ShowOwnNametagMixin<T extends LivingEntity, S extends EntityRenderState, M extends EntityModel<? super S>> {
 
-    @Inject(method = "hasLabel", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "hasLabel*", at = @At("HEAD"), cancellable = true)
     private void showOwnLabel(T entity, double squaredDistanceToCamera, CallbackInfoReturnable<Boolean> info) {
         var nametag = (NametagModule) FireClientside.getModule("nametag");
         if(nametag == null || !nametag.isShowOwn()) {
@@ -24,7 +28,7 @@ public class ShowOwnNametagMixin<T extends LivingEntity, S extends EntityRenderS
         }
 
         var client = MinecraftClient.getInstance();
-        if(client.player == null) {
+        if(client.player == null || client.player.getUuid() != entity.getUuid()) {
             return;
         }
 

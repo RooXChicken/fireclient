@@ -33,20 +33,6 @@ public class FPSDisplayModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setVisible(json.optBoolean("visible", getData().isVisible()));
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("visible", getData().isVisible());
-
-        return json;
-    }
-
-    @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
