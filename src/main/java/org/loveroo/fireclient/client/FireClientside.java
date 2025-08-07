@@ -54,6 +54,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new AutoMessageModule());
         registerModule(new DeathInfoModule());
         registerModule(new FlightModificationModule());
+        registerModule(new HitColorModule());
     }
 
     private void registerModule(ModuleBase module) {

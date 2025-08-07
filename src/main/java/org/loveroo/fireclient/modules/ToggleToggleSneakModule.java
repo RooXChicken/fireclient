@@ -1,6 +1,8 @@
 package org.loveroo.fireclient.modules;
 
+import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.TextureUtil;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
@@ -19,12 +21,15 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TriState;
+import net.minecraft.util.math.ColorHelper;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.IOException;
