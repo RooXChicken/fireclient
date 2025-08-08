@@ -13,11 +13,11 @@
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
     "HazeliModeMixin",
-    "ModifyDamageHurtMixin",
     "ModifyFlightVerticalSpeedMixin",
     "OverlayTextureAccessor",
     "PreventUntoggleKeysMixin",
     "RenderBrandingMixin",
+    "RenderShadowMixin",
     "ShowOwnNametagMixin",
     "SkipWorldRenderingMixin"
   ],

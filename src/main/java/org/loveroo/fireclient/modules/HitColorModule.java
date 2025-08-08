@@ -2,6 +2,7 @@ package org.loveroo.fireclient.modules;
 
 import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -29,14 +30,18 @@ public class HitColorModule extends ModuleBase {
         super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color | Format: ARGB HEX"));
 
         getData().setSelectable(false);
+
+        ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
+            if(getData().isEnabled()) {
+                changeColor(hitColor);
+            }
+        });
     }
 
     @Override
     public void loadJson(JSONObject json) throws JSONException {
         hitColor = json.optString("hit_color", hitColor);
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-
-        changeColor(hitColor);
     }
 
     @Override

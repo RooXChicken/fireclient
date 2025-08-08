@@ -66,8 +66,6 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
             return;
         }
 
-        var points = getPoints();
-
         if(mouseState == 0) {
             getData().setPosX(getData().getPosX() + (mouseX - oldMouseX));
             getData().setPosY(getData().getPosY() + (mouseY - oldMouseY));
