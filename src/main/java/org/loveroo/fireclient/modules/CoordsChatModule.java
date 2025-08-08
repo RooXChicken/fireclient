@@ -47,6 +47,7 @@ public class CoordsChatModule extends ModuleBase {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players (names split by space  , comma , , or pipe | )"));
 
         getData().setSelectable(false);
+        getData().setEnabled(false);
     }
 
     @Override
@@ -136,9 +137,10 @@ public class CoordsChatModule extends ModuleBase {
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
+        playerField.setMaxLength(512);
+
         playerField.setText(playerList.getOrDefault(getIp(), ""));
         playerField.setChangedListener(this::playerFieldChanged);
-        playerField.setMaxLength(512);
 
         widgets.add(playerField);
         return widgets;

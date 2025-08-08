@@ -7,6 +7,7 @@
     "ModifyFlightMoveSpeedMixin"
   ],
   "client": [
+    "BigItemMixin",
     "DarkerNametagMixin",
     "DeathInfoMixin",
     "DontResetDeathButtonsMixin",
@@ -16,10 +17,12 @@
     "ModifyFlightVerticalSpeedMixin",
     "OverlayTextureAccessor",
     "PreventUntoggleKeysMixin",
+    "RegisterBigItemsMixin",
     "RenderBrandingMixin",
     "RenderShadowMixin",
     "ShowOwnNametagMixin",
-    "SkipWorldRenderingMixin"
+    "SkipWorldRenderingMixin",
+    "StoreItemTypeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

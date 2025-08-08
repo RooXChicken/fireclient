@@ -34,6 +34,7 @@ public class RenderWorldModule extends ModuleBase {
         super(new ModuleData("render_world", "\uD83C\uDF0D Render World", "[CHEAT] Allows the toggling of the world rendering"));
 
         getData().setSelectable(false);
+        getData().setEnabled(false);
     }
 
     @Override

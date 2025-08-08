@@ -14,6 +14,7 @@ import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
@@ -62,12 +63,12 @@ public class HitColorModule extends ModuleBase {
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
-        colorField.setText(hitColor);
-        colorField.setChangedListener(this::colorFieldChanged);
         colorField.setMaxLength(8);
 
-        widgets.add(colorField);
+        colorField.setText(hitColor);
+        colorField.setChangedListener(this::colorFieldChanged);
 
+        widgets.add(colorField);
         return widgets;
     }
 
@@ -83,6 +84,11 @@ public class HitColorModule extends ModuleBase {
         hitColor += ("0".repeat(Math.max(0, 8 - text.length())));
 
         changeColor(hitColor);
+    }
+
+    @Override
+    public void closeScreen(Screen screen) {
+        FireClientside.saveConfig();
     }
 
     public void changeColor(String color) {

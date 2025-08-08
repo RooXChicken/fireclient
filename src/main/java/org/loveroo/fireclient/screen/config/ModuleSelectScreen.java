@@ -3,7 +3,9 @@ package org.loveroo.fireclient.screen.config;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ScrollableWidget;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
@@ -48,14 +50,14 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             var y = (index / 3) * 30;
 
             moduleButtons.add(ButtonWidget.builder(Text.of(module.getData().getName()), module::moduleConfigPressed)
-                    .dimensions(width/2 - 60 + x, height/2 - 20 + y, 120, 20)
+                    .dimensions(width/2 - 60 + x, height/2 - 80 + y, 120, 20)
                     .build());
 
             addSelectableChild(moduleButtons.get(index));
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 60, height/2 + - 20 +  (modules.size() / 3 + 1) * 30, 120, 20)
+                .dimensions(width/2 - 60, height/2 + - 40 +  (modules.size() / 3 + 1) * 30, 120, 20)
                 .build();
 
         addSelectableChild(backButton);
@@ -76,7 +78,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, "Modules Config", width/2, height/2 - 35, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(text, "Modules Config", width/2, height/2 - 95, 0xFFFFFFFF);
 
         for(var button : moduleButtons) {
             button.render(context, mouseX, mouseY, delta);

@@ -38,7 +38,7 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     @Shadow private World world;
 
     @Unique
-    private static double floorDistance = 0.0;
+    private static double floorDistance;
 
     @ModifyVariable(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V", at = @At("STORE"), ordinal = 6)
     private double modifyDistance(double original) {
