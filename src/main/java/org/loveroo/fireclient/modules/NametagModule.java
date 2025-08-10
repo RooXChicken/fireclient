@@ -21,6 +21,7 @@ public class NametagModule extends ModuleBase {
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7 Nametag", "Allows the modification of vanilla nametags"));
+        getData().setShownName(generateDisplayName(0xE0E7FF));
 
         getData().setSelectable(false);
     }
@@ -45,12 +46,12 @@ public class NametagModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(Text.of("Darker: " + darkerBackground), this::darkerBackgroundButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Darker"), darkerBackground), this::darkerBackgroundButtonPressed)
                 .dimensions(base.width/2 - 130, base.height/2 - 10, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.darker_background")))
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("Show Own: " + showOwn), this::showOwnButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Show Own"), showOwn), this::showOwnButtonPressed)
                 .dimensions(base.width/2 + 10, base.height/2 - 10, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own")))
                 .build());
@@ -60,12 +61,12 @@ public class NametagModule extends ModuleBase {
 
     private void darkerBackgroundButtonPressed(ButtonWidget button) {
         darkerBackground = !darkerBackground;
-        button.setMessage(Text.of("Darker: " + darkerBackground));
+        button.setMessage(getToggleText(Text.of("Darker"), darkerBackground));
     }
 
     private void showOwnButtonPressed(ButtonWidget button) {
         showOwn = !showOwn;
-        button.setMessage(Text.of("Show Own: " + showOwn));
+        button.setMessage(getToggleText(Text.of("Show Own"), showOwn));
     }
 
     public boolean isDarkerBackground() {

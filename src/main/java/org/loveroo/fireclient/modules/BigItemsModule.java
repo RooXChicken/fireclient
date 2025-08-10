@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.modules;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -27,8 +28,15 @@ public class BigItemsModule extends ModuleBase {
 
     public BigItemsModule() {
         super(new ModuleData("big_items", "\uD83C\uDF1F Big Items", "Makes certain items render larger"));
+        getData().setShownName(generateDisplayName(0xF9FFCC));
 
         getData().setSelectable(false);
+
+        ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
+            if(getData().isEnabled()) {
+                collectItems();
+            }
+        });
     }
 
     @Override

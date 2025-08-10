@@ -45,6 +45,7 @@ public class CoordsChatModule extends ModuleBase {
 
     public CoordsChatModule() {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players (names split by space  , comma , , or pipe | )"));
+        getData().setShownName(generateDisplayName(0x89ECF0));
 
         getData().setSelectable(false);
         getData().setEnabled(false);

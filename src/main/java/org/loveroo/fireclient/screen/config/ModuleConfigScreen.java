@@ -73,13 +73,5 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
         module.drawScreen(this, context);
         module.drawOutline(context);
-
-        
-//        var tooltip = "";
-//        if(module.isPointInside(this.mouseX, this.mouseY)) {
-//            tooltip = module.getData().getName();
-//        }
-
-//        setTooltip(Text.of(tooltip));
     }
 }

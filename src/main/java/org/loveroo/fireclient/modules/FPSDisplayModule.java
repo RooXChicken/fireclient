@@ -24,6 +24,7 @@ public class FPSDisplayModule extends ModuleBase {
 
     public FPSDisplayModule() {
         super(new ModuleData("fps_display", "\uD83D\uDCCA FPSDisplay", "Shows your framerate"));
+        getData().setShownName(generateDisplayName(0xC0F0FA));
 
         getData().setHeight(8);
         getData().setWidth(40);

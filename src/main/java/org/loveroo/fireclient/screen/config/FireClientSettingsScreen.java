@@ -5,6 +5,9 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
@@ -17,6 +20,9 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
 
     private ArrayList<ButtonWidget> settingsButtons;
     private ButtonWidget backButton;
+
+    public static final Text defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔ ")).setStyle(Style.EMPTY.withColor(0x57D647));
+    public static final  Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌ ")).setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
         super(Text.of("FireClient Options"));
@@ -41,7 +47,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 60, height/2 + - 20 +  (FireClientside.getModules().size() / 3 + 1) * 30, 120, 20)
+                .dimensions(width/2 - 60, height/2 + - 20 +  (FireClientOption.values().length / 3 + 1) * 30, 120, 20)
                 .build();
 
         addSelectableChild(backButton);
@@ -66,7 +72,9 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         switch(option.getType()) {
             case TOGGLE -> {
                 var value = FireClientside.getSetting(option);
-                return Text.of((value == 1 ? "✔ " : "❌ ") + (option.getName()));
+
+                var nameText = Text.of(option.getName());
+                return ((value == 1) ? defaultTrueText : defaultFalseText).copy().append(nameText);
             }
         }
 

@@ -35,26 +35,34 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(EntityRenderDispatcher.class)
 public abstract class RenderShadowMixin<E extends Entity, S extends EntityRenderState> {
 
-    @Shadow private World world;
-
     @Unique
     private static double floorDistance;
 
+    @Unique
+    private static float distanceToCamera;
+
     @ModifyVariable(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V", at = @At("STORE"), ordinal = 6)
     private double modifyDistance(double original) {
+        var shadow = (ShadowModule) FireClientside.getModule("shadow");
+        if(shadow == null || shadow.isDistanceEffect()) {
+            distanceToCamera = (float)original;
+            return original;
+        }
+
+        distanceToCamera = 0.0f;
         return 0.0;
     }
 
     @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/EntityRenderDispatcher;renderShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/entity/state/EntityRenderState;FFLnet/minecraft/world/WorldView;F)V"))
     private void getFloorDistance(CallbackInfo info, @Local(ordinal = 0) S renderState, @Local(ordinal = 0, argsOnly = true) E entity) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null || !shadow.getData().isEnabled()) {
+        if(shadow == null || !shadow.isIncreaseHeight()) {
             return;
         }
 
         var pos = new Vec3d(renderState.x, renderState.y, renderState.z);
         var rayContext = new RaycastContext(pos, pos.subtract(0, 20, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity);
-        var ray = world.raycast(rayContext);
+        var ray = entity.getEntityWorld().raycast(rayContext);
 
         floorDistance = pos.y - (ray.getBlockPos().getY() + 1);
     }
@@ -70,13 +78,15 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     }
 
     @ModifyVariable(method = "renderShadowPart", at = @At("HEAD"), ordinal = 1, argsOnly = true)
-    private static float moveDown(float original) {
+    private static float modifyShadowOpacity(float original) {
+        var distanceOffset = (1.0f - distanceToCamera / 256.0f);
+
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null || !shadow.getData().isEnabled()) {
+        if(shadow == null || !shadow.isIncreaseHeight()) {
             return original;
         }
 
         var distance = 1.0 - (floorDistance/20.0);
-        return (float)(floorDistance/2 + distance);
+        return (float)(floorDistance/2 + distance) * distanceOffset;
     }
 }

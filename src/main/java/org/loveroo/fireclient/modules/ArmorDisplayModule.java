@@ -10,11 +10,15 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ public class ArmorDisplayModule extends ModuleBase {
 
     public ArmorDisplayModule() {
         super(new ModuleData("armor_display", "\uD83D\uDEE1 Armor Display", "Shows your armor durability and cooldown"));
+        getData().setShownName(generateDisplayName(0xAAF089));
 
         getData().setWidth(20);
         getData().setHeight(40);
@@ -146,7 +151,7 @@ public class ArmorDisplayModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 + 10));
-        widgets.add(ButtonWidget.builder(Text.of("Locked: " + locked), this::lockedButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Locked"), locked), this::lockedButtonPressed)
                 .dimensions(base.width/2 - 60, base.height/2 - 20, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button")))
                 .build());
@@ -156,6 +161,6 @@ public class ArmorDisplayModule extends ModuleBase {
 
     public void lockedButtonPressed(ButtonWidget button) {
         locked = !locked;
-        button.setMessage(Text.of("Locked: " + locked));
+        button.setMessage(getToggleText(Text.of("Locked"), locked));
     }
 }

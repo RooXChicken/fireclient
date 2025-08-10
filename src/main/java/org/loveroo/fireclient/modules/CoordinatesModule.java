@@ -43,9 +43,6 @@ public class CoordinatesModule extends ModuleBase {
     private final int windowSizeX = 480;
     private final int windowSizeY = 80;
 
-//    private int lastWindowX = windowSizeX/2;
-//    private int lastWindowY = windowSizeY/2;
-
     @Nullable
     private JFrame window;
 
@@ -60,6 +57,7 @@ public class CoordinatesModule extends ModuleBase {
 
     public CoordinatesModule() {
         super(new ModuleData("coordinates", "\uD83E\uDDED Coordinates", "Shows your in game coordinates, coordinates for the other dimension, and supports a separate window"));
+        getData().setShownName(generateDisplayName(0x59D93F));
 
         getData().setHeight(8);
         getData().setWidth(110);
@@ -100,7 +98,7 @@ public class CoordinatesModule extends ModuleBase {
             closeCoordsWindow();
 
             if(windowModeButton != null) {
-                windowModeButton.setMessage(Text.of("Windowed Mode: " + false));
+                windowModeButton.setMessage(getToggleText(Text.of("Windowed Mode"), windowMode));
             }
         }
     }
@@ -230,12 +228,12 @@ public class CoordinatesModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
-        widgets.add(ButtonWidget.builder(Text.of("Other Dimension: " + showOther), this::showOtherButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Other Dimension"), showOther), this::showOtherButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 10, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension")))
                 .build());
 
-        windowModeButton = ButtonWidget.builder(Text.of("Windowed Mode: " + windowMode), this::windowModeButtonPressed)
+        windowModeButton = ButtonWidget.builder(getToggleText(Text.of("Windowed Mode"), windowMode), this::windowModeButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 40, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.window_mode")))
                 .build();
@@ -251,12 +249,12 @@ public class CoordinatesModule extends ModuleBase {
 
     public void showOtherButtonPressed(ButtonWidget button) {
         showOther = !showOther;
-        button.setMessage(Text.of("Other Dimension: " + showOther));
+        button.setMessage(getToggleText(Text.of("Other Dimension"), showOther));
     }
 
     public void windowModeButtonPressed(ButtonWidget button) {
         windowMode = !windowMode;
-        button.setMessage(Text.of("Windowed Mode: " + windowMode));
+        button.setMessage(getToggleText(Text.of("Windowed Mode"), windowMode));
 
         if(windowMode) {
             openCoordsWindow();
@@ -267,13 +265,17 @@ public class CoordinatesModule extends ModuleBase {
     }
 
     public void openCoordsWindow() {
+        if(window != null) {
+            window.setVisible(true);
+            return;
+        }
+
         window = new JFrame();
         window.setTitle("Coordinates");
         window.getContentPane().setBackground(new java.awt.Color(43, 43, 43));
         window.setLayout(null);
 
         window.setBounds(0, 0, windowSizeX, windowSizeY);
-//        window.setLocation(lastWindowX, lastWindowY);
 
         coordinatesText = new JLabel();
         coordinatesText.setFont(font);

@@ -49,7 +49,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             var x = ((index % 3) - 1) * 130;
             var y = (index / 3) * 30;
 
-            moduleButtons.add(ButtonWidget.builder(Text.of(module.getData().getName()), module::moduleConfigPressed)
+            moduleButtons.add(ButtonWidget.builder(module.getData().getShownName(), module::moduleConfigPressed)
                     .dimensions(width/2 - 60 + x, height/2 - 80 + y, 120, 20)
                     .build());
 

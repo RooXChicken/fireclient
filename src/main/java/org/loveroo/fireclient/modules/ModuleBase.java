@@ -13,16 +13,22 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
@@ -37,6 +43,14 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     public ModuleData getData() {
         return data;
+    }
+
+    public MutableText generateDisplayName(int emojiColor) {
+        var emoji = getData().getName().substring(0, getData().getName().indexOf(" "));
+        var name = getData().getName().substring(getData().getName().indexOf(" "));
+
+        var nameText = MutableText.of(new PlainTextContent.Literal(name)).setStyle(Style.EMPTY.withColor(0xFFFFFF));
+        return MutableText.of(new PlainTextContent.Literal(emoji)).setStyle(Style.EMPTY.withColor(emojiColor)).append(nameText);
     }
 
     @Override
@@ -133,14 +147,14 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {
-        return ButtonWidget.builder(Text.of("Visible: " + getData().isVisible()), this::visibleButtonPressed)
+        return ButtonWidget.builder(getToggleText(Text.of("Visible"), getData().isVisible()), this::visibleButtonPressed)
                 .dimensions(x, y, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.visibility_toggle")))
                 .build();
     }
 
     public ButtonWidget getToggleEnableButton(int x, int y) {
-        return ButtonWidget.builder(Text.of("Enabled: " + getData().isEnabled()), this::enableButtonPressed)
+        return ButtonWidget.builder(getToggleText(Text.of("Enabled"), getData().isEnabled()), this::enableButtonPressed)
                 .dimensions(x, y, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
                 .build();
@@ -148,18 +162,23 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     public void enableButtonPressed(ButtonWidget button) {
         getData().setEnabled(!getData().isEnabled());
-        button.setMessage(Text.of("Enabled: " + getData().isEnabled()));
+        button.setMessage(getToggleText(Text.of("Enabled"), getData().isEnabled()));
     }
 
     public void visibleButtonPressed(ButtonWidget button) {
         getData().setVisible(!getData().isVisible());
-        button.setMessage(Text.of("Visible: " + getData().isVisible()));
+        button.setMessage(getToggleText(Text.of("Visible"), getData().isVisible()));
+    }
+
+    public MutableText getToggleText(Text message, boolean value) {
+        return ((value) ? FireClientSettingsScreen.defaultTrueText : FireClientSettingsScreen.defaultFalseText).copy().append(message);
     }
 
     public void drawScreen(Screen base, DrawContext context) {
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, getData().getName() + " Configuration", base.width/2, base.height/2 - 40, 0xFFFFFFFF);
+        var configText = getData().getShownName().copy().append(MutableText.of(new PlainTextContent.Literal(" Configuration")).setStyle(Style.EMPTY.withColor(0xFFFFFF)));
+        context.drawCenteredTextWithShadow(text, configText, base.width/2, base.height/2 - 40, 0xFFFFFFFF);
     }
 
     public void openScreen(Screen screen) { }

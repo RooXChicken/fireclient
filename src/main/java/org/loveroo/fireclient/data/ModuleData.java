@@ -1,10 +1,14 @@
 package org.loveroo.fireclient.data;
 
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+
 public class ModuleData {
     private final String id;
 
     private final String name;
     private final String description;
+    private MutableText shownName;
 
     private double posX = 0;
     private double posY = 0;
@@ -24,6 +28,15 @@ public class ModuleData {
 
         this.name = name;
         this.description = description;
+        shownName = MutableText.of(new PlainTextContent.Literal(getName()));
+    }
+
+    public MutableText getShownName() {
+        return shownName;
+    }
+
+    public void setShownName(MutableText shownName) {
+        this.shownName = shownName;
     }
 
     public String getName() {

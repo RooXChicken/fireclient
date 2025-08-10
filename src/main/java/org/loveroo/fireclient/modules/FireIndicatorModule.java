@@ -18,9 +18,13 @@ public class FireIndicatorModule extends ModuleBase {
 
     public FireIndicatorModule() {
         super(new ModuleData("fire_indicator", "\uD83D\uDD25 Fire Indicator", "Shows an indicator when you're on fire"));
+        getData().setShownName(generateDisplayName(0xF7A22A));
 
         getData().setWidth(6);
         getData().setHeight(6);
+
+        getData().setPosX(0);
+        getData().setPosY(80);
     }
 
     @Override

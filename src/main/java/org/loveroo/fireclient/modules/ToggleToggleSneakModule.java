@@ -56,6 +56,8 @@ public class ToggleToggleSneakModule extends ModuleBase {
 
     public ToggleToggleSneakModule() {
         super(new ModuleData("toggle_toggle_sneak", "\uD83D\uDC5F Toggle ToggleSneak", "Allows you to toggle the toggle sneak option"));
+        getData().setShownName(generateDisplayName(0x7D6476));
+
         getData().setSelectable(false);
     }
 

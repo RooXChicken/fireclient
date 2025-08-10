@@ -32,6 +32,7 @@ public class AutoMessageModule extends ModuleBase {
 
     public AutoMessageModule() {
         super(new ModuleData("auto_message", "\uD83D\uDDE8 AutoMessage", "Automatically inputs your last types '/msg' or equivalent command so you can quickly remessage somebody"));
+        getData().setShownName(generateDisplayName(0xD9D9D9));
 
         getData().setSelectable(false);
 

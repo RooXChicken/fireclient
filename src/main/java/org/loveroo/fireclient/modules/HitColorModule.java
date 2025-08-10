@@ -29,6 +29,7 @@ public class HitColorModule extends ModuleBase {
 
     public HitColorModule() {
         super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color | Format: ARGB HEX"));
+        getData().setShownName(generateDisplayName(0xFF0000));
 
         getData().setSelectable(false);
 
@@ -62,7 +63,7 @@ public class HitColorModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
+        var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 36, base.height/2 + 20, 72, 15, Text.of(""));
         colorField.setMaxLength(8);
 
         colorField.setText(hitColor);
