@@ -66,7 +66,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         switch(option.getType()) {
             case TOGGLE -> {
                 var value = FireClientside.getSetting(option);
-                return Text.of(option.getName() + ": " + (value == 1 ? "true" : "false"));
+                return Text.of((value == 1 ? "✔ " : "❌ ") + (option.getName()));
             }
         }
 

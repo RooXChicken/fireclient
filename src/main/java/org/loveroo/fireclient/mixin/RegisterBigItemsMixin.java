@@ -20,7 +20,10 @@ public abstract class RegisterBigItemsMixin {
 
     @Inject(method = "update", at = @At("TAIL"))
     private void registerBigItems(Entity entity, ItemStack stack, ItemModelManager itemModelManager, CallbackInfo info) {
-        var state = (ItemTypeStorage)itemRenderState;
+        if(!(itemRenderState instanceof ItemTypeStorage state)) {
+            return;
+        }
+
         state.fireclient$setItem(stack.getItem());
     }
 }

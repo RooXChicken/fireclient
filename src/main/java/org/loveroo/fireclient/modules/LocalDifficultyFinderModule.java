@@ -35,7 +35,7 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 //    private float ldDiff = 0;
 
     public LocalDifficultyFinderModule() {
-        super(new ModuleData("local_difficulty_finder", "\uD83D\uDD25 Local Difficulty", "A local difficulty calculator based on Zombie Fire Ticks"));
+        super(new ModuleData("local_difficulty_finder", "\uD83D\uDCA5 Local Difficulty", "A local difficulty calculator based on Zombie Fire Ticks"));
 
         getData().setHeight(16);
         getData().setWidth(60);
