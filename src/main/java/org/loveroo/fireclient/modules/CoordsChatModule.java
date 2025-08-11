@@ -116,7 +116,7 @@ public class CoordsChatModule extends ModuleBase {
         var iter = list.keys();
         while(iter.hasNext()) {
             var entry = (String)iter.next();
-            var value = list.optString(entry, "").replaceAll("\\$", " ");
+            var value = list.optString(entry, "");
 
             playerList.put(entry, value);
         }
@@ -130,7 +130,7 @@ public class CoordsChatModule extends ModuleBase {
 
         var list = new JSONObject();
         for(var entry : playerList.entrySet()) {
-            list.put(entry.getKey(), entry.getValue().replaceAll(" ", "$"));
+            list.put(entry.getKey(), entry.getValue().replaceAll(splitRegex, ","));
         }
 
         json.put("player_list", list);

@@ -17,6 +17,10 @@ import org.lwjgl.glfw.GLFW;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -72,15 +76,8 @@ public class FireClientside implements ClientModInitializer {
                 saveConfig();
             }
 
-            var reader = new FileReader(config);
-            var scanner = new Scanner(reader);
-
-            var data = new StringBuilder();
-            while(scanner.hasNext()) {
-                data.append(scanner.next());
-            }
-
-            var json = new JSONObject(data.toString());
+            var data = Files.readString(Paths.get(FIRECLIENT_CONFIG_PATH));
+            var json = new JSONObject(data);
 
             var settings = json.optJSONObject("settings");
             if(settings == null) {
@@ -97,12 +94,17 @@ public class FireClientside implements ClientModInitializer {
             }
 
             for(ModuleBase module : getModules()) {
-                var moduleJson = modules.optJSONObject(module.getData().getId());
-                if(moduleJson == null) {
-                    moduleJson = new JSONObject();
-                }
+                try {
+                    var moduleJson = modules.optJSONObject(module.getData().getId());
+                    if(moduleJson == null) {
+                        moduleJson = new JSONObject();
+                    }
 
-                module.loadJson(moduleJson);
+                    module.loadJson(moduleJson);
+                }
+                catch(Exception e) {
+                    FireClient.LOGGER.error("Failed to load module {}!", module.getData().getName(), e);
+                }
             }
         }
         catch(Exception e) {
@@ -124,7 +126,12 @@ public class FireClientside implements ClientModInitializer {
 
             var modules = new JSONObject();
             for(ModuleBase module : getModules()) {
-                modules.put(module.getData().getId(), module.saveJson());
+                try {
+                    modules.put(module.getData().getId(), module.saveJson());
+                }
+                catch(Exception e) {
+                    FireClient.LOGGER.error("Failed to save module {}!", module.getData().getName(), e);
+                }
             }
 
             json.put("settings", settings);

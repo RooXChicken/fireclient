@@ -62,8 +62,6 @@ public class BigItemsModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        FireClient.LOGGER.info(items);
-
         var itemField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
         itemField.setMaxLength(512);
 
