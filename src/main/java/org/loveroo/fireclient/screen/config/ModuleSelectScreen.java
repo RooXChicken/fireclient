@@ -57,7 +57,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 60, height/2 + - 40 +  (modules.size() / 3 + 1) * 30, 120, 20)
+                .dimensions(width/2 - 40, height/2 + (modules.size() / 3 + 1) * 30 - 100, 80, 20)
                 .build();
 
         addSelectableChild(backButton);

@@ -4,7 +4,9 @@ import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -18,6 +20,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
+import org.loveroo.fireclient.screen.config.ConfigScreenBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,9 +64,9 @@ public class HitColorModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 30));
 
-        var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 36, base.height/2 + 20, 72, 15, Text.of(""));
+        var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 36, base.height/2 + 60, 72, 15, Text.of(""));
         colorField.setMaxLength(8);
 
         colorField.setText(hitColor);
@@ -84,12 +87,31 @@ public class HitColorModule extends ModuleBase {
         hitColor = text;
         hitColor += ("0".repeat(Math.max(0, 8 - text.length())));
 
-        changeColor(hitColor);
+        if(getData().isEnabled()) {
+            changeColor(hitColor);
+        }
     }
 
     @Override
     public void closeScreen(Screen screen) {
+        var client = MinecraftClient.getInstance();
+        client.player.hurtTime = 0;
+
         FireClientside.saveConfig();
+    }
+
+    @Override
+    public void drawScreen(Screen base, DrawContext context) {
+        var client = MinecraftClient.getInstance();
+        client.player.hurtTime = 11;
+
+        int i = base.width/4;
+        int j = base.height/4;
+
+        float scale = 1.4f;
+        int off = 50;
+
+        InventoryScreen.drawEntity(context, (int)((i+26-off)*2), (int)((j-8-off)*2), (int)((i+75-off)*2), (int)((j+78-off)*2), (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
     }
 
     public void changeColor(String color) {

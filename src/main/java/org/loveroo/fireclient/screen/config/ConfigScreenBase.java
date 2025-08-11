@@ -77,4 +77,12 @@ public class ConfigScreenBase extends Screen {
         var text = MinecraftClient.getInstance().textRenderer;
         context.drawCenteredTextWithShadow(text, configText, width/2, 10, 0xFFFFFFFF);
     }
+
+    public int getMouseX() {
+        return mouseX;
+    }
+
+    public int getMouseY() {
+        return mouseY;
+    }
 }

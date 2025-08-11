@@ -45,11 +45,11 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     private double modifyDistance(double original) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
         if(shadow == null || shadow.isDistanceEffect()) {
-            distanceToCamera = (float)original;
+            distanceToCamera = (1.0f - (float)original / 256.0f);
             return original;
         }
 
-        distanceToCamera = 0.0f;
+        distanceToCamera = 1.0f;
         return 0.0;
     }
 
@@ -79,14 +79,12 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
 
     @ModifyVariable(method = "renderShadowPart", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private static float modifyShadowOpacity(float original) {
-        var distanceOffset = (1.0f - distanceToCamera / 256.0f);
-
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
         if(shadow == null || !shadow.isIncreaseHeight()) {
             return original;
         }
 
         var distance = 1.0 - (floorDistance/20.0);
-        return (float)(floorDistance/2 + distance) * distanceOffset;
+        return (float)(floorDistance/2 + distance) * distanceToCamera;
     }
 }

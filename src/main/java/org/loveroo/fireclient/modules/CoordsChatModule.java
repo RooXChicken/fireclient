@@ -81,7 +81,7 @@ public class CoordsChatModule extends ModuleBase {
 
         var coords = coordsBuilder.toString();
 
-        if(playerList.isEmpty()) {
+        if(getCurrent().isEmpty()) {
             RooHelper.sendChatMessage(coords);
         }
         else {
@@ -116,7 +116,9 @@ public class CoordsChatModule extends ModuleBase {
         var iter = list.keys();
         while(iter.hasNext()) {
             var entry = (String)iter.next();
-            list.put(entry, json.optString(entry, ""));
+            var value = list.optString(entry, "").replaceAll("\\$", " ");
+
+            playerList.put(entry, value);
         }
     }
 
@@ -125,7 +127,13 @@ public class CoordsChatModule extends ModuleBase {
         var json = new JSONObject();
 
         json.put("enabled", getData().isEnabled());
-        json.put("player_list", playerList);
+
+        var list = new JSONObject();
+        for(var entry : playerList.entrySet()) {
+            list.put(entry.getKey(), entry.getValue().replaceAll(" ", "$"));
+        }
+
+        json.put("player_list", list);
 
         return json;
     }
@@ -140,11 +148,15 @@ public class CoordsChatModule extends ModuleBase {
         playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
         playerField.setMaxLength(512);
 
-        playerField.setText(playerList.getOrDefault(getIp(), ""));
+        playerField.setText(getCurrent());
         playerField.setChangedListener(this::playerFieldChanged);
 
         widgets.add(playerField);
         return widgets;
+    }
+
+    private String getCurrent() {
+        return playerList.getOrDefault(getIp(), "");
     }
 
     private String getIp() {
@@ -158,7 +170,7 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     public void playerFieldChanged(String text) {
-        var playerListEntry = playerList.getOrDefault(getIp(), "");
+        var playerListEntry = getCurrent();
 
         if(!lastSuggestion.isEmpty() && text.matches(".*" + splitRegex)) {
             playerListEntry = playerListEntry + lastSuggestion + text.substring(text.length()-1);
@@ -229,7 +241,7 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     private String[] getPlayerList() {
-        return playerList.getOrDefault(getIp(), "").split(splitRegex);
+        return getCurrent().split(splitRegex);
     }
 
     @Override
