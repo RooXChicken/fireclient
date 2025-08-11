@@ -31,7 +31,7 @@ public class AutoMessageModule extends ModuleBase {
     private String lastMessage = "";
 
     public AutoMessageModule() {
-        super(new ModuleData("auto_message", "\uD83D\uDDE8 AutoMessage", "Automatically inputs your last types '/msg' or equivalent command so you can quickly remessage somebody"));
+        super(new ModuleData("auto_message", "\uD83D\uDDE8 AutoMessage", "Automatically inputs your last types '/msg' or equivalent command so you can quickly remessage somebody when you press the keybind"));
         getData().setShownName(generateDisplayName(0xD9D9D9));
 
         getData().setSelectable(false);

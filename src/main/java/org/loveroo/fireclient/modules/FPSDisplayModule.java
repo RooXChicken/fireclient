@@ -29,8 +29,8 @@ public class FPSDisplayModule extends ModuleBase {
         getData().setHeight(8);
         getData().setWidth(40);
 
-        getData().setPosX(4);
-        getData().setPosY(30);
+        getData().setPosX(2);
+        getData().setPosY(2);
     }
 
     @Override

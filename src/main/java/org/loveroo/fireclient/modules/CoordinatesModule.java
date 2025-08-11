@@ -62,8 +62,8 @@ public class CoordinatesModule extends ModuleBase {
         getData().setHeight(8);
         getData().setWidth(110);
 
-        getData().setPosX(4);
-        getData().setPosY(6);
+        getData().setPosX(2);
+        getData().setPosY(14);
 
         try {
             System.setProperty("java.awt.headless", "false");

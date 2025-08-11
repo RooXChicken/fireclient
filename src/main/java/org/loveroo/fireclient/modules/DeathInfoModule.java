@@ -26,6 +26,7 @@ public class DeathInfoModule extends ModuleBase {
         super(new ModuleData("death_info", "☠ Death Info", "Shows your death location in the screen and in chat"));
 
         getData().setSelectable(false);
+        getData().setEnabled(true);
     }
 
     @Override

@@ -35,7 +35,6 @@ public class RenderWorldModule extends ModuleBase {
         getData().setShownName(generateDisplayName(0x589157));
 
         getData().setSelectable(false);
-        getData().setEnabled(false);
     }
 
     @Override

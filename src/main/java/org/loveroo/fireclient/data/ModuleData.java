@@ -19,8 +19,8 @@ public class ModuleData {
     private double height = 0;
 
     private boolean skip = false;
-    private boolean visible = true;
-    private boolean enabled = true;
+    private boolean visible = false;
+    private boolean enabled = false;
     private boolean selectable = true;
 
     public ModuleData(String id, String name, String description) {

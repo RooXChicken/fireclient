@@ -23,8 +23,8 @@ public class FireIndicatorModule extends ModuleBase {
         getData().setWidth(6);
         getData().setHeight(6);
 
-        getData().setPosX(0);
-        getData().setPosY(80);
+        getData().setPosX(2);
+        getData().setPosY(26);
     }
 
     @Override

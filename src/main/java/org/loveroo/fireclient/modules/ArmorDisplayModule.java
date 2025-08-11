@@ -40,6 +40,7 @@ public class ArmorDisplayModule extends ModuleBase {
         getData().setHeight(40);
 
         getData().setScale(2.0/3.0);
+        getData().setVisible(true);
     }
 
     @Override

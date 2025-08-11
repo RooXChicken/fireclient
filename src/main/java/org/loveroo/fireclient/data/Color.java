@@ -20,6 +20,15 @@ public record Color(int r, int g, int b, int a) {
         return new Color(r, g, b, a);
     }
 
+    public static Color fromRGB(int argb) {
+        var r = (byte)argb >> 16;
+        var g = (byte)argb >> 8;
+        var b = (byte)argb;
+        var a = 255;
+
+        return new Color(r, g, b, a);
+    }
+
     public Color blend(Color other, double amount) {
         var r = blendPoints(this.r, other.r, amount);
         var g = blendPoints(this.g, other.g, amount);

@@ -43,8 +43,6 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 
         getData().setPosX(4);
         getData().setPosY(42);
-
-        getData().setVisible(false);
     }
 
     @Override
