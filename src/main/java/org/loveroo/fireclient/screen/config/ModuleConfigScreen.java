@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
@@ -61,6 +62,17 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
         return true;
+    }
+
+    @Override
+    protected void exitOnInventory() {
+        for(var widget : children()) {
+            if(widget instanceof TextFieldWidget text && text.isSelected()) {
+                return;
+            }
+        }
+
+        super.exitOnInventory();
     }
 
     @Override

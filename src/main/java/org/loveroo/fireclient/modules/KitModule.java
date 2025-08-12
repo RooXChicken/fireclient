@@ -24,6 +24,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.ModuleData;
@@ -32,6 +33,9 @@ import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -108,11 +112,12 @@ public class KitModule extends ModuleBase {
 
         if(!client.player.isInCreativeMode()) {
             if(client.player.getPermissionLevel() < 2) {
+                client.player.sendMessage(MutableText.of(new PlainTextContent.Literal("You do not have permission for creative mode!")).withColor(0xD63C3C), false);
                 return;
             }
 
             RooHelper.sendChatCommand("gamemode creative");
-            client.player.sendMessage(Text.of("Waiting for creative mode..."), false);
+            client.player.sendMessage(MutableText.of(new PlainTextContent.Literal("Waiting for creative mode...")).withColor(0xB0B0B0), false);
 
             kitToLoad = kitName;
             return;
@@ -170,6 +175,17 @@ public class KitModule extends ModuleBase {
 
         widgets.add(ButtonWidget.builder(Text.of("+"), this::addKitButtonPressed)
                 .dimensions(base.width/2 + 80, base.height/2 - 20, 20, 15)
+                .tooltip(Tooltip.of(Text.of("Create kit")))
+                .build());
+
+        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCC2"), this::folderButtonPressed)
+                .tooltip(Tooltip.of(Text.of("Open kits folder (any kit can be shared and loaded with the .json file)")))
+                .dimensions(base.width/2 + 105, base.height/2 - 20, 20, 15)
+                .build());
+
+        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), this::createFromClipboard)
+                .tooltip(Tooltip.of(Text.of("Create kit from clipboard")))
+                .dimensions(base.width/2 + 130, base.height/2 - 20, 20, 15)
                 .build());
 
         var client = MinecraftClient.getInstance();
@@ -200,6 +216,16 @@ public class KitModule extends ModuleBase {
                     .dimensions(base.width/2 + 80, y, 20, 20)
                     .build());
 
+            widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), (button) -> {
+                        StringSelection stringSelection = new StringSelection(loadKitFile(kit));
+
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, null);
+                    })
+                    .tooltip(Tooltip.of(Text.of("Copy " + kit + " to your clipboard")))
+                    .dimensions(base.width/2 + 105, y, 20, 20)
+                    .build());
+
             index++;
         }
 
@@ -215,6 +241,43 @@ public class KitModule extends ModuleBase {
         saveKit(kitName);
 
         reloadScreen();
+    }
+
+    private void folderButtonPressed(ButtonWidget button) {
+        try {
+            Desktop.getDesktop().open(new File(KIT_BASE_PATH));
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.error("Failed to navigate to kit folder!", e);
+        }
+    }
+
+    private void createFromClipboard(ButtonWidget widget) {
+        var clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+        try {
+            var kit = "";
+            kit = (String)clipboard.getData(DataFlavor.stringFlavor);
+
+            if(kit.isEmpty()) {
+                return;
+            }
+
+            if(kitNameField == null || kitNameField.getText().isEmpty()) {
+                return;
+            }
+
+            var kitName = kitNameField.getText();
+            var writer = new FileWriter(getKitPath(kitName));
+
+            writer.write(kit);
+            writer.close();
+
+            reloadScreen();
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.error("Failed to create kit from clipboard!", e);
+        }
     }
 
     private void deleteButtonPressed(ButtonWidget button) {

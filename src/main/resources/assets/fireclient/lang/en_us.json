@@ -14,5 +14,6 @@
   "fireclient.module.config.about": "Shows information about this module",
   "fireclient.module.shadow.distance_effect": "Entity distance to the camera affects the opacity of shadows (vanilla behavior)",
   "fireclient.module.shadow.increase_height": "Increases shadow height to 20 blocks",
-  "key.fireclient.toggle_auto_message": "Use Auto Message"
+  "key.fireclient.toggle_auto_message": "Use Auto Message",
+  "fireclient.module.flight_module.toggle_with_sneak": "Toggle Flight Modification with Sneak"
 }

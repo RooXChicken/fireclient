@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
 
 public class MainConfigScreen extends ConfigScreenBase {
@@ -57,6 +58,10 @@ public class MainConfigScreen extends ConfigScreenBase {
                     continue;
                 }
 
+                if(!module.getData().isVisible() && FireClientside.getSetting(FireClientOption.SHOW_HIDDEN_MODULES) == 0) {
+                    continue;
+                }
+
                 if(module.isPointInside(mouseX, mouseY)) {
                     selectedModule = module;
                     break;
@@ -75,6 +80,10 @@ public class MainConfigScreen extends ConfigScreenBase {
 
         for(var module : FireClientside.getModules()) {
             if(module.getData().isSkip()) {
+                continue;
+            }
+
+            if(!module.getData().isVisible() && FireClientside.getSetting(FireClientOption.SHOW_HIDDEN_MODULES) == 0) {
                 continue;
             }
 

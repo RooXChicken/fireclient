@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
@@ -51,6 +52,10 @@ public class ConfigScreenBase extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+            exitOnInventory();
+        }
+
         if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
             if(escapePressed()) {
                 return true;
@@ -58,6 +63,10 @@ public class ConfigScreenBase extends Screen {
         }
 
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    protected void exitOnInventory() {
+        client.setScreen(new InventoryScreen(client.player));
     }
 
     protected boolean escapePressed() {

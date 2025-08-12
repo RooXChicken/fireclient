@@ -5,8 +5,9 @@ public enum FireClientOption {
     BRANDING("Branding", "Optional branding message that shows in menus", 1, FireClientOptionType.TOGGLE),
     PREVENT_UNTOGGLE_STICKY("Untoggling Keys Fix", "Prevents untoggling sticky keys (Sprint & Sneak) when respawning", 1, FireClientOptionType.TOGGLE),
     HAZELI_MODE("Hazeli Mode", "...", 0, FireClientOptionType.TOGGLE),
-    DONT_RESET_DEATH("Death Buttons Mode", "Toggles whether the Death Screen buttons get reset when the window size changes (true: dont reset)", 1, FireClientOptionType.TOGGLE),
-    EXTINGUISH_FIX("Fix Extinguish Sound", "Toggles whether to make the fire extinguish sound not spammable", 1, FireClientOptionType.TOGGLE);
+    DONT_RESET_DEATH("Death Buttons Mode", "Fixes the Death Screen buttons being reset when the window size changes", 1, FireClientOptionType.TOGGLE),
+    EXTINGUISH_FIX("Fix Extinguish Sound", "Fixes the fire extinguish sound being spammed", 1, FireClientOptionType.TOGGLE),
+    SHOW_HIDDEN_MODULES("Show Hidden Modules", "Shows module outlines when they are hidden", 1, FireClientOptionType.TOGGLE);
 //    FORCE_CENTER_CURSOR("Force Cursor Centering", 0, FireClientOptionType.TOGGLE);
 
     private final String name;
