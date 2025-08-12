@@ -2,6 +2,7 @@ package org.loveroo.fireclient;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.*;
 import org.loveroo.fireclient.data.Color;
 
@@ -40,5 +41,14 @@ public class RooHelper {
         }
 
         handler.sendChatMessage(msg);
+    }
+
+    public static void sendNotification(String name, String description) {
+        sendNotification(Text.of(name), Text.of(description));
+    }
+
+    public static void sendNotification(Text name, Text description) {
+        var client = MinecraftClient.getInstance();
+        client.getToastManager().add(new SystemToast(SystemToast.Type.PACK_LOAD_FAILURE, name, description));
     }
 }

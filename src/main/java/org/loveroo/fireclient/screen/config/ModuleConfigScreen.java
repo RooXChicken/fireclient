@@ -12,6 +12,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.ModuleBase;
 import org.lwjgl.glfw.GLFW;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,11 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         }
 
         super.exitOnInventory();
+    }
+
+    @Override
+    public void onFilesDropped(List<Path> paths) {
+        module.onFilesDropped(paths);
     }
 
     @Override

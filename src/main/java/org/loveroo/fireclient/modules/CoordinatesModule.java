@@ -7,6 +7,7 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.loot.function.SetFireworksLootFunction;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +18,7 @@ import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,7 +68,6 @@ public class CoordinatesModule extends ModuleBase {
         getData().setPosY(14);
 
         try {
-            System.setProperty("java.awt.headless", "false");
             System.setProperty("awt.useSystemAAFontSettings", "off");
             System.setProperty("swing.aatext", "false");
 
@@ -264,8 +265,30 @@ public class CoordinatesModule extends ModuleBase {
         }
     }
 
+    private void tryWorkaround() {
+        try {
+            var setDefaultHeadless = GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
+            setDefaultHeadless.setAccessible(true);
+            setDefaultHeadless.set(null, Boolean.FALSE);
+
+            var setHeadlessField = GraphicsEnvironment.class.getDeclaredField("headless");
+            setHeadlessField.setAccessible(true);
+            setHeadlessField.set(null, Boolean.FALSE);
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.error("Failed to apply headless workaround! Coordinates window will not work!", e);
+            RooHelper.sendNotification("Failed to open window!", "Please use a different JRE!");
+        }
+    }
+
     public void openCoordsWindow() {
-        System.setProperty("java.awt.headless", "false");
+        if(GraphicsEnvironment.isHeadless()) {
+            tryWorkaround();
+
+            if(GraphicsEnvironment.isHeadless()) {
+                return;
+            }
+        }
 
         if(window != null) {
             window.setVisible(true);

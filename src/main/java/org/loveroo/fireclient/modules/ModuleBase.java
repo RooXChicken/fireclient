@@ -26,6 +26,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -184,5 +185,8 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void openScreen(Screen screen) { }
+
+    public void onFilesDropped(List<Path> paths) { }
+
     public void closeScreen(Screen screen) { }
 }
