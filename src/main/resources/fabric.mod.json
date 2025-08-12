@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "fireclient",
   "version": "${version}",
-  "name": "fireclient",
+  "name": "FireClient",
   "description": "Not a client. Helps with smps [ made with love by roo ]",
   "authors": [],
   "contact": {},

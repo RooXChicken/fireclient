@@ -41,6 +41,8 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         HudLayerRegistrationCallback.EVENT.register(this);
     }
 
+    public void postLoad() { }
+
     public ModuleData getData() {
         return data;
     }

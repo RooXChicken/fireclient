@@ -36,7 +36,8 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
         modules.sort(Comparator.naturalOrder());
 
-        for(var i = 0; i < modules.size(); i++) {
+        var i = 0;
+        for(i = 0; i < modules.size(); i++) {
             var module = FireClientside.getModule(modules.get(i));
 
             if(module.getData().isSkip()) {
@@ -57,7 +58,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 40, height/2 + (modules.size() / 3 + 1) * 30 - 100, 80, 20)
+                .dimensions(width/2 - 40, height/2 + ((i / 3 + 1) * 30) - 80, 80, 20)
                 .build();
 
         addSelectableChild(backButton);

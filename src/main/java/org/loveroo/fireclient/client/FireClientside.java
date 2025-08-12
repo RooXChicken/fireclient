@@ -31,7 +31,9 @@ public class FireClientside implements ClientModInitializer {
     public static final Color mainColor1 = new Color(213, 61, 49, 255);
     public static final Color mainColor2 = new Color(225, 166, 55, 255);
 
-    private static final String FIRECLIENT_CONFIG_PATH = "fireclient.json";
+    private static final String FIRECLIENT_OLD_CONFIG_PATH = "fireclient.json";
+    private static final String FIRECLIENT_PATH = "fireclient/";
+    private static final String FIRECLIENT_CONFIG_FILE = "config.json";
     private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
 
     private static final HashMap<String, ModuleBase> modules = new HashMap<>();
@@ -44,6 +46,10 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+
+        for(var module : getModules()) {
+            module.postLoad();
+        }
     }
 
     private void initModules() {
@@ -62,6 +68,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new ShadowModule());
         registerModule(new BigItemsModule());
         registerModule(new FireIndicatorModule());
+        registerModule(new KitModule());
     }
 
     private void registerModule(ModuleBase module) {
@@ -70,13 +77,20 @@ public class FireClientside implements ClientModInitializer {
 
     private void loadConfig() {
         try {
-            var config = new File(FIRECLIENT_CONFIG_PATH);
+            new File(FIRECLIENT_PATH).mkdir();
+
+            var config = new File(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE);
+            var oldConfig = new File(FIRECLIENT_OLD_CONFIG_PATH);
+
+            if(oldConfig.exists()) {
+                oldConfig.renameTo(config);
+            }
 
             if(!config.exists()) {
                 saveConfig();
             }
 
-            var data = Files.readString(Paths.get(FIRECLIENT_CONFIG_PATH));
+            var data = Files.readString(Paths.get(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE));
             var json = new JSONObject(data);
 
             var settings = json.optJSONObject("settings");
@@ -114,9 +128,6 @@ public class FireClientside implements ClientModInitializer {
 
     public static void saveConfig() {
         try {
-            var config = new File(FIRECLIENT_CONFIG_PATH);
-            var writer = new FileWriter(config);
-
             var json = new JSONObject();
 
             var settings = new JSONObject();
@@ -136,6 +147,11 @@ public class FireClientside implements ClientModInitializer {
 
             json.put("settings", settings);
             json.put("modules", modules);
+
+            new File(FIRECLIENT_PATH).mkdir();
+
+            var config = new File(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE);
+            var writer = new FileWriter(config);
 
             writer.write(json.toString());
             writer.close();

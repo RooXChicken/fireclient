@@ -265,6 +265,8 @@ public class CoordinatesModule extends ModuleBase {
     }
 
     public void openCoordsWindow() {
+        System.setProperty("java.awt.headless", "false");
+
         if(window != null) {
             window.setVisible(true);
             return;
