@@ -18,7 +18,13 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.*;
+import org.loveroo.fireclient.data.kit.KitCreateStatus;
+import org.loveroo.fireclient.data.kit.KitLoadStatus;
+import org.loveroo.fireclient.data.kit.KitManageStatus;
+import org.loveroo.fireclient.data.kit.KitValidationStatus;
+import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
@@ -31,32 +37,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-
-enum KitCreateStatus {
-    SUCCESS,
-    ALREADY_EXISTS,
-    INVALID_KIT,
-    WRITE_FAIL,
-}
-
-enum KitLoadStatus {
-    SUCCESS,
-    INVALID_PLAYER,
-    INVALID_PERMS,
-    NEEDS_GMC,
-    INVALID_KIT,
-}
-
-enum KitManageStatus {
-    SUCCESS,
-    FAILURE,
-}
-
-enum KitValidationStatus {
-    SUCCESS,
-    NO_FILE,
-    INVALID_KIT,
-}
 
 public class KitModule extends ModuleBase {
 
@@ -80,6 +60,10 @@ public class KitModule extends ModuleBase {
         getData().setShownName(generateDisplayName(0x9C9C7C));
 
         getData().setSelectable(false);
+
+        for(var kit : KitManager.getKits()) {
+            createKeybindFromKit(kit);
+        }
     }
 
     @Override
@@ -124,7 +108,6 @@ public class KitModule extends ModuleBase {
                 .build());
 
         var client = MinecraftClient.getInstance();
-        previousGameMoode = client.interactionManager.getCurrentGameMode();
 
         kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 20, 140, 15, Text.of(""));
         kitNameField.setSuggestion("Kit name");
@@ -140,9 +123,14 @@ public class KitModule extends ModuleBase {
 
         var index = 0;
         for(var kit : KitManager.getKits()) {
+            createKeybindFromKit(kit);
+
             var y = base.height/2 + 10 + (index * 22);
 
             buttonToKit.put(y, kit);
+
+            var loadKeybindButton = FireClientside.getKeybindManager().getKeybind(getKitKeyName(kit));
+            widgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 180, y, 100, 20));
 
             widgets.add(ButtonWidget.builder(Text.of(kit), (button) -> loadKit(kit))
                     .tooltip(Tooltip.of(Text.of("Load " + kit)))
@@ -184,8 +172,11 @@ public class KitModule extends ModuleBase {
             case INVALID_PERMS -> { RooHelper.sendNotification("Failed to load " + kitName + "!", "Invalid permissions"); }
 
             case NEEDS_GMC -> {
+                previousGameMoode = MinecraftClient.getInstance().interactionManager.getCurrentGameMode();
+
                 kitToLoadName = kitName;
                 kitToLoad = kitContents;
+
                 RooHelper.sendNotification("Loading " + kitName + "...", "Waiting for Creative Mode");
                 RooHelper.sendChatCommand("gamemode creative");
             }
@@ -296,6 +287,9 @@ public class KitModule extends ModuleBase {
             case FAILURE -> { RooHelper.sendNotification("Failed to delete " + kit + "!", "The kit won't be deleted"); }
         }
 
+        FireClientside.getKeybindManager().unregisterKeybind(getKitKeyName(kit));
+        FireClientside.saveConfig();
+
         reloadScreen();
     }
 
@@ -335,6 +329,22 @@ public class KitModule extends ModuleBase {
     private void reloadScreen() {
         var client = MinecraftClient.getInstance();
         client.setScreen(new ModuleConfigScreen(this));
+    }
+
+    private void createKeybindFromKit(String kitName) {
+        var keyName = getKitKeyName(kitName);
+        if(FireClientside.getKeybindManager().hasKey(keyName)) {
+            return;
+        }
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind(keyName, "\uD83E\uDDF0", "Load " + kitName, true, null,
+                        () -> loadKit(kitName), null)
+        );
+    }
+
+    private String getKitKeyName(String kitName) {
+        return "use_kit_" + kitName;
     }
 
     static class KitManager {

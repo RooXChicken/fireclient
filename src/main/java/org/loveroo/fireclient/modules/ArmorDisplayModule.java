@@ -18,8 +18,12 @@ import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Key;
+import org.loveroo.fireclient.keybind.Keybind;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +45,11 @@ public class ArmorDisplayModule extends ModuleBase {
 
         getData().setScale(2.0/3.0);
         getData().setVisible(true);
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("toggle_armor_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
+                        () -> getData().setVisible(!getData().isVisible()), null)
+        );
     }
 
     @Override
@@ -151,9 +160,11 @@ public class ArmorDisplayModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 + 10));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
+
+        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
         widgets.add(ButtonWidget.builder(getToggleText(Text.of("Locked"), locked), this::lockedButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 - 20, 120, 20)
+                .dimensions(base.width/2 - 60, base.height/2 + 10, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button")))
                 .build());
 

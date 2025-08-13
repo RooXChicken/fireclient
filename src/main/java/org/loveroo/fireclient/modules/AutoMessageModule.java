@@ -13,7 +13,10 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Key;
+import org.loveroo.fireclient.keybind.Keybind;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -22,12 +25,13 @@ import java.util.regex.Pattern;
 
 public class AutoMessageModule extends ModuleBase {
 
-    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
-            new KeyBinding("key.fireclient.toggle_auto_message", GLFW.GLFW_KEY_Y, FireClient.KEYBIND_CATEGORY));
+//    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
+//            new KeyBinding("key.fireclient.toggle_auto_message", GLFW.GLFW_KEY_Y, FireClient.KEYBIND_CATEGORY));
 
     private final Pattern noArgRegex = Pattern.compile("\\/[r]+");
     private final Pattern oneArgRegex = Pattern.compile("\\/[(msg)w(tell)]+ \\w+");
 
+    private boolean openGui = false;
     private String lastMessage = "";
 
     public AutoMessageModule() {
@@ -37,10 +41,6 @@ public class AutoMessageModule extends ModuleBase {
         getData().setSelectable(false);
 
         ClientSendMessageEvents.COMMAND.register((message) -> {
-            if(!getData().isEnabled()) {
-                return;
-            }
-
             var command = "/" + message;
 
             var noArgRes = noArgRegex.matcher(command);
@@ -55,15 +55,28 @@ public class AutoMessageModule extends ModuleBase {
                 return;
             }
         });
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("use_auto_message", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_Y, Key.KeyType.KEY_CODE)),
+                        this::useKey, null)
+        );
+
+        FireClientside.getKeybindManager().getKeybind("use_auto_message").setCancelOnUse(true);
+    }
+
+    private void useKey() {
+        openGui = true;
     }
 
     @Override
     public void update(MinecraftClient client) {
-        if(!getData().isEnabled()) {
+        if(!getData().isEnabled() || !openGui) {
             return;
         }
 
-        if(toggleButton.wasPressed() && !lastMessage.isEmpty()) {
+        openGui = false;
+
+        if(!lastMessage.isEmpty()) {
             client.setScreen(new ChatScreen(lastMessage + " "));
         }
     }
@@ -86,6 +99,7 @@ public class AutoMessageModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
+        widgets.add(FireClientside.getKeybindManager().getKeybind("use_auto_message").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;

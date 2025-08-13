@@ -6,8 +6,10 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.*;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +27,18 @@ public class FireIndicatorModule extends ModuleBase {
 
         getData().setPosX(2);
         getData().setPosY(26);
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("toggle_fire_indicator", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
+                        () -> getData().setVisible(!getData().isVisible()), null)
+        );
     }
 
     @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_fire_indicator").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;

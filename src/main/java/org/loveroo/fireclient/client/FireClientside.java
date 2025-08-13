@@ -6,10 +6,12 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
+import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.lwjgl.glfw.GLFW;
@@ -37,6 +39,8 @@ public class FireClientside implements ClientModInitializer {
     private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
 
     private static final HashMap<String, ModuleBase> modules = new HashMap<>();
+
+    private static final KeybindManager keybindManager = new KeybindManager();
     private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
             new KeyBinding("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
 
@@ -98,7 +102,7 @@ public class FireClientside implements ClientModInitializer {
                 settings = new JSONObject();
             }
 
-            for(FireClientOption option : FireClientOption.values()) {
+            for(var option : FireClientOption.values()) {
                 getSettings().put(option, settings.optInt(option.name().toLowerCase(), 0));
             }
 
@@ -107,7 +111,7 @@ public class FireClientside implements ClientModInitializer {
                 modules = new JSONObject();
             }
 
-            for(ModuleBase module : getModules()) {
+            for(var module : getModules()) {
                 try {
                     var moduleJson = modules.optJSONObject(module.getData().getId());
                     if(moduleJson == null) {
@@ -117,7 +121,26 @@ public class FireClientside implements ClientModInitializer {
                     module.loadJson(moduleJson);
                 }
                 catch(Exception e) {
-                    FireClient.LOGGER.error("Failed to load module {}!", module.getData().getName(), e);
+                    FireClient.LOGGER.error("Failed to load module {}!", module.getData().getId(), e);
+                }
+            }
+
+            var keybinds = json.optJSONObject("keybinds");
+            if(keybinds == null) {
+                keybinds = new JSONObject();
+            }
+
+            for(var keybind : keybindManager.getKeybinds()) {
+                try {
+                    var keybindJson = keybinds.optJSONArray(keybind.getId());
+                    if(keybindJson == null) {
+                        keybindJson = new JSONArray();
+                    }
+
+                    keybind.loadJson(keybindJson);
+                }
+                catch(Exception e) {
+                    FireClient.LOGGER.error("Failed to load keybind {}!", keybind.getId(), e);
                 }
             }
         }
@@ -131,22 +154,33 @@ public class FireClientside implements ClientModInitializer {
             var json = new JSONObject();
 
             var settings = new JSONObject();
-            for(FireClientOption option : FireClientOption.values()) {
+            for(var option : FireClientOption.values()) {
                 settings.put(option.name().toLowerCase(), getSettings().getOrDefault(option, option.getDefaultValue()));
             }
 
             var modules = new JSONObject();
-            for(ModuleBase module : getModules()) {
+            for(var module : getModules()) {
                 try {
                     modules.put(module.getData().getId(), module.saveJson());
                 }
                 catch(Exception e) {
-                    FireClient.LOGGER.error("Failed to save module {}!", module.getData().getName(), e);
+                    FireClient.LOGGER.error("Failed to save module {}!", module.getData().getId(), e);
+                }
+            }
+
+            var keybinds = new JSONObject();
+            for(var keybind : keybindManager.getKeybinds()) {
+                try {
+                    keybinds.put(keybind.getId(), keybind.saveJson());
+                }
+                catch(Exception e) {
+                    FireClient.LOGGER.error("Failed to save keybind {}!", keybind.getId(), e);
                 }
             }
 
             json.put("settings", settings);
             json.put("modules", modules);
+            json.put("keybinds", keybinds);
 
             new File(FIRECLIENT_PATH).mkdir();
 
@@ -190,5 +224,9 @@ public class FireClientside implements ClientModInitializer {
 
     public static void setSetting(FireClientOption option, int value) {
         getSettings().put(option, value);
+    }
+
+    public static KeybindManager getKeybindManager() {
+        return keybindManager;
     }
 }

@@ -15,6 +15,7 @@
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
     "HazeliModeMixin",
+    "KeyboardMixin",
     "ModifyFlightVerticalSpeedMixin",
     "OverlayTextureAccessor",
     "PreventUntoggleKeysMixin",

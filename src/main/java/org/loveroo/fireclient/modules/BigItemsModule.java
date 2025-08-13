@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -37,6 +38,11 @@ public class BigItemsModule extends ModuleBase {
                 collectItems();
             }
         });
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("toggle_big_items", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
+                        () -> getData().setEnabled(!getData().isEnabled()), null)
+        );
     }
 
     @Override
@@ -60,6 +66,7 @@ public class BigItemsModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_big_items").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         var itemField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));

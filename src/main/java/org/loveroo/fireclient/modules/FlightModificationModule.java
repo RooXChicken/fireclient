@@ -9,7 +9,12 @@ import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Key;
+import org.loveroo.fireclient.keybind.Keybind;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -24,6 +29,11 @@ public class FlightModificationModule extends ModuleBase {
         super(new ModuleData("flight_modification", "☁ Flight Modification", "Allows the control of flight speed"));
 
         getData().setSelectable(false);
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("toggle_flight_key", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_F, Key.KeyType.KEY_CODE)),
+                        () -> getData().setEnabled(!getData().isEnabled()), null)
+        );
     }
 
     @Override
@@ -67,6 +77,8 @@ public class FlightModificationModule extends ModuleBase {
     @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = super.getConfigScreen(base);
+
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_key").getRebindButton(5, base.height - 25, 120,20));
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.of("Toggle with Sneak"), toggleWithSneak), this::sneakButtonPressed)
                 .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)

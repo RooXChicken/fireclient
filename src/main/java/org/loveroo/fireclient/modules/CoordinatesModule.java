@@ -15,8 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -83,6 +85,11 @@ public class CoordinatesModule extends ModuleBase {
         catch(Exception e) {
             FireClient.LOGGER.info("Failed to load Coordinates Module's font!", e);
         }
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("toggle_coordinates", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
+                        () -> getData().setVisible(!getData().isVisible()), null)
+        );
     }
 
     @Override
@@ -227,6 +234,8 @@ public class CoordinatesModule extends ModuleBase {
     @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
+
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
 
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
         widgets.add(ButtonWidget.builder(getToggleText(Text.of("Other Dimension"), showOther), this::showOtherButtonPressed)

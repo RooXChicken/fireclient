@@ -21,6 +21,8 @@ import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Key;
+import org.loveroo.fireclient.keybind.Keybind;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -40,27 +42,24 @@ public class CoordsChatModule extends ModuleBase {
     @Nullable
     private TextFieldWidget playerField;
 
-    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
-            new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
+//    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
+//            new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
 
     public CoordsChatModule() {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players when pressing the keybind. (names split by space  , comma , , or pipe | )"));
         getData().setShownName(generateDisplayName(0x89ECF0));
 
         getData().setSelectable(false);
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("use_coords_chat", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_K, Key.KeyType.KEY_CODE)),
+                        this::useKey, null)
+        );
     }
 
-    @Override
-    public void update(MinecraftClient client) {
-        if(toggleButton.isPressed()) {
-            if(!keyPressed) {
-                sendMessages();
-                keyPressed = true;
-            }
-        }
-        else {
-            keyPressed = false;
-        }
+    private void useKey() {
+        sendMessages();
+        keyPressed = true;
     }
 
     private void sendMessages() {
@@ -142,6 +141,7 @@ public class CoordsChatModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
+        widgets.add(FireClientside.getKeybindManager().getKeybind("use_coords_chat").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
