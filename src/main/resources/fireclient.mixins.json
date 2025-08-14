@@ -14,6 +14,7 @@
     "DontResetDeathButtonsMixin",
     "FixTridentShieldMixin",
     "ForceCursorCenterMixin",
+    "FullbrightShadowsMixin",
     "HazeliModeMixin",
     "KeyboardMixin",
     "ModifyFlightVerticalSpeedMixin",
@@ -22,9 +23,11 @@
     "RegisterBigItemsMixin",
     "RenderBrandingMixin",
     "RenderShadowMixin",
+    "ScrollClickMixin",
     "ShowOwnNametagMixin",
     "SkipWorldRenderingMixin",
-    "StoreItemTypeMixin"
+    "StoreItemTypeMixin",
+    "UseItemAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

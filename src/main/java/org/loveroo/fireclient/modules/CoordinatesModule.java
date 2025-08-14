@@ -276,11 +276,11 @@ public class CoordinatesModule extends ModuleBase {
 
     private void tryWorkaround() {
         try {
-            var setDefaultHeadless = GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
+            var setDefaultHeadless = java.awt.GraphicsEnvironment.class.getDeclaredField("defaultHeadless");
             setDefaultHeadless.setAccessible(true);
             setDefaultHeadless.set(null, Boolean.FALSE);
 
-            var setHeadlessField = GraphicsEnvironment.class.getDeclaredField("headless");
+            var setHeadlessField = java.awt.GraphicsEnvironment.class.getDeclaredField("headless");
             setHeadlessField.setAccessible(true);
             setHeadlessField.set(null, Boolean.FALSE);
         }

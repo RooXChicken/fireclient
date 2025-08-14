@@ -189,6 +189,15 @@ public class Keybind {
             case GLFW.GLFW_KEY_LEFT_ALT -> { return "Left Alt"; }
             case GLFW.GLFW_KEY_RIGHT_ALT -> { return "Right Alt"; }
 
+            case GLFW.GLFW_KEY_LEFT_CONTROL -> { return "Left Ctrl"; }
+            case GLFW.GLFW_KEY_RIGHT_CONTROL -> { return "Right Ctrl"; }
+
+            case GLFW.GLFW_KEY_LEFT_SHIFT -> { return "Left Shift"; }
+            case GLFW.GLFW_KEY_RIGHT_SHIFT -> { return "Right Shift"; }
+
+            case GLFW.GLFW_KEY_LEFT_SUPER -> { return "Left Super"; }
+            case GLFW.GLFW_KEY_RIGHT_SUPER -> { return "Right Super"; }
+
             default -> { return GLFW.glfwGetKeyName(key, -1); }
         }
     }

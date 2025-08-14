@@ -17,16 +17,11 @@ import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 
 public class FireClientside implements ClientModInitializer {
 
@@ -67,12 +62,14 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new NametagModule());
         registerModule(new AutoMessageModule());
         registerModule(new DeathInfoModule());
-        registerModule(new FlightModificationModule());
+        registerModule(new FlightSpeedModule());
         registerModule(new HitColorModule());
         registerModule(new ShadowModule());
         registerModule(new BigItemsModule());
         registerModule(new FireIndicatorModule());
         registerModule(new KitModule());
+        registerModule(new ScrollClickModule());
+        registerModule(new ElytraSwapModule());
     }
 
     private void registerModule(ModuleBase module) {

@@ -16,6 +16,9 @@ public class ShadowModule extends ModuleBase {
 
     private boolean distanceEffect = true;
     private boolean increaseHeight = false;
+    private boolean fullbright = false;
+
+    public boolean drawingShadow = false;
 
     public ShadowModule() {
         super(new ModuleData("shadow", "\uD83D\uDD73 Shadows", "Modifies shadow rendering"));
@@ -28,6 +31,7 @@ public class ShadowModule extends ModuleBase {
     public void loadJson(JSONObject json) throws JSONException {
         distanceEffect = json.optBoolean("distance_effect", distanceEffect);
         increaseHeight = json.optBoolean("increase_height", increaseHeight);
+        fullbright = json.optBoolean("fullbright", fullbright);
     }
 
     @Override
@@ -36,6 +40,7 @@ public class ShadowModule extends ModuleBase {
 
         json.put("distance_effect", distanceEffect);
         json.put("increase_height", increaseHeight);
+        json.put("fullbright", fullbright);
 
         return json;
     }
@@ -54,6 +59,11 @@ public class ShadowModule extends ModuleBase {
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.increase_height")))
                 .build());
 
+        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Fullbright"), fullbright), this::fullbrightButtonPressed)
+                .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.fullbright")))
+                .build());
+
         return widgets;
     }
 
@@ -67,11 +77,20 @@ public class ShadowModule extends ModuleBase {
         button.setMessage(getToggleText(Text.of("Increase Height"), increaseHeight));
     }
 
+    private void fullbrightButtonPressed(ButtonWidget button) {
+        fullbright = !fullbright;
+        button.setMessage(getToggleText(Text.of("Fullbright"), fullbright));
+    }
+
     public boolean isDistanceEffect() {
         return distanceEffect;
     }
 
     public boolean isIncreaseHeight() {
         return increaseHeight;
+    }
+
+    public boolean isFullbright() {
+        return fullbright;
     }
 }
