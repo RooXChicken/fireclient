@@ -1,14 +1,31 @@
 package org.loveroo.fireclient.client;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.CommandContextBuilder;
+import com.mojang.brigadier.tree.CommandNode;
+import com.sun.jdi.connect.Connector;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.commands.FCalcCommand;
+import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.keybind.KeybindManager;
@@ -53,6 +70,8 @@ public class FireClientside implements ClientModInitializer {
         for(var module : getModules()) {
             module.postLoad();
         }
+
+        registerCommands();
     }
 
     private void initModules() {
@@ -79,6 +98,11 @@ public class FireClientside implements ClientModInitializer {
 
     public static void registerModule(ModuleBase module) {
         modules.put(module.getData().getId(), module);
+    }
+
+    private void registerCommands() {
+        ClientCommandRegistrationCallback.EVENT.register(new FCalcCommand()::register);
+        ClientCommandRegistrationCallback.EVENT.register(new FKitCommand()::register);
     }
 
     private void loadConfig() {
