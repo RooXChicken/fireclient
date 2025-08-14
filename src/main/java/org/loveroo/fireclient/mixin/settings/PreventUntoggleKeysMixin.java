@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.settings;
 
 import net.minecraft.client.option.KeyBinding;
 import org.loveroo.fireclient.client.FireClientside;

@@ -270,6 +270,10 @@ public class Keybind {
     public JSONArray saveJson() throws JSONException {
         var json = new JSONArray();
 
+        if(keys == null) {
+            return json;
+        }
+
         for(var key : keys) {
             var keyJson = new JSONObject();
 

@@ -21,7 +21,7 @@ public class ModuleData {
     private boolean skip = false;
     private boolean visible = false;
     private boolean enabled = false;
-    private boolean selectable = true;
+    private boolean guiElement = true;
 
     public ModuleData(String id, String name, String description) {
         this.id = id;
@@ -111,12 +111,12 @@ public class ModuleData {
         this.enabled = enabled;
     }
 
-    public boolean isSelectable() {
-        return selectable;
+    public boolean isGuiElement() {
+        return guiElement;
     }
 
-    public void setSelectable(boolean selectable) {
-        this.selectable = selectable;
+    public void setGuiElement(boolean guiElement) {
+        this.guiElement = guiElement;
     }
 
     public String getDescription() {

@@ -2,7 +2,9 @@ package org.loveroo.fireclient.screen.config;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
@@ -21,12 +23,18 @@ public class MainConfigScreen extends ConfigScreenBase {
 
     @Override
     public void init() {
+        for(var module : FireClientside.getModules()) {
+            module.setDrawingOverwritten(true);
+        }
+
         modulesButton = ButtonWidget.builder(Text.of("Modules"), this::modulesButtonPressed)
                 .dimensions(width/2 - 50, height/2 - 10, 100, 20)
+                .tooltip(Tooltip.of(Text.of("Configure various modules")))
                 .build();
 
         settingsButton = ButtonWidget.builder(Text.of("FireClient Settings"), this::settingsButtonPressed)
                 .dimensions(width/2 - 60, height/2 + 20, 120, 20)
+                .tooltip(Tooltip.of(Text.of("Configure FireClient settings")))
                 .build();
 
         addSelectableChild(modulesButton);
@@ -34,17 +42,13 @@ public class MainConfigScreen extends ConfigScreenBase {
     }
 
     private void modulesButtonPressed(ButtonWidget button) {
+        removeOverwrite();
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
     }
 
     private void settingsButtonPressed(ButtonWidget button) {
+        removeOverwrite();
         MinecraftClient.getInstance().setScreen(new FireClientSettingsScreen());
-
-    }
-
-    @Override
-    public void tick() {
-
     }
 
     @Override
@@ -54,7 +58,7 @@ public class MainConfigScreen extends ConfigScreenBase {
         }
         else if(mouseState == 0 || mouseState == 1) {
             for(var module : FireClientside.getModules()) {
-                if(module.getData().isSkip()) {
+                if(!module.getData().isGuiElement()) {
                     continue;
                 }
 
@@ -71,6 +75,18 @@ public class MainConfigScreen extends ConfigScreenBase {
     }
 
     @Override
+    public void close() {
+        removeOverwrite();
+        super.close();
+    }
+
+    private void removeOverwrite() {
+        for(var module : FireClientside.getModules()) {
+            module.setDrawingOverwritten(false);
+        }
+    }
+
+    @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
@@ -79,7 +95,7 @@ public class MainConfigScreen extends ConfigScreenBase {
         }
 
         for(var module : FireClientside.getModules()) {
-            if(module.getData().isSkip()) {
+            if(!module.getData().isGuiElement()) {
                 continue;
             }
 
@@ -88,17 +104,22 @@ public class MainConfigScreen extends ConfigScreenBase {
             }
 
             module.drawOutline(context);
+
+            module.setDrawingOverwritten(false);
+            module.draw(context, RenderTickCounter.ZERO);
+            module.setDrawingOverwritten(true);
         }
 
-        var tooltip = Text.of("");
         for(var module : FireClientside.getModules()) {
+            if(!module.getData().isVisible() && FireClientside.getSetting(FireClientOption.SHOW_HIDDEN_MODULES) == 0) {
+                continue;
+            }
+
             if(module.isPointInside(mouseX, mouseY)) {
-                tooltip = module.getData().getShownName();
+                setTooltip(module.getData().getShownName());
                 break;
             }
         }
-
-        setTooltip(Text.of(tooltip));
 
         modulesButton.render(context, mouseX, mouseY, delta);
         settingsButton.render(context, mouseX, mouseY, delta);

@@ -6,11 +6,12 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.FireClient;
+import org.jetbrains.annotations.Nullable;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
-import org.lwjgl.glfw.GLFW;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -18,48 +19,80 @@ import java.util.List;
 
 public class ModuleConfigScreen extends ConfigScreenBase {
 
-    private final ModuleBase module;
-    private boolean moduleSelected = false;
+    private final List<ModuleBase> modules;
+    private final String about;
+
+    @Nullable
+    private ModuleBase selectedModule = null;
 
     public ModuleConfigScreen(ModuleBase module) {
-        super(Text.of(module.getData().getName() + " Config"));
+        this(module.getData().getName(), module.getData().getDescription(), List.of(module));
+    }
 
-        this.module = module;
-        this.module.openScreen(this);
+    public ModuleConfigScreen(String title, String about, List<ModuleBase> module) {
+        super(Text.of( title + " Config"));
+
+        this.modules = module;
+        this.about = about;
+
+        openScreen();
+    }
+
+    private void openScreen() {
+        for(var module : modules) {
+            module.openScreen(this);
+        }
     }
 
     @Override
     public void init() {
-        var widgets = module.getConfigScreen(this);
+        var widgets = new ArrayList<ClickableWidget>();
+
+        for(var module : modules) {
+            widgets.addAll(module.getConfigScreen(this));
+        }
+
         for(var widget : widgets) {
             addDrawableChild(widget);
         }
 
         addDrawableChild(ButtonWidget.builder(Text.of("About"), (button) -> {})
                 .dimensions(width - 125, height - 25, 120, 20)
-                .tooltip(Tooltip.of(Text.of(module.getData().getDescription())))
+                .tooltip(Tooltip.of(Text.of(about)))
                 .build());
     }
 
     @Override
     public void close() {
-        this.module.closeScreen(this);
+        closeModule();
         super.close();
+    }
+
+    private void closeModule() {
+        for(var module : modules) {
+            module.setDrawingOverwritten(false);
+            module.closeScreen(this);
+        }
     }
 
     @Override
     protected void handleClick() {
         if(mouseState == -1) {
-            moduleSelected = false;
+            selectedModule = null;
         }
         else if(mouseState == 0 || mouseState == 1) {
-            moduleSelected = module.isPointInside(mouseX, mouseY);
+            for(var module : modules) {
+                if(module.isPointInside(mouseX, mouseY)) {
+                    selectedModule = module;
+                    break;
+                }
+            }
         }
     }
 
     @Override
     protected boolean escapePressed() {
-        this.module.closeScreen(this);
+        closeModule();
 
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
         return true;
@@ -73,23 +106,39 @@ public class ModuleConfigScreen extends ConfigScreenBase {
             }
         }
 
+        closeModule();
         super.exitOnInventory();
     }
 
     @Override
     public void onFilesDropped(List<Path> paths) {
-        module.onFilesDropped(paths);
+        for(var module : modules) {
+            module.onFilesDropped(paths);
+        }
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
 
-        if(moduleSelected) {
-            module.handleTransformation(mouseState, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
+        if(selectedModule != null) {
+            selectedModule.handleTransformation(mouseState, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
         }
 
-        module.drawScreen(this, context);
-        module.drawOutline(context);
+        for(var module : modules) {
+            module.drawOutline(context);
+            module.drawScreen(this, context);
+
+            module.setDrawingOverwritten(false);
+            module.draw(context, RenderTickCounter.ZERO);
+            module.setDrawingOverwritten(true);
+        }
+
+        for(var module : modules) {
+            if(module.isPointInside(mouseX, mouseY)) {
+                setTooltip(module.getData().getShownName());
+                break;
+            }
+        }
     }
 }

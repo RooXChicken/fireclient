@@ -1,6 +1,5 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.WorldRenderer;
 import org.joml.Matrix4f;

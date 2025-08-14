@@ -24,7 +24,7 @@ public class ShadowModule extends ModuleBase {
         super(new ModuleData("shadow", "\uD83D\uDD73 Shadows", "Modifies shadow rendering"));
         getData().setShownName(generateDisplayName(0x1A042E));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
     }
 
     @Override

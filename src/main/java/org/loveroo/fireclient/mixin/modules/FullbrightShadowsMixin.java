@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.world.dimension.DimensionType;

@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.item.Item;

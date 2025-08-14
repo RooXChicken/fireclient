@@ -111,7 +111,7 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 
     @Override
     public void draw(DrawContext context, RenderTickCounter ticks) {
-        if(!getData().isVisible()) {
+        if(!canDraw()) {
             return;
         }
 

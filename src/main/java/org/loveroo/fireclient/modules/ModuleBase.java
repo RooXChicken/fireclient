@@ -1,11 +1,9 @@
 package org.loveroo.fireclient.modules;
 
-import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -21,23 +19,28 @@ import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
+import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
-    private ModuleData data;
+    private final ModuleData data;
+    private boolean drawingOverwritten = false;
+
     protected int padding = 2;
 
     protected ModuleBase(ModuleData data) {
         this.data = data;
+
+        if(!this.data.isGuiElement()) {
+            return;
+        }
 
         HudLayerRegistrationCallback.EVENT.register(this);
     }
@@ -62,10 +65,15 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void update(MinecraftClient client) { }
+
+    protected boolean canDraw() {
+        return !drawingOverwritten && getData().isVisible();
+    }
+
     public void draw(DrawContext context, RenderTickCounter ticks) { }
 
     public void drawOutline(DrawContext context) {
-        if(!getData().isSelectable()) {
+        if(!getData().isGuiElement()) {
             return;
         }
 
@@ -79,7 +87,7 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void handleTransformation(int mouseState, int mouseX, int mouseY, int oldMouseX, int oldMouseY) {
-        if(!getData().isSelectable()) {
+        if(!getData().isGuiElement()) {
             return;
         }
 
@@ -189,4 +197,12 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     public void onFilesDropped(List<Path> paths) { }
 
     public void closeScreen(Screen screen) { }
+
+    public boolean isDrawingOverwritten() {
+        return drawingOverwritten;
+    }
+
+    public void setDrawingOverwritten(boolean drawingOverwritten) {
+        this.drawingOverwritten = drawingOverwritten;
+    }
 }

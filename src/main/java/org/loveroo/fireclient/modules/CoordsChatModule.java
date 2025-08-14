@@ -1,25 +1,15 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
@@ -28,7 +18,6 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 
 public class CoordsChatModule extends ModuleBase {
 
@@ -49,7 +38,7 @@ public class CoordsChatModule extends ModuleBase {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players when pressing the keybind. (names split by space  , comma , , or pipe | )"));
         getData().setShownName(generateDisplayName(0x89ECF0));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("use_coords_chat", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_K, Key.KeyType.KEY_CODE)),

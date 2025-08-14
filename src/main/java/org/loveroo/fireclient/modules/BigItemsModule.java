@@ -11,7 +11,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
@@ -31,7 +30,8 @@ public class BigItemsModule extends ModuleBase {
         super(new ModuleData("big_items", "\uD83C\uDF1F Big Items", "Makes certain items render larger"));
         getData().setShownName(generateDisplayName(0xF9FFCC));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
+        
 
         ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
             if(getData().isEnabled()) {

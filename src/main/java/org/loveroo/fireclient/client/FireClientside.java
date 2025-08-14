@@ -18,8 +18,11 @@ import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,9 +34,10 @@ public class FireClientside implements ClientModInitializer {
     private static final String FIRECLIENT_OLD_CONFIG_PATH = "fireclient.json";
     private static final String FIRECLIENT_PATH = "fireclient/";
     private static final String FIRECLIENT_CONFIG_FILE = "config.json";
-    private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
+    private static final String FIRECLIENT_CONFIG_BACKUP_FILE = "config_bk.json";
 
     private static final HashMap<String, ModuleBase> modules = new HashMap<>();
+    private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
 
     private static final KeybindManager keybindManager = new KeybindManager();
     private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
@@ -66,13 +70,14 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new HitColorModule());
         registerModule(new ShadowModule());
         registerModule(new BigItemsModule());
-        registerModule(new FireIndicatorModule());
+        registerModule(new IndicatorsModule());
         registerModule(new KitModule());
         registerModule(new ScrollClickModule());
         registerModule(new ElytraSwapModule());
+        registerModule(new AngleDisplayModule());
     }
 
-    private void registerModule(ModuleBase module) {
+    public static void registerModule(ModuleBase module) {
         modules.put(module.getData().getId(), module);
     }
 
@@ -90,6 +95,8 @@ public class FireClientside implements ClientModInitializer {
             if(!config.exists()) {
                 saveConfig();
             }
+
+            createBackup();
 
             var data = Files.readString(Paths.get(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE));
             var json = new JSONObject(data);
@@ -190,6 +197,10 @@ public class FireClientside implements ClientModInitializer {
         catch(Exception e) {
             FireClient.LOGGER.error("Failed to save config file!", e);
         }
+    }
+
+    private static void createBackup() throws IOException {
+        Files.copy(Path.of(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE), Path.of(FIRECLIENT_PATH + FIRECLIENT_CONFIG_BACKUP_FILE), StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void update(MinecraftClient client) {

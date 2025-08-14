@@ -1,15 +1,10 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.entity.Entity;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.NametagModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(EntityRenderer.class)
 public abstract class DarkerNametagMixin {

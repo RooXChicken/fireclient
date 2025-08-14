@@ -1,19 +1,15 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.text.*;
-import net.minecraft.util.math.Vec3d;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.CoordinatesModule;
 import org.loveroo.fireclient.modules.DeathInfoModule;
-import org.loveroo.fireclient.modules.NametagModule;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

@@ -113,7 +113,7 @@ public class CoordinatesModule extends ModuleBase {
 
     @Override
     public void draw(DrawContext context, RenderTickCounter ticks) {
-        if(!getData().isVisible() && (window == null || !window.isVisible())) {
+        if(!canDraw() && (window == null || !window.isVisible())) {
             return;
         }
 
@@ -139,7 +139,7 @@ public class CoordinatesModule extends ModuleBase {
 
         setCoordinatesText(xText, yText, zText);
 
-        if(!getData().isVisible()) {
+        if(!canDraw()) {
             return;
         }
 
@@ -193,7 +193,7 @@ public class CoordinatesModule extends ModuleBase {
 
         setCoordinatesText(finalNormal, finalOther);
 
-        if(!getData().isVisible()) {
+        if(!canDraw()) {
             return;
         }
 

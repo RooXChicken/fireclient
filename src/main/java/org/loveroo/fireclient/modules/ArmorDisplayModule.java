@@ -42,8 +42,8 @@ public class ArmorDisplayModule extends ModuleBase {
 
         getData().setWidth(20);
         getData().setHeight(40);
-
         getData().setScale(2.0/3.0);
+
         getData().setVisible(true);
 
         FireClientside.getKeybindManager().registerKeybind(
@@ -73,7 +73,7 @@ public class ArmorDisplayModule extends ModuleBase {
 
     @Override
     public void draw(DrawContext context, RenderTickCounter ticks) {
-        if(!getData().isVisible()) {
+        if(!canDraw()) {
             return;
         }
 

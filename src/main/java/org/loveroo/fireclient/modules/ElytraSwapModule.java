@@ -1,30 +1,20 @@
 package org.loveroo.fireclient.modules;
 
-import com.mojang.datafixers.types.templates.Tag;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class ElytraSwapModule extends ModuleBase {
@@ -34,7 +24,7 @@ public class ElytraSwapModule extends ModuleBase {
         super(new ModuleData("elytra_swap", "\uD83E\uDD8B Elytra Swap", "Swaps your elytra and chestplate"));
 
         getData().setEnabled(false);
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("use_elytra_swap", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, null,

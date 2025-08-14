@@ -1,10 +1,9 @@
-package org.loveroo.fireclient.mixin;
+package org.loveroo.fireclient.mixin.modules;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.ItemEntityRenderer;
 import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.random.Random;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ItemTypeStorage;

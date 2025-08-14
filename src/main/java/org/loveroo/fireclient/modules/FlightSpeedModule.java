@@ -11,9 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class FlightSpeedModule extends ModuleBase {
     public FlightSpeedModule() {
         super(new ModuleData("flight_speed", "☁ Flight Speed", "Allows the control of flight speed"));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("toggle_flight_key", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,

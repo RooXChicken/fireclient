@@ -1,11 +1,9 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +21,7 @@ public class NametagModule extends ModuleBase {
         super(new ModuleData("nametag", "\uD83C\uDFF7 Nametag", "Allows the modification of vanilla nametags"));
         getData().setShownName(generateDisplayName(0xE0E7FF));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
     }
 
     @Override

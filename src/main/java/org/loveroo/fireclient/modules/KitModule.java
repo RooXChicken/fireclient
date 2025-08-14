@@ -36,7 +36,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class KitModule extends ModuleBase {
 
@@ -59,7 +58,7 @@ public class KitModule extends ModuleBase {
         super(new ModuleData("kit", "\uD83E\uDDF0 Kit", "Allows you to save and load kits"));
         getData().setShownName(generateDisplayName(0x9C9C7C));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         for(var kit : KitManager.getKits()) {
             createKeybindFromKit(kit);
@@ -92,19 +91,19 @@ public class KitModule extends ModuleBase {
                 .tooltip(Tooltip.of(Text.of("Create kit")))
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCC2"), this::folderButtonPressed)
-                .tooltip(Tooltip.of(Text.of("Open kits folder (any kit can be shared and loaded with valid .json files)")))
-                .dimensions(base.width/2 + 105, base.height/2 - 20, 20, 15)
-                .build());
-
         widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), this::createFromClipboard)
                 .tooltip(Tooltip.of(Text.of("Create kit from clipboard")))
-                .dimensions(base.width/2 + 130, base.height/2 - 20, 20, 15)
+                .dimensions(base.width/2 + 105, base.height/2 - 20, 20, 15)
                 .build());
 
         widgets.add(ButtonWidget.builder(Text.of("↶"), this::undoButtonPressed)
                 .tooltip(Tooltip.of(Text.of("Undo")))
                 .dimensions(base.width/2 - 100, base.height/2 - 20, 20, 15)
+                .build());
+
+        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCC2"), this::folderButtonPressed)
+                .tooltip(Tooltip.of(Text.of("Open kits folder (any kit can be shared and loaded with valid .json files)")))
+                .dimensions(base.width/2 - 125, base.height/2 - 20, 20, 15)
                 .build());
 
         var client = MinecraftClient.getInstance();

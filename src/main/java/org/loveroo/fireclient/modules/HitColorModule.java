@@ -10,14 +10,12 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.texture.NativeImage;
 import net.minecraft.text.Text;
 import net.minecraft.util.Colors;
 import net.minecraft.util.math.ColorHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
 import org.loveroo.fireclient.screen.config.ConfigScreenBase;
@@ -34,7 +32,7 @@ public class HitColorModule extends ModuleBase {
         super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color | Format: ARGB HEX"));
         getData().setShownName(generateDisplayName(0xFF0000));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
             if(getData().isEnabled()) {

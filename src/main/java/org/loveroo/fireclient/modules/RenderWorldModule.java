@@ -1,26 +1,14 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +24,7 @@ public class RenderWorldModule extends ModuleBase {
         super(new ModuleData("render_world", "\uD83C\uDF0D Render World", "[CHEAT] Allows the toggling of the world rendering"));
         getData().setShownName(generateDisplayName(0x589157));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
 
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("use_render_world", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, null,

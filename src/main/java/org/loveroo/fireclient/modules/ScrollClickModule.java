@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.mixin.UseItemAccessor;
+import org.loveroo.fireclient.mixin.modules.UseItemAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ScrollClickModule extends ModuleBase {
         super(new ModuleData("scroll_click", "\uD83D\uDDB1 Scroll Click", "Allows you to simulate a click with every scroll"));
         getData().setShownName(generateDisplayName(0xC9B5B5));
 
-        getData().setSelectable(false);
+        getData().setGuiElement(false);
         getData().setEnabled(false);
 
         FireClientside.getKeybindManager().registerKeybind(
