@@ -3,9 +3,9 @@ package org.loveroo.fireclient.data;
 public enum FireClientOption {
     FIX_TRIDENT_RIPTIDE("Fix Riptide Shields", "Fixes shields obstructing the view when riptiding with a trident", 1, FireClientOptionType.TOGGLE),
     BRANDING("Branding", "Optional branding message that shows in menus", 1, FireClientOptionType.TOGGLE),
-    PREVENT_UNTOGGLE_STICKY("Untoggling Keys Fix", "Prevents untoggling sticky keys (Sprint & Sneak) when respawning", 1, FireClientOptionType.TOGGLE),
+    PREVENT_UNTOGGLE_STICKY("Fix Untoggling Keys", "Prevents untoggling sticky keys (Sprint & Sneak) when respawning", 1, FireClientOptionType.TOGGLE),
     HAZELI_MODE("Hazeli Mode", "...", 0, FireClientOptionType.TOGGLE),
-    DONT_RESET_DEATH("Death Buttons Mode", "Fixes the Death Screen buttons being reset when the window size changes", 1, FireClientOptionType.TOGGLE),
+    DONT_RESET_DEATH("Fix Death Buttons", "Fixes the Death Screen buttons being reset when the window size changes", 1, FireClientOptionType.TOGGLE),
     EXTINGUISH_FIX("Fix Extinguish Sound", "Fixes the fire extinguish sound being spammed", 1, FireClientOptionType.TOGGLE),
     SHOW_HIDDEN_MODULES("Show Hidden Modules", "Shows module outlines when they are hidden", 1, FireClientOptionType.TOGGLE);
 //    FORCE_CENTER_CURSOR("Force Cursor Centering", 0, FireClientOptionType.TOGGLE);

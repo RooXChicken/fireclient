@@ -65,7 +65,7 @@ public class ScrollClickModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_scroll_click").getRebindButton(5, base.height - 25, 120,20));
-        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 20));
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;
     }

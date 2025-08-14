@@ -172,15 +172,19 @@ public class CoordinatesModule extends ModuleBase {
         var yText = String.format("Y: %.2f ", yPos);
         var zText = String.format("Z: %.2f", zPos);
 
+        var order = false;
+
         switch(dimension) {
             case "minecraft:overworld" -> {
                 xPos /= 8.0;
                 zPos /= 8.0;
+                order = true;
             }
 
             case "minecraft:the_nether" -> {
                 xPos *= 8.0;
                 zPos *= 8.0;
+                order = false;
             }
         }
 
@@ -191,7 +195,7 @@ public class CoordinatesModule extends ModuleBase {
         var finalNormal = xText + yText + zText;
         var finalOther = otherXText + otherYText + otherZText;
 
-        setCoordinatesText(finalNormal, finalOther);
+        setCoordinatesText(finalNormal, finalOther, order);
 
         if(!canDraw()) {
             return;
@@ -200,7 +204,7 @@ public class CoordinatesModule extends ModuleBase {
         MutableText normal;
         MutableText other;
 
-        if(dimension.equals("minecraft:overworld")) {
+        if(order) {
             normal = RooHelper.gradientText(finalNormal, yColor1, yColor2);
             other = RooHelper.gradientText(finalOther, netherColor1, netherColor2);
         }
@@ -336,20 +340,32 @@ public class CoordinatesModule extends ModuleBase {
 
     // (kinda cool tho :P)
 
-    private void setCoordinatesText(String normal, String other) {
+    private void setCoordinatesText(String normal, String other, boolean order) {
         if(coordinatesText == null || window == null || !window.isVisible()) {
             return;
         }
 
         var text = new StringBuilder();
         text.append("<html> <head> <style type=\"text/css\">body { font-size: 14px; } </style> </head> <body>");
-        text.append("<p style=\"color: rgb(47, 216, 39);\">");
-        text.append(normal);
-        text.append("</p>");
 
-        text.append("<p style=\"color: rgb(199, 57, 202);\">");
-        text.append(other);
-        text.append("</p>");
+        var normalText = new StringBuilder();
+        normalText.append("<p style=\"color: rgb(47, 216, 39);\">");
+        normalText.append((order) ? normal : other);
+        normalText.append("</p>");
+
+        var otherText = new StringBuilder();
+        otherText.append("<p style=\"color: rgb(199, 57, 202);\">");
+        otherText.append((order) ? other : normal);
+        otherText.append("</p>");
+
+        if(order) {
+            text.append(normalText);
+            text.append(otherText);
+        }
+        else {
+            text.append(otherText);
+            text.append(normalText);
+        }
 
         text.append("</body> </html>");
         coordinatesText.setText(text.toString());
