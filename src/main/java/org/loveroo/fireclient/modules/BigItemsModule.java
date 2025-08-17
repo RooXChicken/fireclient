@@ -106,4 +106,10 @@ public class BigItemsModule extends ModuleBase {
     public boolean isBig(Item item) {
         return bigItems.contains(item);
     }
+
+    public interface ItemTypeStorage {
+
+        Item fireclient$getItem();
+        void fireclient$setItem(Item item);
+    }
 }

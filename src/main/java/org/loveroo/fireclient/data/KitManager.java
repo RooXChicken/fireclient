@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.data.kit;
+package org.loveroo.fireclient.data;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerInventory;
@@ -244,5 +244,31 @@ public class KitManager {
         }
 
         return KitManageStatus.FAILURE;
+    }
+
+    public enum KitCreateStatus {
+        SUCCESS,
+        ALREADY_EXISTS,
+        INVALID_KIT,
+        WRITE_FAIL,
+    }
+
+    public enum KitLoadStatus {
+        SUCCESS,
+        INVALID_PLAYER,
+        INVALID_PERMS,
+        NEEDS_GMC,
+        INVALID_KIT,
+    }
+
+    public enum KitManageStatus {
+        SUCCESS,
+        FAILURE,
+    }
+
+    public enum KitValidationStatus {
+        SUCCESS,
+        NO_FILE,
+        INVALID_KIT,
     }
 }

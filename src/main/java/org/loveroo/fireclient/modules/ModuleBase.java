@@ -86,14 +86,34 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         context.drawVerticalLine(points[1], points[2], points[3], 0xFFFFFFFF);
     }
 
-    public void handleTransformation(int mouseState, int mouseX, int mouseY, int oldMouseX, int oldMouseY) {
+    public void handleTransformation(int mouseState, OldTransform old, int mouseX, int mouseY, int oldMouseX, int oldMouseY, boolean snap) {
         if(!getData().isGuiElement()) {
             return;
         }
 
-        if(mouseState == 0) {
-            getData().setPosX(getData().getPosX() + (mouseX - oldMouseX));
-            getData().setPosY(getData().getPosY() + (mouseY - oldMouseY));
+        switch(mouseState) {
+            case 0 -> {
+                var posX = old.posX + (mouseX - oldMouseX);
+                var posY = old.posY + (mouseY - oldMouseY);
+
+                if(snap) {
+                    posX = Math.round(posX * (1/getData().getSnapX())) * getData().getSnapX();
+                    posY = Math.round(posY * (1/getData().getSnapY())) * getData().getSnapY();
+                }
+
+                getData().setPosX(posX);
+                getData().setPosY(posY);
+            }
+
+            case 1 -> {
+                var newScale = Math.max(0.15, old.scale - (oldMouseX - mouseX)/getData().getWidth());
+
+                if(snap) {
+                    newScale = Math.round(newScale * (1/getData().getSnapScale())) * getData().getSnapScale();
+                }
+
+                getData().setScale(newScale);
+            }
         }
     }
 
@@ -194,6 +214,11 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     public void openScreen(Screen screen) { }
 
+    protected void reloadScreen() {
+        var client = MinecraftClient.getInstance();
+        client.setScreen(new ModuleConfigScreen(this));
+    }
+
     public void onFilesDropped(List<Path> paths) { }
 
     public void closeScreen(Screen screen) { }
@@ -205,4 +230,10 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     public void setDrawingOverwritten(boolean drawingOverwritten) {
         this.drawingOverwritten = drawingOverwritten;
     }
+
+    public OldTransform getTransform() {
+        return new OldTransform(getData().getPosX(), getData().getPosY(), getData().getScale());
+    }
+
+    public record OldTransform(double posX, double posY, double scale) {}
 }

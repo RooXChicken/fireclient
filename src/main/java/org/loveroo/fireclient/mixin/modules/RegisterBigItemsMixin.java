@@ -5,7 +5,7 @@ import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;
 import net.minecraft.client.render.item.ItemRenderState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
-import org.loveroo.fireclient.data.ItemTypeStorage;
+import org.loveroo.fireclient.modules.BigItemsModule;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,7 +20,7 @@ public abstract class RegisterBigItemsMixin {
 
     @Inject(method = "update", at = @At("TAIL"))
     private void registerBigItems(Entity entity, ItemStack stack, ItemModelManager itemModelManager, CallbackInfo info) {
-        if(!(itemRenderState instanceof ItemTypeStorage state)) {
+        if(!(itemRenderState instanceof BigItemsModule.ItemTypeStorage state)) {
             return;
         }
 

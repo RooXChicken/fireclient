@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.screen.config;
 
+import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -9,6 +10,7 @@ import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
+import org.lwjgl.glfw.GLFW;
 
 public class MainConfigScreen extends ConfigScreenBase {
 
@@ -16,6 +18,7 @@ public class MainConfigScreen extends ConfigScreenBase {
     private ButtonWidget settingsButton;
 
     private ModuleBase selectedModule = null;
+    private ModuleBase.OldTransform oldTransform = null;
 
     public MainConfigScreen() {
         super(Text.of("FireClient Main Config"));
@@ -67,6 +70,7 @@ public class MainConfigScreen extends ConfigScreenBase {
                 }
 
                 if(module.isPointInside(mouseX, mouseY)) {
+                    oldTransform = module.getTransform();
                     selectedModule = module;
                     break;
                 }
@@ -91,7 +95,7 @@ public class MainConfigScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
 
         if(selectedModule != null) {
-            selectedModule.handleTransformation(mouseState, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
+            selectedModule.handleTransformation(mouseState, oldTransform, this.mouseX, this.mouseY, oldMouseX, oldMouseY, doSnap());
         }
 
         for(var module : FireClientside.getModules()) {
@@ -116,12 +120,14 @@ public class MainConfigScreen extends ConfigScreenBase {
             }
 
             if(module.isPointInside(mouseX, mouseY)) {
-                setTooltip(module.getData().getShownName());
+                setTooltip(module.getData().getTooltip(showTransform()));
                 break;
             }
         }
 
         modulesButton.render(context, mouseX, mouseY, delta);
         settingsButton.render(context, mouseX, mouseY, delta);
+
+        renderSnapTutorial(context);
     }
 }

@@ -15,6 +15,10 @@ public class ModuleData {
 
     private double scale = 1;
 
+    private double snapX = 5.0;
+    private double snapY = 8.0;
+    private double snapScale = 0.25;
+
     private double width = 0;
     private double height = 0;
 
@@ -33,6 +37,23 @@ public class ModuleData {
 
     public MutableText getShownName() {
         return shownName;
+    }
+
+    public MutableText getTooltip(boolean showTransformation) {
+        var transform = new StringBuilder();
+
+        if(showTransformation) {
+            transform.append("\nX: ");
+            transform.append((int) getPosX());
+
+            transform.append(" Y: ");
+            transform.append((int) getPosY());
+
+            transform.append("\nScale: ");
+            transform.append(String.format("%.2f", getScale()));
+        }
+
+        return shownName.copy().append(transform.toString());
     }
 
     public void setShownName(MutableText shownName) {
@@ -121,5 +142,29 @@ public class ModuleData {
 
     public String getDescription() {
         return description;
+    }
+
+    public double getSnapX() {
+        return snapX;
+    }
+
+    public void setSnapX(double snapX) {
+        this.snapX = snapX;
+    }
+
+    public double getSnapY() {
+        return snapY;
+    }
+
+    public void setSnapY(double snapY) {
+        this.snapY = snapY;
+    }
+
+    public double getSnapScale() {
+        return snapScale;
+    }
+
+    public void setSnapScale(double snapScale) {
+        this.snapScale = snapScale;
     }
 }

@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -16,14 +15,14 @@ import org.loveroo.fireclient.keybind.Keybind;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AngleDisplayModule extends ModuleBase {
+public class HealthDisplayModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xDEDEDE);
-    private final Color color2 = Color.fromRGB(0xA5B09E);
+    private final Color color1 = Color.fromRGB(0xD62D0F);
+    private final Color color2 = Color.fromRGB(0xD13F26);
 
-    public AngleDisplayModule() {
-        super(new ModuleData("angle_display", "° Angle Display", "Shows your angle"));
-        getData().setShownName(generateDisplayName(0xDEDEDE));
+    public HealthDisplayModule() {
+        super(new ModuleData("health_display", "❤ Health Display", "Shows your true health as a decimal"));
+        getData().setShownName(generateDisplayName(color1.toInt()));
 
         getData().setHeight(8);
         getData().setWidth(30);
@@ -34,7 +33,7 @@ public class AngleDisplayModule extends ModuleBase {
         getData().setVisible(false);
 
         FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_angle_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
+                new Keybind("toggle_health_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
                         () -> getData().setVisible(!getData().isVisible()), null)
         );
     }
@@ -43,7 +42,7 @@ public class AngleDisplayModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_angle_display").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_health_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;
@@ -60,13 +59,13 @@ public class AngleDisplayModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var pitch = (client.player != null) ? client.player.getPitch() : 0.0;
-        var msg = String.format("%.2f°", pitch);
-        var angleText = RooHelper.gradientText(msg, color1, color2);
+        var health = (client.player != null) ? (client.player.getHealth() + client.player.getAbsorptionAmount()) : 20.0;
+        var msg = String.format("❤ %.2f", health);
+        var healthText = RooHelper.gradientText(msg, color1, color2);
 
-        getData().setWidth(text.getWidth(angleText));
+        getData().setWidth(text.getWidth(healthText));
 
-        context.drawText(text, angleText, 0, 0, 0xFFFFFFFF, true);
+        context.drawText(text, healthText, 0, 0, 0xFFFFFFFF, true);
 
         endTransform(context.getMatrices());
     }

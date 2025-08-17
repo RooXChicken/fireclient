@@ -24,7 +24,7 @@ public abstract class ScrollClickMixin {
             return;
         }
 
-        scrollClick.incrementClicks();
+        scrollClick.incrementClicks(vertical);
         info.cancel();
     }
 }

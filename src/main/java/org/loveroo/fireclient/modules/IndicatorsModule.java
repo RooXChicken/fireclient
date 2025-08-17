@@ -31,6 +31,7 @@ public class IndicatorsModule extends ModuleBase {
         indicators.add(new NauseaIndicator(index++));
         indicators.add(new PortalIndicator(index++));
         indicators.add(new BlindnessIndicator(index++));
+//        indicators.add(new InWallIndicator(index++));
     }
 
     public void moduleConfigPressed(ButtonWidget button) {

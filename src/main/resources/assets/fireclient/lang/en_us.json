@@ -16,5 +16,7 @@
   "fireclient.module.shadow.increase_height": "Increases shadow height to 20 blocks",
   "fireclient.module.shadow.fullbright": "Makes shadow opacity not depend on light level",
   "key.fireclient.toggle_auto_message": "Use Auto Message",
-  "fireclient.module.flight_module.toggle_with_sneak": "Toggle speed with Sneak"
+  "fireclient.module.flight_module.toggle_with_sneak": "Toggle speed with Sneak",
+  "fireclient.module.scroll_click.scroll_type": "Controls whether the scroll direction changes what click is registered",
+  "fireclient.module.scroll_click.click_type": "Changes what click is registered"
 }

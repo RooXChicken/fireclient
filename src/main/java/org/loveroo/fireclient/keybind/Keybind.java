@@ -8,11 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -312,5 +310,10 @@ public class Keybind {
 
     public interface KeyEvent {
         void action();
+    }
+
+    public enum KeyReturnStatus {
+        ALLOW,
+        CANCEL,
     }
 }

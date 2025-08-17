@@ -6,7 +6,6 @@ import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.random.Random;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.ItemTypeStorage;
 import org.loveroo.fireclient.modules.BigItemsModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +22,7 @@ public class BigItemMixin {
             return;
         }
 
-        var getItem = (ItemTypeStorage)state.itemRenderState;
+        var getItem = (BigItemsModule.ItemTypeStorage)state.itemRenderState;
         if(!bigItems.isBig(getItem.fireclient$getItem())) {
             return;
         }

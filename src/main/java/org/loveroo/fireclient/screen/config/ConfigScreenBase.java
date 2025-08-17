@@ -13,11 +13,13 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.FireClientOption;
 import org.lwjgl.glfw.GLFW;
 
 public class ConfigScreenBase extends Screen {
 
     private final MutableText configText = RooHelper.gradientText("FireClient Config", FireClientside.mainColor1, FireClientside.mainColor2);
+    private final MutableText tutorialText = RooHelper.gradientText("Shift to snap | Ctrl for transform | Right Click to scale", FireClientside.mainColor1, FireClientside.mainColor2);
     protected int mouseState = 0;
 
     protected int mouseX = 0;
@@ -33,6 +35,10 @@ public class ConfigScreenBase extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         mouseState = button;
+
+        this.oldMouseX = this.mouseX;
+        this.oldMouseY = this.mouseY;
+
         handleClick();
 
         return super.mouseClicked(mouseX, mouseY, button);
@@ -73,18 +79,31 @@ public class ConfigScreenBase extends Screen {
         return false;
     }
 
+    protected boolean doSnap() {
+        return (GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS);
+    }
+
+    protected boolean showTransform() {
+        return (GLFW.glfwGetKey(client.getWindow().getHandle(), GLFW.GLFW_KEY_LEFT_CONTROL) == GLFW.GLFW_PRESS);
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-
-        this.oldMouseX = this.mouseX;
-        this.oldMouseY = this.mouseY;
 
         this.mouseX = mouseX;
         this.mouseY = mouseY;
 
         var text = MinecraftClient.getInstance().textRenderer;
         context.drawCenteredTextWithShadow(text, configText, width/2, 10, 0xFFFFFFFF);
+    }
+
+    protected void renderSnapTutorial(DrawContext context) {
+        if(FireClientside.getSetting(FireClientOption.SHOW_TUTORIAL_TEXT) == 0) {
+            return;
+        }
+
+        context.drawText(textRenderer, tutorialText, 2, height-10, 0xFFFFFFFF, true);
     }
 
     public int getMouseX() {

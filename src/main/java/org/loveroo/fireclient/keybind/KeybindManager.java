@@ -1,8 +1,6 @@
 package org.loveroo.fireclient.keybind;
 
 import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.FireClient;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +13,7 @@ public class KeybindManager {
         for(var keybind : keybinds) {
             var status = keybind.onKey(keyCode, scanCode, action, modifiers);
 
-            if(status == KeyReturnStatus.CANCEL) {
+            if(status == Keybind.KeyReturnStatus.CANCEL) {
                 return false;
             }
         }

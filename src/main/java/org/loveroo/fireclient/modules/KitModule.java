@@ -6,30 +6,21 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.*;
-import org.loveroo.fireclient.data.kit.*;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,12 +142,12 @@ public class KitModule extends ModuleBase {
         return widgets;
     }
 
-    public KitLoadStatus loadKit(String kitName, boolean notify) {
+    public KitManager.KitLoadStatus loadKit(String kitName, boolean notify) {
         previousInventory = KitManager.getKitString();
         return loadKitString(kitName, KitManager.getKitFromName(kitName), notify);
     }
 
-    private KitLoadStatus loadKitString(String kitName, String kitContents, boolean notify) {
+    private KitManager.KitLoadStatus loadKitString(String kitName, String kitContents, boolean notify) {
         var loadStatus = KitManager.loadKitFromString(kitContents);
 
         kitToLoadName = "";
@@ -237,7 +228,7 @@ public class KitModule extends ModuleBase {
         undo(true);
     }
 
-    public KitLoadStatus undo(boolean notify) {
+    public KitManager.KitLoadStatus undo(boolean notify) {
         var previousContents = KitManager.getKitString();
 
         var status = loadKitString("__previous", previousInventory, notify);
@@ -325,7 +316,7 @@ public class KitModule extends ModuleBase {
                 case INVALID_KIT -> { RooHelper.sendNotification("Failed to load dragged kit!", "Invalid kit"); }
             }
 
-            if(validationStatus != KitValidationStatus.SUCCESS) {
+            if(validationStatus != KitManager.KitValidationStatus.SUCCESS) {
                 continue;
             }
 
@@ -343,11 +334,6 @@ public class KitModule extends ModuleBase {
         }
 
         reloadScreen();
-    }
-
-    private void reloadScreen() {
-        var client = MinecraftClient.getInstance();
-        client.setScreen(new ModuleConfigScreen(this));
     }
 
     private void createKeybindFromKit(String kitName) {

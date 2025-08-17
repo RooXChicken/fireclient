@@ -24,6 +24,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Nullable
     private ModuleBase selectedModule = null;
+    private ModuleBase.OldTransform oldTransform = null;
 
     public ModuleConfigScreen(ModuleBase module) {
         this(module.getData().getName(), module.getData().getDescription(), List.of(module));
@@ -83,6 +84,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         else if(mouseState == 0 || mouseState == 1) {
             for(var module : modules) {
                 if(module.isPointInside(mouseX, mouseY)) {
+                    oldTransform = module.getTransform();
                     selectedModule = module;
                     break;
                 }
@@ -122,7 +124,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
 
         if(selectedModule != null) {
-            selectedModule.handleTransformation(mouseState, this.mouseX, this.mouseY, oldMouseX, oldMouseY);
+            selectedModule.handleTransformation(mouseState, oldTransform, this.mouseX, this.mouseY, oldMouseX, oldMouseY, doSnap());
         }
 
         for(var module : modules) {
@@ -136,7 +138,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
         for(var module : modules) {
             if(module.isPointInside(mouseX, mouseY)) {
-                setTooltip(module.getData().getShownName());
+                setTooltip(module.getData().getTooltip(showTransform()));
                 break;
             }
         }

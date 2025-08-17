@@ -94,6 +94,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new ScrollClickModule());
         registerModule(new ElytraSwapModule());
         registerModule(new AngleDisplayModule());
+        registerModule(new HealthDisplayModule());
     }
 
     public static void registerModule(ModuleBase module) {

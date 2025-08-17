@@ -95,7 +95,7 @@ public class CoordinatesModule extends ModuleBase {
     @Override
     public void update(MinecraftClient client) {
         if(showOther) {
-            getData().setHeight(16);
+            getData().setHeight(18);
         }
         else {
             getData().setHeight(8);

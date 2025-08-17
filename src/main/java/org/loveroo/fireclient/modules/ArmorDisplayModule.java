@@ -44,6 +44,8 @@ public class ArmorDisplayModule extends ModuleBase {
         getData().setHeight(40);
         getData().setScale(2.0/3.0);
 
+        getData().setSnapScale(1.0/3.0);
+
         getData().setVisible(true);
 
         FireClientside.getKeybindManager().registerKeybind(
@@ -133,12 +135,12 @@ public class ArmorDisplayModule extends ModuleBase {
     }
 
     @Override
-    public void handleTransformation(int mouseState, int mouseX, int mouseY, int oldMouseX, int oldMouseY) {
+    public void handleTransformation(int mouseState, OldTransform old, int mouseX, int mouseY, int oldMouseX, int oldMouseY, boolean snap) {
         if(locked) {
             return;
         }
 
-        super.handleTransformation(mouseState, mouseX, mouseY, oldMouseX, oldMouseY);
+        super.handleTransformation(mouseState, old, mouseX, mouseY, oldMouseX, oldMouseY, snap);
     }
 
     @Override
@@ -161,8 +163,8 @@ public class ArmorDisplayModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
-
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
+
         widgets.add(ButtonWidget.builder(getToggleText(Text.of("Locked"), locked), this::lockedButtonPressed)
                 .dimensions(base.width/2 - 60, base.height/2 + 10, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button")))
@@ -173,6 +175,11 @@ public class ArmorDisplayModule extends ModuleBase {
 
     public void lockedButtonPressed(ButtonWidget button) {
         locked = !locked;
+
+        if(locked) {
+            getData().setScale(2.0/3.0);
+        }
+
         button.setMessage(getToggleText(Text.of("Locked"), locked));
     }
 }
