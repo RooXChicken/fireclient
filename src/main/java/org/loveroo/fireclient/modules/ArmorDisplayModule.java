@@ -68,8 +68,8 @@ public class ArmorDisplayModule extends ModuleBase {
         }
 
         if(locked) {
-            getData().setPosX(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()));
-            getData().setPosY(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale()));
+            getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
+            getData().setPosY((int)(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale())));
         }
     }
 

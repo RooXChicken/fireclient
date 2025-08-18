@@ -1,6 +1,5 @@
 package org.loveroo.fireclient.screen.config;
 
-import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -10,7 +9,7 @@ import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
-import org.lwjgl.glfw.GLFW;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 public class MainConfigScreen extends ConfigScreenBase {
 
@@ -40,12 +39,14 @@ public class MainConfigScreen extends ConfigScreenBase {
                 .tooltip(Tooltip.of(Text.of("Configure FireClient settings")))
                 .build();
 
-        addSelectableChild(modulesButton);
-        addSelectableChild(settingsButton);
+        addDrawableChild(modulesButton);
+        addDrawableChild(settingsButton);
     }
 
     private void modulesButtonPressed(ButtonWidget button) {
         removeOverwrite();
+
+        ModuleSelectScreen.resetScroll();
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
     }
 
@@ -124,9 +125,6 @@ public class MainConfigScreen extends ConfigScreenBase {
                 break;
             }
         }
-
-        modulesButton.render(context, mouseX, mouseY, delta);
-        settingsButton.render(context, mouseX, mouseY, delta);
 
         renderSnapTutorial(context);
     }

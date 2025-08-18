@@ -16,6 +16,7 @@ import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.*;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
@@ -26,8 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class KitModule extends ModuleBase {
-
-    private final HashMap<Integer, String> buttonToKit = new HashMap<>();
 
     private GameMode previousGameMoode = GameMode.SURVIVAL;
     private String kitToLoadName = "";
@@ -41,6 +40,9 @@ public class KitModule extends ModuleBase {
 
     @Nullable
     private TextFieldWidget kitNameField;
+
+    private final int kitWidgetWidth = 300;
+    private final int kitWidgetHeight = 120;
 
     public KitModule() {
         super(new ModuleData("kit", "\uD83E\uDDF0 Kit", "Allows you to save and load kits"));
@@ -103,42 +105,42 @@ public class KitModule extends ModuleBase {
 
         widgets.add(kitNameField);
 
-        buttonToKit.clear();
-
         aboutToDelete = "";
         lastPressed = null;
 
-        var index = 0;
+        var elements = new ArrayList<ScrollableWidget.ElementEntry>();
+
         for(var kit : KitManager.getKits()) {
+            var elementWidgets = new ArrayList<ClickableWidget>();
             createKeybindFromKit(kit);
 
-            var y = base.height/2 + 10 + (index * 22);
-
-            buttonToKit.put(y, kit);
-
             var loadKeybindButton = FireClientside.getKeybindManager().getKeybind(getKitKeyName(kit));
-            widgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 180, y, 100, 20));
+            elementWidgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 140, 0, 60, 20));
 
-            widgets.add(ButtonWidget.builder(Text.of(kit), (button) -> loadKit(kit, true))
+            elementWidgets.add(ButtonWidget.builder(Text.of(kit), (button) -> loadKit(kit, true))
                     .tooltip(Tooltip.of(Text.of("Load \"" + kit + "\"")))
-                    .dimensions(base.width/2 - 70, y, 140, 20)
+                    .dimensions(base.width/2 - 70, 0, 140, 20)
                     .build());
 
-            widgets.add(ButtonWidget.builder(Text.of("-"), this::deleteButtonPressed)
+            elementWidgets.add(ButtonWidget.builder(Text.of("-"), this::deleteButtonPressed)
                     .tooltip(Tooltip.of(Text.of("Delete \"" + kit + "\"")))
-                    .dimensions(base.width/2 + 80, y, 20, 20)
+                    .dimensions(base.width/2 + 80, 0, 20, 20)
                     .build());
 
-            widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), (button) -> {
+            elementWidgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), (button) -> {
                         GLFW.glfwSetClipboardString(client.getWindow().getHandle(), KitManager.getKitFromName(kit));
                     })
                     .tooltip(Tooltip.of(Text.of("Copy \"" + kit + "\" to your clipboard")))
-                    .dimensions(base.width/2 + 105, y, 20, 20)
+                    .dimensions(base.width/2 + 105, 0, 20, 20)
                     .build());
 
-            index++;
+            elements.add(new ScrollableWidget.ElementEntry(elementWidgets));
         }
 
+        var scrollable = new ScrollableWidget(base, kitWidgetWidth, kitWidgetHeight, 0, 25, elements);
+        scrollable.setPosition(base.width/2 - (kitWidgetWidth/2), base.height/2 + 10);
+
+        widgets.add(scrollable);
         return widgets;
     }
 
@@ -273,7 +275,7 @@ public class KitModule extends ModuleBase {
     }
 
     private void deleteButtonPressed(ButtonWidget button) {
-        var kit = buttonToKit.getOrDefault(button.getY(), "");
+        var kit = button.getMessage().getLiteralString();
 
         if(!aboutToDelete.equals(kit)) {
             if(lastPressed != null) {
@@ -342,10 +344,11 @@ public class KitModule extends ModuleBase {
             return;
         }
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind(keyName, "\uD83E\uDDF0", "Load \"" + kitName + "\"", true, null,
-                        () -> loadKit(kitName, true), null)
-        );
+        var keybind = new Keybind(keyName, "\uD83E\uDDF0", "Load \"" + kitName + "\"", true, null,
+                () -> loadKit(kitName, true), null);
+
+        keybind.setShortName(true);
+        FireClientside.getKeybindManager().registerKeybind(keybind);
     }
 
     private String getKitKeyName(String kitName) {

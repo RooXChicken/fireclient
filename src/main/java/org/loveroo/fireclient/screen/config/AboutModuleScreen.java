@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 public class AboutModuleScreen extends ConfigScreenBase {
 

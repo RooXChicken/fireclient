@@ -1,7 +1,6 @@
 package org.loveroo.fireclient.screen.config;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -9,10 +8,9 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 import java.util.ArrayList;
 

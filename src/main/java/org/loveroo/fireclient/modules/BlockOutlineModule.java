@@ -1,30 +1,20 @@
 package org.loveroo.fireclient.modules;
 
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.EulerAngle;
 import net.minecraft.util.shape.*;
-import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
-import org.loveroo.fireclient.screen.config.ConfigScreenBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +27,7 @@ public class BlockOutlineModule extends ModuleBase {
     private int outline = getColor();
     private int defaultOutline = 0x66000000;
 
-    private float rot = -180.0f;
+    private float rot = 180.0f;
 
     public BlockOutlineModule() {
         super(new ModuleData("block_outline", "☐ Block Outline", "Changes the block outline color | Format: ARGB HEX"));
@@ -48,10 +38,10 @@ public class BlockOutlineModule extends ModuleBase {
 
     @Override
     public void update(MinecraftClient client) {
-        rot += 2.0f;
+        rot -= 2.0f;
 
-        while(rot > 180) {
-            rot -= 360;
+        while(rot < 180) {
+            rot += 360;
         }
     }
 

@@ -31,8 +31,8 @@ public class FPSDisplayModule extends ModuleBase {
         getData().setHeight(8);
         getData().setWidth(40);
 
-        getData().setPosX(2);
-        getData().setPosY(2);
+        getData().setPosX(2, 640);
+        getData().setPosY(2, 360);
 
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("toggle_fps_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,

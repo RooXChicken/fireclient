@@ -1,18 +1,13 @@
-package org.loveroo.fireclient.screen.config;
+package org.loveroo.fireclient.screen.base;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.lwjgl.glfw.GLFW;
 

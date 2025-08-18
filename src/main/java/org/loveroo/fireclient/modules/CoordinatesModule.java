@@ -66,8 +66,8 @@ public class CoordinatesModule extends ModuleBase {
         getData().setHeight(8);
         getData().setWidth(110);
 
-        getData().setPosX(2);
-        getData().setPosY(14);
+        getData().setPosX(2, 640);
+        getData().setPosY(14, 360);
 
         try {
             System.setProperty("awt.useSystemAAFontSettings", "off");

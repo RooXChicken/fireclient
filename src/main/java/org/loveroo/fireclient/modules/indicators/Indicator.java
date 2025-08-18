@@ -32,8 +32,8 @@ public abstract class Indicator extends ModuleBase {
         getData().setWidth(6);
         getData().setHeight(6);
 
-        getData().setPosX(2);
-        getData().setPosY(100 + (index * 10));
+        getData().setPosX(2, 640);
+        getData().setPosY(100 + (index * 10), 360);
 
         getData().setSkip(true);
 

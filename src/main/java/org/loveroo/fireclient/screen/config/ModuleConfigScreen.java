@@ -9,9 +9,8 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

@@ -101,8 +101,8 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
                     posY = Math.round(posY * (1/getData().getSnapY())) * getData().getSnapY();
                 }
 
-                getData().setPosX(posX);
-                getData().setPosY(posY);
+                getData().setPosX((int)posX);
+                getData().setPosY((int)posY);
             }
 
             case 1 -> {
@@ -145,9 +145,11 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void loadJson(JSONObject json) throws JSONException {
-        getData().setPosX(json.optDouble("pos_x", getData().getPosX()));
-        getData().setPosY(json.optDouble("pos_y", getData().getPosY()));
+        getData().setRawPosX(json.optDouble("pos_x", getData().getRawPosX()));
+        getData().setRawPosY(json.optDouble("pos_y", getData().getRawPosY()));
+
         getData().setScale(json.optDouble("scale", getData().getScale()));
+
         getData().setVisible(json.optBoolean("visible", getData().isVisible()));
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
@@ -155,9 +157,11 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     public JSONObject saveJson() throws JSONException {
         var json = new JSONObject();
 
-        json.put("pos_x", getData().getPosX());
-        json.put("pos_y", getData().getPosY());
+        json.put("pos_x", getData().getRawPosX());
+        json.put("pos_y", getData().getRawPosY());
+
         json.put("scale", getData().getScale());
+
         json.put("visible", getData().isVisible());
         json.put("enabled", getData().isEnabled());
 

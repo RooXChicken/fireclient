@@ -28,6 +28,7 @@
     "modules.ShowOwnNametagMixin",
     "modules.SkipWorldRenderingMixin",
     "modules.StoreItemTypeMixin",
+    "modules.WorldRendererAccessor",
     "settings.DisableExtinguishSpamMixin",
     "settings.DontResetDeathButtonsMixin",
     "settings.FixTridentShieldMixin",

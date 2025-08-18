@@ -33,6 +33,7 @@ public class Keybind {
     private ButtonWidget activeRebindButton;
 
     private boolean rebinding = false;
+    private boolean shortName = false;
 
     @Nullable
     private ArrayList<Key> reboundKeys;
@@ -163,7 +164,7 @@ public class Keybind {
     public Text getKeysCombo(List<Key> keyList) {
         var builder = new StringBuilder();
         if(keyList == null || keyList.isEmpty()) {
-            builder.append("Unbound");
+            builder.append((shortName) ? "N/A" : "Unbound");
 
             return name.copy().append(": " + builder);
         }
@@ -306,6 +307,14 @@ public class Keybind {
 
     public void setCancelOnUse(boolean cancelOnUse) {
         this.cancelOnUse = cancelOnUse;
+    }
+
+    public boolean isShortName() {
+        return shortName;
+    }
+
+    public void setShortName(boolean shortName) {
+        this.shortName = shortName;
     }
 
     public interface KeyEvent {

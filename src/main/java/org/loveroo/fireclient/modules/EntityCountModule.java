@@ -11,29 +11,30 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.mixin.modules.WorldRendererAccessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class HealthDisplayModule extends ModuleBase {
+public class EntityCountModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xD62D0F);
-    private final Color color2 = Color.fromRGB(0xD13F26);
+    private final Color color1 = Color.fromRGB(0xD4D4D4);
+    private final Color color2 = Color.fromRGB(0xDECEB4);
 
-    public HealthDisplayModule() {
-        super(new ModuleData("health_display", "❤ Health Display", "Shows your true health as a decimal"));
-        getData().setShownName(generateDisplayName(color1.toInt()));
+    public EntityCountModule() {
+        super(new ModuleData("entity_count", "\uD83D\uDC64 Entity Count", "Shows the world's entity information"));
+        getData().setShownName(generateDisplayName(0xD4D4D4));
 
         getData().setHeight(8);
         getData().setWidth(30);
 
         getData().setPosX(2, 640);
-        getData().setPosY(38, 360);
+        getData().setPosY(50, 360);
 
         getData().setVisible(false);
 
         FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_health_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
+                new Keybind("toggle_entity_count", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
                         () -> getData().setVisible(!getData().isVisible()), null)
         );
     }
@@ -42,7 +43,7 @@ public class HealthDisplayModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_health_display").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_entity_count").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;
@@ -59,13 +60,14 @@ public class HealthDisplayModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var health = (client.player != null) ? (client.player.getHealth() + client.player.getAbsorptionAmount()) : 20.0;
-        var msg = String.format("❤ %.2f", health);
-        var healthText = RooHelper.gradientText(msg, color1, color2);
+        var accessor = (WorldRendererAccessor)client.worldRenderer;
+        var msg = "E: " + accessor.getRenderedEntitiesCount() + "/" + accessor.getWorld().getRegularEntityCount();
 
-        getData().setWidth(text.getWidth(healthText));
+        var entityText = RooHelper.gradientText(msg, color1, color2);
 
-        context.drawText(text, healthText, 0, 0, 0xFFFFFFFF, true);
+        getData().setWidth(text.getWidth(entityText));
+
+        context.drawText(text, entityText, 0, 0, 0xFFFFFFFF, true);
 
         endTransform(context.getMatrices());
     }

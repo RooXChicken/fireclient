@@ -8,7 +8,7 @@ import net.minecraft.text.MutableText;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.screen.config.ConfigScreenBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

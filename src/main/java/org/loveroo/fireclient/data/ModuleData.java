@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.data;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 
@@ -44,10 +45,10 @@ public class ModuleData {
 
         if(showTransformation) {
             transform.append("\nX: ");
-            transform.append((int) getPosX());
+            transform.append(getPosX());
 
             transform.append(" Y: ");
-            transform.append((int) getPosY());
+            transform.append(getPosY());
 
             transform.append("\nScale: ");
             transform.append(String.format("%.2f", getScale()));
@@ -64,19 +65,55 @@ public class ModuleData {
         return name;
     }
 
-    public double getPosX() {
+    public int getPosX() {
+        var client = MinecraftClient.getInstance();
+        var width = client.getWindow().getScaledWidth();
+
+        return (int)Math.round(posX * width);
+    }
+
+    public void setPosX(int x) {
+        var client = MinecraftClient.getInstance();
+        var width = client.getWindow().getScaledWidth();
+
+        setPosX(x, width);
+    }
+
+    public void setPosX(int x, int screenWidth) {
+        posX = ((double)x / screenWidth);
+    }
+
+    public int getPosY() {
+        var client = MinecraftClient.getInstance();
+        var height = client.getWindow().getScaledHeight();
+
+        return (int)Math.round(posY * height);
+    }
+
+    public void setPosY(int y) {
+        var client = MinecraftClient.getInstance();
+        var height = client.getWindow().getScaledHeight();
+
+        setPosY(y, height);
+    }
+
+    public void setPosY(int y, int screenHeight) {
+        posY = ((double)y / screenHeight);
+    }
+
+    public double getRawPosX() {
         return posX;
     }
 
-    public void setPosX(double posX) {
-        this.posX = posX;
-    }
-
-    public double getPosY() {
+    public double getRawPosY() {
         return posY;
     }
 
-    public void setPosY(double posY) {
+    public void setRawPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public void setRawPosY(double posY) {
         this.posY = posY;
     }
 

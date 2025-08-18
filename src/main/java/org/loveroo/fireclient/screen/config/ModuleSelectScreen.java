@@ -1,23 +1,26 @@
 package org.loveroo.fireclient.screen.config;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ScrollableWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ModuleSelectScreen extends ConfigScreenBase {
 
-    private ArrayList<ButtonWidget> moduleButtons;
+    private ScrollableWidget modulesWidget;
     private ButtonWidget backButton;
+
+    private final int moduleSelectWidth = 400;
+    private final int moduleSelectHeight = 140;
+
+    private static double scroll = 0.0;
 
     public ModuleSelectScreen() {
         super(Text.of("FireClient Module Options"));
@@ -25,7 +28,8 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
     @Override
     public void init() {
-        moduleButtons = new ArrayList<>();
+        var moduleButtons = new ArrayList<ClickableWidget>();
+        var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
         var skips = 0;
         var modules = new ArrayList<String>();
@@ -36,8 +40,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
         modules.sort(Comparator.naturalOrder());
 
-        var i = 0;
-        for(i = 0; i < modules.size(); i++) {
+        for(var i = 0; i < modules.size(); i++) {
             var module = FireClientside.getModule(modules.get(i));
 
             if(module.getData().isSkip()) {
@@ -48,24 +51,49 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             var index = i - skips;
 
             var x = ((index % 3) - 1) * 130;
-            var y = (index / 3) * 30;
 
             moduleButtons.add(ButtonWidget.builder(module.getData().getShownName(), module::moduleConfigPressed)
-                    .dimensions(width/2 - 60 + x, height/2 - 80 + y, 120, 20)
+                    .dimensions(width/2 - 60 + x, 0, 120, 20)
                     .build());
-
-            addSelectableChild(moduleButtons.get(index));
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 40, height/2 + (((i - skips) / 3 + 1) * 30) - 80, 80, 20)
+                .dimensions(width/2 - 40, height/2 + moduleSelectHeight/2 + 20, 80, 20)
                 .build();
 
-        addSelectableChild(backButton);
+        addDrawableChild(backButton);
+
+        var size = moduleButtons.size();
+        var lineCount = (int)Math.ceil(size/3.0);
+
+        for(int i = 0; i < lineCount; i++) {
+            var entryWidgets = new ArrayList<ClickableWidget>();
+
+            var moduleEntryIndex = (i*3);
+            var moduleEntryCount = Math.min(3, size - moduleEntryIndex);
+
+            for(int k = 0; k < moduleEntryCount; k++) {
+                entryWidgets.add(moduleButtons.get(moduleEntryIndex + k));
+            }
+
+            var entry = new ScrollableWidget.ElementEntry(entryWidgets);
+            entries.add(entry);
+        }
+
+        modulesWidget = new ScrollableWidget(this, moduleSelectWidth, moduleSelectHeight, 0, 30, entries);
+        modulesWidget.setPosition(width/2 - (moduleSelectWidth/2), height/2 - (moduleSelectHeight/2));
+        modulesWidget.setScrollY(scroll);
+
+        addDrawableChild(modulesWidget);
     }
 
     private void backButtonPressed(ButtonWidget button) {
         MinecraftClient.getInstance().setScreen(new MainConfigScreen());
+    }
+
+    @Override
+    public void tick() {
+        scroll = modulesWidget.getScrollY();
     }
 
     @Override
@@ -79,12 +107,10 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, "Modules Config", width/2, height/2 - 95, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(text, "Modules Config", width/2, height/2 - (moduleSelectHeight/2 + 20), 0xFFFFFFFF);
+    }
 
-        for(var button : moduleButtons) {
-            button.render(context, mouseX, mouseY, delta);
-        }
-
-        backButton.render(context, mouseX, mouseY, delta);
+    public static void resetScroll() {
+        scroll = 0;
     }
 }

@@ -18,7 +18,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
-import org.loveroo.fireclient.screen.config.ConfigScreenBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 import java.util.ArrayList;
 import java.util.List;
