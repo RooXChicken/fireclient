@@ -145,8 +145,19 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void loadJson(JSONObject json) throws JSONException {
-        getData().setRawPosX(json.optDouble("pos_x", getData().getRawPosX()));
-        getData().setRawPosY(json.optDouble("pos_y", getData().getRawPosY()));
+        var posX = json.optDouble("pos_x", getData().getDefaultPosX());
+        var posY = json.optDouble("pos_y", getData().getDefaultPosY());
+
+        if(posX > 1.0) {
+            posX = getData().getDefaultPosX();
+        }
+
+        if(posY > 1.0) {
+            posY = getData().getDefaultPosY();
+        }
+
+        getData().setRawPosX(posX);
+        getData().setRawPosY(posY);
 
         getData().setScale(json.optDouble("scale", getData().getScale()));
 

@@ -14,6 +14,9 @@ public class ModuleData {
     private double posX = 0;
     private double posY = 0;
 
+    private double defaultPosX = 0;
+    private double defaultPosY = 0;
+
     private double scale = 1;
 
     private double snapX = 5.0;
@@ -203,5 +206,21 @@ public class ModuleData {
 
     public void setSnapScale(double snapScale) {
         this.snapScale = snapScale;
+    }
+
+    public double getDefaultPosX() {
+        return defaultPosX;
+    }
+
+    public void setDefaultPosX(double defaultPosX, int screenWidth) {
+        this.defaultPosX = defaultPosX/screenWidth;
+    }
+
+    public double getDefaultPosY() {
+        return defaultPosY;
+    }
+
+    public void setDefaultPosY(double defaultPosY, int screenHeight) {
+        this.defaultPosY = defaultPosY/screenHeight;
     }
 }

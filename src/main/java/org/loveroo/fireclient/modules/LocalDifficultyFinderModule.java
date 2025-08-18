@@ -41,8 +41,8 @@ public class LocalDifficultyFinderModule extends ModuleBase {
         getData().setHeight(16);
         getData().setWidth(60);
 
-        getData().setPosX(4, 640);
-        getData().setPosY(42, 360);
+        getData().setDefaultPosX(4, 640);
+        getData().setDefaultPosY(42, 360);
     }
 
     @Override

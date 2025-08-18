@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
@@ -11,13 +12,17 @@ import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
 
 import java.util.ArrayList;
 
 public class FireClientSettingsScreen extends ConfigScreenBase {
 
-    private ArrayList<ButtonWidget> settingsButtons;
+    private ScrollableWidget settingsWidget;
     private ButtonWidget backButton;
+
+    private final int settingsWidth = 440;
+    private final int settingsHeight = 140;
 
     public static final Text defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔ ")).setStyle(Style.EMPTY.withColor(0x57D647));
     public static final  Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌ ")).setStyle(Style.EMPTY.withColor(0xD63C3C));
@@ -28,27 +33,47 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
 
     @Override
     public void init() {
-        settingsButtons = new ArrayList<>();
+        var settingsButtons = new ArrayList<ClickableWidget>();
+        var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
         for(var i = 0; i < FireClientOption.values().length; i++) {
             var option = FireClientOption.values()[i];
 
             var x = ((i % 3) - 1) * 145;
-            var y = (i / 3) * 30;
 
             settingsButtons.add(ButtonWidget.builder(getOptionLabel(option), (button) -> handleSettings(button, option))
-                    .dimensions(width/2 - 65 + x, height/2 - 20 + y, 130, 20)
+                    .dimensions(width/2 - 65 + x, 0, 130, 20)
                     .tooltip(Tooltip.of(Text.of(option.getDescription())))
                     .build());
-
-            addSelectableChild(settingsButtons.get(i));
         }
 
         backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
-                .dimensions(width/2 - 60, height/2 + - 20 +  (FireClientOption.values().length / 3 + 1) * 30, 120, 20)
+                .dimensions(width/2 - 40, height/2 + settingsHeight/2 + 20, 80, 20)
                 .build();
 
-        addSelectableChild(backButton);
+        addDrawableChild(backButton);
+
+        var size = settingsButtons.size();
+        var lineCount = (int)Math.ceil(size/3.0);
+
+        for(int i = 0; i < lineCount; i++) {
+            var entryWidgets = new ArrayList<ClickableWidget>();
+
+            var settingsEntryIndex = (i*3);
+            var settingsEntryCount = Math.min(3, size - settingsEntryIndex);
+
+            for(int k = 0; k < settingsEntryCount; k++) {
+                entryWidgets.add(settingsButtons.get(settingsEntryIndex + k));
+            }
+
+            var entry = new ScrollableWidget.ElementEntry(entryWidgets);
+            entries.add(entry);
+        }
+
+        settingsWidget = new ScrollableWidget(this, settingsWidth, settingsHeight, 0, 30, entries);
+        settingsWidget.setPosition(width/2 - (settingsWidth /2), height/2 - (settingsHeight /2));
+
+        addDrawableChild(settingsWidget);
     }
 
     private void backButtonPressed(ButtonWidget button) {
@@ -90,12 +115,6 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, "Settings", width/2, height/2 - 35, 0xFFFFFFFF);
-
-        for(var button : settingsButtons) {
-            button.render(context, mouseX, mouseY, delta);
-        }
-
-        backButton.render(context, mouseX, mouseY, delta);
+        context.drawCenteredTextWithShadow(text, "Settings", width/2, height/2 - (settingsHeight/2 + 20), 0xFFFFFFFF);
     }
 }
