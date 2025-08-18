@@ -56,7 +56,7 @@ public class FKitCommand {
         );
     }
 
-    private Text getResult(String message, int status) {
+    private MutableText getResult(String message, int status) {
         var color = (status == 1) ? 0xFFFFFFFF : 0xFFC82909;
         var messageText = MutableText.of(new PlainTextContent.Literal(" " + message)).setStyle(Style.EMPTY).withColor(color);
 

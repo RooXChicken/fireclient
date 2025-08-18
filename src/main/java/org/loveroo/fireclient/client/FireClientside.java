@@ -26,6 +26,7 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.commands.FCalcCommand;
 import org.loveroo.fireclient.commands.FKitCommand;
+import org.loveroo.fireclient.commands.FTextCommand;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.keybind.KeybindManager;
@@ -104,6 +105,7 @@ public class FireClientside implements ClientModInitializer {
     private void registerCommands() {
         ClientCommandRegistrationCallback.EVENT.register(new FCalcCommand()::register);
         ClientCommandRegistrationCallback.EVENT.register(new FKitCommand()::register);
+        ClientCommandRegistrationCallback.EVENT.register(new FTextCommand()::register);
     }
 
     private void loadConfig() {

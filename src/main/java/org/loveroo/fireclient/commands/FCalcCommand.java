@@ -40,7 +40,7 @@ public class FCalcCommand {
         );
     }
 
-    private Text getResult(String message) {
+    private MutableText getResult(String message) {
         var messageText = MutableText.of(new PlainTextContent.Literal(" " + message)).setStyle(Style.EMPTY).withColor(0xFFFFFFFF);
         return fCalcHeader.copy().append(messageText);
     }
