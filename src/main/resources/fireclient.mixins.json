@@ -23,6 +23,7 @@
     "modules.RegisterBigItemsMixin",
     "modules.RenderShadowMixin",
     "modules.ScrollClickMixin",
+    "modules.SendDeathMessageMixin",
     "modules.ShowOwnNametagMixin",
     "modules.SkipWorldRenderingMixin",
     "modules.StoreItemTypeMixin",

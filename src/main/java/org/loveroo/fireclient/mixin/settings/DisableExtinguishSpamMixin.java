@@ -32,13 +32,14 @@ public class DisableExtinguishSpamMixin {
             return;
         }
 
-        var difference = client.player.clientWorld.getTime() - lastExtinguish;
+        var time = client.player.clientWorld.getTime();
+        var difference = time - lastExtinguish;
 
         if(difference < 10) {
             cancel = true;
         }
 
-        lastExtinguish = client.player.clientWorld.getTime();
+        lastExtinguish = time;
 
         if(cancel) {
             info.cancel();
