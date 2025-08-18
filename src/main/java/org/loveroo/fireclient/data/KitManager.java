@@ -1,11 +1,19 @@
 package org.loveroo.fireclient.data;
 
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.GenericContainerScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.text.Text;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -127,13 +135,8 @@ public class KitManager {
         }
 
         try {
-            var from = NbtHelper.fromNbtProviderString(kit);
-            var invList = (NbtList)from.get("inv");
-
+            var loadedInv = getInventoryFromKit(kit);
             var playerInv = client.player.getInventory();
-
-            var loadedInv = new PlayerInventory(client.player);
-            loadedInv.readNbt(invList);
 
             var slots = client.player.playerScreenHandler.slots;
 
@@ -157,6 +160,54 @@ public class KitManager {
         }
 
         return KitLoadStatus.SUCCESS;
+    }
+
+    private static PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
+        var client = MinecraftClient.getInstance();
+
+        var from = NbtHelper.fromNbtProviderString(kit);
+        var invList = (NbtList)from.get("inv");
+
+        var loadedInv = new PlayerInventory(client.player);
+        loadedInv.readNbt(invList);
+
+        return loadedInv;
+    }
+
+    public static KitPreviewStatus previewKit(String kitName, boolean fromCommand) {
+        var kit = getKitFromFile(new File(getKitPath(kitName)));
+        return previewKitFromString(kitName, kit, fromCommand);
+    }
+
+    public static KitPreviewStatus previewKitFromString(String kitName, String kit, boolean fromCommand) {
+        if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
+            return KitPreviewStatus.INVALID_KIT;
+        }
+
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return KitPreviewStatus.INVALID_PLAYER;
+        }
+
+        try {
+            var loadedInv = getInventoryFromKit(kit);
+            client.send(() -> client.setScreen(new KitPreviewScreen(client.player, loadedInv, kitName, fromCommand)));
+
+//            var inv = new SimpleInventory(45);
+//
+//            for(int i = 0; i < loadedInv.size(); i++) {
+//                inv.setStack(i, loadedInv.getStack(i));
+//            }
+//
+//            var handler = new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X5, client.player.playerScreenHandler.syncId, client.player.getInventory(), inv, 5);
+//            client.setScreen(new GenericContainerScreen(handler, client.player.getInventory(), Text.of("Preview \"" + kitName + "\"")));
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.info("Failed to preview kit!", e);
+            return KitPreviewStatus.INVALID_KIT;
+        }
+
+        return KitPreviewStatus.SUCCESS;
     }
 
     // file manager
@@ -270,5 +321,11 @@ public class KitManager {
         SUCCESS,
         NO_FILE,
         INVALID_KIT,
+    }
+
+    public enum KitPreviewStatus {
+        SUCCESS,
+        INVALID_PLAYER,
+        INVALID_KIT
     }
 }

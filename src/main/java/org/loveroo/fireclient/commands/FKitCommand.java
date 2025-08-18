@@ -33,6 +33,12 @@ public class FKitCommand {
                         .executes(this::loadKitCommand)
         );
 
+        var previewSub = ClientCommandManager.literal("preview")
+                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                        .suggests(kitSuggestion)
+                        .executes(this::previewKitCommand)
+                );
+
         var createSub = ClientCommandManager.literal("create")
                 .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
                         .executes(this::createKitCommand)
@@ -53,6 +59,7 @@ public class FKitCommand {
                 .then(createSub)
                 .then(deleteSub)
                 .then(undoSub)
+                .then(previewSub)
         );
     }
 
@@ -141,6 +148,32 @@ public class FKitCommand {
 
             case NEEDS_GMC -> {
                 message = "Loading \"" + kitName + "\"... Waiting for Creative Mode";
+            }
+        }
+
+        context.getSource().sendFeedback(getResult(message, status));
+        return status;
+    }
+
+    private int previewKitCommand(CommandContext<FabricClientCommandSource> context) {
+        var kitName = StringArgumentType.getString(context, "kit_name");
+
+        var message = "";
+        var status = 1;
+
+        var loadStatus = KitManager.previewKit(kitName, true);
+
+        switch(loadStatus) {
+            case SUCCESS -> { return 1; }
+
+            case INVALID_KIT -> {
+                message = "Invalid kit!";
+                status = 0;
+            }
+
+            case INVALID_PLAYER -> {
+                message = "Invalid player!";
+                status = 0;
             }
         }
 

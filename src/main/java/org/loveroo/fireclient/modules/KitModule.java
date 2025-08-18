@@ -41,7 +41,7 @@ public class KitModule extends ModuleBase {
     @Nullable
     private TextFieldWidget kitNameField;
 
-    private final int kitWidgetWidth = 300;
+    private final int kitWidgetWidth = 330;
     private final int kitWidgetHeight = 120;
 
     public KitModule() {
@@ -132,6 +132,11 @@ public class KitModule extends ModuleBase {
                     })
                     .tooltip(Tooltip.of(Text.of("Copy \"" + kit + "\" to your clipboard")))
                     .dimensions(base.width/2 + 105, 0, 20, 20)
+                    .build());
+
+            elementWidgets.add(ButtonWidget.builder(Text.of("\uD83D\uDC41"), (button) -> KitManager.previewKit(kit, false))
+                    .tooltip(Tooltip.of(Text.of("Preview \"" + kit + "\"")))
+                    .dimensions(base.width/2 + 130, 0, 20, 20)
                     .build());
 
             elements.add(new ScrollableWidget.ElementEntry(elementWidgets));
