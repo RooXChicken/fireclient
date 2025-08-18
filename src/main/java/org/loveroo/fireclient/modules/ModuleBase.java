@@ -206,10 +206,14 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public void drawScreen(Screen base, DrawContext context) {
+        drawScreenHeader(context, base.width/2, base.height/2 - 40);
+    }
+
+    protected void drawScreenHeader(DrawContext context, int x, int y) {
         var text = MinecraftClient.getInstance().textRenderer;
 
         var configText = getData().getShownName().copy().append(MutableText.of(new PlainTextContent.Literal(" Configuration")).setStyle(Style.EMPTY.withColor(0xFFFFFF)));
-        context.drawCenteredTextWithShadow(text, configText, base.width/2, base.height/2 - 40, 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(text, configText, x, y, 0xFFFFFFFF);
     }
 
     public void openScreen(Screen screen) { }

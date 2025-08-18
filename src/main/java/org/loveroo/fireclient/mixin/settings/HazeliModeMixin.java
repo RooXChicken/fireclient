@@ -21,14 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
-@Mixin(PlayerEntityRenderer.class)
+@Mixin(SkinTextures.class)
 abstract class HazeliModeMixin {
 
     @Unique
     private final Identifier hazeli = Identifier.of(FireClient.MOD_ID, "textures/skin/hazeli.png");
 
-    @Inject(method = "getTexture(Lnet/minecraft/client/render/entity/state/PlayerEntityRenderState;)Lnet/minecraft/util/Identifier;", at = @At("HEAD"), cancellable = true)
-    public void getTexture(PlayerEntityRenderState playerEntityRenderState, CallbackInfoReturnable<Identifier> info) {
+    @Inject(method = "texture", at = @At("HEAD"), cancellable = true)
+    public void getTexture(CallbackInfoReturnable<Identifier> info) {
         if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
             return;
         }

@@ -85,6 +85,10 @@ public class HitColorModule extends ModuleBase {
         hitColor = text;
         hitColor += ("0".repeat(Math.max(0, 8 - text.length())));
 
+        if(!hitColor.matches("[0-9a-fA-F]+")) {
+            hitColor = defaultColor;
+        }
+
         if(getData().isEnabled()) {
             changeColor(hitColor);
         }
@@ -100,6 +104,8 @@ public class HitColorModule extends ModuleBase {
 
     @Override
     public void drawScreen(Screen base, DrawContext context) {
+        super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
+
         var client = MinecraftClient.getInstance();
         client.player.hurtTime = 11;
 
@@ -109,7 +115,7 @@ public class HitColorModule extends ModuleBase {
         float scale = 1.4f;
         int off = 50;
 
-        InventoryScreen.drawEntity(context, (int)((i+26-off)*2), (int)((j-8-off)*2), (int)((i+75-off)*2), (int)((j+78-off)*2), (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
+        InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
     }
 
     public void changeColor(String color) {

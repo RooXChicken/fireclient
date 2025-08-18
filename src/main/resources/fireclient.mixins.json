@@ -16,6 +16,7 @@
     "indicators.HidePortalOverlayMixin",
     "modules.BigItemMixin",
     "modules.BoundKeyAccessor",
+    "modules.ChangeBlockOutlineMixin",
     "modules.DarkerNametagMixin",
     "modules.DeathInfoMixin",
     "modules.FullbrightShadowsMixin",
@@ -33,8 +34,10 @@
     "settings.ForceCursorCenterMixin",
     "settings.HazeliModeMixin",
     "settings.HazeliPlayerModelMixin",
+    "settings.PreventUnlistingMixin",
     "settings.PreventUntoggleKeysMixin",
-    "settings.RenderBrandingMixin"
+    "settings.RenderBrandingMixin",
+    "settings.ShowLatencyMixin"
   ],
   "injectors": {
     "defaultRequire": 1
