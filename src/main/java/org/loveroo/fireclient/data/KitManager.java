@@ -191,15 +191,6 @@ public class KitManager {
         try {
             var loadedInv = getInventoryFromKit(kit);
             client.send(() -> client.setScreen(new KitPreviewScreen(client.player, loadedInv, kitName, fromCommand)));
-
-//            var inv = new SimpleInventory(45);
-//
-//            for(int i = 0; i < loadedInv.size(); i++) {
-//                inv.setStack(i, loadedInv.getStack(i));
-//            }
-//
-//            var handler = new GenericContainerScreenHandler(ScreenHandlerType.GENERIC_9X5, client.player.playerScreenHandler.syncId, client.player.getInventory(), inv, 5);
-//            client.setScreen(new GenericContainerScreen(handler, client.player.getInventory(), Text.of("Preview \"" + kitName + "\"")));
         }
         catch(Exception e) {
             FireClient.LOGGER.info("Failed to preview kit!", e);

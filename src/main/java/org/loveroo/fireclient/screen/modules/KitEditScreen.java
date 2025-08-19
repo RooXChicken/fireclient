@@ -96,6 +96,20 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
+    protected void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType) {
+        if(actionType == SlotActionType.THROW) {
+            return;
+        }
+
+        super.onMouseClick(slot, slotId, button, actionType);
+    }
+
+    @Override
+    protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
+        return false;
+    }
+
+    @Override
     protected boolean handleHotbarKeyPressed(int keyCode, int scanCode) {
         if(!handler.getCursorStack().isEmpty() || focusedSlot == null) {
             return false;
