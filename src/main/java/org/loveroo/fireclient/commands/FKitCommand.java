@@ -37,7 +37,13 @@ public class FKitCommand {
                 .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
                         .suggests(kitSuggestion)
                         .executes(this::previewKitCommand)
-                );
+        );
+
+        var editSub = ClientCommandManager.literal("edit")
+                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                        .suggests(kitSuggestion)
+                        .executes(this::editKitCommand)
+        );
 
         var createSub = ClientCommandManager.literal("create")
                 .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
@@ -60,6 +66,7 @@ public class FKitCommand {
                 .then(deleteSub)
                 .then(undoSub)
                 .then(previewSub)
+                .then(editSub)
         );
     }
 
@@ -158,12 +165,20 @@ public class FKitCommand {
     private int previewKitCommand(CommandContext<FabricClientCommandSource> context) {
         var kitName = StringArgumentType.getString(context, "kit_name");
 
+        return openKitScreen(context, KitManager.previewKit(kitName, true));
+    }
+
+    private int editKitCommand(CommandContext<FabricClientCommandSource> context) {
+        var kitName = StringArgumentType.getString(context, "kit_name");
+
+        return openKitScreen(context, KitManager.editKit(kitName, true));
+    }
+
+    private int openKitScreen(CommandContext<FabricClientCommandSource> context, KitManager.KitViewStatus viewStatus) {
         var message = "";
         var status = 1;
 
-        var loadStatus = KitManager.previewKit(kitName, true);
-
-        switch(loadStatus) {
+        switch(viewStatus) {
             case SUCCESS -> { return 1; }
 
             case INVALID_KIT -> {
@@ -187,7 +202,7 @@ public class FKitCommand {
         var message = "";
         var status = 1;
 
-        var createStatus = KitManager.createKit(kitName, KitManager.getKitString());
+        var createStatus = KitManager.createKit(kitName, KitManager.getPlayerInventoryString());
         switch(createStatus) {
             case SUCCESS -> message = "Successfully created \"" + kitName + "\"!";
 

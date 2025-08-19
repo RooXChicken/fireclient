@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientWorld.class)
-public class DisableExtinguishSpamMixin {
+public abstract class DisableExtinguishSpamMixin {
 
     @Unique
     private long lastExtinguish = 0;

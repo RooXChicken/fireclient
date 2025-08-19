@@ -4,7 +4,9 @@
   "package": "org.loveroo.fireclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "modules.ModifyFlightMoveSpeedMixin"
+    "modules.FixKitHotbarKeys",
+    "modules.ModifyFlightMoveSpeedMixin",
+    "settings.BrewingStandFuelMixin"
   ],
   "client": [
     "KeyboardMixin",
@@ -19,7 +21,9 @@
     "modules.ChangeBlockOutlineMixin",
     "modules.DarkerNametagMixin",
     "modules.DeathInfoMixin",
+    "modules.FixKitClicks",
     "modules.FullbrightShadowsMixin",
+    "modules.GetSlotAccessor",
     "modules.ModifyFlightVerticalSpeedMixin",
     "modules.RegisterBigItemsMixin",
     "modules.RenderShadowMixin",

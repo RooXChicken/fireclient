@@ -29,6 +29,7 @@ import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.commands.FTextCommand;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
+import org.loveroo.fireclient.data.RecipeManager;
 import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
@@ -73,6 +74,7 @@ public class FireClientside implements ClientModInitializer {
         }
 
         registerCommands();
+//        new RecipeManager();
     }
 
     private void initModules() {

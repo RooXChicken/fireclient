@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.modules;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -17,18 +18,16 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.*;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class KitModule extends ModuleBase {
 
-    private GameMode previousGameMoode = GameMode.SURVIVAL;
+    private GameMode previousGameMode = GameMode.SURVIVAL;
     private String kitToLoadName = "";
     private String kitToLoad = "";
 
@@ -42,7 +41,7 @@ public class KitModule extends ModuleBase {
     private TextFieldWidget kitNameField;
 
     private final int kitWidgetWidth = 330;
-    private final int kitWidgetHeight = 120;
+    private final int kitWidgetHeight = 140;
 
     public KitModule() {
         super(new ModuleData("kit", "\uD83E\uDDF0 Kit", "Allows you to save and load kits"));
@@ -67,7 +66,7 @@ public class KitModule extends ModuleBase {
             if(client.player != null && client.player.isInCreativeMode()) {
                 loadKitString(kitToLoadName, kitToLoad, true);
 
-                RooHelper.sendChatCommand("gamemode " + previousGameMoode.getName());
+                RooHelper.sendChatCommand("gamemode " + previousGameMode.getName());
             }
         }
     }
@@ -77,28 +76,28 @@ public class KitModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(ButtonWidget.builder(Text.of("+"), this::addKitButtonPressed)
-                .dimensions(base.width/2 + 80, base.height/2 - 20, 20, 15)
+                .dimensions(base.width/2 + 80, base.height/2 - 80, 20, 15)
                 .tooltip(Tooltip.of(Text.of("Create kit")))
                 .build());
 
         widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), this::createFromClipboard)
                 .tooltip(Tooltip.of(Text.of("Create kit from clipboard")))
-                .dimensions(base.width/2 + 105, base.height/2 - 20, 20, 15)
+                .dimensions(base.width/2 + 105, base.height/2 - 80, 20, 15)
                 .build());
 
         widgets.add(ButtonWidget.builder(Text.of("↶"), this::undoButtonPressed)
                 .tooltip(Tooltip.of(Text.of("Undo")))
-                .dimensions(base.width/2 - 100, base.height/2 - 20, 20, 15)
+                .dimensions(base.width/2 - 100, base.height/2 - 80, 20, 15)
                 .build());
 
         widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCC2"), this::folderButtonPressed)
                 .tooltip(Tooltip.of(Text.of("Open kits folder (any kit can be shared and loaded with valid .json files)")))
-                .dimensions(base.width/2 - 125, base.height/2 - 20, 20, 15)
+                .dimensions(base.width/2 - 125, base.height/2 - 80, 20, 15)
                 .build());
 
         var client = MinecraftClient.getInstance();
 
-        kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 20, 140, 15, Text.of(""));
+        kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 80, 140, 15, Text.of(""));
         kitNameField.setSuggestion("Kit name");
         kitNameField.setMaxLength(32);
         kitNameField.setChangedListener(this::kitNameFieldChanged);
@@ -122,7 +121,7 @@ public class KitModule extends ModuleBase {
                     .dimensions(base.width/2 - 70, 0, 140, 20)
                     .build());
 
-            elementWidgets.add(ButtonWidget.builder(Text.of("-"), this::deleteButtonPressed)
+            elementWidgets.add(ButtonWidget.builder(Text.of("-"), (button) -> deleteButtonPressed(button, kit))
                     .tooltip(Tooltip.of(Text.of("Delete \"" + kit + "\"")))
                     .dimensions(base.width/2 + 80, 0, 20, 20)
                     .build());
@@ -134,8 +133,8 @@ public class KitModule extends ModuleBase {
                     .dimensions(base.width/2 + 105, 0, 20, 20)
                     .build());
 
-            elementWidgets.add(ButtonWidget.builder(Text.of("\uD83D\uDC41"), (button) -> KitManager.previewKit(kit, false))
-                    .tooltip(Tooltip.of(Text.of("Preview \"" + kit + "\"")))
+            elementWidgets.add(ButtonWidget.builder(Text.of("✎"), (button -> editButtonPressed(button, kit)))
+                    .tooltip(Tooltip.of(Text.of("Edit \"" + kit + "\"")))
                     .dimensions(base.width/2 + 130, 0, 20, 20)
                     .build());
 
@@ -143,14 +142,19 @@ public class KitModule extends ModuleBase {
         }
 
         var scrollable = new ScrollableWidget(base, kitWidgetWidth, kitWidgetHeight, 0, 25, elements);
-        scrollable.setPosition(base.width/2 - (kitWidgetWidth/2), base.height/2 + 10);
+        scrollable.setPosition(base.width/2 - (kitWidgetWidth/2), base.height/2 - 50);
 
         widgets.add(scrollable);
         return widgets;
     }
 
+    @Override
+    public void drawScreen(Screen base, DrawContext context) {
+        drawScreenHeader(context, base.width/2, base.height/2 - 95);
+    }
+
     public KitManager.KitLoadStatus loadKit(String kitName, boolean notify) {
-        previousInventory = KitManager.getKitString();
+        previousInventory = KitManager.getPlayerInventoryString();
         return loadKitString(kitName, KitManager.getKitFromName(kitName), notify);
     }
 
@@ -174,7 +178,7 @@ public class KitModule extends ModuleBase {
             }
 
             case NEEDS_GMC -> {
-                previousGameMoode = MinecraftClient.getInstance().interactionManager.getCurrentGameMode();
+                previousGameMode = MinecraftClient.getInstance().interactionManager.getCurrentGameMode();
 
                 kitToLoadName = kitName;
                 kitToLoad = kitContents;
@@ -215,7 +219,7 @@ public class KitModule extends ModuleBase {
         }
 
         var kitName = kitNameField.getText();
-        var createStatus = KitManager.createKit(kitName, KitManager.getKitString());
+        var createStatus = KitManager.createKit(kitName, KitManager.getPlayerInventoryString());
 
         switch(createStatus) {
             case SUCCESS -> { }
@@ -227,6 +231,16 @@ public class KitModule extends ModuleBase {
         reloadScreen();
     }
 
+    private void editButtonPressed(ButtonWidget button, String kitName) {
+        var status = KitManager.editKit(kitName, false);
+
+        switch(status) {
+            case SUCCESS -> {}
+            case INVALID_KIT -> { RooHelper.sendNotification("Failed to preview \"" + kitName + "\"", "Invalid kit"); }
+            case INVALID_PLAYER -> { RooHelper.sendNotification("Failed to preview \"" + kitName + "\"", "Invalid player"); }
+        }
+    }
+
     private void folderButtonPressed(ButtonWidget button) {
         Util.getOperatingSystem().open(new File(KitManager.KIT_BASE_PATH));
     }
@@ -236,7 +250,7 @@ public class KitModule extends ModuleBase {
     }
 
     public KitManager.KitLoadStatus undo(boolean notify) {
-        var previousContents = KitManager.getKitString();
+        var previousContents = KitManager.getPlayerInventoryString();
 
         var status = loadKitString("__previous", previousInventory, notify);
         previousInventory = previousContents;
@@ -279,32 +293,30 @@ public class KitModule extends ModuleBase {
         return true;
     }
 
-    private void deleteButtonPressed(ButtonWidget button) {
-        var kit = button.getMessage().getLiteralString();
-
-        if(!aboutToDelete.equals(kit)) {
+    private void deleteButtonPressed(ButtonWidget button, String kitName) {
+        if(!aboutToDelete.equals(kitName)) {
             if(lastPressed != null) {
                 lastPressed.setMessage(Text.of("-"));
                 lastPressed.setTooltip(Tooltip.of(Text.of("Delete \"" + aboutToDelete + "\"")));
             }
 
-            aboutToDelete = kit;
+            aboutToDelete = kitName;
             lastPressed = button;
 
             button.setMessage(MutableText.of(new PlainTextContent.Literal("-")).withColor(0xD63C3C));
-            button.setTooltip(Tooltip.of(MutableText.of(new PlainTextContent.Literal("Confirm delete \"" + kit + "\"!")).withColor(0xD63C3C)));
+            button.setTooltip(Tooltip.of(MutableText.of(new PlainTextContent.Literal("Confirm delete \"" + kitName + "\"!")).withColor(0xD63C3C)));
 
             return;
         }
 
-        var deleteStatus = KitManager.deleteKit(kit);
+        var deleteStatus = KitManager.deleteKit(kitName);
 
         switch(deleteStatus) {
-            case SUCCESS -> { RooHelper.sendNotification("Recycled \"" + kit + "\"!", "It will be deleted next startup!"); }
-            case FAILURE -> { RooHelper.sendNotification("Failed to delete \"" + kit + "\"!", "The kit won't be deleted"); }
+            case SUCCESS -> { RooHelper.sendNotification("Recycled \"" + kitName + "\"!", "It will be deleted next startup!"); }
+            case FAILURE -> { RooHelper.sendNotification("Failed to delete \"" + kitName + "\"!", "The kit won't be deleted"); }
         }
 
-        FireClientside.getKeybindManager().unregisterKeybind(getKitKeyName(kit));
+        FireClientside.getKeybindManager().unregisterKeybind(getKitKeyName(kitName));
         FireClientside.saveConfig();
 
         reloadScreen();

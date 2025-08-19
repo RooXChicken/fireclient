@@ -2,17 +2,12 @@ package org.loveroo.fireclient.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.text.Text;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.screen.modules.KitEditScreen;
 import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
 
 import java.io.File;
@@ -101,13 +96,17 @@ public class KitManager {
 
     // saving and loading
 
-    public static String getKitString() {
+    public static String getPlayerInventoryString() {
         var client = MinecraftClient.getInstance();
         if(client.player == null) {
             return DEFAULT_KIT;
         }
 
-        var invNbt = client.player.getInventory().writeNbt(new NbtList());
+        return getInventoryAsString(client.player.getInventory());
+    }
+
+    public static String getInventoryAsString(PlayerInventory inv) {
+        var invNbt = inv.writeNbt(new NbtList());
         return "{\"inv\":" + invNbt.asString() + "}";
     }
 
@@ -174,19 +173,19 @@ public class KitManager {
         return loadedInv;
     }
 
-    public static KitPreviewStatus previewKit(String kitName, boolean fromCommand) {
+    public static KitViewStatus previewKit(String kitName, boolean fromCommand) {
         var kit = getKitFromFile(new File(getKitPath(kitName)));
         return previewKitFromString(kitName, kit, fromCommand);
     }
 
-    public static KitPreviewStatus previewKitFromString(String kitName, String kit, boolean fromCommand) {
+    public static KitViewStatus previewKitFromString(String kitName, String kit, boolean fromCommand) {
         if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
-            return KitPreviewStatus.INVALID_KIT;
+            return KitViewStatus.INVALID_KIT;
         }
 
         var client = MinecraftClient.getInstance();
         if(client.player == null) {
-            return KitPreviewStatus.INVALID_PLAYER;
+            return KitViewStatus.INVALID_PLAYER;
         }
 
         try {
@@ -204,10 +203,37 @@ public class KitManager {
         }
         catch(Exception e) {
             FireClient.LOGGER.info("Failed to preview kit!", e);
-            return KitPreviewStatus.INVALID_KIT;
+            return KitViewStatus.INVALID_KIT;
         }
 
-        return KitPreviewStatus.SUCCESS;
+        return KitViewStatus.SUCCESS;
+    }
+
+    public static KitViewStatus editKit(String kitName, boolean fromCommand) {
+        var kit = getKitFromFile(new File(getKitPath(kitName)));
+        return editKitFromString(kitName, kit, fromCommand);
+    }
+
+    public static KitViewStatus editKitFromString(String kitName, String kit, boolean fromCommand) {
+        if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
+            return KitViewStatus.INVALID_KIT;
+        }
+
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return KitViewStatus.INVALID_PLAYER;
+        }
+
+        try {
+            var loadedInv = getInventoryFromKit(kit);
+            client.send(() -> client.setScreen(new KitEditScreen(client.player, loadedInv, kitName, fromCommand)));
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.info("Failed to edit kit!", e);
+            return KitViewStatus.INVALID_KIT;
+        }
+
+        return KitViewStatus.SUCCESS;
     }
 
     // file manager
@@ -280,6 +306,7 @@ public class KitManager {
             FireClient.LOGGER.error("Failed to get kits!", e);
         }
 
+        kits.sort(String::compareTo);
         return kits;
     }
 
@@ -323,7 +350,7 @@ public class KitManager {
         INVALID_KIT,
     }
 
-    public enum KitPreviewStatus {
+    public enum KitViewStatus {
         SUCCESS,
         INVALID_PLAYER,
         INVALID_KIT

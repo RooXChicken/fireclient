@@ -10,7 +10,8 @@ public enum FireClientOption {
     SHOW_HIDDEN_MODULES("Show Hidden Modules", "Shows module outlines when they are hidden", 1, FireClientOptionType.TOGGLE),
     SHOW_TUTORIAL_TEXT("Show Tutorial Text", "Shows the transform tutorial in the Main Config screen", 1, FireClientOptionType.TOGGLE),
     PREVENT_HIDING_ENTRIES("Prevent Hiding Entries", "Prevents hiding the player list entries in the tab list", 0, FireClientOptionType.TOGGLE),
-    SHOW_PING_NUMBER("Show Ping Number", "Shows a player's latency as a number", 0, FireClientOptionType.TOGGLE);
+    SHOW_PING_NUMBER("Show Ping Number", "Shows a player's latency as a number", 0, FireClientOptionType.TOGGLE),
+    BLAZE_POWDER_FILL("Blaze Powder Fill", "Prevents blaze powder from being autofilled into the fuel slot (makes it an ingredient instead)", 0, FireClientOptionType.TOGGLE);
 //    FORCE_CENTER_CURSOR("Force Cursor Centering", 0, FireClientOptionType.TOGGLE);
 
     private final String name;

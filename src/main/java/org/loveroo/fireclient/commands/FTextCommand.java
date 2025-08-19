@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.text.*;
 import org.loveroo.fireclient.RooHelper;
@@ -18,7 +17,7 @@ public class FTextCommand {
     public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         var smallTextSub = ClientCommandManager.literal("to_small")
                 .then(ClientCommandManager.argument("text", StringArgumentType.greedyString())
-                        .executes(context -> smallTextSub(context))
+                        .executes(context -> smallTextCommand(context))
         );
 
         dispatcher.register(ClientCommandManager.literal("ftext")
@@ -31,7 +30,7 @@ public class FTextCommand {
         return fTextHeader.copy().append(messageText);
     }
 
-    private int smallTextSub(CommandContext<FabricClientCommandSource> context) {
+    private int smallTextCommand(CommandContext<FabricClientCommandSource> context) {
         var text = StringArgumentType.getString(context, "text").toLowerCase();
         var small = RooHelper.toSmallText(text);
 
