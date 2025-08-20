@@ -20,6 +20,7 @@ import org.loveroo.fireclient.data.KitManager;
 import org.loveroo.fireclient.mixin.modules.AddSlotAccessor;
 import org.loveroo.fireclient.mixin.modules.GetSlotAccessor;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.lwjgl.glfw.GLFW;
 
 public class KitEditScreen extends KitViewScreen {
 
@@ -138,20 +139,14 @@ public class KitEditScreen extends KitViewScreen {
         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
     }
 
-//    @Override
-//    protected void onMouseClick(Slot slot, int slotId, int button, SlotActionType actionType) {
-//        if(actionType == SlotActionType.THROW && slot != null && slot.hasStack()) {
-//            client.getNetworkHandler().sendPacket(new CreativeInventoryActionC2SPacket(-1, slot.getStack()));
-//        }
-//
-//        super.onMouseClick(slot, slotId, button, actionType);
-//    }
-//
-//    @Override
-//    protected boolean isClickOutsideBounds(double mouseX, double mouseY, int left, int top, int button) {
-//        return super.isClickOutsideBounds();
-//    }
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(!edited && (keyCode != GLFW.GLFW_KEY_ESCAPE && !client.options.inventoryKey.matchesKey(keyCode, scanCode))) {
+            edited = true;
+        }
 
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
