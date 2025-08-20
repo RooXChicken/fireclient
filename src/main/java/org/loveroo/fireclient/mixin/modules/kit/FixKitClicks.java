@@ -1,6 +1,5 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.kit;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -11,10 +10,7 @@ import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.GameMode;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.screen.modules.KitViewScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -56,8 +52,6 @@ abstract class FixKitHotbarKeys {
 
     @Shadow
     public abstract void setCursorStack(ItemStack stack);
-
-    @Shadow @Final public int syncId;
 
     @Redirect(method = "internalOnSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInCreativeMode()Z"))
     private boolean allowCloning(PlayerEntity player) {

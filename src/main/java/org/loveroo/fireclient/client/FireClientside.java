@@ -102,6 +102,8 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new EntityCountModule());
         registerModule(new HighestBlockModule());
         registerModule(new SubtitlesModule());
+        registerModule(new FullbrightModule());
+        registerModule(new PerspectiveModule());
     }
 
     public static void registerModule(ModuleBase module) {

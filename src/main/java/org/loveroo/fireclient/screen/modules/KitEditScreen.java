@@ -17,8 +17,8 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.KitManager;
-import org.loveroo.fireclient.mixin.modules.AddSlotAccessor;
-import org.loveroo.fireclient.mixin.modules.GetSlotAccessor;
+import org.loveroo.fireclient.mixin.modules.kit.AddSlotAccessor;
+import org.loveroo.fireclient.mixin.modules.kit.GetSlotAccessor;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 

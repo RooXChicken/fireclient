@@ -1,8 +1,7 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.renderworld;
 
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 

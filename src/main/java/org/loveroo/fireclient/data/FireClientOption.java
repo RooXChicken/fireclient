@@ -12,7 +12,6 @@ public enum FireClientOption {
     PREVENT_HIDING_ENTRIES("Prevent Hiding Entries", "Prevents hiding the player list entries in the tab list", 0, FireClientOptionType.TOGGLE),
     SHOW_PING_NUMBER("Show Ping Number", "Shows a player's latency as a number", 0, FireClientOptionType.TOGGLE),
     BLAZE_POWDER_FILL("Blaze Powder Fill", "Prevents blaze powder from being autofilled into the fuel slot (makes it an ingredient instead)", 0, FireClientOptionType.TOGGLE);
-//    FORCE_CENTER_CURSOR("Force Cursor Centering", 0, FireClientOptionType.TOGGLE);
 
     private final String name;
     private final String description;

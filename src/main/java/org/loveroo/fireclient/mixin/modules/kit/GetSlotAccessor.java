@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.kit;
 
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.screen.slot.Slot;

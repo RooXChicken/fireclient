@@ -8,6 +8,7 @@ import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
@@ -40,7 +42,8 @@ abstract class HazeliModeMixin {
 @Mixin(EntityRenderDispatcher.class)
 abstract class HazeliPlayerModelMixin {
 
-    @Shadow private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
+    @Shadow
+    private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
 
     @Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
     public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
@@ -49,5 +52,21 @@ abstract class HazeliPlayerModelMixin {
         }
 
         info.setReturnValue((EntityRenderer)modelRenderers.get(SkinTextures.Model.SLIM));
+    }
+}
+
+@Mixin(EntityRenderer.class)
+abstract class HazeliNametagMixin {
+
+    @Unique
+    private final Text hazeliNametag = Text.of("Hazeli");
+
+    @ModifyVariable(method = "renderLabelIfPresent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private Text changeText(Text original) {
+        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
+            return original;
+        }
+
+        return hazeliNametag;
     }
 }

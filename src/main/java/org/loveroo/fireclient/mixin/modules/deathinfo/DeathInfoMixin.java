@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.deathinfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;

@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.bigitems;
 
 import net.minecraft.client.item.ItemModelManager;
 import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;

@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.nametag;
 
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.text.Text;
@@ -10,10 +10,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 
 @Mixin(EntityRenderer.class)
-public abstract class DarkerNametagMixin {
-
-    @Unique
-    private Text hazeliNametag = Text.of("Hazeli");
+public abstract class ModifyNametagMixin {
 
     @ModifyConstant(method = "renderLabelIfPresent", constant = @Constant(intValue = -2130706433))
     private int changeColor(int original) {
@@ -33,14 +30,5 @@ public abstract class DarkerNametagMixin {
         }
 
         return (128 << 24);
-    }
-
-    @ModifyVariable(method = "renderLabelIfPresent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private Text changeText(Text original) {
-        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
-            return original;
-        }
-
-        return hazeliNametag;
     }
 }

@@ -1,8 +1,6 @@
-package org.loveroo.fireclient.mixin.modules;
+package org.loveroo.fireclient.mixin.modules.blockoutline;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
-import net.minecraft.client.util.BufferAllocator;
 import net.minecraft.client.util.math.MatrixStack;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.BlockOutlineModule;
