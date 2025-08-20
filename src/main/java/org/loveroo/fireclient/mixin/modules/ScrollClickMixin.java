@@ -24,7 +24,7 @@ public abstract class ScrollClickMixin {
         }
 
         var scrollClick = (ScrollClickModule)FireClientside.getModule("scroll_click");
-        if(scrollClick == null || !scrollClick.getData().isEnabled()) {
+        if(scrollClick == null || !scrollClick.getData().isEnabled() || scrollClick.isTempDisabled()) {
             return;
         }
 

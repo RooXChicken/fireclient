@@ -22,6 +22,8 @@ public class ScrollClickModule extends ModuleBase {
     private int leftClicks = 0;
     private int rightClicks = 0;
 
+    private boolean tempDisabled = false;
+
     private ScrollMode mode = ScrollMode.SINGLE;
 
     private SingleClickType singleClickType = SingleClickType.USE;
@@ -37,6 +39,11 @@ public class ScrollClickModule extends ModuleBase {
         FireClientside.getKeybindManager().registerKeybind(
                 new Keybind("toggle_scroll_click", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
                         () -> getData().setEnabled(!getData().isEnabled()), null)
+        );
+
+        FireClientside.getKeybindManager().registerKeybind(
+                new Keybind("disable_scroll_click", Text.of("Disable"), Text.of("Temporarily disables ").copy().append(getData().getShownName()), true, null,
+                        () -> tempDisabled = true, () -> tempDisabled = false)
         );
     }
 
@@ -93,6 +100,8 @@ public class ScrollClickModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_scroll_click").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("disable_scroll_click").getRebindButton(5, base.height - 50, 120,20));
+
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         widgets.add(ButtonWidget.builder(getScrollModeText(), this::scrollModeChanged)
@@ -138,6 +147,10 @@ public class ScrollClickModule extends ModuleBase {
         }
 
         return Text.of("");
+    }
+
+    public boolean isTempDisabled() {
+        return tempDisabled;
     }
 
     public void incrementClicks(double direction) {

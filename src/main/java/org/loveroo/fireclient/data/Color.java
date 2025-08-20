@@ -47,4 +47,35 @@ public record Color(int r, int g, int b, int a) {
     public int toInt() {
         return a << 24 | r << 16 | g << 8 | b;
     }
+
+    public String toARGBHex() {
+        var rText = getColorHexComponent(r);
+        var gText = getColorHexComponent(g);
+        var bText = getColorHexComponent(b);
+        var aText = getColorHexComponent(a);
+
+        return (aText + rText + gText + bText).toUpperCase();
+    }
+
+    public String toRGBAHex() {
+        var rText = getColorHexComponent(r);
+        var gText = getColorHexComponent(g);
+        var bText = getColorHexComponent(b);
+        var aText = getColorHexComponent(a);
+
+        return (rText + gText + bText + aText).toUpperCase();
+    }
+
+    public String toRGBHex() {
+        var rText = getColorHexComponent(r);
+        var gText = getColorHexComponent(g);
+        var bText = getColorHexComponent(b);
+
+        return (rText + gText + bText).toUpperCase();
+    }
+
+    private String getColorHexComponent(int color) {
+        var text = Integer.toHexString(color);
+        return "0".repeat(2 - text.length()) + text;
+    }
 }

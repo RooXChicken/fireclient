@@ -19,6 +19,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class HitColorModule extends ModuleBase {
     private String hitColor = "B2FF0000";
 
     public HitColorModule() {
-        super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color | Format: ARGB HEX"));
+        super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color of entities"));
         getData().setShownName(generateDisplayName(0xFF0000));
 
         getData().setGuiElement(false);
@@ -64,13 +65,10 @@ public class HitColorModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 30));
 
-        var colorField = new TextFieldWidget(client.textRenderer, base.width/2 - 36, base.height/2 + 60, 72, 15, Text.of(""));
-        colorField.setMaxLength(8);
+        var colorPicker = new ColorPickerWidget(base.width/2 - 36, base.height/2 + 60, getHitColor(hitColor), this::hitColorChanged);
+        widgets.add(colorPicker);
 
-        colorField.setText(hitColor);
-        colorField.setChangedListener(this::colorFieldChanged);
-
-        widgets.add(colorField);
+        colorPicker.registerWidgets(base);
         return widgets;
     }
 
@@ -79,19 +77,6 @@ public class HitColorModule extends ModuleBase {
         super.enableButtonPressed(button);
 
         changeColor((getData().isEnabled()) ? hitColor : defaultColor);
-    }
-
-    public void colorFieldChanged(String text) {
-        hitColor = text;
-        hitColor += ("0".repeat(Math.max(0, 8 - text.length())));
-
-        if(!hitColor.matches("[0-9a-fA-F]+")) {
-            hitColor = defaultColor;
-        }
-
-        if(getData().isEnabled()) {
-            changeColor(hitColor);
-        }
     }
 
     @Override
@@ -118,8 +103,20 @@ public class HitColorModule extends ModuleBase {
         InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
     }
 
+    private void hitColorChanged(int color) {
+        hitColor = Integer.toHexString(color).toUpperCase();
+
+        if(getData().isEnabled()) {
+            changeColor(hitColor);
+        }
+    }
+
     public void changeColor(String color) {
-        changeColor((int)Long.parseLong(color.toLowerCase(), 16));
+        changeColor(getHitColor(color));
+    }
+
+    public int getHitColor(String color) {
+        return (int)Long.parseLong(color, 16);
     }
 
     public void changeColor(int color) {

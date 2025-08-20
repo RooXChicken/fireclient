@@ -66,6 +66,12 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
         return true;
     }
 
+    @Override
+    public void close() {
+        onClose();
+        super.close();
+    }
+
     protected void exitToKit() {
         var kit = FireClientside.getModule("kit");
         if(kit == null) {
@@ -73,6 +79,7 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
             return;
         }
 
+        onClose();
         MinecraftClient.getInstance().setScreen(new ModuleConfigScreen(kit));
     }
 
@@ -90,4 +97,6 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
     protected boolean isFromCommand() {
         return fromCommand;
     }
+
+    protected void onClose() { }
 }

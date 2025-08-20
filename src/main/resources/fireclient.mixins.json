@@ -4,11 +4,13 @@
   "package": "org.loveroo.fireclient.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "modules.AddSlotAccessor",
     "modules.FixKitHotbarKeys",
     "modules.ModifyFlightMoveSpeedMixin",
     "settings.BrewingStandFuelMixin"
   ],
   "client": [
+    "AddWidgetAccessor",
     "KeyboardMixin",
     "OverlayTextureAccessor",
     "indicators.HideFireOverlayMixin",
@@ -21,6 +23,7 @@
     "modules.ChangeBlockOutlineMixin",
     "modules.DarkerNametagMixin",
     "modules.DeathInfoMixin",
+    "modules.FixDropItems",
     "modules.FixKitClicks",
     "modules.FullbrightShadowsMixin",
     "modules.GetSlotAccessor",
@@ -32,6 +35,7 @@
     "modules.ShowOwnNametagMixin",
     "modules.SkipWorldRenderingMixin",
     "modules.StoreItemTypeMixin",
+    "modules.SubtitlesMixin",
     "modules.WorldRendererAccessor",
     "settings.DisableExtinguishSpamMixin",
     "settings.DontResetDeathButtonsMixin",

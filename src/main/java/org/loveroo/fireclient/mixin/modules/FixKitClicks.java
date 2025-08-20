@@ -1,14 +1,24 @@
 package org.loveroo.fireclient.mixin.modules;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.world.GameMode;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.screen.modules.KitViewScreen;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -41,15 +51,70 @@ abstract class FixKitClicks {
 @Mixin(ScreenHandler.class)
 abstract class FixKitHotbarKeys {
 
+    @Shadow
+    public abstract ItemStack getCursorStack();
+
+    @Shadow
+    public abstract void setCursorStack(ItemStack stack);
+
+    @Shadow @Final public int syncId;
+
     @Redirect(method = "internalOnSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInCreativeMode()Z"))
     private boolean allowCloning(PlayerEntity player) {
         var client = MinecraftClient.getInstance();
-        return (client.currentScreen instanceof KitViewScreen);
+        if(!(client.currentScreen instanceof KitViewScreen)) {
+            return player.isInCreativeMode();
+        }
+
+        return true;
     }
 
     @Redirect(method = "shouldQuickCraftContinue", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInCreativeMode()Z"))
     private static boolean allowFinishDrag(PlayerEntity player) {
         var client = MinecraftClient.getInstance();
-        return (client.currentScreen instanceof KitViewScreen);
+        if(!(client.currentScreen instanceof KitViewScreen)) {
+            return player.isInCreativeMode();
+        }
+
+        return true;
+    }
+
+    @Inject(method = "internalOnSlotClick", at = @At("HEAD"), cancellable = true)
+    private void dropKitItem(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo info) {
+        var client = MinecraftClient.getInstance();
+
+        if(!(client.currentScreen instanceof KitViewScreen) || slotIndex != -999 || actionType != SlotActionType.PICKUP) {
+            return;
+        }
+
+        client.interactionManager.dropCreativeStack(getCursorStack());
+        setCursorStack(ItemStack.EMPTY);
+
+        info.cancel();
+    }
+}
+
+@Mixin(ClientPlayerInteractionManager.class)
+abstract class FixDropItems {
+
+    @Shadow @Final
+    private MinecraftClient client;
+
+    @Shadow @Final
+    private ClientPlayNetworkHandler networkHandler;
+
+    @Shadow
+    private GameMode gameMode;
+
+    @Inject(method = "dropCreativeStack", at = @At("HEAD"), cancellable = true)
+    private void allowDropInKit(ItemStack stack, CallbackInfo info) {
+        if(!(client.currentScreen instanceof KitViewScreen) || !gameMode.isCreative() || stack.isEmpty()) {
+            return;
+        }
+
+        networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(-1, stack));
+        client.player.getItemDropCooldown().increment();
+
+        info.cancel();
     }
 }

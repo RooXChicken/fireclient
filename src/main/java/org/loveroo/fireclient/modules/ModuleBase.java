@@ -124,11 +124,11 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     protected int[] getPoints() {
-        var x1 = (int)(data.getPosX()) - padding;
-        var x2 = (int)(data.getPosX() + (data.getWidth() * data.getScale())) + padding;
+        var x1 = data.getPosX() - padding;
+        var x2 = (int)Math.round(data.getPosX() + (data.getWidth() * data.getScale())) + padding;
 
-        var y1 = (int)(data.getPosY()) - padding;
-        var y2 = (int)(data.getPosY() + (data.getHeight() * data.getScale())) + padding;
+        var y1 = data.getPosY() - padding;
+        var y2 = (int)Math.round(data.getPosY() + (data.getHeight() * data.getScale())) + padding;
 
         return new int[] { x1, x2, y1, y2 };
     }
@@ -136,8 +136,8 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     protected void transform(MatrixStack matrix) {
         matrix.push();
 
+        matrix.translate(data.getPosX(), data.getPosY(), 0.0f);
         matrix.scale((float)data.getScale(), (float)data.getScale(), 0.0f);
-        matrix.translate(data.getPosX() * 1/data.getScale(), data.getPosY() * 1/data.getScale(), 0.0f);
     }
 
     protected void endTransform(MatrixStack matrix) {
