@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.modules;
 
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
@@ -72,6 +73,7 @@ public class PerspectiveModule extends ModuleBase {
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.of("Zoom In/Out"), zoomEnabled), this::toggleZoomButton)
                 .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.perspective.zoom")))
                 .build());
 
         return widgets;

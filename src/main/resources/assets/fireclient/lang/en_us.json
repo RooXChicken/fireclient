@@ -19,5 +19,6 @@
   "fireclient.module.flight_module.toggle_with_sneak": "Toggle speed with Sneak",
   "fireclient.module.scroll_click.scroll_type": "Controls whether the scroll direction changes what click is registered",
   "fireclient.module.scroll_click.click_type": "Changes what click is registered",
-  "fireclient.module.block_outline.thick_outline": "Makes the block outline thicker"
+  "fireclient.module.block_outline.thick_outline": "Makes the block outline thicker",
+  "fireclient.module.perspective.zoom": "Zooms the Perspective in and out when using the scroll wheel"
 }
