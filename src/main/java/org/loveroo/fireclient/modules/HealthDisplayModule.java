@@ -17,12 +17,11 @@ import java.util.List;
 
 public class HealthDisplayModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xD62D0F);
-    private final Color color2 = Color.fromRGB(0xD13F26);
+    private static final Color color1 = Color.fromRGB(0xD62D0F);
+    private static final Color color2 = Color.fromRGB(0xD13F26);
 
     public HealthDisplayModule() {
-        super(new ModuleData("health_display", "❤ Health Display", "Shows your true health as a decimal"));
-        getData().setShownName(generateDisplayName(color1.toInt()));
+        super(new ModuleData("health_display", "❤", color1));
 
         getData().setHeight(8);
         getData().setWidth(30);
@@ -32,10 +31,13 @@ public class HealthDisplayModule extends ModuleBase {
 
         getData().setVisible(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_health_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_health_display",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override

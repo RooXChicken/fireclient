@@ -2,6 +2,7 @@ package org.loveroo.fireclient.screen.config;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
@@ -23,7 +24,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
     private static double scroll = 0.0;
 
     public ModuleSelectScreen() {
-        super(Text.of("FireClient Module Options"));
+        super(Text.translatable("fireclient.screen.module_select.title"));
     }
 
     @Override
@@ -57,8 +58,9 @@ public class ModuleSelectScreen extends ConfigScreenBase {
                     .build());
         }
 
-        backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
+        backButton = ButtonWidget.builder(Text.translatable("fireclient.screen.settings.back.name"), this::backButtonPressed)
                 .dimensions(width/2 - 40, height/2 + moduleSelectHeight/2 + 20, 80, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.settings.back.tooltip")))
                 .build();
 
         addDrawableChild(backButton);
@@ -107,7 +109,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, "Modules Config", width/2, height/2 - (moduleSelectHeight/2 + 20), 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(text, Text.translatable("fireclient.screen.module_select.header"), width/2, height/2 - (moduleSelectHeight/2 + 20), 0xFFFFFFFF);
     }
 
     public static void resetScroll() {

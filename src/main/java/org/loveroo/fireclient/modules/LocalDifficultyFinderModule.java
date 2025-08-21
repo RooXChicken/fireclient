@@ -19,8 +19,8 @@ import java.util.List;
 
 public class LocalDifficultyFinderModule extends ModuleBase {
 
-    private final Color color1 = new Color(230, 137, 25, 255);
-    private final Color color2 = new Color(240, 204, 79, 255);
+    private static final Color color1 = new Color(230, 137, 25, 255);
+    private static final Color color2 = new Color(240, 204, 79, 255);
 
 //    private float approximation = 0;
     private int fireTicks = 0;
@@ -35,8 +35,7 @@ public class LocalDifficultyFinderModule extends ModuleBase {
 //    private float ldDiff = 0;
 
     public LocalDifficultyFinderModule() {
-        super(new ModuleData("local_difficulty_finder", "\uD83D\uDCA5 Local Difficulty", "A local difficulty calculator based on Zombie Fire Ticks"));
-        getData().setShownName(generateDisplayName(0xFFDEA1));
+        super(new ModuleData("local_difficulty", "\uD83D\uDCA5", color1));
 
         getData().setHeight(16);
         getData().setWidth(60);

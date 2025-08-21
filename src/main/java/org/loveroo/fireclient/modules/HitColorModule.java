@@ -16,6 +16,7 @@ import net.minecraft.util.math.ColorHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
@@ -26,12 +27,13 @@ import java.util.List;
 
 public class HitColorModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xFF3333);
+
     private final String defaultColor = "B2FF0000";
     private String hitColor = "B2FF0000";
 
     public HitColorModule() {
-        super(new ModuleData("hit_color", "✦ Hit Color", "Changes the hit color of entities"));
-        getData().setShownName(generateDisplayName(0xFF0000));
+        super(new ModuleData("hit_color", "✦", color));
 
         getData().setGuiElement(false);
 
@@ -60,7 +62,6 @@ public class HitColorModule extends ModuleBase {
 
     @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
-        var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 30));
@@ -82,7 +83,9 @@ public class HitColorModule extends ModuleBase {
     @Override
     public void closeScreen(Screen screen) {
         var client = MinecraftClient.getInstance();
-        client.player.hurtTime = 0;
+        if(client.player != null) {
+            client.player.hurtTime = 0;
+        }
 
         FireClientside.saveConfig();
     }
@@ -92,7 +95,9 @@ public class HitColorModule extends ModuleBase {
         super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
 
         var client = MinecraftClient.getInstance();
-        client.player.hurtTime = 11;
+        if(client.player != null) {
+            client.player.hurtTime = 11;
+        }
 
         int i = base.width/4;
         int j = base.height/4;

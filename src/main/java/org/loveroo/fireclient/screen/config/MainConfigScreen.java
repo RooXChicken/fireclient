@@ -20,7 +20,7 @@ public class MainConfigScreen extends ConfigScreenBase {
     private ModuleBase.OldTransform oldTransform = null;
 
     public MainConfigScreen() {
-        super(Text.of("FireClient Main Config"));
+        super(Text.translatable("fireclient.screen.main_config.title"));
     }
 
     @Override
@@ -29,14 +29,14 @@ public class MainConfigScreen extends ConfigScreenBase {
             module.setDrawingOverwritten(true);
         }
 
-        modulesButton = ButtonWidget.builder(Text.of("Modules"), this::modulesButtonPressed)
+        modulesButton = ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.modules.name"), this::modulesButtonPressed)
                 .dimensions(width/2 - 50, height/2 - 10, 100, 20)
-                .tooltip(Tooltip.of(Text.of("Configure various modules")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.modules.tooltip")))
                 .build();
 
-        settingsButton = ButtonWidget.builder(Text.of("FireClient Settings"), this::settingsButtonPressed)
+        settingsButton = ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.settings.name"), this::settingsButtonPressed)
                 .dimensions(width/2 - 60, height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.of("Configure FireClient settings")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.settings.tooltip")))
                 .build();
 
         addDrawableChild(modulesButton);

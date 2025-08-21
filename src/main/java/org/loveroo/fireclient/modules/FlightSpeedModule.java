@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -17,20 +18,25 @@ import java.util.List;
 
 public class FlightSpeedModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xFFFFFF);
+
     private float speed = 0.05f;
 
     private int sneakTicks = 0;
     private boolean toggleWithSneak = false;
 
     public FlightSpeedModule() {
-        super(new ModuleData("flight_speed", "☁ Flight Speed", "Allows the control of flight speed"));
+        super(new ModuleData("flight_speed", "☁", color));
 
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_flight_key", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
-                        () -> getData().setEnabled(!getData().isEnabled()), null)
-        );
+        var toggleBind = new Keybind("toggle_flight_speed",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                true, null,
+                () -> getData().setEnabled(!getData().isEnabled()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override
@@ -75,18 +81,18 @@ public class FlightSpeedModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = super.getConfigScreen(base);
 
-        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_key").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_speed").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Toggle with Sneak"), toggleWithSneak), this::sneakButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"), toggleWithSneak), this::sneakButtonPressed)
                 .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.flight_module.toggle_with_sneak")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.tooltip")))
                 .build());
 
-        var slider = new SliderWidget(base.width / 2 - 50, base.height / 2 + 45, 100, 20, Text.of(String.format("Speed: %.2f", speed)), (speed - 0.05f)*5) {
+        var slider = new SliderWidget(base.width / 2 - 50, base.height / 2 + 45, 100, 20, getSpeedText(), (speed - 0.05f)*5) {
 
             @Override
             protected void updateMessage() {
-                setMessage(Text.of(String.format("Speed: %.2f", speed)));
+                setMessage(getSpeedText());
             }
 
             @Override
@@ -101,7 +107,11 @@ public class FlightSpeedModule extends ModuleBase {
 
     private void sneakButtonPressed(ButtonWidget button) {
         toggleWithSneak = !toggleWithSneak;
-        button.setMessage(getToggleText(Text.of("Toggle with Sneak"), toggleWithSneak));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"), toggleWithSneak));
+    }
+
+    private Text getSpeedText() {
+        return Text.translatable("fireclient.module.flight_speed.display", String.format("%.2f", speed));
     }
 
     public float getSpeed() {

@@ -4,12 +4,8 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -21,12 +17,11 @@ import java.util.List;
 
 public class FPSDisplayModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xD3FFBF);
-    private final Color color2 = Color.fromRGB(0xE8EBE6);
+    private static final Color color1 = Color.fromRGB(0xD3FFBF);
+    private static final Color color2 = Color.fromRGB(0xE8EBE6);
 
     public FPSDisplayModule() {
-        super(new ModuleData("fps_display", "\uD83D\uDCCA FPSDisplay", "Shows your framerate"));
-        getData().setShownName(generateDisplayName(0xD3FFBF));
+        super(new ModuleData("fps_display", "\uD83D\uDCCA", color1));
 
         getData().setHeight(8);
         getData().setWidth(40);
@@ -34,10 +29,13 @@ public class FPSDisplayModule extends ModuleBase {
         getData().setDefaultPosX(2, 640);
         getData().setDefaultPosY(2, 360);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_fps_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_fps_display",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override

@@ -10,6 +10,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.scrollclick.BoundKeyAccessor;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ScrollClickModule extends ModuleBase {
+
+    private static final Color color = Color.fromRGB(0xC9B5B5);
 
     private int leftClicks = 0;
     private int rightClicks = 0;
@@ -30,16 +33,18 @@ public class ScrollClickModule extends ModuleBase {
     private SingleClickType dualClickType = SingleClickType.USE;
 
     public ScrollClickModule() {
-        super(new ModuleData("scroll_click", "\uD83D\uDDB1 Scroll Click", "Allows you to simulate a click with every scroll"));
-        getData().setShownName(generateDisplayName(0xC9B5B5));
+        super(new ModuleData("scroll_click", "\uD83D\uDDB1", color));
 
         getData().setGuiElement(false);
         getData().setEnabled(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_scroll_click", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
-                        () -> getData().setEnabled(!getData().isEnabled()), null)
-        );
+        var toggleBind = new Keybind("toggle_scroll_click",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                true, null,
+                () -> getData().setEnabled(!getData().isEnabled()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override
@@ -99,12 +104,12 @@ public class ScrollClickModule extends ModuleBase {
 
         widgets.add(ButtonWidget.builder(getScrollModeText(), this::scrollModeChanged)
                 .dimensions(base.width/2 - 130, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.scroll_type")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.scroll_type.tooltip")))
                 .build());
 
         widgets.add(ButtonWidget.builder(getClickTypeText(), this::clickTypeChanged)
                 .dimensions(base.width/2 + 10, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.click_type")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.click_type.tooltip")))
                 .build());
 
         return widgets;
@@ -116,7 +121,7 @@ public class ScrollClickModule extends ModuleBase {
     }
 
     private Text getScrollModeText() {
-        return Text.of("Click Type: " + mode.getName());
+        return Text.translatable("fireclient.module.scroll_click.click_type.name", mode.getName());
     }
 
     private void clickTypeChanged(ButtonWidget button) {
@@ -135,8 +140,8 @@ public class ScrollClickModule extends ModuleBase {
 
     private Text getClickTypeText() {
         switch(mode) {
-            case SINGLE -> { return Text.of(singleClickType.getName()); }
-            case DUAL -> { return Text.of("Up: " + dualClickType.getName()); }
+            case SINGLE -> { return singleClickType.getName(); }
+            case DUAL -> { return Text.translatable("fireclient.module.scroll_click.dual_click_type.direction", dualClickType.getName()); }
         }
 
         return Text.of("");
@@ -181,8 +186,8 @@ public class ScrollClickModule extends ModuleBase {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
+        public Text getName() {
+            return Text.translatable("fireclient.module.scroll_click.click_type." + name.toLowerCase());
         }
     }
 
@@ -196,8 +201,8 @@ public class ScrollClickModule extends ModuleBase {
             this.name = name;
         }
 
-        public String getName() {
-            return name;
+        public Text getName() {
+            return Text.translatable("fireclient.module.scroll_click.single_click_type." + name.toLowerCase());
         }
     }
 

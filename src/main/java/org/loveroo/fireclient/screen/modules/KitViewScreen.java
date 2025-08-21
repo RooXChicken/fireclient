@@ -7,6 +7,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -24,13 +25,13 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
 
     private boolean fromCommand = false;
 
-    public KitViewScreen(PlayerEntity player, PlayerInventory inventory, String labelText, String kitName, boolean fromCommand) {
-        super(new PlayerScreenHandler(inventory, false, player), inventory, Text.of(labelText + " \"" + kitName + "\""));
+    public KitViewScreen(PlayerEntity player, PlayerInventory inventory, Text labelText, String kitName, boolean fromCommand) {
+        super(new PlayerScreenHandler(inventory, false, player), inventory, labelText);
 
         this.fromCommand = fromCommand;
         this.kitName = kitName;
 
-        label = RooHelper.gradientText(labelText + " \"" + kitName + "\"", color1, color2);
+        label = RooHelper.gradientText(labelText.getString(), color1, color2);
     }
 
     @Override

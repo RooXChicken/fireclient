@@ -13,8 +13,6 @@ import org.lwjgl.glfw.GLFW;
 
 public class ConfigScreenBase extends Screen {
 
-    private final MutableText configText = RooHelper.gradientText("FireClient Config", FireClientside.mainColor1, FireClientside.mainColor2);
-    private final MutableText tutorialText = RooHelper.gradientText("Shift to snap | Ctrl for transform | Right Click to scale", FireClientside.mainColor1, FireClientside.mainColor2);
     protected int mouseState = 0;
 
     protected int mouseX = 0;
@@ -90,6 +88,8 @@ public class ConfigScreenBase extends Screen {
         this.mouseY = mouseY;
 
         var text = MinecraftClient.getInstance().textRenderer;
+
+        var configText = RooHelper.gradientText(Text.translatable("fireclient.screen.generic.header").getString(), FireClientside.mainColor1, FireClientside.mainColor2);
         context.drawCenteredTextWithShadow(text, configText, width/2, 10, 0xFFFFFFFF);
     }
 
@@ -98,6 +98,7 @@ public class ConfigScreenBase extends Screen {
             return;
         }
 
+        var tutorialText = RooHelper.gradientText(Text.translatable("fireclient.screen.main_config.tutorial").getString(), FireClientside.mainColor1, FireClientside.mainColor2);
         context.drawText(textRenderer, tutorialText, 2, height-10, 0xFFFFFFFF, true);
     }
 

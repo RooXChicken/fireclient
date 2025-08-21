@@ -3,13 +3,14 @@ package org.loveroo.fireclient.data;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Text;
 
 public class ModuleData {
     private final String id;
 
-    private final String name;
-    private final String description;
-    private MutableText shownName;
+    private final MutableText emoji;
+    private final MutableText shownName;
+    private final MutableText description;
 
     private double posX = 0;
     private double posY = 0;
@@ -31,16 +32,20 @@ public class ModuleData {
     private boolean enabled = false;
     private boolean guiElement = true;
 
-    public ModuleData(String id, String name, String description) {
+    public ModuleData(String id, String emoji, Color color) {
         this.id = id;
+        this.emoji = Text.literal(emoji + " ").withColor(color.toInt());
 
-        this.name = name;
-        this.description = description;
-        shownName = MutableText.of(new PlainTextContent.Literal(getName()));
+        this.shownName = this.emoji.copy().append(Text.translatable("fireclient.module." + id + ".name").withColor(0xFFFFFFFF));
+        this.description = Text.translatable("fireclient.module." + id + ".description");
     }
 
     public MutableText getShownName() {
         return shownName;
+    }
+
+    public MutableText getEmoji() {
+        return emoji;
     }
 
     public MutableText getTooltip(boolean showTransformation) {
@@ -58,14 +63,6 @@ public class ModuleData {
         }
 
         return shownName.copy().append(transform.toString());
-    }
-
-    public void setShownName(MutableText shownName) {
-        this.shownName = shownName;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getPosX() {
@@ -180,7 +177,7 @@ public class ModuleData {
         this.guiElement = guiElement;
     }
 
-    public String getDescription() {
+    public Text getDescription() {
         return description;
     }
 

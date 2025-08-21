@@ -43,9 +43,9 @@ public class RooHelper {
         handler.sendChatMessage(msg);
     }
 
-    public static void sendNotification(String name, String description) {
-        sendNotification(Text.of(name), Text.of(description));
-    }
+//    public static void sendNotification(String name, String description) {
+//        sendNotification(Text.of(name), Text.of(description));
+//    }
 
     public static void sendNotification(Text name, Text description) {
         var client = MinecraftClient.getInstance();

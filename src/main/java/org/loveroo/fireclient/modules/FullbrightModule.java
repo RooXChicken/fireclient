@@ -1,12 +1,12 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -15,16 +15,20 @@ import java.util.List;
 
 public class FullbrightModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xFFF466);
+
     public FullbrightModule() {
-        super(new ModuleData("fullbright", "\uD83D\uDCA1 Fullbright", "Makes everything fully lit"));
-        getData().setShownName(generateDisplayName(0xFFF466));
+        super(new ModuleData("fullbright", "\uD83D\uDCA1", color));
 
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_fullbright", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
-                        this::useKey, null)
-        );
+        var toggleBind = new Keybind("toggle_fullbright",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                true, null,
+                this::useKey, null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     private void useKey() {

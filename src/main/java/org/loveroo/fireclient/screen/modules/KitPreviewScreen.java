@@ -2,12 +2,13 @@ package org.loveroo.fireclient.screen.modules;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class KitPreviewScreen extends KitViewScreen {
 
     public KitPreviewScreen(PlayerEntity player, PlayerInventory inventory, String kitName, boolean fromCommand) {
-        super(player, inventory, "Preview", kitName, fromCommand);
+        super(player, inventory, Text.translatable("fireclient.screen.preview_kit.title", kitName), kitName, fromCommand);
     }
 
     @Override

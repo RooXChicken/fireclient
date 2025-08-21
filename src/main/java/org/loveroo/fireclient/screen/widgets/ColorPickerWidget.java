@@ -33,7 +33,7 @@ public class ColorPickerWidget extends ClickableWidget {
     private final Consumer<Integer> colorChanged;
 
     public ColorPickerWidget(int x, int y, int color, Consumer<Integer> colorChanged) {
-        super(0, 0, 88, 100, Text.of("Color Picker"));
+        super(0, 0, 88, 100, Text.translatable("fireclient.widget.color_picker.name"));
 
         var client = MinecraftClient.getInstance();
         var inputColor = Color.fromARGB(color);

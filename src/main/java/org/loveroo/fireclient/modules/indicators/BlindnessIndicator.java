@@ -7,11 +7,11 @@ import org.loveroo.fireclient.data.Color;
 public class BlindnessIndicator extends Indicator {
 
     public BlindnessIndicator(int index) {
-        super("indicator_blindess", "\uD83D\uDC41", "Blindness", Color.fromRGB(0x211C21), false, index);
+        super("indicator_blindness", "\uD83D\uDC41", Color.fromRGB(0x211C21), false, index);
     }
 
     @Override
     protected boolean doesDraw(MinecraftClient client) {
-        return (client.player.hasStatusEffect(StatusEffects.BLINDNESS));
+        return (client.player != null && client.player.hasStatusEffect(StatusEffects.BLINDNESS));
     }
 }

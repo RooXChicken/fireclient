@@ -7,7 +7,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.loot.function.SetFireworksLootFunction;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +19,6 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +26,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class CoordinatesModule extends ModuleBase {
+
+    private static final Color color = Color.fromRGB(0x59D93F);
 
     public static final Color xColor1 = new Color(247, 33, 33, 255);
     public static final Color xColor2 = new Color(176, 18, 18, 255);
@@ -60,8 +60,7 @@ public class CoordinatesModule extends ModuleBase {
     private ButtonWidget windowModeButton;
 
     public CoordinatesModule() {
-        super(new ModuleData("coordinates", "\uD83E\uDDED Coordinates", "Shows your in game coordinates, coordinates for the other dimension, and supports a separate window"));
-        getData().setShownName(generateDisplayName(0x59D93F));
+        super(new ModuleData("coordinates", "\uD83E\uDDED", color));
 
         getData().setHeight(8);
         getData().setWidth(110);
@@ -86,10 +85,13 @@ public class CoordinatesModule extends ModuleBase {
             FireClient.LOGGER.info("Failed to load Coordinates Module's font!", e);
         }
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_coordinates", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_coordinates",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override
@@ -106,7 +108,7 @@ public class CoordinatesModule extends ModuleBase {
             closeCoordsWindow();
 
             if(windowModeButton != null) {
-                windowModeButton.setMessage(getToggleText(Text.of("Windowed Mode"), windowMode));
+                windowModeButton.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode));
             }
         }
     }
@@ -242,14 +244,14 @@ public class CoordinatesModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
 
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
-        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Other Dimension"), showOther), this::showOtherButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.coordinates.other_dimension.name"), showOther), this::showOtherButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
                 .build());
 
-        windowModeButton = ButtonWidget.builder(getToggleText(Text.of("Windowed Mode"), windowMode), this::windowModeButtonPressed)
+        windowModeButton = ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode), this::windowModeButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 40, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.window_mode")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
                 .build();
 
         widgets.add(windowModeButton);
@@ -263,12 +265,12 @@ public class CoordinatesModule extends ModuleBase {
 
     public void showOtherButtonPressed(ButtonWidget button) {
         showOther = !showOther;
-        button.setMessage(getToggleText(Text.of("Other Dimension"), showOther));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.other_dimension.name"), showOther));
     }
 
     public void windowModeButtonPressed(ButtonWidget button) {
         windowMode = !windowMode;
-        button.setMessage(getToggleText(Text.of("Windowed Mode"), windowMode));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode));
 
         if(windowMode) {
             openCoordsWindow();
@@ -290,7 +292,10 @@ public class CoordinatesModule extends ModuleBase {
         }
         catch(Exception e) {
             FireClient.LOGGER.error("Failed to apply headless workaround! Coordinates window will not work!", e);
-            RooHelper.sendNotification("Failed to open window!", "Please use a different JRE!");
+
+            RooHelper.sendNotification(
+                    Text.translatable("fireclient.module.coordinates.window_fail.name"),
+                    Text.translatable("fireclient.module.coordinates.window_fail.contents"));
         }
     }
 

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.indicators.*;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
@@ -18,14 +19,15 @@ import java.util.List;
 
 public class IndicatorsModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xD7D9B2);
+
     private final ArrayList<Indicator> indicators = new ArrayList<>();
 
     private final int indicatorWidgetWidth = 300;
     private final int indicatorWidgetHeight = 100;
 
     public IndicatorsModule() {
-        super(new ModuleData("indicators", "★ Indicators", "Shows various effect indicators"));
-        getData().setShownName(generateDisplayName(0xD7D9B2));
+        super(new ModuleData("indicators", "★", color));
 
         getData().setGuiElement(false);
 
@@ -44,7 +46,7 @@ public class IndicatorsModule extends ModuleBase {
         var indicatorModules = new ArrayList<ModuleBase>(indicators);
         indicatorModules.add(this);
 
-        client.setScreen(new ModuleConfigScreen("Indicators", "Configure various on screen indicators", indicatorModules));
+        client.setScreen(new ModuleConfigScreen(Text.translatable("fireclient.module.indicators.name"), Text.translatable("fireclient.module.indicators.description"), indicatorModules));
     }
 
     @Override
@@ -60,9 +62,9 @@ public class IndicatorsModule extends ModuleBase {
             var x = base.width/2 - 60;
 
             if(indicator.hasOverlay()) {
-                indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.of("Overlay"), indicator.doesShowOverlay()), (button) -> overlayToggled(button, indicator))
+                indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.indicators.overlay.name"), indicator.doesShowOverlay()), (button) -> overlayToggled(button, indicator))
                         .dimensions(x + 100, 0, 80, 20)
-                        .tooltip(Tooltip.of(Text.of("Shows the on screen overlay for ").copy().append(indicator.getData().getShownName())))
+                        .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.overlay.tooltip", indicator.getData().getShownName())))
                         .build()
                 );
             }
@@ -73,9 +75,9 @@ public class IndicatorsModule extends ModuleBase {
 
             indicatorWidgets.add(text);
 
-            indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.of("Indicator"), indicator.getData().isVisible()), (button) -> indicatorToggled(button, indicator))
+            indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.indicators.indicator.name"), indicator.getData().isVisible()), (button) -> indicatorToggled(button, indicator))
                     .dimensions(x, 0, 80, 20)
-                    .tooltip(Tooltip.of(Text.of("Shows the indicator for ").copy().append(indicator.getData().getShownName())))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.indicator.tooltip", indicator.getData().getShownName())))
                     .build()
             );
 
@@ -92,11 +94,11 @@ public class IndicatorsModule extends ModuleBase {
 
     private void indicatorToggled(ButtonWidget button, Indicator indicator) {
         indicator.getData().setVisible(!indicator.getData().isVisible());
-        button.setMessage(getToggleText(Text.of("Indicator"), indicator.getData().isVisible()));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.indicators.indicator.name"), indicator.getData().isVisible()));
     }
 
     private void overlayToggled(ButtonWidget button, Indicator indicator) {
         indicator.setShowOverlay(!indicator.doesShowOverlay());
-        button.setMessage(getToggleText(Text.of("Overlay"), indicator.doesShowOverlay()));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.indicators.overlay.name"), indicator.doesShowOverlay()));
     }
 }

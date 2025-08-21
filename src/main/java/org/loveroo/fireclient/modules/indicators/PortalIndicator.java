@@ -7,12 +7,12 @@ import org.loveroo.fireclient.data.Color;
 public class PortalIndicator extends Indicator {
 
     public PortalIndicator(int index) {
-        super("indicator_portal", "\uD83C\uDF00", "Portal", Color.fromRGB(0x780080), true, index);
+        super("indicator_portal", "\uD83C\uDF00", Color.fromRGB(0x780080), true, index);
     }
 
     @Override
     protected boolean doesDraw(MinecraftClient client) {
-        if(client.player.portalManager == null) {
+        if(client.player == null || client.player.portalManager == null) {
             return false;
         }
 

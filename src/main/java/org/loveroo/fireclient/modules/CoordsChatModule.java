@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
@@ -21,34 +22,32 @@ import java.util.List;
 
 public class CoordsChatModule extends ModuleBase {
 
-    private HashMap<String, String> playerList = new HashMap<>();
+    private static final Color color = Color.fromRGB(0x89ECF0);
+
+    private final HashMap<String, String> playerList = new HashMap<>();
 
     private final String splitRegex = "[ ,|]+";
     private String lastSuggestion = "";
 
-    private boolean keyPressed = false;
-
     @Nullable
     private TextFieldWidget playerField;
 
-//    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
-//            new KeyBinding("key.fireclient.run_coords_chat", GLFW.GLFW_KEY_K, FireClient.KEYBIND_CATEGORY));
-
     public CoordsChatModule() {
-        super(new ModuleData("coords_chat", "\uD83D\uDCE8 Coords Chat", "Sends your coordinates to everybody online (blank) or the selected players when pressing the keybind. (names split by space  , comma , , or pipe | )"));
-        getData().setShownName(generateDisplayName(0x89ECF0));
+        super(new ModuleData("coords_chat", "\uD83D\uDCE8", color));
 
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("use_coords_chat", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_K, Key.KeyType.KEY_CODE)),
-                        this::useKey, null)
-        );
+        var useBind = new Keybind("use_coords_chat",
+                Text.translatable("fireclient.keybind.generic.use.name"),
+                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                true, null,
+                this::useKey, null);
+
+        FireClientside.getKeybindManager().registerKeybind(useBind);
     }
 
     private void useKey() {
         sendMessages();
-        keyPressed = true;
     }
 
     private void sendMessages() {

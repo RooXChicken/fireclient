@@ -7,11 +7,11 @@ import org.loveroo.fireclient.data.ModuleData;
 public class FireIndicator extends Indicator {
 
     public FireIndicator(int index) {
-        super("indicator_fire", "\uD83D\uDD25", "Fire", Color.fromRGB(0xFA7B39), true, index);
+        super("indicator_fire", "\uD83D\uDD25", Color.fromRGB(0xFA7B39), true, index);
     }
 
     @Override
     protected boolean doesDraw(MinecraftClient client) {
-        return (client.player.isOnFire());
+        return (client.player != null && client.player.isOnFire());
     }
 }

@@ -18,12 +18,11 @@ import java.util.List;
 
 public class AngleDisplayModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xDEDEDE);
-    private final Color color2 = Color.fromRGB(0xA5B09E);
+    private static final Color color1 = Color.fromRGB(0xDEDEDE);
+    private static final Color color2 = Color.fromRGB(0xA5B09E);
 
     public AngleDisplayModule() {
-        super(new ModuleData("angle_display", "° Angle Display", "Shows your angle"));
-        getData().setShownName(generateDisplayName(0xDEDEDE));
+        super(new ModuleData("angle_display", "°", color1));
 
         getData().setHeight(8);
         getData().setWidth(30);
@@ -33,10 +32,13 @@ public class AngleDisplayModule extends ModuleBase {
 
         getData().setVisible(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_angle_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_angle_display",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override

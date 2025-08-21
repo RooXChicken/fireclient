@@ -10,9 +10,6 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.json.JSONException;
@@ -21,14 +18,14 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ArmorDisplayModule extends ModuleBase {
+
+    private static final Color color = Color.fromRGB(0xAAF089);
 
     private Identifier cooldownTexture = Identifier.of(FireClient.MOD_ID, "textures/armor_display/cooldown.png");
     private boolean locked = true;
@@ -37,8 +34,7 @@ public class ArmorDisplayModule extends ModuleBase {
     private int flashColor = 0xFFFF5656;
 
     public ArmorDisplayModule() {
-        super(new ModuleData("armor_display", "\uD83D\uDEE1 Armor Display", "Shows your armor durability and cooldown"));
-        getData().setShownName(generateDisplayName(0xAAF089));
+        super(new ModuleData("armor_display", "\uD83D\uDEE1", color));
 
         getData().setWidth(20);
         getData().setHeight(40);
@@ -48,10 +44,13 @@ public class ArmorDisplayModule extends ModuleBase {
 
         getData().setVisible(true);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_armor_display", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_armor_display",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override
@@ -165,9 +164,9 @@ public class ArmorDisplayModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Locked"), locked), this::lockedButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.armor_display.lock_button.name"), locked), this::lockedButtonPressed)
                 .dimensions(base.width/2 - 60, base.height/2 + 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button.tooltip")))
                 .build());
 
         return widgets;
@@ -180,6 +179,6 @@ public class ArmorDisplayModule extends ModuleBase {
             getData().setScale(2.0/3.0);
         }
 
-        button.setMessage(getToggleText(Text.of("Locked"), locked));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.armor_display.lock_button.name"), locked));
     }
 }

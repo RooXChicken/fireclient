@@ -4,6 +4,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ import java.util.List;
 
 public class DeathInfoModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xFFFFFF);
+
     public DeathInfoModule() {
-        super(new ModuleData("death_info", "☠ Death Info", "Shows your death location in the screen and in chat"));
+        super(new ModuleData("death_info", "☠", color));
 
         getData().setGuiElement(false);
         getData().setEnabled(true);

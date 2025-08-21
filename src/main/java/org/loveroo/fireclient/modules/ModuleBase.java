@@ -19,6 +19,8 @@ import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
@@ -51,14 +53,6 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         return data;
     }
 
-    public MutableText generateDisplayName(int emojiColor) {
-        var emoji = getData().getName().substring(0, getData().getName().indexOf(" "));
-        var name = getData().getName().substring(getData().getName().indexOf(" "));
-
-        var nameText = MutableText.of(new PlainTextContent.Literal(name)).setStyle(Style.EMPTY.withColor(0xFFFFFF));
-        return MutableText.of(new PlainTextContent.Literal(emoji)).setStyle(Style.EMPTY.withColor(emojiColor)).append(nameText);
-    }
-
     @Override
     public void register(LayeredDrawerWrapper layeredDrawer) {
         layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
@@ -67,6 +61,12 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     public void update(MinecraftClient client) { }
 
     protected boolean canDraw() {
+        if(FireClientside.getSetting(FireClientOption.SHOW_MODULES_DEBUG) == 0) {
+            if(MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud()) {
+                return false;
+            }
+        }
+
         return !drawingOverwritten && getData().isVisible();
     }
 
@@ -193,14 +193,14 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {
-        return ButtonWidget.builder(getToggleText(Text.of("Visible"), getData().isVisible()), this::visibleButtonPressed)
+        return ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.generic.toggle_visible"), getData().isVisible()), this::visibleButtonPressed)
                 .dimensions(x, y, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.visibility_toggle")))
                 .build();
     }
 
     public ButtonWidget getToggleEnableButton(int x, int y) {
-        return ButtonWidget.builder(getToggleText(Text.of("Enabled"), getData().isEnabled()), this::enableButtonPressed)
+        return ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.generic.toggle_enabled"), getData().isEnabled()), this::enableButtonPressed)
                 .dimensions(x, y, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
                 .build();
@@ -208,12 +208,12 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     public void enableButtonPressed(ButtonWidget button) {
         getData().setEnabled(!getData().isEnabled());
-        button.setMessage(getToggleText(Text.of("Enabled"), getData().isEnabled()));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.generic.toggle_enabled"), getData().isEnabled()));
     }
 
     public void visibleButtonPressed(ButtonWidget button) {
         getData().setVisible(!getData().isVisible());
-        button.setMessage(getToggleText(Text.of("Visible"), getData().isVisible()));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.generic.toggle_visible"), getData().isVisible()));
     }
 
     public MutableText getToggleText(Text message, boolean value) {
@@ -227,7 +227,7 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     protected void drawScreenHeader(DrawContext context, int x, int y) {
         var text = MinecraftClient.getInstance().textRenderer;
 
-        var configText = getData().getShownName().copy().append(MutableText.of(new PlainTextContent.Literal(" Configuration")).setStyle(Style.EMPTY.withColor(0xFFFFFF)));
+        var configText = Text.translatable("fireclient.module.generic.config_text", getData().getShownName());
         context.drawCenteredTextWithShadow(text, configText, x, y, 0xFFFFFFFF);
     }
 

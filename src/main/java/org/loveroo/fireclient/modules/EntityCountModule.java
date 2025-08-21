@@ -18,12 +18,11 @@ import java.util.List;
 
 public class EntityCountModule extends ModuleBase {
 
-    private final Color color1 = Color.fromRGB(0xD4D4D4);
-    private final Color color2 = Color.fromRGB(0xDECEB4);
+    private static final Color color1 = Color.fromRGB(0xD4D4D4);
+    private static final Color color2 = Color.fromRGB(0xDECEB4);
 
     public EntityCountModule() {
-        super(new ModuleData("entity_count", "\uD83D\uDC64 Entity Count", "Shows the world's entity information"));
-        getData().setShownName(generateDisplayName(0xD4D4D4));
+        super(new ModuleData("entity_count", "\uD83D\uDC64", color1));
 
         getData().setHeight(8);
         getData().setWidth(30);
@@ -33,10 +32,13 @@ public class EntityCountModule extends ModuleBase {
 
         getData().setVisible(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_entity_count", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()).append("'s visibility"), true, null,
-                        () -> getData().setVisible(!getData().isVisible()), null)
-        );
+        var toggleBind = new Keybind("toggle_entity_count",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                true, null,
+                () -> getData().setVisible(!getData().isVisible()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.loveroo.fireclient.screen.modules;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
@@ -34,7 +35,7 @@ public class KitEditScreen extends KitViewScreen {
     private final int trashSlotY = 62;
 
     public KitEditScreen(PlayerEntity player, PlayerInventory inventory, String kitName, boolean fromCommand) {
-        super(player, inventory, "Edit", kitName, fromCommand);
+        super(player, inventory, Text.translatable("fireclient.screen.edit_kit.title", kitName), kitName, fromCommand);
 
         trashSlot = new Slot(inventory, 255, trashSlotX, trashSlotY);
 
@@ -46,13 +47,15 @@ public class KitEditScreen extends KitViewScreen {
     protected void init() {
         super.init();
 
-        var saveButton = ButtonWidget.builder(Text.of("\uD83D\uDCBE Save"), this::saveButtonPressed)
+        var saveButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.save.name"), this::saveButtonPressed)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.save.tooltip", kitName)))
                 .dimensions(width/2 + 10, height/2 + 90,80, 20)
                 .build();
 
         addDrawableChild(saveButton);
 
-        var undoButton = ButtonWidget.builder(Text.of("↶ Undo"), this::undoButtonPressed)
+        var undoButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.undo.name"), this::undoButtonPressed)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.undo.tooltip", kitName)))
                 .dimensions(width/2 - 90, height/2 + 90,80, 20)
                 .build();
 
@@ -66,7 +69,10 @@ public class KitEditScreen extends KitViewScreen {
             case SUCCESS -> { }
 
             case FAILURE -> {
-                RooHelper.sendNotification("Failed to recycle \"" + kitName + "\"", "The kit will not be modified");
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.recycle.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.recycle.failure.contents"));
+
                 return;
             }
         }
@@ -74,11 +80,29 @@ public class KitEditScreen extends KitViewScreen {
         var createStatus = KitManager.createKit(kitName, KitManager.getInventoryAsString(getInventory()));
 
         switch(createStatus) {
-            case SUCCESS -> { RooHelper.sendNotification("Successfully saved \"" + kitName + "\"", "The old kit was recycled"); }
+            case SUCCESS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.edit.success.name", kitName),
+                        Text.translatable("fireclient.module.kit.edit.success.contents"));
+            }
 
-            case INVALID_KIT -> { RooHelper.sendNotification("Failed to save \"" + kitName + "\"", "Invalid editor inventory"); }
-            case ALREADY_EXISTS -> { RooHelper.sendNotification("Failed to save \"" + kitName + "\"", "Kit name already exists"); }
-            case WRITE_FAIL -> { RooHelper.sendNotification("Failed to save \"" + kitName + "\"", "Failed to save kit"); }
+            case INVALID_KIT -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
+                        Text.translatable("fireclient.module.kit.edit.invalid_editor_inventory"));
+            }
+
+            case ALREADY_EXISTS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
+                        Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
+            }
+
+            case WRITE_FAIL -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
+                        Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
+            }
         }
 
         saved = true;
@@ -207,7 +231,9 @@ public class KitEditScreen extends KitViewScreen {
     @Override
     protected void onClose() {
         if(edited && !saved) {
-            RooHelper.sendNotification("Successfully reverted \"" + kitName + "\"", "No changes were made");
+            RooHelper.sendNotification(
+                    Text.translatable("fireclient.module.kit.edit.revert.name", kitName),
+                    Text.translatable("fireclient.module.kit.edit.revert.contents"));
         }
     }
 }

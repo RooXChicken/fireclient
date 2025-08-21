@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -19,17 +20,22 @@ import java.util.function.Predicate;
 
 public class ElytraSwapModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xFFFFFF);
+
     public ElytraSwapModule() {
         // the butterfly was the best i could find i promise
-        super(new ModuleData("elytra_swap", "\uD83E\uDD8B Elytra Swap", "Swaps your elytra and chestplate"));
+        super(new ModuleData("elytra_swap", "\uD83E\uDD8B", color));
 
         getData().setEnabled(false);
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("use_elytra_swap", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, null,
-                        this::useKey, null)
-        );
+        var useBind = new Keybind("use_elytra_swap",
+                Text.translatable("fireclient.keybind.generic.use.name"),
+                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                true, null,
+                this::useKey, null);
+
+        FireClientside.getKeybindManager().registerKeybind(useBind);
     }
 
     private void useKey() {
@@ -75,7 +81,7 @@ public class ElytraSwapModule extends ModuleBase {
 
     private void swapArmor(int sourceSlot, int destSlot) {
         var client = MinecraftClient.getInstance();
-        if(client.player == null) {
+        if(client.player == null || client.interactionManager == null) {
             return;
         }
 

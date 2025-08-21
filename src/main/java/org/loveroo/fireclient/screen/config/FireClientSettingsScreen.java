@@ -28,7 +28,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
     public static final  Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌ ")).setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
-        super(Text.of("FireClient Options"));
+        super(Text.translatable("fireclient.screen.settings.title"));
     }
 
     @Override
@@ -43,12 +43,13 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
 
             settingsButtons.add(ButtonWidget.builder(getOptionLabel(option), (button) -> handleSettings(button, option))
                     .dimensions(width/2 - 65 + x, 0, 130, 20)
-                    .tooltip(Tooltip.of(Text.of(option.getDescription())))
+                    .tooltip(Tooltip.of(option.getDescription()))
                     .build());
         }
 
-        backButton = ButtonWidget.builder(Text.of("Back"), this::backButtonPressed)
+        backButton = ButtonWidget.builder(Text.translatable("fireclient.screen.settings.back.name"), this::backButtonPressed)
                 .dimensions(width/2 - 40, height/2 + settingsHeight/2 + 20, 80, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.settings.back.tooltip")))
                 .build();
 
         addDrawableChild(backButton);
@@ -96,12 +97,12 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
             case TOGGLE -> {
                 var value = FireClientside.getSetting(option);
 
-                var nameText = Text.of(option.getName());
+                var nameText = option.getName();
                 return ((value == 1) ? defaultTrueText : defaultFalseText).copy().append(nameText);
             }
         }
 
-        return Text.of(option.getName());
+        return option.getName();
     }
 
     @Override
@@ -115,6 +116,6 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         super.render(context, mouseX, mouseY, delta);
         var text = MinecraftClient.getInstance().textRenderer;
 
-        context.drawCenteredTextWithShadow(text, "Settings", width/2, height/2 - (settingsHeight/2 + 20), 0xFFFFFFFF);
+        context.drawCenteredTextWithShadow(text, Text.translatable("fireclient.screen.settings.header"), width/2, height/2 - (settingsHeight/2 + 20), 0xFFFFFFFF);
     }
 }

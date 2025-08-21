@@ -7,6 +7,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -15,21 +16,22 @@ import java.util.List;
 
 public class RenderWorldModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0x589157);
+
     private boolean toggled = false;
 
-//    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
-//            new KeyBinding("key.fireclient.toggle_render_world", GLFW.GLFW_KEY_J, FireClient.KEYBIND_CATEGORY));
-
     public RenderWorldModule() {
-        super(new ModuleData("render_world", "\uD83C\uDF0D Render World", "[CHEAT] Allows the toggling of the world rendering"));
-        getData().setShownName(generateDisplayName(0x589157));
+        super(new ModuleData("render_world", "\uD83C\uDF0D", color));
 
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("use_render_world", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, null,
-                        this::useKey, null)
-        );
+        var useBind = new Keybind("use_render_world",
+                Text.translatable("fireclient.keybind.generic.use.name"),
+                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                true, null,
+                this::useKey, null);
+
+        FireClientside.getKeybindManager().registerKeybind(useBind);
     }
 
     private void useKey() {

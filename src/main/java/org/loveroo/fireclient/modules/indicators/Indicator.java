@@ -17,16 +17,11 @@ import java.util.List;
 
 public abstract class Indicator extends ModuleBase {
 
-    private final MutableText emoji;
-
     private boolean hasOverlay = false;
     private boolean showOverlay = true;
 
-    public Indicator(String id, String emoji, String name, Color emojiColor, boolean hasOverlay, int index) {
-        super(new ModuleData(id, emoji + " " + name, name + " indicator"));
-        this.emoji = MutableText.of(new PlainTextContent.Literal(emoji)).setStyle(Style.EMPTY.withColor(emojiColor.toInt()));
-
-        getData().setShownName(generateDisplayName(emojiColor.toInt()));
+    public Indicator(String id, String emoji, Color color, boolean hasOverlay, int index) {
+        super(new ModuleData(id, emoji, color));
         this.hasOverlay = hasOverlay;
 
         getData().setWidth(6);
@@ -56,7 +51,7 @@ public abstract class Indicator extends ModuleBase {
         transform(context.getMatrices());
 
         var text = client.textRenderer;
-        context.drawText(text, emoji, 0, 0, 0xFFFFFFFF, true);
+        context.drawText(text, getData().getEmoji(), 0, 0, 0xFFFFFFFF, true);
 
         endTransform(context.getMatrices());
     }

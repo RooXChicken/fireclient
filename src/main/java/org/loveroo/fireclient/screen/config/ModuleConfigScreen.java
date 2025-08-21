@@ -19,18 +19,18 @@ import java.util.List;
 public class ModuleConfigScreen extends ConfigScreenBase {
 
     private final List<ModuleBase> modules;
-    private final String about;
+    private final Text about;
 
     @Nullable
     private ModuleBase selectedModule = null;
     private ModuleBase.OldTransform oldTransform = null;
 
     public ModuleConfigScreen(ModuleBase module) {
-        this(module.getData().getName(), module.getData().getDescription(), List.of(module));
+        this(module.getData().getShownName(), module.getData().getDescription(), List.of(module));
     }
 
-    public ModuleConfigScreen(String title, String about, List<ModuleBase> module) {
-        super(Text.of( title + " Config"));
+    public ModuleConfigScreen(Text title, Text about, List<ModuleBase> module) {
+        super(Text.translatable("fireclient.module.generic.config_text", title));
 
         this.modules = module;
         this.about = about;
@@ -56,9 +56,9 @@ public class ModuleConfigScreen extends ConfigScreenBase {
             addDrawableChild(widget);
         }
 
-        addDrawableChild(ButtonWidget.builder(Text.of("About"), (button) -> {})
+        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.module.generic.about.name"), (button) -> {})
                 .dimensions(width - 125, height - 25, 120, 20)
-                .tooltip(Tooltip.of(Text.of(about)))
+                .tooltip(Tooltip.of(about))
                 .build());
     }
 

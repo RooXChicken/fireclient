@@ -14,6 +14,7 @@ import org.joml.Quaternionf;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockOutlineModule extends ModuleBase {
+
+    private static final Color color = Color.fromRGB(0x6E6E6E);
 
     private String outlineColor = "66000000";
     private boolean thick = false;
@@ -31,8 +34,7 @@ public class BlockOutlineModule extends ModuleBase {
     private float rot = 180.0f;
 
     public BlockOutlineModule() {
-        super(new ModuleData("block_outline", "☐ Block Outline", "Changes the block outline color"));
-        getData().setShownName(generateDisplayName(0x6E6E6E));
+        super(new ModuleData("block_outline", "☐", color));
 
         getData().setGuiElement(false);
     }
@@ -76,9 +78,9 @@ public class BlockOutlineModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.of("Thick Outline"), thick), this::thickButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.block_outline.name"), thick), this::thickButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.block_outline.thick_outline")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.block_outline.thick_outline.tooltip")))
                 .build());
 
         var colorPicker = new ColorPickerWidget(base.width/2 - 36, base.height/2 + 50, outline, (color) -> { outline = color; });
@@ -91,7 +93,7 @@ public class BlockOutlineModule extends ModuleBase {
 
     private void thickButtonPressed(ButtonWidget button) {
         thick = !thick;
-        button.setMessage(getToggleText(Text.of("Thick Outline"), thick));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.block_outline.name"), thick));
     }
 
     @Override

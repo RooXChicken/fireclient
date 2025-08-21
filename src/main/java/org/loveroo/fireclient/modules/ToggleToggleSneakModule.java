@@ -18,30 +18,35 @@ import java.util.List;
 
 public class ToggleToggleSneakModule extends ModuleBase {
 
-    private final Color offColor1 = new Color(247, 33, 33, 255);
-    private final Color offColor2 = new Color(176, 18, 18, 255);
-    private final Color onColor1 = new Color(47, 216, 39, 255);
-    private final Color onColor2 = new Color(28, 158, 21, 255);
+    private static final Color color = Color.fromRGB(0x7D6476);
+
+    private static final Color offColor1 = new Color(247, 33, 33, 255);
+    private static final Color offColor2 = new Color(176, 18, 18, 255);
+    private static final Color onColor1 = new Color(47, 216, 39, 255);
+    private static final Color onColor2 = new Color(28, 158, 21, 255);
 
     private final MutableText onText = RooHelper.gradientText("Sneak Toggled: On", onColor1, onColor2);
     private final MutableText offText = RooHelper.gradientText("Sneak Toggled: Off", offColor1, offColor2);
 
-//    private final KeyBinding toggleButton = KeyBindingHelper.registerKeyBinding(
-//            new KeyBinding("key.fireclient.toggle_toggle_sneak", GLFW.GLFW_KEY_L, FireClient.KEYBIND_CATEGORY));
-
     public ToggleToggleSneakModule() {
-        super(new ModuleData("toggle_toggle_sneak", "\uD83D\uDC5F Toggle ToggleSneak", "Allows you to toggle the toggle sneak option when pressing the keybind"));
-        getData().setShownName(generateDisplayName(0x7D6476));
+        super(new ModuleData("toggle_toggle_sneak", "\uD83D\uDC5F", color));
 
         getData().setGuiElement(false);
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("use_toggle_toggle_sneak", Text.of("Use"), Text.of("Use ").copy().append(getData().getShownName()), true, List.of(new Key(GLFW.GLFW_KEY_L, Key.KeyType.KEY_CODE)),
-                        this::useKey, null)
-        );
+        var useBind = new Keybind("use_toggle_toggle_sneak",
+                Text.translatable("fireclient.keybind.generic.use.name"),
+                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                true, null,
+                this::useKey, null);
+
+        FireClientside.getKeybindManager().registerKeybind(useBind);
     }
 
     private void useKey() {
+        if(!getData().isEnabled()) {
+            return;
+        }
+
         var client = MinecraftClient.getInstance();
 
         var toggled = !client.options.getSneakToggled().getValue();

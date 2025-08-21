@@ -38,21 +38,10 @@ public class Keybind {
     @Nullable
     private ArrayList<Key> reboundKeys;
 
-    public Keybind(String id, String name, String description, boolean inGame, List<Key> keys) {
-        this(id, Text.of(name), Text.of(description), inGame, keys);
-    }
-
-    public Keybind(String id, String name, String description, boolean inGame, List<Key> keys, KeyEvent onKeyPress, KeyEvent onKeyRelease) {
-        this(id, name, description, inGame, keys);
-
-        this.onKeyPress = onKeyPress;
-        this.onKeyRelease = onKeyRelease;
-    }
-
     public Keybind(String id, Text name, Text description, boolean inGame, List<Key> keys) {
         this.id = id;
-        this.name = Text.of(name);
-        this.description = Text.of(description);
+        this.name = name;
+        this.description = description;
 
         this.keys = keys;
         this.inGame = inGame;

@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -21,17 +22,17 @@ import java.util.List;
 
 public class BigItemsModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0xF9FFCC);
+
     private final String splitRegex = "[ ,|]+";
     private String items = "golden_apple";
 
     private HashSet<Item> bigItems = new HashSet<>();
 
     public BigItemsModule() {
-        super(new ModuleData("big_items", "\uD83C\uDF1F Big Items", "Makes certain items render larger"));
-        getData().setShownName(generateDisplayName(0xF9FFCC));
+        super(new ModuleData("big_items", "\uD83C\uDF1F", color));
 
         getData().setGuiElement(false);
-        
 
         ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
             if(getData().isEnabled()) {
@@ -39,10 +40,13 @@ public class BigItemsModule extends ModuleBase {
             }
         });
 
-        FireClientside.getKeybindManager().registerKeybind(
-                new Keybind("toggle_big_items", Text.of("Toggle"), Text.of("Toggle ").copy().append(getData().getShownName()), true, null,
-                        () -> getData().setEnabled(!getData().isEnabled()), null)
-        );
+        var toggleBind = new Keybind("toggle_big_items",
+                Text.translatable("fireclient.keybind.generic.toggle.name"),
+                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                true, null,
+                () -> getData().setEnabled(!getData().isEnabled()), null);
+
+        FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
 
     @Override

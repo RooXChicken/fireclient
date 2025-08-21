@@ -7,8 +7,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
@@ -27,6 +25,8 @@ import java.util.List;
 
 public class KitModule extends ModuleBase {
 
+    private static final Color color = Color.fromRGB(0x9C9C7C);
+
     private GameMode previousGameMode = GameMode.SURVIVAL;
     private String kitToLoadName = "";
     private String kitToLoad = "";
@@ -44,8 +44,7 @@ public class KitModule extends ModuleBase {
     private final int kitWidgetHeight = 140;
 
     public KitModule() {
-        super(new ModuleData("kit", "\uD83E\uDDF0 Kit", "Allows you to save and load kits"));
-        getData().setShownName(generateDisplayName(0x9C9C7C));
+        super(new ModuleData("kit", "\uD83E\uDDF0", color));
 
         getData().setGuiElement(false);
 
@@ -75,30 +74,30 @@ public class KitModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(Text.of("+"), this::addKitButtonPressed)
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.create.name"), this::addKitButtonPressed)
                 .dimensions(base.width/2 + 80, base.height/2 - 80, 20, 15)
-                .tooltip(Tooltip.of(Text.of("Create kit")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.create.tooltip")))
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), this::createFromClipboard)
-                .tooltip(Tooltip.of(Text.of("Create kit from clipboard")))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.create_clipboard.name"), this::createFromClipboard)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.create_clipboard.tooltip")))
                 .dimensions(base.width/2 + 105, base.height/2 - 80, 20, 15)
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("↶"), this::undoButtonPressed)
-                .tooltip(Tooltip.of(Text.of("Undo")))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.undo.name"), this::undoButtonPressed)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.undo.tooltip")))
                 .dimensions(base.width/2 - 100, base.height/2 - 80, 20, 15)
                 .build());
 
-        widgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCC2"), this::folderButtonPressed)
-                .tooltip(Tooltip.of(Text.of("Open kits folder (any kit can be shared and loaded with valid .json files)")))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.open_folder.name"), this::folderButtonPressed)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.open_folder.tooltip")))
                 .dimensions(base.width/2 - 125, base.height/2 - 80, 20, 15)
                 .build());
 
         var client = MinecraftClient.getInstance();
 
         kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 80, 140, 15, Text.of(""));
-        kitNameField.setSuggestion("Kit name");
+        kitNameField.setSuggestion(Text.translatable("fireclient.module.kit.name_suggestion").getString());
         kitNameField.setMaxLength(32);
         kitNameField.setChangedListener(this::kitNameFieldChanged);
 
@@ -117,24 +116,24 @@ public class KitModule extends ModuleBase {
             elementWidgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 140, 0, 60, 20));
 
             elementWidgets.add(ButtonWidget.builder(Text.of(kit), (button) -> loadKit(kit, true))
-                    .tooltip(Tooltip.of(Text.of("Load \"" + kit + "\"")))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.load.tooltip", kit)))
                     .dimensions(base.width/2 - 70, 0, 140, 20)
                     .build());
 
-            elementWidgets.add(ButtonWidget.builder(Text.of("-"), (button) -> deleteButtonPressed(button, kit))
-                    .tooltip(Tooltip.of(Text.of("Delete \"" + kit + "\"")))
+            elementWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.delete.name"), (button) -> deleteButtonPressed(button, kit))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.delete.tooltip", kit)))
                     .dimensions(base.width/2 + 80, 0, 20, 20)
                     .build());
 
-            elementWidgets.add(ButtonWidget.builder(Text.of("\uD83D\uDCCB"), (button) -> {
+            elementWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.copy_to_clipboard.name"), (button) -> {
                         GLFW.glfwSetClipboardString(client.getWindow().getHandle(), KitManager.getKitFromName(kit));
                     })
-                    .tooltip(Tooltip.of(Text.of("Copy \"" + kit + "\" to your clipboard")))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.copy_to_clipboard.tooltip", kit)))
                     .dimensions(base.width/2 + 105, 0, 20, 20)
                     .build());
 
-            elementWidgets.add(ButtonWidget.builder(Text.of("✎"), (button -> editButtonPressed(button, kit)))
-                    .tooltip(Tooltip.of(Text.of("Edit \"" + kit + "\"")))
+            elementWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.edit.name"), (button -> editButtonPressed(button, kit)))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.edit.tooltip", kit)))
                     .dimensions(base.width/2 + 130, 0, 20, 20)
                     .build());
 
@@ -166,14 +165,19 @@ public class KitModule extends ModuleBase {
 
         switch(loadStatus) {
             case SUCCESS -> { }
+
             case INVALID_PLAYER -> {
                 if(notify) {
-                    RooHelper.sendNotification("Failed to load \"" + kitName + "\"!", "Invalid player");
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.load_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents"));
                 }
             }
             case INVALID_PERMS -> {
                 if(notify) {
-                    RooHelper.sendNotification("Failed to load \"" + kitName + "\"!", "Invalid permissions");
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.load_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.load.failure.invalid_permission.contents"));
                 }
             }
 
@@ -184,7 +188,9 @@ public class KitModule extends ModuleBase {
                 kitToLoad = kitContents;
 
                 if(notify) {
-                    RooHelper.sendNotification("Loading \"" + kitName + "\"...", "Waiting for Creative Mode");
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.load.waiting_gmc.title", kitName),
+                            Text.translatable("fireclient.module.kit.load.waiting_gmc.contents"));
                 }
 
                 RooHelper.sendChatCommand("gamemode creative");
@@ -192,7 +198,9 @@ public class KitModule extends ModuleBase {
 
             case INVALID_KIT -> {
                 if(notify) {
-                    RooHelper.sendNotification("Failed to load \"" + kitName + "\"!", "Invalid kit");
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.load_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
                 }
             }
         }
@@ -223,9 +231,24 @@ public class KitModule extends ModuleBase {
 
         switch(createStatus) {
             case SUCCESS -> { }
-            case ALREADY_EXISTS -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Kit name already exists"); }
-            case INVALID_KIT -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Invalid kit"); }
-            case WRITE_FAIL -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Failed to save file"); }
+
+            case ALREADY_EXISTS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
+            }
+
+            case INVALID_KIT -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
+            }
+
+            case WRITE_FAIL -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
+            }
         }
 
         reloadScreen();
@@ -236,8 +259,18 @@ public class KitModule extends ModuleBase {
 
         switch(status) {
             case SUCCESS -> {}
-            case INVALID_KIT -> { RooHelper.sendNotification("Failed to preview \"" + kitName + "\"", "Invalid kit"); }
-            case INVALID_PLAYER -> { RooHelper.sendNotification("Failed to preview \"" + kitName + "\"", "Invalid player"); }
+
+            case INVALID_KIT -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.preview.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
+            }
+
+            case INVALID_PLAYER -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents"));
+            }
         }
     }
 
@@ -275,10 +308,29 @@ public class KitModule extends ModuleBase {
         var createStatus = KitManager.createKit(kitName, kitContents);
 
         switch(createStatus) {
-            case SUCCESS -> { RooHelper.sendNotification("Loaded \"" + kitName + "\" from clipboard!", kitName); }
-            case ALREADY_EXISTS -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Kit name already exists"); }
-            case INVALID_KIT -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\" from clipboard!", "Invalid kit"); }
-            case WRITE_FAIL -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\" from clipboard!", "Failed to save file"); }
+            case SUCCESS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create_clipboard.success.title", kitName),
+                        Text.translatable("fireclient.module.kit.create_clipboard.success.contents"));
+            }
+
+            case ALREADY_EXISTS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create_clipboard.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
+            }
+
+            case INVALID_KIT -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create_clipboard.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
+            }
+
+            case WRITE_FAIL -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.create_clipboard.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
+            }
         }
 
         reloadScreen();
@@ -286,7 +338,10 @@ public class KitModule extends ModuleBase {
 
     private boolean checkField() {
         if(kitNameField == null || kitNameField.getText().isEmpty()) {
-            RooHelper.sendNotification("Please set a kit name!", "Empty kit name field");
+            RooHelper.sendNotification(
+                    Text.translatable("fireclient.module.kit.empty_name.title"),
+                    Text.translatable("fireclient.module.kit.empty_name.contents"));
+
             return false;
         }
 
@@ -296,15 +351,15 @@ public class KitModule extends ModuleBase {
     private void deleteButtonPressed(ButtonWidget button, String kitName) {
         if(!aboutToDelete.equals(kitName)) {
             if(lastPressed != null) {
-                lastPressed.setMessage(Text.of("-"));
-                lastPressed.setTooltip(Tooltip.of(Text.of("Delete \"" + aboutToDelete + "\"")));
+                lastPressed.setMessage(Text.translatable("fireclient.module.kit.delete.name"));
+                lastPressed.setTooltip(Tooltip.of(Text.translatable("fireclient.module.kit.delete.tooltip", aboutToDelete)));
             }
 
             aboutToDelete = kitName;
             lastPressed = button;
 
-            button.setMessage(MutableText.of(new PlainTextContent.Literal("-")).withColor(0xD63C3C));
-            button.setTooltip(Tooltip.of(MutableText.of(new PlainTextContent.Literal("Confirm delete \"" + kitName + "\"!")).withColor(0xD63C3C)));
+            button.setMessage(Text.translatable("fireclient.module.kit.delete.name").withColor(0xD63C3C));
+            button.setTooltip(Tooltip.of(Text.translatable("fireclient.module.kit.delete.confirm", kitName).withColor(0xD63C3C)));
 
             return;
         }
@@ -312,8 +367,17 @@ public class KitModule extends ModuleBase {
         var deleteStatus = KitManager.deleteKit(kitName);
 
         switch(deleteStatus) {
-            case SUCCESS -> { RooHelper.sendNotification("Recycled \"" + kitName + "\"!", "It will be deleted next startup!"); }
-            case FAILURE -> { RooHelper.sendNotification("Failed to delete \"" + kitName + "\"!", "The kit won't be deleted"); }
+            case SUCCESS -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.recycle.success.title", kitName),
+                        Text.translatable("fireclient.module.kit.recycle.success.contents"));
+            }
+
+            case FAILURE -> {
+                RooHelper.sendNotification(
+                        Text.translatable("fireclient.module.kit.recycle.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.recycle.failure.contents"));
+            }
         }
 
         FireClientside.getKeybindManager().unregisterKeybind(getKitKeyName(kitName));
@@ -331,8 +395,18 @@ public class KitModule extends ModuleBase {
 
             switch(validationStatus) {
                 case SUCCESS -> { }
-                case NO_FILE -> { RooHelper.sendNotification("Failed to load dragged kit!", "Invalid file"); }
-                case INVALID_KIT -> { RooHelper.sendNotification("Failed to load dragged kit!", "Invalid kit"); }
+
+                case NO_FILE -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.drag_and_drop.failure.title", file.getName()),
+                            Text.translatable("fireclient.module.kit.drag_and_drop.no_file.contents"));
+                }
+
+                case INVALID_KIT -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.drag_and_drop.failure.title", file.getName()),
+                            Text.translatable("fireclient.module.kit.drag_and_drop.invalid_kit.contents"));
+                }
             }
 
             if(validationStatus != KitManager.KitValidationStatus.SUCCESS) {
@@ -345,10 +419,29 @@ public class KitModule extends ModuleBase {
             var createStatus = KitManager.createKit(kitName, kitContents);
 
             switch(createStatus) {
-                case SUCCESS -> { RooHelper.sendNotification("Successfully loaded \"" + kitName + "\"!", kitName); }
-                case ALREADY_EXISTS -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Kit name already exists"); }
-                case INVALID_KIT -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Invalid kit"); }
-                case WRITE_FAIL -> { RooHelper.sendNotification("Failed to create \"" + kitName + "\"!", "Failed to save file"); }
+                case SUCCESS -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.drag_and_drop.success.title", kitName),
+                            Text.translatable("fireclient.module.kit.drag_and_drop.success.contents"));
+                }
+
+                case ALREADY_EXISTS -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
+                }
+
+                case INVALID_KIT -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
+                }
+
+                case WRITE_FAIL -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
+                            Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
+                }
             }
         }
 
@@ -361,7 +454,10 @@ public class KitModule extends ModuleBase {
             return;
         }
 
-        var keybind = new Keybind(keyName, "\uD83E\uDDF0", "Load \"" + kitName + "\"", true, null,
+        var keybind = new Keybind(keyName,
+                Text.translatable("fireclient.module.kit.load_keybind.name"),
+                Text.translatable("fireclient.module.kit.load_keybind.tooltip", kitName),
+                true, null,
                 () -> loadKit(kitName, true), null);
 
         keybind.setShortName(true);
