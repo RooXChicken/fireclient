@@ -281,7 +281,7 @@
   "fireclient.settings.show_modules_debug.description": "Shows the module guis when the F3 debug screen is open",
 
   "fireclient.settings.cache_uuid.name": "Cache Entity UUID",
-  "fireclient.settings.cache_uuid.description": "Caches the targetted entity UUID when you first open the chat screen, allowing you to use it in commands",
+  "fireclient.settings.cache_uuid.description": "Caches the targeted entity UUID when you first open the chat screen, allowing you to use it in commands",
 
   "fireclient.keybind.generic.toggle.name": "Toggle",
   "fireclient.keybind.generic.toggle_visibility.description": "Toggle %1$s's visibility",
