@@ -16,6 +16,7 @@ public enum FireClientOption {
     BLAZE_POWDER_FILL(0, FireClientOptionType.TOGGLE),
     SHOW_MODULES_DEBUG(1, FireClientOptionType.TOGGLE),
     CACHE_UUID(0, FireClientOptionType.TOGGLE);
+//    DISABLE_GRADIENT(0, FireClientOptionType.TOGGLE);
 
     private final Text name;
     private final Text description;

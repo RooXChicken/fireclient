@@ -1,14 +1,18 @@
 package org.loveroo.fireclient.mixin.modules.shadows;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.WorldView;
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.ShadowModule;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,6 +20,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderDispatcher.class)
@@ -50,13 +55,13 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
         var rayContext = new RaycastContext(pos, pos.subtract(0, 20, 0), RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity);
         var ray = entity.getEntityWorld().raycast(rayContext);
 
-        floorDistance = pos.y - (ray.getBlockPos().getY() + 1);
+        floorDistance = pos.y - (ray.getPos().getY() + 1);
     }
 
     @Inject(method = "renderShadow", at = @At("HEAD"))
     private static void renderShadow(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo info) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null) {
+        if(shadow == null || !shadow.isIncreaseHeight()) {
             return;
         }
 
@@ -66,7 +71,7 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     @Inject(method = "renderShadow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;peek()Lnet/minecraft/client/util/math/MatrixStack$Entry;", shift = At.Shift.AFTER))
     private static void resetRenderState(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo ci) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null) {
+        if(shadow == null || !shadow.isIncreaseHeight()) {
             return;
         }
 

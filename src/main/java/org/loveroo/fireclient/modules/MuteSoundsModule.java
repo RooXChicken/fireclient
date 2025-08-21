@@ -10,8 +10,9 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.json.JSONArray;
@@ -24,26 +25,27 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.RenderItemWidget;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
-public class BigItemsModule extends ModuleBase {
+public class MuteSoundsModule extends ModuleBase {
 
-    private static final Color color = Color.fromRGB(0xF9FFCC);
+    private static final Color color = Color.fromRGB(0xFA8A73);
 
-    private final List<BigItem> bigItems = new ArrayList<>();
+    private final List<MutedSound> mutedSounds = new ArrayList<>();
 
     private final int soundsWidgetWidth = 300;
     private final int soundsWidgetHeight = 100;
 
-    public BigItemsModule() {
-        super(new ModuleData("big_items", "\uD83C\uDF1F", color));
+    public MuteSoundsModule() {
+        super(new ModuleData("mute_sounds", "\uD83D\uDD07", color));
 
         getData().setGuiElement(false);
 
-        var toggleBind = new Keybind("toggle_big_items",
+        var toggleBind = new Keybind("toggle_mute_sounds",
                 Text.translatable("fireclient.keybind.generic.toggle.name"),
                 Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
@@ -54,18 +56,18 @@ public class BigItemsModule extends ModuleBase {
 
     @Override
     public void loadJson(JSONObject json) throws JSONException {
-        var itemList = json.optJSONArray("items");
-        if(itemList == null) {
-            itemList = new JSONArray();
+        var soundList = json.optJSONArray("sounds");
+        if(soundList == null) {
+            soundList = new JSONArray();
         }
 
-        for(var i = 0; i < itemList.length(); i++) {
-            var item = itemList.optJSONObject(i);
-            if(item == null) {
+        for(var i = 0; i < soundList.length(); i++) {
+            var sound = soundList.optJSONObject(i);
+            if(sound == null) {
                 continue;
             }
 
-            bigItems.add(new BigItem(item.optString("id", ""), item.optBoolean("enabled", true)));
+            mutedSounds.add(new MutedSound(sound.optString("id", ""), sound.optBoolean("enabled", true)));
         }
 
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
@@ -75,18 +77,18 @@ public class BigItemsModule extends ModuleBase {
     public JSONObject saveJson() throws JSONException {
         var json = new JSONObject();
 
-        var itemList = new JSONArray();
+        var soundList = new JSONArray();
 
-        for(var item : bigItems) {
-            var itemJson = new JSONObject();
+        for(var sound : mutedSounds) {
+            var soundJson = new JSONObject();
 
-            itemJson.put("id", item.getItem());
-            itemJson.put("enabled", item.isEnabled());
+            soundJson.put("id", sound.getSound());
+            soundJson.put("enabled", sound.isEnabled());
 
-            itemList.put(itemJson);
+            soundList.put(soundJson);
         }
 
-        json.put("items", itemList);
+        json.put("sounds", soundList);
         json.put("enabled", getData().isEnabled());
 
         return json;
@@ -97,52 +99,50 @@ public class BigItemsModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_big_items").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_mute_sounds").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
         var soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
         soundField.setMaxLength(128);
-        soundField.setChangedListener((text) -> itemTextChanged(soundField, text));
+        soundField.setChangedListener((text) -> soundTextChanged(soundField, text));
 
         widgets.add(soundField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(soundField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
                 .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.add_item.tooltip")))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
                 .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
-        for(var item : bigItems) {
+        for(var sound : mutedSounds) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(item.getItem()), base.getTextRenderer());
-            text.setPosition(base.width/2 - 120, 4);
+            var text = new TextWidget(Text.literal(sound.getSound()), base.getTextRenderer());
+            text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new RenderItemWidget(item.getItemEntry(), base.width/2 - 140, 0));
-
-            entryWidgets.add(ButtonWidget.builder(getToggleText(null, item.isEnabled()), (button) -> toggleItemButton(button, item))
+            entryWidgets.add(ButtonWidget.builder(getToggleText(null, sound.isEnabled()), (button) -> toggleSoundButton(button, sound))
                     .dimensions(base.width/2 + 90, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.toggle_item.tooltip", item.getItem())))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getSound())))
                     .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.remove_item.name").withColor(0xD63C3C), (button) -> removeSound(item))
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
                     .dimensions(base.width/2 + 115, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.remove_item.tooltip", item.getItem())))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getSound())))
                     .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
-        var scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 25, entries);
+        var scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
         return widgets;
     }
 
-    private void itemTextChanged(TextFieldWidget widget, String text) {
+    private void soundTextChanged(TextFieldWidget widget, String text) {
         widget.setSuggestion(getSuggestion(text));
     }
 
@@ -151,13 +151,13 @@ public class BigItemsModule extends ModuleBase {
             return "";
         }
 
-        var filteredItems = Registries.ITEM.getIds().stream().filter((id) -> id.getPath().contains(text)).toList();
-        if(filteredItems.isEmpty()) {
+        var filteredSounds = Registries.SOUND_EVENT.getIds().stream().filter((id) -> id.getPath().contains(text)).toList();
+        if(filteredSounds.isEmpty()) {
             return "";
         }
 
-        var item = filteredItems.getFirst().getPath();
-        var split = item.split(text);
+        var sound = filteredSounds.getFirst().getPath();
+        var split = sound.split(text);
         if(split.length <= 0) {
             return "";
         }
@@ -165,35 +165,35 @@ public class BigItemsModule extends ModuleBase {
         return split[split.length-1];
     }
 
-    private void addItemButtonPressed(TextFieldWidget text) {
+    private void addSoundButtonPressed(TextFieldWidget text) {
         var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
         if(suggestion == null) {
             suggestion = "";
         }
 
-        var item = text.getText() + suggestion;
+        var sound = text.getText() + suggestion;
 
-        if(!item.matches("[a-z0-9/._-]+")) {
+        if(!sound.matches("[a-z0-9/._-]+")) {
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.big_items.add_item.failure.title"),
-                    Text.translatable("fireclient.module.big_items.add_item.invalid_item.contents")
+                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
+                    Text.translatable("fireclient.module.mute_sounds.add_sound.invalid_id.contents")
             );
 
             return;
         }
 
-        bigItems.add(new BigItem(item, true));
+        mutedSounds.add(new MutedSound(sound, true));
         reloadScreen();
     }
 
-    private void removeSound(BigItem item) {
-        bigItems.remove(item);
+    private void removeSound(MutedSound sound) {
+        mutedSounds.remove(sound);
         reloadScreen();
     }
 
-    private void toggleItemButton(ButtonWidget button, BigItem item) {
-        item.setEnabled(!item.isEnabled());
-        button.setMessage(getToggleText(null, item.isEnabled()));
+    private void toggleSoundButton(ButtonWidget button, MutedSound sound) {
+        sound.setEnabled(!sound.isEnabled());
+        button.setMessage(getToggleText(null, sound.isEnabled()));
     }
 
     @Override
@@ -206,29 +206,29 @@ public class BigItemsModule extends ModuleBase {
         FireClientside.saveConfig();
     }
 
-    public boolean isBig(Item item) {
-        return bigItems.stream().anyMatch((bigItem) -> (bigItem.isEnabled() && bigItem.getItemEntry().equals(item)));
+    public boolean isMute(SoundEvent sound) {
+        return mutedSounds.stream().anyMatch((muted) -> (muted.isEnabled() && muted.getSoundEvent().id().equals(sound.id())));
     }
 
-    static class BigItem {
+    static class MutedSound {
 
-        private final String item;
-        private final Item itemEntry;
+        private final String sound;
+        private final SoundEvent soundEvent;
         private boolean enabled;
 
-        public BigItem(String item, boolean enabled) {
-            this.item = item;
+        public MutedSound(String sound, boolean enabled) {
+            this.sound = sound;
             this.enabled = enabled;
 
-            this.itemEntry = Registries.ITEM.get(Identifier.ofVanilla(this.item));
+            this.soundEvent = SoundEvent.of(Identifier.ofVanilla(this.sound));
         }
 
-        public String getItem() {
-            return item;
+        public String getSound() {
+            return sound;
         }
 
-        public Item getItemEntry() {
-            return itemEntry;
+        public SoundEvent getSoundEvent() {
+            return soundEvent;
         }
 
         public boolean isEnabled() {
@@ -238,11 +238,5 @@ public class BigItemsModule extends ModuleBase {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
-    }
-
-    public interface ItemTypeStorage {
-
-        Item fireclient$getItem();
-        void fireclient$setItem(Item item);
     }
 }

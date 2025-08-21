@@ -148,7 +148,7 @@ public class KitModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context) {
+    public void drawScreen(Screen base, DrawContext context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 95);
     }
 
@@ -236,6 +236,8 @@ public class KitModule extends ModuleBase {
                 RooHelper.sendNotification(
                         Text.translatable("fireclient.module.kit.create.failure.title", kitName),
                         Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
+
+                return;
             }
 
             case INVALID_KIT -> {
@@ -405,7 +407,7 @@ public class KitModule extends ModuleBase {
                 case INVALID_KIT -> {
                     RooHelper.sendNotification(
                             Text.translatable("fireclient.module.kit.drag_and_drop.failure.title", file.getName()),
-                            Text.translatable("fireclient.module.kit.drag_and_drop.invalid_kit.contents"));
+                            Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
                 }
             }
 

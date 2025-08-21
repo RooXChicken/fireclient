@@ -82,7 +82,7 @@ public abstract class Indicator extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context) { }
+    public void drawScreen(Screen base, DrawContext context, float delta) { }
 
     public boolean hasOverlay() {
         return hasOverlay;

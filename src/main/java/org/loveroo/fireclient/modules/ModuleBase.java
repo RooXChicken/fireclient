@@ -16,6 +16,7 @@ import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
@@ -40,11 +41,9 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     protected ModuleBase(ModuleData data) {
         this.data = data;
 
-        if(!this.data.isGuiElement()) {
-            return;
+        if(this.data.isGuiElement()) {
+            HudLayerRegistrationCallback.EVENT.register(this);
         }
-
-        HudLayerRegistrationCallback.EVENT.register(this);
     }
 
     public void postLoad() { }
@@ -216,11 +215,18 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         button.setMessage(getToggleText(Text.translatable("fireclient.module.generic.toggle_visible"), getData().isVisible()));
     }
 
-    public MutableText getToggleText(Text message, boolean value) {
-        return ((value) ? FireClientSettingsScreen.defaultTrueText : FireClientSettingsScreen.defaultFalseText).copy().append(message);
+    public MutableText getToggleText(@Nullable Text message, boolean value) {
+        var toggle = ((value) ? FireClientSettingsScreen.defaultTrueText : FireClientSettingsScreen.defaultFalseText);
+
+        if(message != null) {
+            return toggle.copy().append(" ").append(message);
+        }
+        else {
+            return (MutableText) toggle;
+        }
     }
 
-    public void drawScreen(Screen base, DrawContext context) {
+    public void drawScreen(Screen base, DrawContext context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 40);
     }
 

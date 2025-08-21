@@ -8,6 +8,7 @@
     "modules.kit.AddSlotAccessor",
     "modules.kit.FixKitHotbarKeys",
     "modules.perspective.PreventPlayerRotationMixin",
+    "modules.shadows.RenderShadowsOnAllMixin",
     "settings.BrewingStandFuelMixin"
   ],
   "client": [
@@ -30,6 +31,8 @@
     "modules.kit.FixDropItems",
     "modules.kit.FixKitClicks",
     "modules.kit.GetSlotAccessor",
+    "modules.mutesounds.GetSuggestionAccessor",
+    "modules.mutesounds.MuteSoundsMixin",
     "modules.nametag.ModifyNametagMixin",
     "modules.nametag.ShowOwnNametagMixin",
     "modules.perspective.IncreaseZoomMixin",

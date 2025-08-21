@@ -20,6 +20,7 @@ public class ShadowModule extends ModuleBase {
     private boolean distanceEffect = true;
     private boolean increaseHeight = false;
     private boolean fullbright = false;
+    private boolean renderOnAll = false;
 
     public boolean drawingShadow = false;
 
@@ -34,6 +35,7 @@ public class ShadowModule extends ModuleBase {
         distanceEffect = json.optBoolean("distance_effect", distanceEffect);
         increaseHeight = json.optBoolean("increase_height", increaseHeight);
         fullbright = json.optBoolean("fullbright", fullbright);
+        renderOnAll = json.optBoolean("render_on_all", renderOnAll);
     }
 
     @Override
@@ -43,6 +45,7 @@ public class ShadowModule extends ModuleBase {
         json.put("distance_effect", distanceEffect);
         json.put("increase_height", increaseHeight);
         json.put("fullbright", fullbright);
+        json.put("render_on_all", renderOnAll);
 
         return json;
     }
@@ -62,8 +65,13 @@ public class ShadowModule extends ModuleBase {
                 .build());
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.shadow.fullbright.name"), fullbright), this::fullbrightButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
+                .dimensions(base.width/2 - 130, base.height/2 + 20, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.fullbright.tooltip")))
+                .build());
+
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.shadow.render_on_all.name"), renderOnAll), this::renderOnAllButtonPressed)
+                .dimensions(base.width/2 + 10, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.render_on_all.tooltip")))
                 .build());
 
         return widgets;
@@ -84,6 +92,11 @@ public class ShadowModule extends ModuleBase {
         button.setMessage(getToggleText(Text.translatable("fireclient.module.shadow.fullbright.name"), fullbright));
     }
 
+    private void renderOnAllButtonPressed(ButtonWidget button) {
+        renderOnAll = !renderOnAll;
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.shadow.render_on_all.name"), renderOnAll));
+    }
+
     public boolean isDistanceEffect() {
         return distanceEffect;
     }
@@ -94,5 +107,9 @@ public class ShadowModule extends ModuleBase {
 
     public boolean isFullbright() {
         return fullbright;
+    }
+
+    public boolean isRenderOnAll() {
+        return renderOnAll;
     }
 }

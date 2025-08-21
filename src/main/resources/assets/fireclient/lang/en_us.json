@@ -26,6 +26,18 @@
   "fireclient.module.big_items.name": "Big Items",
   "fireclient.module.big_items.description": "Makes certain items render larger",
 
+  "fireclient.module.big_items.toggle_item.tooltip": "Toggle \"%1$s\"",
+
+  "fireclient.module.big_items.add_item.name": "+",
+  "fireclient.module.big_items.add_item.tooltip": "Add item",
+
+  "fireclient.module.big_items.remove_item.name": "-",
+  "fireclient.module.big_items.remove_item.tooltip": "Remove \"%1$s\"",
+
+  "fireclient.module.big_items.add_item.failure.title": "Failed to add item",
+  "fireclient.module.big_items.add_item.invalid_id.contents": "Invalid identifier",
+  "fireclient.module.big_items.add_item.invalid_item.contents": "Item not found",
+
   "fireclient.module.block_outline.name": "Block Outline",
   "fireclient.module.block_outline.description": "Changes the block outline color",
 
@@ -137,7 +149,7 @@
   "fireclient.module.kit.preview.failure.title": "Failed to preview \"%1$s\"",
 
   "fireclient.module.kit.create_clipboard.success.title": "Successfully pasted \"%1$s\"",
-  "fireclient.module.kit.create_clipboard.success.contents": "Successfully pasted \"%1$s\"",
+  "fireclient.module.kit.create_clipboard.success.contents": "Imported via clipboard",
 
   "fireclient.module.kit.create_clipboard.failure.title": "Failed to paste \"%1$s\"",
 
@@ -147,12 +159,11 @@
   "fireclient.module.kit.recycle.failure.title": "Failed to delete \"%1$s\"",
   "fireclient.module.kit.recycle.failure.contents": "The kit won't be deleted",
 
-  "fireclient.module.kit.drag_and_drop.success.title": "Successfully imported \"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.success.title": "Successfully dragged \"%1$s\"",
   "fireclient.module.kit.drag_and_drop.success.contents": "Imported via drag & drop",
 
-  "fireclient.module.kit.drag_and_drop.failure.title": "Failed to import kit \"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.failure.title": "Failed to drag kit \"%1$s\"",
   "fireclient.module.kit.drag_and_drop.no_file.contents": "Invalid file",
-  "fireclient.module.kit.drag_and_drop.invalid_kit.contents": "Invalid kit",
 
   "fireclient.module.kit.edit.success.name": "Successfully saved \"%1$s\"",
   "fireclient.module.kit.edit.success.contents": "The old kit was recycled",
@@ -174,6 +185,21 @@
 
   "fireclient.module.local_difficulty.name": "Local Difficulty",
   "fireclient.module.local_difficulty.description": "Calculates an approximation of the local difficulty calculator based on Zombie Fire Ticks",
+
+  "fireclient.module.mute_sounds.name": "Mute Sounds",
+  "fireclient.module.mute_sounds.description": "Allows certain sounds to be muted",
+
+  "fireclient.module.mute_sounds.toggle_sound.tooltip": "Toggle \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.name": "+",
+  "fireclient.module.mute_sounds.add_sound.tooltip": "Add sound",
+
+  "fireclient.module.mute_sounds.remove_sound.name": "-",
+  "fireclient.module.mute_sounds.remove_sound.tooltip": "Remove \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.failure.title": "Failed to add sound",
+  "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Invalid identifier",
+  "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Sound not found",
 
   "fireclient.module.nametag.name": "Nametag",
   "fireclient.module.nametag.description": "Allows the modification of nametags",
@@ -216,6 +242,8 @@
   "fireclient.module.shadow.increase_height.tooltip": "Increases shadow height to 20 blocks",
   "fireclient.module.shadow.fullbright.name": "Fullbright",
   "fireclient.module.shadow.fullbright.tooltip": "Makes shadow opacity not depend on light level",
+  "fireclient.module.shadow.render_on_all.name": "Render on All",
+  "fireclient.module.shadow.render_on_all.tooltip": "Allows shadows to render on non-full cube blocks",
 
   "fireclient.module.subtitles.name": "Subtitles",
   "fireclient.module.subtitles.description": "Modifies the subtitles hud",
@@ -282,6 +310,9 @@
 
   "fireclient.settings.cache_uuid.name": "Cache Entity UUID",
   "fireclient.settings.cache_uuid.description": "Caches the targeted entity UUID when you first open the chat screen, allowing you to use it in commands",
+
+  "fireclient.settings.disable_gradient.name": "Disable Gradients",
+  "fireclient.settings.disable_gradient.description": "Disables the gradient text used in most modules in FireClient",
 
   "fireclient.keybind.generic.toggle.name": "Toggle",
   "fireclient.keybind.generic.toggle_visibility.description": "Toggle %1$s's visibility",

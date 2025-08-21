@@ -128,7 +128,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
         for(var module : modules) {
             module.drawOutline(context);
-            module.drawScreen(this, context);
+            module.drawScreen(this, context, delta);
 
             module.setDrawingOverwritten(false);
             module.draw(context, RenderTickCounter.ZERO);

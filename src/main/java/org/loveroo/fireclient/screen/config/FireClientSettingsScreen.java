@@ -24,8 +24,8 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
     private final int settingsWidth = 440;
     private final int settingsHeight = 140;
 
-    public static final Text defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔ ")).setStyle(Style.EMPTY.withColor(0x57D647));
-    public static final  Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌ ")).setStyle(Style.EMPTY.withColor(0xD63C3C));
+    public static final Text defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
+    public static final  Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
         super(Text.translatable("fireclient.screen.settings.title"));
@@ -98,7 +98,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
                 var value = FireClientside.getSetting(option);
 
                 var nameText = option.getName();
-                return ((value == 1) ? defaultTrueText : defaultFalseText).copy().append(nameText);
+                return ((value == 1) ? defaultTrueText : defaultFalseText).copy().append(" ").append(nameText);
             }
         }
 

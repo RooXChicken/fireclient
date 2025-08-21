@@ -98,6 +98,9 @@ public class CoordsChatModule extends ModuleBase {
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
 
         var list = json.optJSONObject("player_list");
+        if(list == null) {
+            list = new JSONObject();
+        }
 
         var iter = list.keys();
         while(iter.hasNext()) {

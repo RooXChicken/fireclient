@@ -104,6 +104,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new SubtitlesModule());
         registerModule(new FullbrightModule());
         registerModule(new PerspectiveModule());
+        registerModule(new MuteSoundsModule());
     }
 
     public static void registerModule(ModuleBase module) {
@@ -127,13 +128,13 @@ public class FireClientside implements ClientModInitializer {
                 oldConfig.renameTo(config);
             }
 
-            if(!config.exists()) {
-                saveConfig();
+            var data = "{}";
+
+            if(config.exists()) {
+                createBackup();
+                data = Files.readString(Paths.get(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE));
             }
 
-            createBackup();
-
-            var data = Files.readString(Paths.get(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE));
             var json = new JSONObject(data);
 
             var settings = json.optJSONObject("settings");
@@ -142,7 +143,7 @@ public class FireClientside implements ClientModInitializer {
             }
 
             for(var option : FireClientOption.values()) {
-                getSettings().put(option, settings.optInt(option.name().toLowerCase(), 0));
+                getSettings().put(option, settings.optInt(option.name().toLowerCase(), option.getDefaultValue()));
             }
 
             var modules = json.optJSONObject("modules");
@@ -262,7 +263,7 @@ public class FireClientside implements ClientModInitializer {
     }
 
     public static int getSetting(FireClientOption option) {
-        return getSettings().getOrDefault(option, 0);
+        return getSettings().getOrDefault(option, option.getDefaultValue());
     }
 
     public static void setSetting(FireClientOption option, int value) {

@@ -40,15 +40,6 @@ public class BlockOutlineModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
-        rot -= 2.0f;
-
-        while(rot < 180) {
-            rot += 360;
-        }
-    }
-
-    @Override
     public void loadJson(JSONObject json) throws JSONException {
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
 
@@ -78,7 +69,7 @@ public class BlockOutlineModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.block_outline.name"), thick), this::thickButtonPressed)
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.block_outline.thick_outline.name"), thick), this::thickButtonPressed)
                 .dimensions(base.width/2 - 60,base.height / 2 + 20, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.block_outline.thick_outline.tooltip")))
                 .build());
@@ -93,7 +84,7 @@ public class BlockOutlineModule extends ModuleBase {
 
     private void thickButtonPressed(ButtonWidget button) {
         thick = !thick;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.block_outline.name"), thick));
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.block_outline.thick_outline.name"), thick));
     }
 
     @Override
@@ -102,7 +93,7 @@ public class BlockOutlineModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context) {
+    public void drawScreen(Screen base, DrawContext context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 80);
 
         var shape = VoxelShapes.cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
@@ -110,6 +101,12 @@ public class BlockOutlineModule extends ModuleBase {
 
         var matrix = context.getMatrices();
         matrix.push();
+
+        rot -= delta*2.0f;
+
+        while(rot < 180) {
+            rot += 360;
+        }
 
         matrix.translate(base.width/2.0f, base.height/2.0f - 40, 0.0f);
         matrix.scale(scale, scale, scale);

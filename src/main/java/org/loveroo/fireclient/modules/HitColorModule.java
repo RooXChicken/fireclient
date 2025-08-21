@@ -91,7 +91,7 @@ public class HitColorModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context) {
+    public void drawScreen(Screen base, DrawContext context, float delta) {
         super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
 
         var client = MinecraftClient.getInstance();
