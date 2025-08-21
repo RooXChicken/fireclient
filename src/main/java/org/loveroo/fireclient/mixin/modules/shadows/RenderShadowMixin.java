@@ -55,11 +55,21 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
 
     @Inject(method = "renderShadow", at = @At("HEAD"))
     private static void renderShadow(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo info) {
+        var shadow = (ShadowModule) FireClientside.getModule("shadow");
+        if(shadow == null) {
+            return;
+        }
+
         renderState.y -= floorDistance;
     }
 
     @Inject(method = "renderShadow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;peek()Lnet/minecraft/client/util/math/MatrixStack$Entry;", shift = At.Shift.AFTER))
     private static void resetRenderState(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo ci) {
+        var shadow = (ShadowModule) FireClientside.getModule("shadow");
+        if(shadow == null) {
+            return;
+        }
+
         renderState.y += floorDistance;
     }
 
