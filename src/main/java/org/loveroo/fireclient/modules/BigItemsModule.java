@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,8 +36,15 @@ public class BigItemsModule extends ModuleBase {
 
     private final List<BigItem> bigItems = new ArrayList<>();
 
+    private static double scrollPos = 0.0;
     private final int soundsWidgetWidth = 300;
     private final int soundsWidgetHeight = 100;
+
+    @Nullable
+    private ScrollableWidget scroll;
+
+    @Nullable
+    private TextFieldWidget itemField;
 
     public BigItemsModule() {
         super(new ModuleData("big_items", "\uD83C\uDF1F", color));
@@ -93,6 +101,12 @@ public class BigItemsModule extends ModuleBase {
     }
 
     @Override
+    public void moduleConfigPressed(ButtonWidget button) {
+        scrollPos = 0.0;
+        super.moduleConfigPressed(button);
+    }
+
+    @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
@@ -100,13 +114,13 @@ public class BigItemsModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_big_items").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        var soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
-        soundField.setMaxLength(128);
-        soundField.setChangedListener((text) -> itemTextChanged(soundField, text));
+        itemField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
+        itemField.setMaxLength(128);
+        itemField.setChangedListener((text) -> itemTextChanged(itemField, text));
 
-        widgets.add(soundField);
+        widgets.add(itemField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(soundField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(itemField))
                 .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.add_item.tooltip")))
                 .build());
@@ -135,14 +149,30 @@ public class BigItemsModule extends ModuleBase {
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
-        var scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 25, entries);
+        scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight,  0, 25, entries);
+        scroll.setScrollY(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
+
         return widgets;
     }
 
+    @Override
+    public void openScreen(Screen base) {
+        base.setFocused(itemField);
+    }
+
     private void itemTextChanged(TextFieldWidget widget, String text) {
+        if(!text.isEmpty()) {
+            var check = text.substring(text.length()-1);
+            if(" ,|".contains(check)) {
+                widget.setText(text.substring(0, text.length()-1));
+                addItemButtonPressed(widget);
+                return;
+            }
+        }
+
         widget.setSuggestion(getSuggestion(text));
     }
 
@@ -151,18 +181,16 @@ public class BigItemsModule extends ModuleBase {
             return "";
         }
 
-        var filteredItems = Registries.ITEM.getIds().stream().filter((id) -> id.getPath().contains(text)).toList();
+        var filteredItems = Registries.ITEM.getIds().stream().filter((id) ->
+                id.getPath().startsWith(text) && bigItems.stream().noneMatch((bigItem -> (bigItem.item.equalsIgnoreCase(id.getPath()))))
+        ).toList();
+
         if(filteredItems.isEmpty()) {
             return "";
         }
 
         var item = filteredItems.getFirst().getPath();
-        var split = item.split(text);
-        if(split.length <= 0) {
-            return "";
-        }
-
-        return split[split.length-1];
+        return item.substring(text.length());
     }
 
     private void addItemButtonPressed(TextFieldWidget text) {
@@ -177,6 +205,15 @@ public class BigItemsModule extends ModuleBase {
             RooHelper.sendNotification(
                     Text.translatable("fireclient.module.big_items.add_item.failure.title"),
                     Text.translatable("fireclient.module.big_items.add_item.invalid_item.contents")
+            );
+
+            return;
+        }
+
+        if(bigItems.stream().anyMatch((bigItem -> bigItem.getItem().equalsIgnoreCase(item)))) {
+            RooHelper.sendNotification(
+                    Text.translatable("fireclient.module.big_items.add_item.failure.title"),
+                    Text.translatable("fireclient.module.big_items.add_item.already_exists.contents")
             );
 
             return;
@@ -198,6 +235,10 @@ public class BigItemsModule extends ModuleBase {
 
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
+        if(scroll != null) {
+            scrollPos = scroll.getScrollY();
+        }
+
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
     }
 

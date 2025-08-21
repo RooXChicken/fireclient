@@ -37,6 +37,7 @@
   "fireclient.module.big_items.add_item.failure.title": "Failed to add item",
   "fireclient.module.big_items.add_item.invalid_id.contents": "Invalid identifier",
   "fireclient.module.big_items.add_item.invalid_item.contents": "Item not found",
+  "fireclient.module.big_items.add_item.already_exists.contents": "Item already in list",
 
   "fireclient.module.block_outline.name": "Block Outline",
   "fireclient.module.block_outline.description": "Changes the block outline color",
@@ -200,6 +201,7 @@
   "fireclient.module.mute_sounds.add_sound.failure.title": "Failed to add sound",
   "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Invalid identifier",
   "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Sound not found",
+  "fireclient.module.mute_sounds.add_sound.already_exists.contents": "Sound already in list",
 
   "fireclient.module.nametag.name": "Nametag",
   "fireclient.module.nametag.description": "Allows the modification of nametags",

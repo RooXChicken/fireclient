@@ -34,8 +34,6 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
         this.modules = module;
         this.about = about;
-
-        openScreen();
     }
 
     private void openScreen() {
@@ -60,6 +58,8 @@ public class ModuleConfigScreen extends ConfigScreenBase {
                 .dimensions(width - 125, height - 25, 120, 20)
                 .tooltip(Tooltip.of(about))
                 .build());
+
+        openScreen();
     }
 
     @Override

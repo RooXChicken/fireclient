@@ -15,6 +15,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +38,15 @@ public class MuteSoundsModule extends ModuleBase {
 
     private final List<MutedSound> mutedSounds = new ArrayList<>();
 
+    private static double scrollPos = 0.0;
     private final int soundsWidgetWidth = 300;
     private final int soundsWidgetHeight = 100;
+
+    @Nullable
+    private ScrollableWidget scroll;
+
+    @Nullable
+    private TextFieldWidget soundField;
 
     public MuteSoundsModule() {
         super(new ModuleData("mute_sounds", "\uD83D\uDD07", color));
@@ -95,6 +103,12 @@ public class MuteSoundsModule extends ModuleBase {
     }
 
     @Override
+    public void moduleConfigPressed(ButtonWidget button) {
+        scrollPos = 0.0;
+        super.moduleConfigPressed(button);
+    }
+
+    @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
@@ -102,7 +116,7 @@ public class MuteSoundsModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_mute_sounds").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        var soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
+        soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
         soundField.setMaxLength(128);
         soundField.setChangedListener((text) -> soundTextChanged(soundField, text));
 
@@ -135,14 +149,29 @@ public class MuteSoundsModule extends ModuleBase {
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
-        var scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
+        scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
+        scroll.setScrollY(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
         return widgets;
     }
 
+    @Override
+    public void openScreen(Screen base) {
+        base.setFocused(soundField);
+    }
+
     private void soundTextChanged(TextFieldWidget widget, String text) {
+        if(!text.isEmpty()) {
+            var check = text.substring(text.length()-1);
+            if(" ,|".contains(check)) {
+                widget.setText(text.substring(0, text.length()-1));
+                addSoundButtonPressed(widget);
+                return;
+            }
+        }
+
         widget.setSuggestion(getSuggestion(text));
     }
 
@@ -151,18 +180,16 @@ public class MuteSoundsModule extends ModuleBase {
             return "";
         }
 
-        var filteredSounds = Registries.SOUND_EVENT.getIds().stream().filter((id) -> id.getPath().contains(text)).toList();
+        var filteredSounds = Registries.SOUND_EVENT.getIds().stream().filter((id) ->
+                id.getPath().startsWith(text) && mutedSounds.stream().noneMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(id.getPath())))
+        ).toList();
+
         if(filteredSounds.isEmpty()) {
             return "";
         }
 
         var sound = filteredSounds.getFirst().getPath();
-        var split = sound.split(text);
-        if(split.length <= 0) {
-            return "";
-        }
-
-        return split[split.length-1];
+        return sound.substring(text.length());
     }
 
     private void addSoundButtonPressed(TextFieldWidget text) {
@@ -177,6 +204,15 @@ public class MuteSoundsModule extends ModuleBase {
             RooHelper.sendNotification(
                     Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
                     Text.translatable("fireclient.module.mute_sounds.add_sound.invalid_id.contents")
+            );
+
+            return;
+        }
+
+        if(mutedSounds.stream().anyMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(sound)))) {
+            RooHelper.sendNotification(
+                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
+                    Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
             );
 
             return;
@@ -198,6 +234,10 @@ public class MuteSoundsModule extends ModuleBase {
 
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
+        if(scroll != null) {
+            scrollPos = scroll.getScrollY();
+        }
+
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
     }
 
