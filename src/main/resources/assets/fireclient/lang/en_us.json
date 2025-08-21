@@ -62,7 +62,7 @@
   "fireclient.module.death_info.description": "Shows your death location in the screen and in chat",
 
   "fireclient.module.elytra_swap.name": "Elytra Swap",
-  "fireclient.module.elytra_swap.description": "Swaps your elytra and chestplate",
+  "fireclient.module.elytra_swap.description": "Swaps your elytra and chestplate when pressing the keybind",
 
   "fireclient.module.entity_count.name": "Entity Count",
   "fireclient.module.entity_count.description": "Shows the world's entity information",
