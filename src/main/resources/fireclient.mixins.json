@@ -9,7 +9,8 @@
     "modules.kit.FixKitHotbarKeys",
     "modules.perspective.PreventPlayerRotationMixin",
     "modules.shadows.RenderShadowsOnAllMixin",
-    "settings.BrewingStandFuelMixin"
+    "settings.BrewingStandFuelMixin",
+    "settings.FixPowderSnowMixin"
   ],
   "client": [
     "AddWidgetAccessor",

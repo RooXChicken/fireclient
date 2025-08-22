@@ -54,9 +54,9 @@ public class ModuleConfigScreen extends ConfigScreenBase {
             addDrawableChild(widget);
         }
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.module.generic.about.name"), (button) -> {})
+        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.module.generic.back.name"), (button) -> escapePressed())
                 .dimensions(width - 125, height - 25, 120, 20)
-                .tooltip(Tooltip.of(about))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.back.tooltip")))
                 .build());
 
         openScreen();

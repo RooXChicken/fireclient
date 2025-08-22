@@ -22,5 +22,8 @@ public abstract class EntityUUIDCacheMixin {
         if(client.targetedEntity != null) {
             CachedEntityUUID.setCachedUUID(client.targetedEntity.getUuid());
         }
+        else {
+            CachedEntityUUID.setCachedUUID(null);
+        }
     }
 }

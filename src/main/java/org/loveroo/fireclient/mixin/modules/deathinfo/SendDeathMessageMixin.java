@@ -2,6 +2,7 @@ package org.loveroo.fireclient.mixin.modules.deathinfo;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.HoverEvent;
@@ -13,6 +14,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.modules.CoordinatesModule;
 import org.loveroo.fireclient.modules.DeathInfoModule;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class SendDeathMessageMixin {
 
+    @Shadow private ClientWorld world;
     @Unique
     private long lastDeath = 0;
 
@@ -65,7 +68,7 @@ public class SendDeathMessageMixin {
 
         var positionText = x.append(y).append(z);
 
-        var command = "/tp " + xPos + yPos + zPos;
+        var command = "/execute in " + world.getDimensionEntry().getIdAsString() + " run tp " + xPos + yPos + zPos;
         var click = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command);
         var hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of(command));
 

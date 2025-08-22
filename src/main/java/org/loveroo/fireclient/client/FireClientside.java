@@ -130,6 +130,8 @@ public class FireClientside implements ClientModInitializer {
 
             var data = "{}";
 
+            // we still load even if the save file is empty because all load functions are safe
+            // this is actually preferred so we can use default values
             if(config.exists()) {
                 createBackup();
                 data = Files.readString(Paths.get(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE));

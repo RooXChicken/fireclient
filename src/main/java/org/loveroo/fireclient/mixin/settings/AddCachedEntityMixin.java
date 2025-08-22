@@ -26,6 +26,7 @@ public abstract class AddCachedEntityMixin {
 
         if(CachedEntityUUID.getCachedUUID() == null) {
             info.setReturnValue(Collections.emptyList());
+            return;
         }
 
         info.setReturnValue(Collections.singleton(CachedEntityUUID.getCachedUUID().toString()));

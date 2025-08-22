@@ -68,7 +68,6 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
 
         @Override
         public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-
             for(var widget : widgets) {
                 widget.setPosition(widget.getX(), y + heightOffset.getOrDefault(widget, 0));
                 widget.render(context, mouseX, mouseY, tickDelta);

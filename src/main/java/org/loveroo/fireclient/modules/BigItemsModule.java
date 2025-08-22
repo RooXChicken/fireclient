@@ -149,7 +149,7 @@ public class BigItemsModule extends ModuleBase {
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
-        scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight,  0, 25, entries);
+        scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight,  0, 20, entries);
         scroll.setScrollY(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 

@@ -5,7 +5,9 @@
   "fireclient.module.generic.visibility_toggle": "Enables the rendering of this module",
   "fireclient.module.generic.enabled_toggle": "Enables the logic of this module",
   "fireclient.module.generic.config_text": "%1$s Configuration",
-  "fireclient.module.generic.about.name": "About",
+
+  "fireclient.module.generic.back.name": "Back",
+  "fireclient.module.generic.back.tooltip": "Return to Module Select",
 
   "fireclient.widget.color_picker.name": "Color Picker",
 

@@ -54,6 +54,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             var x = ((index % 3) - 1) * 130;
 
             moduleButtons.add(ButtonWidget.builder(module.getData().getShownName(), module::moduleConfigPressed)
+                    .tooltip(Tooltip.of(module.getData().getDescription()))
                     .dimensions(width/2 - 60 + x, 0, 120, 20)
                     .build());
         }

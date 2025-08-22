@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.world.dimension.DimensionTypes;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -159,6 +160,7 @@ public class CoordinatesModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var dimension = client.player.getWorld().getDimensionEntry().getIdAsString();
 
+        // TODO: replace with #DimensionTypes
         if(!dimension.equals("minecraft:overworld") && !dimension.equals("minecraft:the_nether")) {
             drawNormal(context);
             return;
