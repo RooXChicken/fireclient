@@ -158,10 +158,18 @@ public class CoordinatesModule extends ModuleBase {
 
     private void drawWithOther(DrawContext context) {
         var client = MinecraftClient.getInstance();
-        var dimension = client.player.getWorld().getDimensionEntry().getIdAsString();
+        if(client.player == null) {
+            return;
+        }
 
-        // TODO: replace with #DimensionTypes
-        if(!dimension.equals("minecraft:overworld") && !dimension.equals("minecraft:the_nether")) {
+        var dimensionEntry = client.player.getWorld().getDimensionEntry().getKey();
+        if(dimensionEntry.isEmpty()) {
+            return;
+        }
+
+        var dimension = dimensionEntry.get();
+
+        if(dimension != DimensionTypes.OVERWORLD && dimension != DimensionTypes.THE_NETHER) {
             drawNormal(context);
             return;
         }
@@ -178,18 +186,15 @@ public class CoordinatesModule extends ModuleBase {
 
         var order = false;
 
-        switch(dimension) {
-            case "minecraft:overworld" -> {
-                xPos /= 8.0;
-                zPos /= 8.0;
-                order = true;
-            }
-
-            case "minecraft:the_nether" -> {
-                xPos *= 8.0;
-                zPos *= 8.0;
-                order = false;
-            }
+        if(dimension == DimensionTypes.OVERWORLD) {
+            xPos /= 8.0;
+            zPos /= 8.0;
+            order = true;
+        }
+        else {
+            xPos *= 8.0;
+            zPos *= 8.0;
+            order = false;
         }
 
         var otherXText = String.format("X: %.2f ", xPos);

@@ -2,6 +2,7 @@ package org.loveroo.fireclient.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
@@ -12,6 +13,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.MathCalculator;
 
 public class FCalcCommand {
 
@@ -34,10 +36,23 @@ public class FCalcCommand {
                         .executes(context -> itemSubCommand(context)))
         );
 
+        var mathSub = ClientCommandManager.literal("math").
+                then(ClientCommandManager.argument("equation", StringArgumentType.greedyString())
+                        .executes(this::mathSubCommand)
+                );
+
         dispatcher.register(ClientCommandManager.literal("fcalc")
                 .then(stackSub)
                 .then(itemCountSub)
+                .then(mathSub)
         );
+    }
+
+    private int mathSubCommand(CommandContext<FabricClientCommandSource> context) {
+        var equation = StringArgumentType.getString(context, "equation");
+
+        context.getSource().sendFeedback(getResult(MathCalculator.calculate(equation) + ""));
+        return 1;
     }
 
     private MutableText getResult(String message) {

@@ -27,8 +27,8 @@ public enum FireClientOption {
     FireClientOption(int defaultValue, FireClientOptionType type) {
         this.name = Text.translatable("fireclient.settings." + name().toLowerCase() + ".name");
         this.description = Text.translatable("fireclient.settings." + name().toLowerCase() + ".description");
-        this.defaultValue = defaultValue;
 
+        this.defaultValue = defaultValue;
         this.type = type;
     }
 
