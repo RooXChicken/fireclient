@@ -1,13 +1,9 @@
-package org.loveroo.fireclient.mixin.indicators;
+package org.loveroo.fireclient.mixin.modules.indicators;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.gui.hud.InGameOverlayRenderer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.modules.indicators.FireIndicator;
 import org.loveroo.fireclient.modules.indicators.NauseaIndicator;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

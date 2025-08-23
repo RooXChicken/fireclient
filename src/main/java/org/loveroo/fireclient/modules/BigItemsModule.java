@@ -220,6 +220,8 @@ public class BigItemsModule extends ModuleBase {
         }
 
         bigItems.add(new BigItem(item, true));
+        text.setSuggestion("");
+
         reloadScreen();
     }
 

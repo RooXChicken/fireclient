@@ -97,9 +97,8 @@ public class KitModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
 
         kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 80, 140, 15, Text.of(""));
-        kitNameField.setSuggestion(Text.translatable("fireclient.module.kit.name_suggestion").getString());
+        kitNameField.setPlaceholder(Text.translatable("fireclient.module.kit.name_suggestion"));
         kitNameField.setMaxLength(32);
-        kitNameField.setChangedListener(this::kitNameFieldChanged);
 
         widgets.add(kitNameField);
 
@@ -206,19 +205,6 @@ public class KitModule extends ModuleBase {
         }
 
         return loadStatus;
-    }
-
-    private void kitNameFieldChanged(String text) {
-        if(kitNameField == null) {
-            return;
-        }
-
-        if(text.isEmpty()) {
-            kitNameField.setSuggestion("Kit name");
-        }
-        else {
-            kitNameField.setSuggestion("");
-        }
     }
 
     private void addKitButtonPressed(ButtonWidget button) {

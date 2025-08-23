@@ -1,0 +1,330 @@
+{
+  "key.category.fireclient": "FireClient",
+  "key.fireclient.module_config": "Άνοιξε τη Διαμόρφωση Μονάδων",
+
+  "fireclient.module.generic.visibility_toggle": "Ενεργοποιεί την εμφάνιση αυτής της μονάδας",
+  "fireclient.module.generic.enabled_toggle": "Ενεργοποιεί την λογική αυτής της μονάδας",
+  "fireclient.module.generic.config_text": "Διαμόρφωση του %1$s", 
+
+  "fireclient.module.generic.back.name": "Πίσω",
+  "fireclient.module.generic.back.tooltip": "Επιστροφή στην Επιλογή Μονάδων",
+
+  "fireclient.widget.color_picker.name": "Επιλογέας Χρώματος",
+
+  "fireclient.module.generic.toggle_visible": "Ορατό",
+  "fireclient.module.generic.toggle_enabled": "Ενεργοποιημένο",
+
+  "fireclient.module.angle_display.name": "Επείδειξη Γωνίας",
+  "fireclient.module.angle_display.description": "Δείχνει την γωνία όψης σου",
+
+  "fireclient.module.armor_display.name": "Επείδειξη Πανοπλίας",
+  "fireclient.module.armor_display.description": "Δείχνει την ανθεκτικότητα και τον χρόνο αναμονής της πανοπλίας σας",
+  "fireclient.module.armor_display.lock_button.name": "Κλειδωμένο",
+  "fireclient.module.armor_display.lock_button.tooltip": "Κλειδώνει την θέση στην γραμμή εργαλειών",
+
+  "fireclient.module.auto_message.name": "Αυτόματο Μήνυμα",
+  "fireclient.module.auto_message.description": "Εισάγει αυτόματα την τελευταία σας '/msg' ή ισοδύναμη εντολή, ώστε να μπορείτε να στείλετε ξανά μήνυμα γρήγορα σε κάποιον πατώντας ένα πλήκτρο της επιλογής σας",
+
+  "fireclient.module.big_items.name": "Μεγάλα Αντικείμενα",
+  "fireclient.module.big_items.description": "Κάνει ορισμένα αντικείμενα να εμφανίζονται μεγαλύτερα",
+
+  "fireclient.module.big_items.toggle_item.tooltip": "Εναλλαγή του \"%1$s\"",
+
+  "fireclient.module.big_items.add_item.name": "+",
+  "fireclient.module.big_items.add_item.tooltip": "Πρόσθεσε αντικείμενο",
+
+  "fireclient.module.big_items.remove_item.name": "-",
+  "fireclient.module.big_items.remove_item.tooltip": "Αφαίρεση του \"%1$s\"",
+
+  "fireclient.module.big_items.add_item.failure.title": "Απέτυχε να προσθέσει το αντικείμενο",
+  "fireclient.module.big_items.add_item.invalid_id.contents": "Μη έγκυρο αναγνωριστικό",
+  "fireclient.module.big_items.add_item.invalid_item.contents": "Το αντικείμενο δεν βρέθηκε",
+  "fireclient.module.big_items.add_item.already_exists.contents": "Το αντικείμενο είναι ήδη στην λίστα",
+
+  "fireclient.module.block_outline.name": "Περίγραμμα Μπλοκ",
+  "fireclient.module.block_outline.description": "Αλλάζει το χρώμα του περιγράμματος του μπλοκ",
+
+  "fireclient.module.block_outline.thick_outline.name": "Παχύ Περίγραμμα",
+  "fireclient.module.block_outline.thick_outline.tooltip": "Κάνει το περίγραμμα του μπλοκ πιο παχύ",
+
+  "fireclient.module.coordinates.name": "Συντεταγμένες",
+  "fireclient.module.coordinates.description": "Δείχνει τις συντεταγμένες σας, τις συντεταγμένες για την άλλη διάσταση και υποστηρίζει ξεχωριστό παράθυρο",
+
+  "fireclient.module.coordinates.window_fail.name": "Απέτυχε να ανοίξει το παράθυρο",
+  "fireclient.module.coordinates.window_fail.contents": "Παρακαλώ χρησιμοποιήστε διαφορετικό JRE",
+
+  "fireclient.module.coordinates.other_dimension.name": "Άλλη Διάσταση",
+  "fireclient.module.coordinates.other_dimension.tooltip": "Δείχνει τις κλιμακωτές συντεταγμένες της άλλης διάστασης (Υπερκόσμος/Κάτω Κόσμος)",
+  "fireclient.module.coordinates.windowed_mode.name": "Λειτουργία Ξεχωριστού Παραθύρου",
+  "fireclient.module.coordinates.windowed_mode.tooltip": "Εμφανίζει ξεχωριστό παράθυρο για τις συντεταγμένες. Χρήσιμο για ζωντανή μετάδοση/κοινή χρήση οθόνης",
+
+  "fireclient.module.coords_chat.name": "Συντεταγμένες στην Συνομιλία",
+  "fireclient.module.coords_chat.description": "Στέλνει τις συντεταγμένες σας σε όλους όσους είναι συνδεδεμένοι (κενό) ή στους επιλεγμένους παίκτες όταν πατάτε το πλήκτρο της επιλογής σας. (ονόματα χωρισμένα με κενό , κόμμα , , ή κάθετο |)",
+
+  "fireclient.module.death_info.name": "Πληροφορίες Θανάτου",
+  "fireclient.module.death_info.description": "Δείχνει την τοποθεσία θανάτου σας στην οθόνη και στη συνομιλία",
+
+  "fireclient.module.elytra_swap.name": "Αλλαγή Έλυτρα",
+  "fireclient.module.elytra_swap.description": "Ανταλλάσσει τα έλυτρα και το θώρακα σας όταν πατάτε το πλήκτρο της επιλογής σας",
+
+  "fireclient.module.entity_count.name": "Καταμέτρηση Οντοτήτων",
+  "fireclient.module.entity_count.description": "Εμφανίζει τις πληροφορίες οντότητας του κόσμου",
+
+  "fireclient.module.flight_speed.name": "Ταχύτητα Πτήσης",
+  "fireclient.module.flight_speed.description": "Επιτρέπει τον έλεγχο της ταχύτητας πτήσης",
+  "fireclient.module.flight_speed.display": "Ταχύτητα: %1$s",
+
+  "fireclient.module.flight_speed.toggle_with_sneak.name": "Εναλλαγή με Σκύψιμο",
+  "fireclient.module.flight_speed.toggle_with_sneak.tooltip": "Εναλλαγή με Σκύψιμο",
+
+  "fireclient.module.fps_display.name": "Επείδειξη FPS",
+  "fireclient.module.fps_display.description": "Δείχνει το framerate σας",
+
+  "fireclient.module.fullbright.name": "Fullbright",
+  "fireclient.module.fullbright.description": "Φωτίζει τα πάντα πλήρως",
+
+  "fireclient.module.health_display.name": "Επίδειξη Ζωής/Καρδιών",
+  "fireclient.module.health_display.description": "Δείχνει την πραγματική σας ζωή/καρδιές ως δεκαδικό ψηφίο",
+
+  "fireclient.module.highest_block.name": "Ανώτατο Μπλοκ",
+  "fireclient.module.highest_block.description": "Δείχνει το υψηλότερο μπλοκ του κόσμου στην τοποθεσία σας",
+
+  "fireclient.module.hit_color.name": "Χρώμα Επιτυχίας",
+  "fireclient.module.hit_color.description": "Αλλάζει το χρώμα επιτυχίας των οντοτήτων", 
+
+  "fireclient.module.indicators.name": "Δείκτες",
+  "fireclient.module.indicators.description": "Δείχνει διάφορους δείκτες εφέ",
+
+  "fireclient.module.indicators.overlay.name": "Επικάλυψη",
+  "fireclient.module.indicators.overlay.tooltip": "Εμφανίζει την επικάλυψη οθόνης για %1$s",
+  "fireclient.module.indicators.indicator.name": "Δείκτης",
+  "fireclient.module.indicators.indicator.tooltip": "Εμφανίζει τον δείκτη για %1$s",
+
+  "fireclient.module.indicator_blindness.name": "Τύφλωση",
+  "fireclient.module.indicator_frost.name": "Παγωνιά",
+  "fireclient.module.indicator_nausea.name": "Ναυτία",
+  "fireclient.module.indicator_portal.name": "Πύλη",
+  "fireclient.module.indicator_in_wall.name": "Σε Τοίχο",
+  "fireclient.module.indicator_fire.name": "Φωτιά",
+
+  "fireclient.module.kit.name": "Κιτ",
+  "fireclient.module.kit.description": "Σας επιτρέπει να αποθηκεύετε, να φορτώνετε, να επεξεργάζεστε και να μοιράζεστε κιτ",
+
+  "fireclient.module.kit.name_suggestion": "Όνομα Κιτ",
+  "fireclient.module.kit.create.name": "+",
+  "fireclient.module.kit.create.tooltip": "Δημιουργία Κιτ",
+  "fireclient.module.kit.create_clipboard.name": "\uD83D\uDCCB",
+  "fireclient.module.kit.create_clipboard.tooltip": "Δημιουργήστε Κιτ από το Πρόχειρο",
+  "fireclient.module.kit.undo.name": "↶",
+  "fireclient.module.kit.undo.tooltip": "Αναίρεση",
+  "fireclient.module.kit.open_folder.name": "\uD83D\uDCC2",
+  "fireclient.module.kit.open_folder.tooltip": "Άνοιγμα φακέλου κιτ (οποιοδήποτε κιτ μπορεί να κοινοποιηθεί και να φορτωθεί με έγκυρα αρχεία .json)",
+
+  "fireclient.module.kit.load.tooltip": "Φόρτωση του \"%1$s\"",
+  "fireclient.module.kit.delete.name": "-",
+  "fireclient.module.kit.delete.tooltip": "Διαγραφή κιτ",
+  "fireclient.module.kit.delete.confirm": "Επιβεβαίωση διαγραφής του \"%1$s\"",
+  "fireclient.module.kit.copy_to_clipboard.name": "\uD83D\uDCCB",
+  "fireclient.module.kit.copy_to_clipboard.tooltip": "Αντιγραφή του \"%1$s\" στο πρόχειρο",
+  "fireclient.module.kit.edit.name": "✎",
+  "fireclient.module.kit.edit.tooltip": "Επεξεργασία του \"%1$s\"",
+
+  "fireclient.module.kit.load_keybind.name": "\uD83E\uDDF0",
+  "fireclient.module.kit.load_keybind.tooltip": "Φόρτωση του \"%1$s\"",
+
+  "fireclient.module.kit.generic.create_failure.title": "Απέτυχε η δημιουργία του \"%1$s\"",
+  "fireclient.module.kit.generic.already_exists.contents": "Υπάρχει ήδη αυτό το όνομα κιτ",
+  "fireclient.module.kit.generic.invalid_kit.contents": "Άκυρο κιτ",
+  "fireclient.module.kit.generic.write_failure.contents": "Αποτυχία εγγραφής αρχείου",
+  "fireclient.module.kit.load.generic.invalid_player.contents": "Μη έγκυρος παίκτης",
+
+  "fireclient.module.kit.empty_name.title": "Παρακαλώ ορίστε ένα όνομα κιτ",
+  "fireclient.module.kit.empty_name.contents": "Αδειάστε το πεδίο ονόματος κιτ",
+
+  "fireclient.module.kit.generic.load_failure.title": "Απέτυχε η φόρτωση του \"%1$s\"",
+  "fireclient.module.kit.load.failure.invalid_permission.contents": "Μη έγκυρα δικαιώματα",
+
+  "fireclient.module.kit.load.waiting_gmc.title": "Φόρτωση του \"%1$s\"...",
+  "fireclient.module.kit.load.waiting_gmc.contents": "Αναμονή για τη Λειτουργία Δημιουργίας",
+
+  "fireclient.module.kit.create.failure.title": "Απέτυχε η δημιουργία του \"%1$s\"",
+
+  "fireclient.module.kit.preview.failure.title": "Απέτυχε η προεπισκόπηση του \"%1$s\"",
+
+  "fireclient.module.kit.create_clipboard.success.title": "Επικολλήθηκε με επιτυχία το \"%1$s\"",
+  "fireclient.module.kit.create_clipboard.success.contents": "Εισήχθη μέσω του πρόχειρου",
+
+  "fireclient.module.kit.create_clipboard.failure.title": "Απέτυχε η επικόλληση του \"%1$s\"",
+
+  "fireclient.module.kit.recycle.success.title": "Ανακυκλώθηκε το \"%1$s\"",
+  "fireclient.module.kit.recycle.success.contents": "Θα διαγραφεί την επόμενη εκκίνηση",
+
+  "fireclient.module.kit.recycle.failure.title": "Η διαγραφή του \"%1$s\" απέτυχε",
+  "fireclient.module.kit.recycle.failure.contents": "Το κιτ δεν θα διαγραφεί",
+
+  "fireclient.module.kit.drag_and_drop.success.title": "Σύρθηκε με επιτυχία το \"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.success.contents": "Εισήχθη μέσω μεταφοράς και απόθεσης",
+
+  "fireclient.module.kit.drag_and_drop.failure.title": "Απέτυχε η μεταφορά του κιτ \"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.no_file.contents": "Μη έγκυρο αρχείο",
+
+  "fireclient.module.kit.edit.success.name": "Αποθηκεύτηκε με επιτυχία το \"%1$s\"",
+  "fireclient.module.kit.edit.success.contents": "Το παλιό κιτ ανακυκλώθηκε",
+
+  "fireclient.module.kit.edit.failure.name": "Αποτυχία αποθήκευσης του \"%1$s\"",
+  "fireclient.module.kit.edit.invalid_editor_inventory": "Μη έγκυρο απόθεμα επεξεργαστή",
+
+  "fireclient.module.kit.edit.revert.name": "Έγινε επιτυχής επαναφορά του \"%1$s\"",
+  "fireclient.module.kit.edit.revert.contents": "Δεν έγιναν αλλαγές",
+
+  "fireclient.screen.edit_kit.title": "Επεξεργαστείτε το \"%1$s\"",
+  "fireclient.screen.preview_kit.title": "Δείτε προεπισκόπηση του \"%1$s\"",
+
+  "fireclient.screen.edit_kit.save.name": "\uD83D\uDCBE Αποθήκευση",
+  "fireclient.screen.edit_kit.save.tooltip": "Αποθήκευση αλλαγών σε \"%1$s\"",
+
+  "fireclient.screen.edit_kit.undo.name": "↶ Αναίρεση",
+  "fireclient.screen.edit_kit.undo.tooltip": "Αναίρεση αλλαγών σε \"%1$s\"",
+
+  "fireclient.module.local_difficulty.name": "Τοπική Δυσκολία",
+  "fireclient.module.local_difficulty.description": "Υπολογίζει μια προσέγγιση της τοπικής δυσκολίας με βάση τα καρέ της φωτιάς των ζόμπι",
+
+  "fireclient.module.mute_sounds.name": "Σίγαση Ήχων",
+  "fireclient.module.mute_sounds.description": "Επιτρέπει τη σίγαση ορισμένων ήχων",
+
+  "fireclient.module.mute_sounds.toggle_sound.tooltip": "Εναλλαγή του \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.name": "+",
+  "fireclient.module.mute_sounds.add_sound.tooltip": "Προσθήκη ήχου",
+
+  "fireclient.module.mute_sounds.remove_sound.name": "-",
+  "fireclient.module.mute_sounds.remove_sound.tooltip": "Αφαίρεση του \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.failure.title": "Αποτυχία προσθήκης ήχου",
+  "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Μη έγκυρο αναγνωριστικό",
+  "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Ο ήχος δεν βρέθηκε",
+  "fireclient.module.mute_sounds.add_sound.already_exists.contents": "Ο ήχος είναι ήδη στη λίστα",
+
+  "fireclient.module.nametag.name": "Ετικέτα Ονόματος",
+  "fireclient.module.nametag.description": "Επιτρέπει την τροποποίηση ετικετών ονομάτων",
+
+  "fireclient.module.nametag.darker_background.name": "Πιο Σκούρα",
+  "fireclient.module.nametag.darker_background.tooltip": "Δίνει στις ετικέτες ονομάτων πιο σκούρο φόντο, κάνοντας τες πιο εύκολα ορατές",
+  "fireclient.module.nametag.show_own.name": "Εμφάνιση δικών",
+  "fireclient.module.nametag.show_own.tooltip": "Κάνει την ετικέτα ονόματός σας ορατή",
+  "fireclient.module.nametag.text_shadow.name": "Σκιά Κειμένου",
+  "fireclient.module.nametag.text_shadow.tooltip": "Εμφανίζει μια σκιά κειμένου στην ετικέτας ονόματος",
+
+  "fireclient.module.perspective.name": "Προοπτική",
+  "fireclient.module.perspective.description": "Σας επιτρέπει να κοιτάτε τριγύρω σε τρίτο πρόσωπο χωρίς να κουνάτε το κεφάλι του παίκτη σας",
+
+  "fireclient.module.perspective.zoom.name": "Μεγέθυνση/Σμίκρυνση",
+  "fireclient.module.perspective.zoom.tooltip": "Μεγεθύνει και σμικρύνει την Προοπτική με την χρήση του τροχού κύλισης",
+
+  "fireclient.module.render_world.name": "Εμφάνιση Κόσμου",
+  "fireclient.module.render_world.description": "[CHEAT] Επιτρέπει την εναλλαγή της εμφάνισης του κόσμου",
+
+  "fireclient.module.scroll_click.name": "Κλικ με Κύλιση",
+  "fireclient.module.scroll_click.description": "Επιτρέπει την προσομοίωση ενός κλικ με κάθε κύλιση",
+
+  "fireclient.module.scroll_click.scroll_type.tooltip": "Ελέγχει εάν η κατεύθυνση κύλισης αλλάζει ποιο κλικ καταγράφεται",
+  "fireclient.module.scroll_click.click_type.name": "Τύπος Κλικ: %1$s",
+  "fireclient.module.scroll_click.click_type.tooltip": "Αλλάζει ποιο κλικ καταγράφεται",
+
+  "fireclient.module.scroll_click.click_type.single": "Μονό",
+  "fireclient.module.scroll_click.click_type.dual": "Διπλό",
+
+  "fireclient.module.scroll_click.single_click_type.use": "Χρήση",
+  "fireclient.module.scroll_click.single_click_type.attack": "Επίθεση",
+
+  "fireclient.module.scroll_click.dual_click_type.direction": "Πάνω: %1$s",
+
+  "fireclient.module.shadow.name": "Σκιές",
+  "fireclient.module.shadow.description": "Τροποποιεί την εμφάνιση σκιών",
+
+  "fireclient.module.shadow.distance_effect.name": "Εφέ απόστασης",
+  "fireclient.module.shadow.distance_effect.tooltip": "Η απόσταση της οντότητας από την κάμερα επηρεάζει την αδιαφάνεια των σκιών (συμπεριφορά vanilla)",
+  "fireclient.module.shadow.increase_height.name": "Αύξηση ύψους",
+  "fireclient.module.shadow.increase_height.tooltip": "Αυξάνει το ύψος της σκιάς σε 20 μπλοκ",
+  "fireclient.module.shadow.fullbright.name": "Fullbright",
+  "fireclient.module.shadow.fullbright.tooltip": "Κάνει την αδιαφάνεια της σκιάς να μην εξαρτάται από το επίπεδο φωτός",
+  "fireclient.module.shadow.render_on_all.name": "Εμφάνιση σε όλα",
+  "fireclient.module.shadow.render_on_all.tooltip": "Επιτρέπει την εμφάνιση σκιών σε μη πλήρη μπλοκ κύβου",
+
+  "fireclient.module.subtitles.name": "Υπότιτλοι",
+  "fireclient.module.subtitles.description": "Τροποποιεί την Οθόνη Κεφαλής-Επί-Καθρέφτου (HUD) των υποτίτλων",
+
+  "fireclient.module.subtitles.visible.name": "Ορατοί",
+  "fireclient.module.subtitles.visible.tooltip": "Εναλλαγή της ορατότητας των υποτίτλων",
+
+  "fireclient.screen.generic.header": "Διαμόρφωση FireClient",
+
+  "fireclient.screen.main_config.title": "Κύρια Καρτέλα Διαμόρφωσης FireClient",
+  "fireclient.screen.main_config.tutorial": "Shift για προσκόλληση | Ctrl για μεταμόρφωση | Δεξί Κλικ για αλλαγή μεγέθους",
+
+  "fireclient.screen.main_config.modules.name": "Μονάδες",
+  "fireclient.screen.main_config.modules.tooltip": "Διαμορφώστε διάφορες μονάδες",
+  "fireclient.screen.main_config.settings.name": "Ρυθμίσεις FireClient",
+  "fireclient.screen.main_config.settings.tooltip": "Διαμόρφωση ρυθμίσεων FireClient",
+
+  "fireclient.screen.settings.title": "Επιλογές FireClient",
+  "fireclient.screen.settings.header": "Ρυθμίσεις",
+  "fireclient.screen.settings.back.name": "Πίσω",
+  "fireclient.screen.settings.back.tooltip": "Επιστροφή στην Κύρια Καρτέλα Διαμόρφωσης",
+
+  "fireclient.screen.module_select.title": "Επιλογή Μονάδας",
+  "fireclient.screen.module_select.header": "Διαμόρφωση Μονάδων",
+
+  "fireclient.module.toggle_toggle_sneak.name": "Εναλλαγή Εναλλαγή-Σκυψίματος",
+  "fireclient.module.toggle_toggle_sneak.description": "Σας επιτρέπει να εναλλάσσετε την επιλογή εναλλαγής σκυψίματος όταν πατάτε το πλήκτρο της επιλογής σας",
+
+  "fireclient.settings.fix_trident_riptide.name": "Επιδιόρθωση Ασπίδας με Παλίρροια",
+  "fireclient.settings.fix_trident_riptide.description": "Διορθώνει το εμπόδιο ορατότητας κατά την χρήση ασπίδας και τρίαινας με παλίρροια",
+
+  "fireclient.settings.branding.name": "Επωνυμία",
+  "fireclient.settings.branding.description": "Προαιρετικό μήνυμα επωνυμίας που εμφανίζεται στα μενού",
+
+  "fireclient.settings.prevent_untoggle_sticky.name": "Διόρθωση Απενεργοποίησης Πλήκτρων",
+  "fireclient.settings.prevent_untoggle_sticky.description": "Αποτρέπει την απενεργοποίηση των αυτοκόλλητων πλήκτρων (Τρεξίματος & Σκυψίματος) κατά την επανεμφάνιση",
+
+  "fireclient.settings.hazeli_mode.name": "Ρύθμιση Hazeli",
+  "fireclient.settings.hazeli_mode.description": "...",
+
+  "fireclient.settings.dont_reset_death.name": "Διόρθωση Κουμπιών Θανάτου",
+  "fireclient.settings.dont_reset_death.description": "Διορθώνει την επαναφορά των κουμπιών της οθόνης θανάτου όταν αλλάζει το μέγεθος του παραθύρου",
+
+  "fireclient.settings.extinguish_fix.name": "Διόρθωση Ήχου Σβήσιμου",
+  "fireclient.settings.extinguish_fix.description": "Διορθώνει τον ανεπιθύμητο ήχο κατά την κατάσβεση φωτιάς",
+
+  "fireclient.settings.show_hidden_modules.name": "Εμφάνιση Κρυφών Μονάδων",
+  "fireclient.settings.show_hidden_modules.description": "Εμφανίζει τα περιγράμματα των μονάδων όταν είναι κρυμμένα",
+
+  "fireclient.settings.show_tutorial_text.name": "Εμφάνιση Κειμένου Εκμάθησης",
+  "fireclient.settings.show_tutorial_text.description": "Εμφανίζει της οδηγίες μετασχηματισμού στην καρτέλα κύριας διαμόρφωσης",
+
+  "fireclient.settings.prevent_hiding_entries.name": "Αποτροπή Απόκρυψης Καταχωρήσεων",
+  "fireclient.settings.prevent_hiding_entries.description": "Αποτρέπει την απόκρυψη των καταχωρήσεων παικτών στη λίστα παικτών",
+
+  "fireclient.settings.show_ping_number.name": "Εμφάνιση Αριθμού Ping",
+  "fireclient.settings.show_ping_number.description": "Εμφανίζει την καθυστέρηση ενός παίκτη ως αριθμό αντί για μπάρες",
+
+  "fireclient.settings.blaze_powder_fill.name": "Συμπλήρωση Σκόνης Πυροστρόβιλου",
+  "fireclient.settings.blaze_powder_fill.description": "Αποτρέπει την αυτόματη συμπλήρωση της σκόνης πυροστρόβιλου στην υποδοχή καυσίμου (την καθιστά συστατικό)",
+
+  "fireclient.settings.show_modules_debug.name": "Εμφάνιση GUI στο F3",
+  "fireclient.settings.show_modules_debug.description": "Εμφανίζει τα GUI των μονάδων όταν είναι ανοιχτή η οθόνη εντοπισμού σφαλμάτων F3",
+
+  "fireclient.settings.cache_uuid.name": "Προσωρινή Αποθήκευση UUID Οντοτήτων",
+  "fireclient.settings.cache_uuid.description": "Αποθηκεύει προσωρινά το UUID της στοχευμένης οντότητας όταν ανοίγετε για πρώτη φορά την οθόνη συνομιλίας, επιτρέποντάς σας να το χρησιμοποιήσετε σε εντολές",
+
+  "fireclient.settings.disable_gradient.name": "Απενεργοποίηση Διαβαθμίσεων",
+  "fireclient.settings.disable_gradient.description": "Απενεργοποιεί το κείμενο διαβάθμισης που χρησιμοποιείται στις περισσότερες μονάδες στο FireClient",
+
+  "fireclient.keybind.generic.unbound_key.long": "Unbound",
+  "fireclient.keybind.generic.unbound_key.short": "N/A",
+  "fireclient.keybind.generic.toggle.name": "Εναλλαγή",
+  "fireclient.keybind.generic.toggle_visibility.description": "Εναλλαγή ορατότητας %1$s's",
+  "fireclient.keybind.generic.toggle.description": "Εναλλαγή του %1$s",
+  "fireclient.keybind.generic.use.name": "Χρήση",
+  "fireclient.keybind.generic.use.description": "Χρήση του %1$s"
+}

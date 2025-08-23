@@ -19,6 +19,7 @@ public class NametagModule extends ModuleBase {
 
     private boolean showOwn = false;
     private boolean darkerBackground = false;
+    private boolean textShadow = false;
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7", color));
@@ -30,6 +31,7 @@ public class NametagModule extends ModuleBase {
     public void loadJson(JSONObject json) throws JSONException {
         showOwn = json.optBoolean("show_own", showOwn);
         darkerBackground = json.optBoolean("darker_background", darkerBackground);
+        textShadow = json.optBoolean("text_shadow", textShadow);
     }
 
     @Override
@@ -38,6 +40,7 @@ public class NametagModule extends ModuleBase {
 
         json.put("show_own", showOwn);
         json.put("darker_background", darkerBackground);
+        json.put("text_shadow", textShadow);
 
         return json;
     }
@@ -56,6 +59,11 @@ public class NametagModule extends ModuleBase {
                 .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own.tooltip")))
                 .build());
 
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow), this::textShadowButtonPressed)
+                .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.text_shadow.tooltip")))
+                .build());
+
         return widgets;
     }
 
@@ -69,11 +77,20 @@ public class NametagModule extends ModuleBase {
         button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.show_own.name"), showOwn));
     }
 
+    private void textShadowButtonPressed(ButtonWidget button) {
+        textShadow = !textShadow;
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow));
+    }
+
     public boolean isDarkerBackground() {
         return darkerBackground;
     }
 
     public boolean isShowOwn() {
         return showOwn;
+    }
+
+    public boolean isTextShadow() {
+        return textShadow;
     }
 }

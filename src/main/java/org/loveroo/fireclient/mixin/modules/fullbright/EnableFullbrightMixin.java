@@ -17,6 +17,6 @@ public abstract class EnableFullbrightMixin {
             return original;
         }
 
-        return Float.MAX_VALUE;
+        return 1000.0f;
     }
 }

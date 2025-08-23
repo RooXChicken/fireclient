@@ -122,7 +122,7 @@
 
   "fireclient.module.kit.load.tooltip": "Load \"%1$s\"",
   "fireclient.module.kit.delete.name": "-",
-  "fireclient.module.kit.delete.tooltip": "Create kit",
+  "fireclient.module.kit.delete.tooltip": "Delete kit",
   "fireclient.module.kit.delete.confirm": "Confirm delete \"%1$s\"",
   "fireclient.module.kit.copy_to_clipboard.name": "\uD83D\uDCCB",
   "fireclient.module.kit.copy_to_clipboard.tooltip": "Copy \"%1$s\" to the clipboard",
@@ -212,6 +212,8 @@
   "fireclient.module.nametag.darker_background.tooltip": "Gives nametags a darker background, making them easier to see",
   "fireclient.module.nametag.show_own.name": "Show Own",
   "fireclient.module.nametag.show_own.tooltip": "Makes your own nametag visible",
+  "fireclient.module.nametag.text_shadow.name": "Text Shadow",
+  "fireclient.module.nametag.text_shadow.tooltip": "Shows a text shadow for the nametag's text",
 
   "fireclient.module.perspective.name": "Perspective",
   "fireclient.module.perspective.description": "Allows you to look around in Third Person without moving your player's head",
@@ -318,6 +320,8 @@
   "fireclient.settings.disable_gradient.name": "Disable Gradients",
   "fireclient.settings.disable_gradient.description": "Disables the gradient text used in most modules in FireClient",
 
+  "fireclient.keybind.generic.unbound_key.long": "Unbound",
+  "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",
   "fireclient.keybind.generic.toggle_visibility.description": "Toggle %1$s's visibility",
   "fireclient.keybind.generic.toggle.description": "Toggle %1$s",

@@ -2,6 +2,7 @@ package org.loveroo.fireclient.mixin.modules.shadows;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.state.EntityRenderState;
@@ -12,6 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.dimension.DimensionType;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.ShadowModule;
@@ -24,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityRenderDispatcher.class)
-public abstract class RenderShadowMixin<E extends Entity, S extends EntityRenderState> {
+public abstract class RenderShadowMixin {
 
     @Unique
     private static double floorDistance;
@@ -45,7 +47,7 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     }
 
     @Inject(method = "render(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/EntityRenderer;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/EntityRenderDispatcher;renderShadow(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/render/entity/state/EntityRenderState;FFLnet/minecraft/world/WorldView;F)V"))
-    private void getFloorDistance(CallbackInfo info, @Local(ordinal = 0) S renderState, @Local(ordinal = 0, argsOnly = true) E entity) {
+    private void getFloorDistance(CallbackInfo info, @Local(ordinal = 0) EntityRenderState renderState, @Local(ordinal = 0, argsOnly = true) Entity entity) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
         if(shadow == null || !shadow.isIncreaseHeight()) {
             return;
@@ -60,12 +62,19 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
 
     @Inject(method = "renderShadow", at = @At("HEAD"))
     private static void renderShadow(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo info) {
+        ShadowModule.drawingShadow = true;
+
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
         if(shadow == null || !shadow.isIncreaseHeight()) {
             return;
         }
 
         renderState.y -= floorDistance;
+    }
+
+    @Inject(method = "renderShadow", at = @At("TAIL"))
+    private static void stopDrawing(MatrixStack matrices, VertexConsumerProvider vertexConsumers, EntityRenderState renderState, float opacity, float tickDelta, WorldView world, float radius, CallbackInfo info) {
+        ShadowModule.drawingShadow = false;
     }
 
     @Inject(method = "renderShadow", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;peek()Lnet/minecraft/client/util/math/MatrixStack$Entry;", shift = At.Shift.AFTER))
@@ -81,13 +90,7 @@ public abstract class RenderShadowMixin<E extends Entity, S extends EntityRender
     @ModifyVariable(method = "renderShadowPart", at = @At("HEAD"), ordinal = 1, argsOnly = true)
     private static float modifyShadowOpacity(float original) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null) {
-            return original;
-        }
-
-        shadow.drawingShadow = true;
-
-        if(!shadow.isIncreaseHeight()) {
+        if(shadow == null || !shadow.isIncreaseHeight()) {
             return original;
         }
 

@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.indicators;
+package org.loveroo.fireclient.mixin.modules.indicators;
 
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;

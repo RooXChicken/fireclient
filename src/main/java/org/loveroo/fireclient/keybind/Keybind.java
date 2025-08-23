@@ -153,7 +153,7 @@ public class Keybind {
     public Text getKeysCombo(List<Key> keyList) {
         var builder = new StringBuilder();
         if(keyList == null || keyList.isEmpty()) {
-            builder.append((shortName) ? "N/A" : "Unbound");
+            builder.append((shortName) ? Text.translatable("fireclient.keybind.generic.unbound_key.short").getString() : Text.translatable("fireclient.keybind.generic.unbound_key.long").getString());
 
             return name.copy().append(": " + builder);
         }

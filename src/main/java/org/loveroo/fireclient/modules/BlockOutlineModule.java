@@ -25,10 +25,9 @@ public class BlockOutlineModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x6E6E6E);
 
-    private String outlineColor = "66000000";
     private boolean thick = false;
 
-    private int outline = getColor();
+    private int outline = 0x66000000;
     private int defaultOutline = 0x66000000;
 
     private float rot = 180.0f;
@@ -44,12 +43,12 @@ public class BlockOutlineModule extends ModuleBase {
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
 
         // because i was silly and forgot to rename the variable
-        outlineColor = json.optString("hit_color", outlineColor);
-        outlineColor = json.optString("outline_color", outlineColor);
+        outline = json.optInt("outline", defaultOutline);
+        if(json.has("outline_color")) {
+            outline = (int)Long.parseLong(json.getString("outline_color"), 16);
+        }
 
         thick = json.optBoolean("thick_outline", thick);
-
-        outline = getColor();
     }
 
     @Override
@@ -57,7 +56,7 @@ public class BlockOutlineModule extends ModuleBase {
         var json = new JSONObject();
 
         json.put("enabled", getData().isEnabled());
-        json.put("outline_color", outlineColor);
+        json.put("outline", outline);
         json.put("thick_outline", thick);
 
         return json;
@@ -118,10 +117,6 @@ public class BlockOutlineModule extends ModuleBase {
         var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
         context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
         matrix.pop();
-    }
-
-    private int getColor() {
-        return (int)Long.parseLong(outlineColor.toLowerCase(), 16);
     }
 
     public int getOutline() {

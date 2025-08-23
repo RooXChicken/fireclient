@@ -219,6 +219,8 @@ public class MuteSoundsModule extends ModuleBase {
         }
 
         mutedSounds.add(new MutedSound(sound, true));
+        text.setSuggestion("");
+        
         reloadScreen();
     }
 

@@ -1,12 +1,9 @@
 package org.loveroo.fireclient.mixin.modules.nametag;
 
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.NametagModule;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 
 @Mixin(EntityRenderer.class)
@@ -31,4 +28,15 @@ public abstract class ModifyNametagMixin {
 
         return (128 << 24);
     }
+
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 4)
+    private boolean showShadow(boolean shadow) {
+        var nametag = (NametagModule) FireClientside.getModule("nametag");
+        if(nametag == null || !nametag.isTextShadow()) {
+            return shadow;
+        }
+
+        return true;
+    }
+
 }

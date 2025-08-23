@@ -22,7 +22,7 @@ public class ShadowModule extends ModuleBase {
     private boolean fullbright = false;
     private boolean renderOnAll = false;
 
-    public boolean drawingShadow = false;
+    public static boolean drawingShadow = false;
 
     public ShadowModule() {
         super(new ModuleData("shadow", "\uD83D\uDD73", color));
