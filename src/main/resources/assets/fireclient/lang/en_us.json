@@ -273,6 +273,14 @@
   "fireclient.module.shadow.render_on_all.name": "Render on All",
   "fireclient.module.shadow.render_on_all.tooltip": "Allows shadows to render on non-full cube blocks",
 
+  "fireclient.module.sign.name": "Signs",
+  "fireclient.module.sign.description": "Modifies the behavior of signs",
+
+  "fireclient.module.sign.disable_gui.name": "Disable GUI",
+  "fireclient.module.sign.disable_gui.description": "Prevents the sign GUI from being opened",
+  "fireclient.module.sign.disable_rendering.name": "Disable Rendering",
+  "fireclient.module.sign.disable_rendering.description": "Blocks signs from being rendered",
+
   "fireclient.module.subtitles.name": "Subtitles",
   "fireclient.module.subtitles.description": "Modifies the subtitles hud",
 
