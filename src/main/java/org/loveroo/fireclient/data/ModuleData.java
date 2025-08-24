@@ -58,7 +58,10 @@ public class ModuleData {
             transform.append(" Y: ");
             transform.append(getPosY());
 
-            transform.append("\nScale: ");
+            transform.append("\n");
+            transform.append(Text.translatable("fireclient.screen.generic.scale_label").getString());
+            transform.append(": ");
+
             transform.append(String.format("%.2f", getScale()));
         }
 
