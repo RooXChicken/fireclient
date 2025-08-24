@@ -5,6 +5,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
@@ -13,6 +14,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.SettingsSlider;
 
 import java.util.ArrayList;
 
@@ -41,10 +43,44 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
 
             var x = ((i % 3) - 1) * 145;
 
-            settingsButtons.add(ButtonWidget.builder(getOptionLabel(option), (button) -> handleSettings(button, option))
-                    .dimensions(width/2 - 65 + x, 0, 130, 20)
-                    .tooltip(Tooltip.of(option.getDescription()))
-                    .build());
+            ClickableWidget widget = null;
+
+            var xPos = width/2 - 65 + x;
+            var width = 130;
+            var height = 20;
+
+            switch(option.getType()) {
+                case TOGGLE -> {
+                    widget = ButtonWidget.builder(getOptionLabel(option), (button) -> handleSettings(button, option))
+                                .dimensions(xPos, 0, width, height)
+                                .tooltip(Tooltip.of(option.getDescription()))
+                                .build();
+                }
+
+                case SLIDER -> {
+                    var sliderAmount = (double)option.getValue() / ((FireClientOption.SliderOptionData)option.getData()).getMaxValue();
+                    widget = new SettingsSlider(option, xPos, 0, width, height, option.getName(), sliderAmount) {
+
+                        @Override
+                        public void updateMessage() {
+                            Text amountText = null;
+
+                            var amount = option.getValue();
+                            if(amount >= ((FireClientOption.SliderOptionData)option.getData()).getMaxValue()) {
+                                amountText = Text.translatable("fireclient.settings.chat_history.unlimited");
+                            }
+                            else {
+                                amountText = Text.literal(String.valueOf(amount));
+                            }
+
+                            setMessage(Text.translatable("fireclient.settings.chat_history.text", amountText));
+                        }
+                    };
+                    widget.setTooltip(Tooltip.of(option.getDescription()));
+                }
+            }
+
+            settingsButtons.add(widget);
         }
 
         backButton = ButtonWidget.builder(Text.translatable("fireclient.screen.settings.back.name"), this::backButtonPressed)
@@ -81,13 +117,17 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         MinecraftClient.getInstance().setScreen(new MainConfigScreen());
     }
 
-    private void handleSettings(ButtonWidget button, FireClientOption option) {
+    private void handleSettings(ClickableWidget widget, FireClientOption option) {
         switch(option.getType()) {
             case TOGGLE -> {
                 var value = (FireClientside.getSetting(option) == 0) ? 1 : 0;
                 FireClientside.setSetting(option, value);
 
-                button.setMessage(getOptionLabel(option));
+                widget.setMessage(getOptionLabel(option));
+            }
+
+            case SLIDER -> {
+
             }
         }
     }

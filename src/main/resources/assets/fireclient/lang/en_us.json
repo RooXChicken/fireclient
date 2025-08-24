@@ -344,6 +344,11 @@
   "fireclient.settings.disable_gradient.name": "Disable Gradients",
   "fireclient.settings.disable_gradient.description": "Disables the gradient text used in most modules in FireClient",
 
+  "fireclient.settings.chat_history.name": "Chat History",
+  "fireclient.settings.chat_history.description": "Modifies the chat history length",
+  "fireclient.settings.chat_history.text": "Length: %1$s",
+  "fireclient.settings.chat_history.unlimited": "Unlimited",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",

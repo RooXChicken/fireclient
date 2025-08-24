@@ -49,6 +49,7 @@
     "modules.shadows.RenderShadowMixin",
     "modules.subtitles.SubtitlesMixin",
     "settings.AddCachedEntityMixin",
+    "settings.ChatLengthMixin",
     "settings.DisableExtinguishSpamMixin",
     "settings.DontResetDeathButtonsMixin",
     "settings.EntityUUIDCacheMixin",
