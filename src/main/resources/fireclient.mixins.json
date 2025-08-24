@@ -10,6 +10,7 @@
     "modules.perspective.PreventPlayerRotationMixin",
     "modules.shadows.RenderShadowsOnAllMixin",
     "settings.BrewingStandFuelMixin",
+    "settings.CleanViewMixin",
     "settings.FixPowderSnowMixin",
     "settings.LimitParticleCountMixin"
   ],

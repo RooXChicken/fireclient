@@ -361,6 +361,9 @@
   "fireclient.settings.chat_history.text": "Length: %1$s",
   "fireclient.settings.chat_history.unlimited": "Unlimited",
 
+  "fireclient.settings.clearview.name": "Clearview",
+  "fireclient.settings.clearview.description": "Hide status effect particles for yourself",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",

@@ -18,6 +18,7 @@ public abstract class LimitParticleCountMixin {
     @Shadow @Final
     private int count;
 
+    // half the particle cap
     @Unique
     private final int cap = 16384/2;
 

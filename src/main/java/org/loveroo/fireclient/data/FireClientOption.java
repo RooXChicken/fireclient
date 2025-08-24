@@ -18,7 +18,8 @@ public enum FireClientOption {
     SHOW_MODULES_DEBUG(new ToggleOptionData(1)),
     CACHE_UUID(new ToggleOptionData(0)),
     CAP_PARTICLE_COUNT(new ToggleOptionData(0)),
-    CHAT_HISTORY(new SliderOptionData(1, 100, 2000));
+    CHAT_HISTORY(new SliderOptionData(1, 100, 2000)),
+    CLEARVIEW(new ToggleOptionData(0));
 //    DISABLE_GRADIENT(0, FireClientOptionType.TOGGLE);
 
     private final Text name;

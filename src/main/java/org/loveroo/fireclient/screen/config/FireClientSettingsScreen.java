@@ -17,6 +17,8 @@ import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.SettingsSlider;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class FireClientSettingsScreen extends ConfigScreenBase {
 
@@ -38,8 +40,10 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         var settingsButtons = new ArrayList<ClickableWidget>();
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
-        for(var i = 0; i < FireClientOption.values().length; i++) {
-            var option = FireClientOption.values()[i];
+        var sortedOptions = Arrays.stream(FireClientOption.values()).sorted(Comparator.comparing(it -> it.getName().getString())).toList();
+
+        for(var i = 0; i < sortedOptions.size(); i++) {
+            var option = sortedOptions.get(i);
 
             var x = ((i % 3) - 1) * 145;
 
