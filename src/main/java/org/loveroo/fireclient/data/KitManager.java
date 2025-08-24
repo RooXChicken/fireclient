@@ -323,6 +323,11 @@ public class KitManager {
             return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
         }
 
+        var bytes = kitContents.getBytes();
+        if(bytes.length > 4194304) {
+            return new KitUploadInfo(KitUploadStatus.TOO_LARGE, kitName, "");
+        }
+
         try {
             var url = new URL(FireClient.getServerUrl("kit/upload"));
 
@@ -341,11 +346,18 @@ public class KitManager {
             input.close();
 
             var code = connection.getResponseCode();
-            if(code == 400) {
-                var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
-                FireClient.LOGGER.info("Failed to upload kit! {}", status);
+            switch(code) {
+                case 400 -> {
+                    var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
+                    FireClient.LOGGER.info("Failed to upload kit! {}", status);
 
-                return new KitUploadInfo(status, kitName, "");
+                    return new KitUploadInfo(status, kitName, "");
+                }
+
+                case 429 -> {
+                    FireClient.LOGGER.info("Failed to upload kit! Rate limited");
+                    return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
+                }
             }
 
             RooHelper.sendChatMessage(KitManager.toSharedKit(kitName, receivedData));
@@ -486,6 +498,7 @@ public class KitManager {
     public enum KitUploadStatus {
         SUCCESS,
         INVALID_KIT,
+        TOO_LARGE,
         FAILURE,
     }
 

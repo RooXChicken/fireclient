@@ -184,6 +184,7 @@
   "fireclient.module.kit.edit.revert.contents": "No changes were made",
 
   "fireclient.module.kit.share.failure.generic": "Failed to upload \"%1$s\"",
+  "fireclient.module.kit.share.failure.too_large": "%1$s. File too large",
   "fireclient.module.kit.share.failure.invalid_kit": "%1$s. Invalid kit",
 
   "fireclient.module.kit.share.message": "%1$s has shared \"%2$s\". %3$s",

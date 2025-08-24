@@ -65,6 +65,7 @@ public class KitEditScreen extends KitViewScreen {
     private void saveButtonPressed(ButtonWidget button) {
         var deleteStatus = KitManager.deleteKit(kitName);
 
+        // TODO: convert this to use fromCommand to send a chat message or notification
         switch(deleteStatus) {
             case SUCCESS -> { }
 
@@ -230,6 +231,7 @@ public class KitEditScreen extends KitViewScreen {
 
     @Override
     protected void onClose() {
+        // TODO: same deal
         if(edited && !saved) {
             RooHelper.sendNotification(
                     Text.translatable("fireclient.module.kit.edit.revert.name", kitName),

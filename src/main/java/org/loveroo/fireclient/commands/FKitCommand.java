@@ -95,26 +95,34 @@ public class FKitCommand {
 
         var status = KitManager.uploadKit(kitName, kitContents);
 
+        var message = "";
+        var code = 1;
+
         switch(status.status()) {
             case SUCCESS -> { }
 
             case INVALID_KIT -> {
-                context.getSource().sendFeedback(getResult(
-                        Text.translatable("fireclient.module.kit.share.failure.invalid_kit",
-                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString()).getString(), 0));
+                message = Text.translatable("fireclient.module.kit.share.failure.invalid_kit",
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName)).getString();
 
-                return 0;
+                code = 0;
+            }
+
+            case TOO_LARGE -> {
+                message = Text.translatable("fireclient.module.kit.share.failure.too_large",
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName)).getString();
+
+                code = 0;
             }
 
             case FAILURE -> {
-                context.getSource().sendFeedback(getResult(
-                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString(), 0));
-
-                return 0;
+                message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString();
+                code = 0;
             }
         }
 
-        return 1;
+        context.getSource().sendFeedback(getResult(message, code));
+        return code;
     }
 
     private int undoKitCommand(CommandContext<FabricClientCommandSource> context) {

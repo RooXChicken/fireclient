@@ -26,38 +26,43 @@ public class OverrideKitCommandMixin {
         var status = KitManager.downloadKit(kitName, kitId);
 
         var client = MinecraftClient.getInstance();
-        Text text = null;
+
+        var message = "";
+        var code = 1;
 
         switch(status.status()) {
             case SUCCESS -> {
-                text = FKitCommand.getResult(Text.translatable("fireclient.module.kit.download.success", kitName).getString(), 1);
+                message = Text.translatable("fireclient.module.kit.download.success", kitName).getString();
             }
 
             case NO_KIT -> {
-                text = FKitCommand.getResult(
-                        Text.translatable("fireclient.module.kit.download.failure.no_kit",
-                                Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString()).getString(), 0);
+                message = Text.translatable("fireclient.module.kit.download.failure.no_kit",
+                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
+
+                code = 0;
             }
 
             case INVALID_KIT -> {
-                text = FKitCommand.getResult(
-                        Text.translatable("fireclient.module.kit.download.failure.invalid_kit",
-                                Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString()).getString(), 0);
+                message = Text.translatable("fireclient.module.kit.download.failure.invalid_kit",
+                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
+
+                code = 0;
             }
 
             case ALREADY_EXISTS -> {
-                text = FKitCommand.getResult(
-                        Text.translatable("fireclient.module.kit.download.failure.already_exists",
-                                Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString()).getString(), 0);
+                message = Text.translatable("fireclient.module.kit.download.failure.already_exists",
+                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
+
+                code = 0;
             }
 
             case FAILURE -> {
-                text = FKitCommand.getResult(
-                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString(), 0);
+                message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString();
+                code = 0;
             }
         }
 
-        client.player.sendMessage(text, false);
+        client.player.sendMessage(FKitCommand.getResult(message, code), false);
         return true;
     }
 }
