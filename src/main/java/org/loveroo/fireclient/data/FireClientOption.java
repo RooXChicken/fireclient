@@ -17,6 +17,7 @@ public enum FireClientOption {
     BLAZE_POWDER_FILL(new ToggleOptionData(0)),
     SHOW_MODULES_DEBUG(new ToggleOptionData(1)),
     CACHE_UUID(new ToggleOptionData(0)),
+    CAP_PARTICLE_COUNT(new ToggleOptionData(0)),
     CHAT_HISTORY(new SliderOptionData(1, 100, 2000));
 //    DISABLE_GRADIENT(0, FireClientOptionType.TOGGLE);
 

@@ -10,7 +10,8 @@
     "modules.perspective.PreventPlayerRotationMixin",
     "modules.shadows.RenderShadowsOnAllMixin",
     "settings.BrewingStandFuelMixin",
-    "settings.FixPowderSnowMixin"
+    "settings.FixPowderSnowMixin",
+    "settings.LimitParticleCountMixin"
   ],
   "client": [
     "AddWidgetAccessor",
