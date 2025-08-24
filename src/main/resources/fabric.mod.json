@@ -3,9 +3,13 @@
   "id": "fireclient",
   "version": "${version}",
   "name": "FireClient",
-  "description": "Not a client. Helps with SMPs [ made with love by roo ]",
+  "description": "Not a client. Helps with SMPs [ made with love by roo ]\n\n* Greek translation: AlexOinks\n* Portuguese translation: VioletMeows",
   "authors": [ "RooXChicken" ],
-  "contact": { "website": "https://loveroo.org" },
+  "contact": {
+    "homepage": "https://loveroo.org",
+    "sources": "https://github.com/RooXChicken/fireclient",
+    "issues": "https://github.com/RooXChicken/fireclient/issues"
+  },
   "license": "All-Rights-Reserved",
   "icon": "assets/fireclient/icon.png",
   "environment": "client",

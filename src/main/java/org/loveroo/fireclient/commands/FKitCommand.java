@@ -121,7 +121,10 @@ public class FKitCommand {
             }
         }
 
-        context.getSource().sendFeedback(getResult(message, code));
+        if(!message.isEmpty()) {
+            context.getSource().sendFeedback(getResult(message, code));
+        }
+
         return code;
     }
 

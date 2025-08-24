@@ -356,6 +356,7 @@ public class KitManager {
 
                 case 429 -> {
                     FireClient.LOGGER.info("Failed to upload kit! Rate limited");
+
                     return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
                 }
             }
