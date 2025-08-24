@@ -7,11 +7,14 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.screen.modules.KitEditScreen;
 import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -315,6 +318,139 @@ public class KitManager {
         return KitManageStatus.FAILURE;
     }
 
+    public static KitUploadInfo uploadKit(String kitName, String kitContents) {
+        if(kitStringStatus(kitContents) != KitValidationStatus.SUCCESS) {
+            return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
+        }
+
+        try {
+            var url = new URL(FireClient.getServerUrl("kit/upload"));
+
+            var connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+            var output = connection.getOutputStream();
+            output.write(kitContents.getBytes());
+            output.flush();
+            output.close();
+
+            var input = connection.getInputStream();
+            var receivedData = new String(input.readAllBytes());
+            input.close();
+
+            var code = connection.getResponseCode();
+            if(code == 400) {
+                var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
+                FireClient.LOGGER.info("Failed to upload kit! {}", status);
+
+                return new KitUploadInfo(status, kitName, "");
+            }
+
+            RooHelper.sendChatMessage(KitManager.toSharedKit(kitName, receivedData));
+            return new KitUploadInfo(KitUploadStatus.SUCCESS, kitName, receivedData);
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.error("Failed to upload kit!", e);
+        }
+
+        return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
+    }
+
+    public static KitDownloadInfo downloadKit(String kitName, String kitId) {
+        try {
+            var url = new URL(FireClient.getServerUrl("kit/download?id=" + kitId));
+
+            var connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoInput(true);
+
+            var input = connection.getInputStream();
+            var receivedData = new String(input.readAllBytes());
+            input.close();
+
+            var code = connection.getResponseCode();
+            if(code == 400) {
+                var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
+                FireClient.LOGGER.info("Failed to download kit! {}", status);
+
+                return new KitDownloadInfo(status, kitName);
+            }
+
+            var createStatus = KitManager.createKit(kitName, receivedData);
+
+            switch(createStatus) {
+                case SUCCESS -> { }
+
+                case ALREADY_EXISTS -> { return new KitDownloadInfo(KitDownloadStatus.ALREADY_EXISTS, kitName); }
+                case INVALID_KIT -> { return new KitDownloadInfo(KitDownloadStatus.INVALID_KIT, kitName); }
+
+                default -> { return new KitDownloadInfo(KitDownloadStatus.FAILURE, kitName); }
+            }
+
+            return new KitDownloadInfo(KitDownloadStatus.SUCCESS, kitName);
+        }
+        catch(Exception e) {
+            FireClient.LOGGER.error("Failed to download kit!", e);
+        }
+
+        return new KitDownloadInfo(KitDownloadStatus.FAILURE, kitName);
+    }
+
+    private static final String SHARED_KIT_PREFIX = "__!fireclient_shared_kit_";
+
+    public static String toSharedKit(String kitName, String kitId) {
+        var result = "{}";
+
+        try {
+            var json = new JSONObject();
+
+            json.put("name", kitName);
+            json.put("id", kitId);
+
+            result = json.toString();
+        }
+        catch(Exception e) { }
+
+        return SHARED_KIT_PREFIX + result;
+    }
+
+    public static boolean isSharedKit(String message) {
+        return message.contains(SHARED_KIT_PREFIX);
+    }
+
+    public static String getSharedKitSender(String message) {
+        if(!isSharedKit(message)) {
+            return "";
+        }
+
+        var split = message.split(SHARED_KIT_PREFIX);
+        return split[0];
+    }
+
+    public static String getSharedKitId(String message) {
+        return getSharedKitData(message, "id");
+    }
+
+    public static String getSharedKitName(String message) {
+        return getSharedKitData(message, "name");
+    }
+
+    private static String getSharedKitData(String message, String data) {
+        if(!isSharedKit(message)) {
+            return "";
+        }
+
+        try {
+            var json = new JSONObject(message.split(SHARED_KIT_PREFIX)[1]);
+            return json.optString(data, "");
+        }
+        catch(Exception e) { }
+
+        return "";
+    }
+
     public enum KitCreateStatus {
         SUCCESS,
         ALREADY_EXISTS,
@@ -346,4 +482,21 @@ public class KitManager {
         INVALID_PLAYER,
         INVALID_KIT
     }
+
+    public enum KitUploadStatus {
+        SUCCESS,
+        INVALID_KIT,
+        FAILURE,
+    }
+
+    public enum KitDownloadStatus {
+        SUCCESS,
+        NO_KIT,
+        ALREADY_EXISTS,
+        INVALID_KIT,
+        FAILURE,
+    }
+
+    public record KitUploadInfo(KitUploadStatus status, String kitName, String kitId) { }
+    public record KitDownloadInfo(KitDownloadStatus status, String kitName) { }
 }

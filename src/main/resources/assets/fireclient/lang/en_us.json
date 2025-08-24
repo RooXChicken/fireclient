@@ -128,10 +128,13 @@
   "fireclient.module.kit.copy_to_clipboard.tooltip": "Copy \"%1$s\" to the clipboard",
   "fireclient.module.kit.edit.name": "✎",
   "fireclient.module.kit.edit.tooltip": "Edit \"%1$s\"",
+  "fireclient.module.kit.share.name": "\uD83C\uDF10",
+  "fireclient.module.kit.share.tooltip": "Share \"%1$s\" in the chat",
 
   "fireclient.module.kit.load_keybind.name": "\uD83E\uDDF0",
   "fireclient.module.kit.load_keybind.tooltip": "Load \"%1$s\"",
 
+  "fireclient.module.kit.generic.create.success": "Successfully created \"%1$s\"",
   "fireclient.module.kit.generic.create_failure.title": "Failed to create \"%1$s\"",
   "fireclient.module.kit.generic.already_exists.contents": "Kit name already exists",
   "fireclient.module.kit.generic.invalid_kit.contents": "Invalid kit",
@@ -143,6 +146,9 @@
 
   "fireclient.module.kit.generic.load_failure.title": "Failed to load \"%1$s\"",
   "fireclient.module.kit.load.failure.invalid_permission.contents": "Invalid permissions",
+
+  "fireclient.module.kit.undo.success.title": "Success",
+  "fireclient.module.kit.load.success.title": "Successfully loaded \"%1$s\"",
 
   "fireclient.module.kit.load.waiting_gmc.title": "Loading \"%1$s\"...",
   "fireclient.module.kit.load.waiting_gmc.contents": "Waiting for Creative Mode",
@@ -176,6 +182,20 @@
 
   "fireclient.module.kit.edit.revert.name": "Successfully reverted \"%1$s\"",
   "fireclient.module.kit.edit.revert.contents": "No changes were made",
+
+  "fireclient.module.kit.share.failure.generic": "Failed to upload \"%1$s\"",
+  "fireclient.module.kit.share.failure.invalid_kit": "%1$s. Invalid kit",
+
+  "fireclient.module.kit.share.message": "%1$s has shared \"%2$s\". %3$s",
+  "fireclient.module.kit.share.download.name": "[Download]",
+  "fireclient.module.kit.share.download.tooltip": "Download \"%1$s\"",
+
+  "fireclient.module.kit.download.success": "Successfully downloaded \"%1$s\"",
+  "fireclient.module.kit.download.failure.generic": "Failed to download \"%1$s\"",
+  "fireclient.module.kit.download.failure.no_kit": "%1$s. Kit does not exist",
+  "fireclient.module.kit.download.failure.already_exists": "%1$s. Kit name already exists",
+  "fireclient.module.kit.download.failure.invalid_kit": "%1$s. Invalid kit",
+
 
   "fireclient.screen.edit_kit.title": "Edit \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Preview \"%1$s\"",
@@ -266,6 +286,8 @@
   "fireclient.screen.main_config.modules.tooltip": "Configure various modules",
   "fireclient.screen.main_config.settings.name": "FireClient Settings",
   "fireclient.screen.main_config.settings.tooltip": "Configure FireClient settings",
+  "fireclient.screen.main_config.exit.name": "Exit",
+  "fireclient.screen.main_config.exit.tooltip": "Return to game",
 
   "fireclient.screen.settings.title": "FireClient Options",
   "fireclient.screen.settings.header": "Settings",

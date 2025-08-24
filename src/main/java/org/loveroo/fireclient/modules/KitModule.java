@@ -97,8 +97,17 @@ public class KitModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
 
         kitNameField = new TextFieldWidget(client.textRenderer, base.width/2 - 70, base.height/2 - 80, 140, 15, Text.of(""));
-        kitNameField.setPlaceholder(Text.translatable("fireclient.module.kit.name_suggestion"));
+        kitNameField.setSuggestion(Text.translatable("fireclient.module.kit.name_suggestion").getString());
         kitNameField.setMaxLength(32);
+
+        kitNameField.setChangedListener((text) -> {
+            if(text.isEmpty()) {
+                kitNameField.setSuggestion(Text.translatable("fireclient.module.kit.name_suggestion").getString());
+            }
+            else {
+                kitNameField.setSuggestion("");
+            }
+        });
 
         widgets.add(kitNameField);
 
@@ -112,7 +121,7 @@ public class KitModule extends ModuleBase {
             createKeybindFromKit(kit);
 
             var loadKeybindButton = FireClientside.getKeybindManager().getKeybind(getKitKeyName(kit));
-            elementWidgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 140, 0, 60, 20));
+            elementWidgets.add(loadKeybindButton.getRebindButton(base.width / 2 - 155, 0, 50, 20));
 
             elementWidgets.add(ButtonWidget.builder(Text.of(kit), (button) -> loadKit(kit, true))
                     .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.load.tooltip", kit)))
@@ -134,6 +143,11 @@ public class KitModule extends ModuleBase {
             elementWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.edit.name"), (button -> editButtonPressed(button, kit)))
                     .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.edit.tooltip", kit)))
                     .dimensions(base.width/2 + 130, 0, 20, 20)
+                    .build());
+
+            elementWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.kit.share.name"), (button -> uploadKitButtonPressed(button, kit)))
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.kit.share.tooltip", kit)))
+                    .dimensions(base.width/2 - 100, 0, 20, 20)
                     .build());
 
             elements.add(new ScrollableWidget.ElementEntry(elementWidgets));
@@ -260,6 +274,11 @@ public class KitModule extends ModuleBase {
                         Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents"));
             }
         }
+    }
+
+    private void uploadKitButtonPressed(ButtonWidget button, String kitName) {
+        var kitContents = KitManager.getKitFromName(kitName);
+        KitManager.uploadKit(kitName, kitContents);
     }
 
     private void folderButtonPressed(ButtonWidget button) {

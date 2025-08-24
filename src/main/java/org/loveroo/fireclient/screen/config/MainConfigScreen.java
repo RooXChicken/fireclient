@@ -13,9 +13,6 @@ import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
 public class MainConfigScreen extends ConfigScreenBase {
 
-    private ButtonWidget modulesButton;
-    private ButtonWidget settingsButton;
-
     private ModuleBase selectedModule = null;
     private ModuleBase.OldTransform oldTransform = null;
 
@@ -29,18 +26,20 @@ public class MainConfigScreen extends ConfigScreenBase {
             module.setDrawingOverwritten(true);
         }
 
-        modulesButton = ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.modules.name"), this::modulesButtonPressed)
+        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.modules.name"), this::modulesButtonPressed)
                 .dimensions(width/2 - 50, height/2 - 10, 100, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.modules.tooltip")))
-                .build();
+                .build());
 
-        settingsButton = ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.settings.name"), this::settingsButtonPressed)
+        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.settings.name"), this::settingsButtonPressed)
                 .dimensions(width/2 - 60, height/2 + 20, 120, 20)
                 .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.settings.tooltip")))
-                .build();
+                .build());
 
-        addDrawableChild(modulesButton);
-        addDrawableChild(settingsButton);
+        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.exit.name"), this::exitButtonPressed)
+                .dimensions(width - 85, height - 25, 80, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.exit.tooltip")))
+                .build());
     }
 
     private void modulesButtonPressed(ButtonWidget button) {
@@ -53,6 +52,11 @@ public class MainConfigScreen extends ConfigScreenBase {
     private void settingsButtonPressed(ButtonWidget button) {
         removeOverwrite();
         MinecraftClient.getInstance().setScreen(new FireClientSettingsScreen());
+    }
+
+    private void exitButtonPressed(ButtonWidget button) {
+        removeOverwrite();
+        MinecraftClient.getInstance().setScreen(null);
     }
 
     @Override

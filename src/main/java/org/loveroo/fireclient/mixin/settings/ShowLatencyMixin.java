@@ -32,19 +32,13 @@ public class ShowLatencyMixin {
     private final int unknownColor = 0x787878;
 
     @Unique
-    private final int ping5Color = 0x24AB1A;
+    private final int goodColor = 0x55D640;
 
     @Unique
-    private final int ping4Color = 0xEAE071;
+    private final int neutralColor = 0xEAED58;
 
     @Unique
-    private final int ping3Color = 0xB8761C;
-
-    @Unique
-    private final int ping2Color = 0xE83F3F;
-
-    @Unique
-    private final int ping1Color = 0xA61111;
+    private final int badColor = 0xBD2222;
 
     @Inject(method = "renderLatencyIcon", at = @At("HEAD"), cancellable = true)
     private void renderLatency(DrawContext context, int width, int x, int y, PlayerListEntry entry, CallbackInfo info) {
@@ -69,23 +63,16 @@ public class ShowLatencyMixin {
 
     @Unique
     private int getColor(PlayerListEntry entry) {
-        if (entry.getLatency() < 0) {
+        var ping = entry.getLatency();
+        if(ping < 0) {
             return unknownColor;
         }
-        else if (entry.getLatency() < 150) {
-            return ping5Color;
-        }
-        else if (entry.getLatency() < 300) {
-            return ping4Color;
-        }
-        else if (entry.getLatency() < 600) {
-            return ping3Color;
-        }
-        else if (entry.getLatency() < 1000) {
-            return ping2Color;
+
+        if(ping < 150) {
+            return Color.fromRGB(goodColor).blend(Color.fromRGB(neutralColor), (ping/150.0)).toInt();
         }
         else {
-            return ping1Color;
+            return Color.fromRGB(neutralColor).blend(Color.fromRGB(badColor), ((ping-150)/500.0)).toInt();
         }
     }
 }

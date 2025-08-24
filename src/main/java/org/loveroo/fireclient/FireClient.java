@@ -7,15 +7,22 @@ import org.slf4j.LoggerFactory;
 public class FireClient implements ModInitializer {
 
     static {
+        // attempt to override headless mode
         System.setProperty("java.awt.headless", "false");
     }
 
-    public static String MOD_ID = "fireclient";
-    public static String KEYBIND_CATEGORY = "key.category.fireclient";
-    public static Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final String MOD_ID = "fireclient";
+    private static final String SERVER_URL = "https://api.loveroo.org/api/fireclient/";
+    public static final String KEYBIND_CATEGORY = "key.category.fireclient";
+
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
     @Override
     public void onInitialize() {
 
+    }
+
+    public static String getServerUrl(String path) {
+        return SERVER_URL + path;
     }
 }

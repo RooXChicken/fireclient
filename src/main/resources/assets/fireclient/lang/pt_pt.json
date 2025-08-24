@@ -1,0 +1,330 @@
+{
+  "key.category.fireclient": "FireClient",
+  "key.fireclient.module_config": "Abrir Configuração",
+
+  "fireclient.module.generic.visibility_toggle": "Permite a renderização deste módulo",
+  "fireclient.module.generic.enabled_toggle": "Permite a lógica deste módulo",
+  "fireclient.module.generic.config_text": "Configuração de %1$s",
+
+  "fireclient.module.generic.back.name": "Voltar",
+  "fireclient.module.generic.back.tooltip": "Voltar à seleção de Modelo",
+
+  "fireclient.widget.color_picker.name": "Seletor de Cores",
+
+  "fireclient.module.generic.toggle_visible": "Visível",
+  "fireclient.module.generic.toggle_enabled": "Ativado",
+
+  "fireclient.module.angle_display.name": "Disposição do Ângulo",
+  "fireclient.module.angle_display.description": "Dispõe o Ângulo",
+
+  "fireclient.module.armor_display.name": "Disposição da Armadura",
+  "fireclient.module.armor_display.description": "Dispõe a durabilidade e o tempo de recarga da sua armadura",
+  "fireclient.module.armor_display.lock_button.name": "Bloqueado",
+  "fireclient.module.armor_display.lock_button.tooltip": "Bloqueia a posição na barra de atalhos",
+
+  "fireclient.module.auto_message.name": "Auto Mensagem",
+  "fireclient.module.auto_message.description": "Introduz automaticamente o último comando digitado '/msg' ou equivalente para que possa enviar uma mensagem rapidamente a alguém quando pressiona a tecla de atalho",
+
+  "fireclient.module.big_items.name": "Itens Gigantes ",
+  "fireclient.module.big_items.description": "Dispõe itens escolhdos maiores que normal",
+
+  "fireclient.module.big_items.toggle_item.tooltip": "Alternar\"%1$s\"",
+
+  "fireclient.module.big_items.add_item.name": "+",
+  "fireclient.module.big_items.add_item.tooltip": "Adicionar item",
+
+  "fireclient.module.big_items.remove_item.name": "-",
+  "fireclient.module.big_items.remove_item.tooltip": "Remover \"%1$s\"",
+
+  "fireclient.module.big_items.add_item.failure.title": "Falha ao adiconar item",
+  "fireclient.module.big_items.add_item.invalid_id.contents": "Identificador inválido",
+  "fireclient.module.big_items.add_item.invalid_item.contents": "Item não encontrado",
+  "fireclient.module.big_items.add_item.already_exists.contents": "Item já se encontra na lista",
+
+  "fireclient.module.block_outline.name": "Contorno do bloco",
+  "fireclient.module.block_outline.description": "Muda a cor do contorno do bloco",
+
+  "fireclient.module.block_outline.thick_outline.name": "Contorno Grosso",
+  "fireclient.module.block_outline.thick_outline.tooltip": "Torna o contorno do bloco mais espesso",
+
+  "fireclient.module.coordinates.name": "Coordenadas",
+  "fireclient.module.coordinates.description": "Dispõe as coordenadas do jogo, as das outras dimensões e suporta o modo janela separada",
+
+  "fireclient.module.coordinates.window_fail.name": "Falha a abrir janela",
+  "fireclient.module.coordinates.window_fail.contents": "Por favor, utilize um JRE diferente",
+
+  "fireclient.module.coordinates.other_dimension.name": "Outra Dimensão",
+  "fireclient.module.coordinates.other_dimension.tooltip": "Mostra as coordenadas de outra dimensão (Overworld/Nether)",
+  "fireclient.module.coordinates.windowed_mode.name": "Modo Janela",
+  "fireclient.module.coordinates.windowed_mode.tooltip": "Apresenta uma janela separada para coordenadas. Útil para streaming/partilha de ecrã",
+
+  "fireclient.module.coords_chat.name": "Coordendas no Chat",
+  "fireclient.module.coords_chat.description": "Manda as coordenadas no chat (blank) ou os jogadores selecionados ao premir a tecla de atalho. (nomes separados por espaço, vírgula, ou pipe |)",
+
+  "fireclient.module.death_info.name": "Informações sobre a morte",
+  "fireclient.module.death_info.description": "Dispõe o local da sua morte no ecrã e no chat",
+
+  "fireclient.module.elytra_swap.name": "Troco de Elytra",
+  "fireclient.module.elytra_swap.description": "Troca os seus Elytra e peitorais ao pressionar a tecla de atalho",
+
+  "fireclient.module.entity_count.name": "Contagem de Entidades",
+  "fireclient.module.entity_count.description": "Dispõe a Informacão das Entidades do Mundo",
+
+  "fireclient.module.flight_speed.name": "Velocidade de Voo",
+  "fireclient.module.flight_speed.description": "Controla a Velocidade de Voo",
+  "fireclient.module.flight_speed.display": "Velocidade: %1$s",
+
+  "fireclient.module.flight_speed.toggle_with_sneak.name": "Alternar Agachar",
+  "fireclient.module.flight_speed.toggle_with_sneak.tooltip": "Alternar Agachar",
+
+  "fireclient.module.fps_display.name": "Disposição de FPS",
+  "fireclient.module.fps_display.description": "Dispõe o teu FPS",
+
+  "fireclient.module.fullbright.name": "Luminosidade",
+  "fireclient.module.fullbright.description": "Deixa tudo totalmente iluminado",
+
+  "fireclient.module.health_display.name": "Disposição de Saúde",
+  "fireclient.module.health_display.description": "Dispõe a tua verdadeira saúde ao decimal",
+
+  "fireclient.module.highest_block.name": "Bloco mais Alto",
+  "fireclient.module.highest_block.description": "Dispõe o bloco mais alto na tua localização exacta",
+
+  "fireclient.module.hit_color.name": "Acertar Cor",
+  "fireclient.module.hit_color.description": "Muda a cor ao acertar numa entidade",
+
+  "fireclient.module.indicators.name": "Indicadores",
+  "fireclient.module.indicators.description": "Dispõe vários indicadores de efeito",
+
+  "fireclient.module.indicators.overlay.name": "Sobreposição",
+  "fireclient.module.indicators.overlay.tooltip": "Dispõe a sobreposição de %1$s",
+  "fireclient.module.indicators.indicator.name": "Indicador",
+  "fireclient.module.indicators.indicator.tooltip": "Mostra o indicador de %1$s",
+
+  "fireclient.module.indicator_blindness.name": "Cegueira",
+  "fireclient.module.indicator_frost.name": "Frio",
+  "fireclient.module.indicator_nausea.name": "Náusea",
+  "fireclient.module.indicator_portal.name": "Portal",
+  "fireclient.module.indicator_in_wall.name": "Dentro de uma parede",
+  "fireclient.module.indicator_fire.name": "Fogo",
+
+  "fireclient.module.kit.name": "Kit",
+  "fireclient.module.kit.description": "Permite guardar, carregar, editar e partilhar kits",
+
+  "fireclient.module.kit.name_suggestion": "Nome do Kit",
+  "fireclient.module.kit.create.name": "+",
+  "fireclient.module.kit.create.tooltip": "Criar kit",
+  "fireclient.module.kit.create_clipboard.name": "\uD83D\uDCCB",
+  "fireclient.module.kit.create_clipboard.tooltip": "Criar kit da área de transferência",
+  "fireclient.module.kit.undo.name": "↶",
+  "fireclient.module.kit.undo.tooltip": "Desfazer",
+  "fireclient.module.kit.open_folder.name": "\uD83D\uDCC2",
+  "fireclient.module.kit.open_folder.tooltip": "Abrir a pasta de kits (qualquer kit pode ser partilhado e carregado com ficheiros . json válidos)",
+
+  "fireclient.module.kit.load.tooltip": "Carregar \"%1$s\"",
+  "fireclient.module.kit.delete.name": "-",
+  "fireclient.module.kit.delete.tooltip": "Eliminar kit",
+  "fireclient.module.kit.delete.confirm": "Confirmar Eliminação \"%1$s\"",
+  "fireclient.module.kit.copy_to_clipboard.name": "\uD83D\uDCCB",
+  "fireclient.module.kit.copy_to_clipboard.tooltip": "Copiar \"%1$s\" para a área de transferência",
+  "fireclient.module.kit.edit.name": "✎",
+  "fireclient.module.kit.edit.tooltip": "Editar \"%1$s\"",
+
+  "fireclient.module.kit.load_keybind.name": "\uD83E\uDDF0",
+  "fireclient.module.kit.load_keybind.tooltip": "Carregar \"%1$s\"",
+
+  "fireclient.module.kit.generic.create_failure.title": "Falha ao Criar \"%1$s\"",
+  "fireclient.module.kit.generic.already_exists.contents": "Nome do kit já existe",
+  "fireclient.module.kit.generic.invalid_kit.contents": "Kit Inválido",
+  "fireclient.module.kit.generic.write_failure.contents": "Falha ao gravar o ficheiro",
+  "fireclient.module.kit.load.generic.invalid_player.contents": "Jogador Inválido",
+
+  "fireclient.module.kit.empty_name.title": "Por favor dé um nome ao kit",
+  "fireclient.module.kit.empty_name.contents": "Campo de nome do kit vazio",
+
+  "fireclient.module.kit.generic.load_failure.title": "Falha ao carregar \"%1$s\"",
+  "fireclient.module.kit.load.failure.invalid_permission.contents": "Permisões Inválidas",
+
+  "fireclient.module.kit.load.waiting_gmc.title": "Carregar \"%1$s\"...",
+  "fireclient.module.kit.load.waiting_gmc.contents": "Esperar pelo modo Criativo",
+
+  "fireclient.module.kit.create.failure.title": "Falha ao criar \"%1$s\"",
+
+  "fireclient.module.kit.preview.failure.title": "Falha na Visualisação de \"%1$s\"",
+
+  "fireclient.module.kit.create_clipboard.success.title": "Colado com sucesso \"%1$s\"",
+  "fireclient.module.kit.create_clipboard.success.contents": "Importado via a área de transferência",
+
+  "fireclient.module.kit.create_clipboard.failure.title": "Failed to paste \"%1$s\"",
+
+  "fireclient.module.kit.recycle.success.title": "Reciclado \"%1$s\"",
+  "fireclient.module.kit.recycle.success.contents": "Será excluído na próxima inicialização",
+
+  "fireclient.module.kit.recycle.failure.title": "Falha a eliminar \"%1$s\"",
+  "fireclient.module.kit.recycle.failure.contents": "O kit não será eliminado",
+
+  "fireclient.module.kit.drag_and_drop.success.title": "Arrastado com sucesso\"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.success.contents": "Importado via arrastar e largar",
+
+  "fireclient.module.kit.drag_and_drop.failure.title": "Falha a arrastar kit \"%1$s\"",
+  "fireclient.module.kit.drag_and_drop.no_file.contents": "Ficheiro Inválido",
+
+  "fireclient.module.kit.edit.success.name": "Salvado com sucesso \"%1$s\"",
+  "fireclient.module.kit.edit.success.contents": "O kit antigo for reciclado",
+
+  "fireclient.module.kit.edit.failure.name": "Falha ao salvar \"%1$s\"",
+  "fireclient.module.kit.edit.invalid_editor_inventory": "Inventário de editor inválido",
+
+  "fireclient.module.kit.edit.revert.name": "Revertido com sucesso \"%1$s\"",
+  "fireclient.module.kit.edit.revert.contents": "Não houve mudanças",
+
+  "fireclient.screen.edit_kit.title": "Editar \"%1$s\"",
+  "fireclient.screen.preview_kit.title": "Visualisar \"%1$s\"",
+
+  "fireclient.screen.edit_kit.save.name": "Salvar \uD83D\uDCBE",
+  "fireclient.screen.edit_kit.save.tooltip": "Guardar alterações de \"%1$s\"",
+
+  "fireclient.screen.edit_kit.undo.name": "↶ Refazer",
+  "fireclient.screen.edit_kit.undo.tooltip": "Refazer mudanças do \"%1$s\"",
+
+  "fireclient.module.local_difficulty.name": "Dificuldade Local",
+  "fireclient.module.local_difficulty.description": "Calcula uma aproximação da calculadora de dificuldade local com base nos ticks de fogo nos Zombis",
+
+  "fireclient.module.mute_sounds.name": "Silenciar Sons",
+  "fireclient.module.mute_sounds.description": "Permite silenciar determinados sons",
+
+  "fireclient.module.mute_sounds.toggle_sound.tooltip": "Alternar \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.name": "+",
+  "fireclient.module.mute_sounds.add_sound.tooltip": "Adicionar Som",
+
+  "fireclient.module.mute_sounds.remove_sound.name": "-",
+  "fireclient.module.mute_sounds.remove_sound.tooltip": "Eliminar \"%1$s\"",
+
+  "fireclient.module.mute_sounds.add_sound.failure.title": "Falha ao adicionar som",
+  "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Identificador Inválido",
+  "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Som não encontrado",
+  "fireclient.module.mute_sounds.add_sound.already_exists.contents": "Som já existe",
+
+  "fireclient.module.nametag.name": "Crachás",
+  "fireclient.module.nametag.description": "Permite a modificação de crachás",
+
+  "fireclient.module.nametag.darker_background.name": "Modo Escuro",
+  "fireclient.module.nametag.darker_background.tooltip": "Dá aos crachás um fundo mais escuro, tornando-os mais fáceis de ver",
+  "fireclient.module.nametag.show_own.name": "Mostra o própro",
+  "fireclient.module.nametag.show_own.tooltip": "Mostra o teu própro crachá",
+  "fireclient.module.nametag.text_shadow.name": "Sombra do texto",
+  "fireclient.module.nametag.text_shadow.tooltip": "Dispõe uma sombra no texto do teu crachá",
+
+  "fireclient.module.perspective.name": "Perspetiva",
+  "fireclient.module.perspective.description": "Permite olhar em redor em terceira pessoa sem mover a cabeça do seu jogador",
+
+  "fireclient.module.perspective.zoom.name": "Ampliar Zoom",
+  "fireclient.module.perspective.zoom.tooltip": "Aumenta e diminui o zoom da perspetiva ao utilizar a roda de rolagem",
+
+  "fireclient.module.render_world.name": "Renderizar mundo",
+  "fireclient.module.render_world.description": "[CHEAT] Permite alternar a renderização do mundo",
+
+  "fireclient.module.scroll_click.name": "Rolar Clique",
+  "fireclient.module.scroll_click.description": "Permite simular um clique com a roda de rolagem",
+
+  "fireclient.module.scroll_click.scroll_type.tooltip": "Controla se a direção da deslocação altera o clique registado",
+  "fireclient.module.scroll_click.click_type.name": "Tipo de clique: %1$s",
+  "fireclient.module.scroll_click.click_type.tooltip": "Muda que tipo de clique é registado",
+
+  "fireclient.module.scroll_click.click_type.single": "Síngulo",
+  "fireclient.module.scroll_click.click_type.dual": "Dual",
+
+  "fireclient.module.scroll_click.single_click_type.use": "Uso",
+  "fireclient.module.scroll_click.single_click_type.attack": "Ataque",
+
+  "fireclient.module.scroll_click.dual_click_type.direction": "Para Cima: %1$s",
+
+  "fireclient.module.shadow.name": "Sombras",
+  "fireclient.module.shadow.description": "Modifica o rendimento de sombras",
+
+  "fireclient.module.shadow.distance_effect.name": "Efeito de Distância",
+  "fireclient.module.shadow.distance_effect.tooltip": "A distância da entidade à câmera afeta a opacidade das sombras (comportamento vanilla)",
+  "fireclient.module.shadow.increase_height.name": "Aumentar a altura",
+  "fireclient.module.shadow.increase_height.tooltip": "Aumenta a altura da sombra para 20 blocos",
+  "fireclient.module.shadow.fullbright.name": "Luminosidade",
+  "fireclient.module.shadow.fullbright.tooltip": "Faz com que a opacidade da sombra não dependa do nível de luz",
+  "fireclient.module.shadow.render_on_all.name": "Renderizar em tudo",
+  "fireclient.module.shadow.render_on_all.tooltip": "Permite que sombras sejam renderizadas em blocos de cubo não completos",
+
+  "fireclient.module.subtitles.name": "Subtitulos",
+  "fireclient.module.subtitles.description": "Modifica o HUD das legendas",
+
+  "fireclient.module.subtitles.visible.name": "Visível",
+  "fireclient.module.subtitles.visible.tooltip": "Alterna a visibilidade das legendas",
+
+  "fireclient.screen.generic.header": "Configuração FireClient",
+
+  "fireclient.screen.main_config.title": "Configuração principal do FireClient",
+  "fireclient.screen.main_config.tutorial": "Shift para ajustar | Ctrl para transformar | Clique com o botão direito para dimensionar",
+
+  "fireclient.screen.main_config.modules.name": "Módulos",
+  "fireclient.screen.main_config.modules.tooltip": "Configura vários Módulos",
+  "fireclient.screen.main_config.settings.name": "Configurações do FireClient",
+  "fireclient.screen.main_config.settings.tooltip": "Configurar as definições do FireClient",
+
+  "fireclient.screen.settings.title": "Opções do FireClient",
+  "fireclient.screen.settings.header": "Configurações",
+  "fireclient.screen.settings.back.name": "Voltar",
+  "fireclient.screen.settings.back.tooltip": "Voltar à tela de configuração principal",
+
+  "fireclient.screen.module_select.title": "Selecionar Módulos",
+  "fireclient.screen.module_select.header": "Configuração dos Módulos",
+
+  "fireclient.module.toggle_toggle_sneak.name": "Alternar Alternar Agachar",
+  "fireclient.module.toggle_toggle_sneak.description": "Permite alternar a opção de alternância furtiva ao premir a tecla de atalho",
+
+  "fireclient.settings.fix_trident_riptide.name": "Arrangar Escudos de Riptide",
+  "fireclient.settings.fix_trident_riptide.description": "Corrige os escudos que obstruem a visão quando se navega com um tridente",
+
+  "fireclient.settings.branding.name": "Marca",
+  "fireclient.settings.branding.description": "Mensagem de marca opcional que aparece nos menus",
+
+  "fireclient.settings.prevent_untoggle_sticky.name": "Corrigir chaves de desativação",
+  "fireclient.settings.prevent_untoggle_sticky.description": "Evita que as teclas fixas não sejam alternadas (Corrida e Agachar) ao reaparecer",
+
+  "fireclient.settings.hazeli_mode.name": "Modo Hazeli",
+  "fireclient.settings.hazeli_mode.description": "...",
+
+  "fireclient.settings.dont_reset_death.name": "Reparar botões da morte",
+  "fireclient.settings.dont_reset_death.description": "Corrige os botões do Ecrã da Morte a serem repostos quando o tamanho da janela muda",
+
+  "fireclient.settings.extinguish_fix.name": "Corrigir som de extinção",
+  "fireclient.settings.extinguish_fix.description": "Corrige o som de extinção de incêndios que estava a ser reproduzido no spam",
+
+  "fireclient.settings.show_hidden_modules.name": "Mostrar módulos ocultos",
+  "fireclient.settings.show_hidden_modules.description": "Mostra os contornos dos módulos quando estão escondidos",
+
+  "fireclient.settings.show_tutorial_text.name": "Mostrar texto do tutorial",
+  "fireclient.settings.show_tutorial_text.description": "Mostra o tutorial de transformação no ecrã de configuração principal",
+
+  "fireclient.settings.prevent_hiding_entries.name": "Impedir a ocultação de entradas",
+  "fireclient.settings.prevent_hiding_entries.description": "Evita ocultar as entradas da lista de jogadores na lista de separadores",
+
+  "fireclient.settings.show_ping_number.name": "Mostrar número de ping",
+  "fireclient.settings.show_ping_number.description": "Mostra a latência de um jogador como um número em vez de barras",
+
+  "fireclient.settings.blaze_powder_fill.name": "Preenchimento de Pó Blaze",
+  "fireclient.settings.blaze_powder_fill.description": "Impede que o pó de blaze seja automaticamente preenchido no compartimento de combustível (tornando-o um ingrediente)",
+
+  "fireclient.settings.show_modules_debug.name": "Mostra o GUI em F3",
+  "fireclient.settings.show_modules_debug.description": "Mostra a interface gráfica do módulo quando o ecrã de depuração F3 está aberto",
+
+  "fireclient.settings.cache_uuid.name": "UUID da entidade de cache",
+  "fireclient.settings.cache_uuid.description": "Armazena em cache o UUID da entidade alvo quando abre o ecrã de chat pela primeira vez, permitindo utilizá-lo em comandos",
+
+  "fireclient.settings.disable_gradient.name": "Desativar gradientes",
+  "fireclient.settings.disable_gradient.description": "Desativa o texto gradiente utilizado na maioria dos módulos no FireClient",
+
+  "fireclient.keybind.generic.unbound_key.long": "Não consolidado",
+  "fireclient.keybind.generic.unbound_key.short": "N/A",
+  "fireclient.keybind.generic.toggle.name": "Alternar",
+  "fireclient.keybind.generic.toggle_visibility.description": "Alternar a Visibilidade de %1$s",
+  "fireclient.keybind.generic.toggle.description": "Alternar %1$s",
+  "fireclient.keybind.generic.use.name": "Usar",
+  "fireclient.keybind.generic.use.description": "Usar %1$s"
+}

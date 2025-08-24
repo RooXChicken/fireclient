@@ -6,12 +6,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.text.*;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.KitManager;
@@ -60,6 +58,12 @@ public class FKitCommand {
                     .executes(this::undoKitCommand
         );
 
+        var shareSub = ClientCommandManager.literal("share")
+                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                        .suggests(kitSuggestion)
+                        .executes(this::shareKitCommand)
+        );
+
         dispatcher.register(ClientCommandManager.literal("fkit")
                 .then(loadSub)
                 .then(createSub)
@@ -67,14 +71,50 @@ public class FKitCommand {
                 .then(undoSub)
                 .then(previewSub)
                 .then(editSub)
+                .then(shareSub)
         );
     }
 
-    private MutableText getResult(String message, int status) {
+    public static MutableText getResult(String message, int status) {
         var color = (status == 1) ? 0xFFFFFFFF : 0xFFC82909;
-        var messageText = MutableText.of(new PlainTextContent.Literal(" " + message)).setStyle(Style.EMPTY).withColor(color);
+        return getResult(Text.literal(message).setStyle(Style.EMPTY).withColor(color));
+    }
 
-        return fKitHeader.copy().append(messageText);
+    public static MutableText getResult(MutableText message) {
+        return fKitHeader.copy().append(" ").append(message);
+    }
+
+    private int shareKitCommand(CommandContext<FabricClientCommandSource> context) {
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return 0;
+        }
+
+        var kitName = StringArgumentType.getString(context, "kit_name");
+        var kitContents = KitManager.getKitFromName(kitName);
+
+        var status = KitManager.uploadKit(kitName, kitContents);
+
+        switch(status.status()) {
+            case SUCCESS -> { }
+
+            case INVALID_KIT -> {
+                context.getSource().sendFeedback(getResult(
+                        Text.translatable("fireclient.module.kit.share.failure.invalid_kit",
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString()).getString(), 0));
+
+                return 0;
+            }
+
+            case FAILURE -> {
+                context.getSource().sendFeedback(getResult(
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString(), 0));
+
+                return 0;
+            }
+        }
+
+        return 1;
     }
 
     private int undoKitCommand(CommandContext<FabricClientCommandSource> context) {
@@ -93,25 +133,25 @@ public class FKitCommand {
         var undoStatus = kitModule.undo(false);
 
         switch(undoStatus) {
-            case SUCCESS -> message = "Success!";
+            case SUCCESS -> message = Text.translatable("fireclient.module.kit.undo.success.title").getString();
 
             case INVALID_PERMS -> {
-                message = "Invalid permission!";
+                message = Text.translatable("fireclient.module.kit.load.failure.invalid_permission.contents").getString();
                 status = 0;
             }
 
             case INVALID_KIT -> {
-                message = "Invalid kit!";
+                message = Text.translatable("fireclient.module.kit.generic.invalid_kit.contents").getString();
                 status = 0;
             }
 
             case INVALID_PLAYER -> {
-                message = "Invalid player!";
+                message = Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents").getString();
                 status = 0;
             }
 
             case NEEDS_GMC -> {
-                message = "Loading \"__previous\"... Waiting for Creative Mode";
+                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", "__previous").append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
             }
         }
 
@@ -127,7 +167,6 @@ public class FKitCommand {
 
         var kitModule = (KitModule) FireClientside.getModule("kit");
         if(kitModule == null) {
-            message = "Kit module not found!";
             status = 0;
 
             context.getSource().sendFeedback(getResult(message, status));
@@ -136,25 +175,25 @@ public class FKitCommand {
 
         var loadStatus = kitModule.loadKit(kitName, false);
         switch(loadStatus) {
-            case SUCCESS -> message = "Successfully loaded \"" + kitName + "\"!";
+            case SUCCESS -> message = Text.translatable("fireclient.module.kit.load.success.title", kitName).getString();
 
             case INVALID_PERMS -> {
-                message = "Invalid permission!";
+                message = Text.translatable("fireclient.module.kit.load.failure.invalid_permission.contents").getString();
                 status = 0;
             }
 
             case INVALID_KIT -> {
-                message = "Invalid kit!";
+                message = Text.translatable("fireclient.module.kit.generic.invalid_kit.contents").getString();
                 status = 0;
             }
 
             case INVALID_PLAYER -> {
-                message = "Invalid player!";
+                message = Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents").getString();
                 status = 0;
             }
 
             case NEEDS_GMC -> {
-                message = "Loading \"" + kitName + "\"... Waiting for Creative Mode";
+                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
             }
         }
 
@@ -182,12 +221,12 @@ public class FKitCommand {
             case SUCCESS -> { return 1; }
 
             case INVALID_KIT -> {
-                message = "Invalid kit!";
+                message = Text.translatable("fireclient.module.kit.generic.invalid_kit.contents").getString();
                 status = 0;
             }
 
             case INVALID_PLAYER -> {
-                message = "Invalid player!";
+                message = Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents").getString();
                 status = 0;
             }
         }
@@ -204,20 +243,20 @@ public class FKitCommand {
 
         var createStatus = KitManager.createKit(kitName, KitManager.getPlayerInventoryString());
         switch(createStatus) {
-            case SUCCESS -> message = "Successfully created \"" + kitName + "\"!";
+            case SUCCESS -> message = Text.translatable("fireclient.module.kit.generic.create.success", kitName).getString();
 
             case ALREADY_EXISTS -> {
-                message = "\"" + kitName + "\" already exists!";
+                message = Text.translatable("fireclient.module.kit.generic.already_exists.contents").getString();
                 status = 0;
             }
 
             case INVALID_KIT -> {
-                message = "Invalid kit!";
+                message = Text.translatable("fireclient.module.kit.generic.invalid_kit.contents").getString();
                 status = 0;
             }
 
             case WRITE_FAIL -> {
-                message = "Failed to write \"" + kitName + "\"!";
+                message = Text.translatable("fireclient.module.kit.generic.write_failure.contents").getString();
                 status = 0;
             }
         }
@@ -234,10 +273,10 @@ public class FKitCommand {
 
         var deleteStatus = KitManager.deleteKit(kitName);
         switch(deleteStatus) {
-            case SUCCESS -> message = "Successfully recycled \"" + kitName + "\"! It will be deleted next startup!";
+            case SUCCESS -> message = Text.translatable("fireclient.module.kit.recycle.success.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.recycle.success.contents")).getString();
 
             case FAILURE -> {
-                message = "Failed to delete \"" + kitName + "\"! The kit won't be deleted";
+                message = Text.translatable("fireclient.module.kit.recycle.failure.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.recycle.failure.contents")).getString();
                 status = 0;
             }
         }

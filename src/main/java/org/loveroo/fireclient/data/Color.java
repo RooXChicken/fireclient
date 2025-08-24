@@ -76,7 +76,7 @@ public record Color(int r, int g, int b, int a) {
     }
 
     private int blendPoints(int p1, int p2, double amount) {
-        return (int)((p2-p1) * amount + p1);
+        return (int)((p2-p1) * Math.clamp(amount, 0.0, 1.0) + p1);
     }
 
     /**
