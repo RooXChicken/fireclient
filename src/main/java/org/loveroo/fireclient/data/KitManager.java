@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.util.Identifier;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -18,11 +19,13 @@ import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
 import java.io.File;
 import java.io.FileWriter;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class KitManager {
 
@@ -31,12 +34,20 @@ public class KitManager {
 
     private static final String DEFAULT_KIT = "{\"inv\":[]}";
 
+    private static final Identifier KIT_DOWNLOAD_ID = Identifier.of(FireClient.MOD_ID, "kit.download");
+
+    private static final int KIT_MAX_SIZE = 4194304;
+
     public static String getKitPath(String kitName) {
         return KIT_BASE_PATH + kitName + ".json";
     }
 
     public static String getDeletedKitPath(String kitName) {
         return KIT_DELETED_PATH + kitName + ".json";
+    }
+
+    public static Identifier getKitDownloadId() {
+        return KIT_DOWNLOAD_ID;
     }
 
     public static KitManageStatus initializeDirectories() {
@@ -389,97 +400,25 @@ public class KitManager {
         return KitManageStatus.FAILURE;
     }
 
-    public static KitUploadInfo uploadKit(String kitName, String kitContents) {
+    public static void uploadKit(String kitName, String kitContents, Consumer<KitUploadStatus> onComplete) {
         if(kitStringStatus(kitContents) != KitValidationStatus.SUCCESS) {
-            return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
+            onComplete.accept(KitUploadStatus.INVALID_KIT);
+            return;
         }
 
         var bytes = kitContents.getBytes();
-        if(bytes.length > 4194304) {
-            return new KitUploadInfo(KitUploadStatus.TOO_LARGE, kitName, "");
+        if(bytes.length > KIT_MAX_SIZE) {
+            onComplete.accept(KitUploadStatus.TOO_LARGE);
+            return;
         }
 
-        try {
-            var url = new URL(FireClient.getServerUrl("kit/upload"));
-
-            var connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-
-            var output = connection.getOutputStream();
-            output.write(kitContents.getBytes());
-            output.flush();
-            output.close();
-
-            var input = connection.getInputStream();
-            var receivedData = new String(input.readAllBytes());
-            input.close();
-
-            var code = connection.getResponseCode();
-            switch(code) {
-                case 400 -> {
-                    var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
-                    FireClient.LOGGER.info("Failed to upload kit! {}", status);
-
-                    return new KitUploadInfo(status, kitName, "");
-                }
-
-                case 429 -> {
-                    FireClient.LOGGER.info("Failed to upload kit! Rate limited");
-
-                    return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
-                }
-            }
-
-            RooHelper.sendChatMessage(KitManager.toSharedKit(kitName, receivedData));
-            return new KitUploadInfo(KitUploadStatus.SUCCESS, kitName, receivedData);
-        }
-        catch(Exception e) {
-            FireClient.LOGGER.error("Failed to upload kit!", e);
-        }
-
-        return new KitUploadInfo(KitUploadStatus.FAILURE, kitName, "");
+        var thread = new KitUploadThread(kitName, kitContents, onComplete);
+        thread.start();
     }
 
-    public static KitDownloadInfo downloadKit(String kitName, String kitId) {
-        try {
-            var url = new URL(FireClient.getServerUrl("kit/download?id=" + kitId));
-
-            var connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-
-            var input = connection.getInputStream();
-            var receivedData = new String(input.readAllBytes());
-            input.close();
-
-            var code = connection.getResponseCode();
-            if(code == 400) {
-                var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
-                FireClient.LOGGER.info("Failed to download kit! {}", status);
-
-                return new KitDownloadInfo(status, kitName);
-            }
-
-            var createStatus = KitManager.createKit(kitName, receivedData);
-
-            switch(createStatus) {
-                case SUCCESS -> { }
-
-                case ALREADY_EXISTS -> { return new KitDownloadInfo(KitDownloadStatus.ALREADY_EXISTS, kitName); }
-                case INVALID_KIT -> { return new KitDownloadInfo(KitDownloadStatus.INVALID_KIT, kitName); }
-
-                default -> { return new KitDownloadInfo(KitDownloadStatus.FAILURE, kitName); }
-            }
-
-            return new KitDownloadInfo(KitDownloadStatus.SUCCESS, kitName);
-        }
-        catch(Exception e) {
-            FireClient.LOGGER.error("Failed to download kit!", e);
-        }
-
-        return new KitDownloadInfo(KitDownloadStatus.FAILURE, kitName);
+    public static void downloadKit(String kitName, String kitId, Consumer<KitDownloadStatus> onComplete) {
+        var thread = new KitDownloadThread(kitName, kitId, onComplete);
+        thread.start();
     }
 
     private static final String SHARED_KIT_PREFIX = "__!fireclient_shared_kit_";
@@ -522,18 +461,17 @@ public class KitManager {
     }
 
     private static String getSharedKitData(String message, String data) {
-        if(!isSharedKit(message)) {
-            return "";
-        }
-
-        try {
-            var json = new JSONObject(message.split(SHARED_KIT_PREFIX)[1]);
-            return json.optString(data, "");
-        }
-        catch(Exception e) { }
-
-        return "";
+        return getSharedKitJson(message).optString(data, "");
     }
+
+    public static JSONObject getSharedKitJson(String message) {
+        if(!isSharedKit(message)) {
+            return new JSONObject();
+        }
+
+        return RooHelper.jsonFromStringSafe(message.split(SHARED_KIT_PREFIX)[1]);
+    }
+
 
     public enum KitCreateStatus {
         SUCCESS,
@@ -582,6 +520,130 @@ public class KitManager {
         FAILURE,
     }
 
-    public record KitUploadInfo(KitUploadStatus status, String kitName, String kitId) { }
-    public record KitDownloadInfo(KitDownloadStatus status, String kitName) { }
+    static class KitUploadThread extends Thread {
+
+        private final String kitName;
+        private final String kitContents;
+
+        private final Consumer<KitUploadStatus> onComplete;
+
+        public KitUploadThread(String kitName, String kitContents, Consumer<KitUploadStatus> onComplete) {
+            this.kitName = kitName;
+            this.kitContents = kitContents;
+
+            this.onComplete = onComplete;
+        }
+
+        @Override
+        public void run() {
+            try {
+                var url = new URI(FireClient.getServerUrl("v1/kit/upload")).toURL();
+
+                var connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+
+                var output = connection.getOutputStream();
+                output.write(kitContents.getBytes());
+                output.flush();
+                output.close();
+
+                var input = connection.getInputStream();
+                var receivedData = new String(input.readAllBytes());
+                input.close();
+
+                var code = connection.getResponseCode();
+                switch(code) {
+                    case 400 -> {
+                        var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
+                        FireClient.LOGGER.info("Failed to upload kit! {}", status);
+
+                        onComplete.accept(status);
+                        return;
+                    }
+
+                    case 429 -> {
+                        FireClient.LOGGER.info("Failed to upload kit! Rate limited");
+
+                        onComplete.accept(KitUploadStatus.FAILURE);
+                        return;
+                    }
+                }
+
+                onComplete.accept(KitUploadStatus.SUCCESS);
+                RooHelper.sendChatMessage(KitManager.toSharedKit(kitName, receivedData));
+            }
+            catch(Exception e) {
+                FireClient.LOGGER.error("Failed to upload kit!", e);
+
+                onComplete.accept(KitUploadStatus.FAILURE);
+            }
+        }
+    }
+
+    static class KitDownloadThread extends Thread {
+
+        private final String kitName;
+        private final String kitId;
+
+        private final Consumer<KitDownloadStatus> onComplete;
+
+        public KitDownloadThread(String kitName, String kitId, Consumer<KitDownloadStatus> onComplete) {
+            this.kitName = kitName;
+            this.kitId = kitId;
+
+            this.onComplete = onComplete;
+        }
+
+        @Override
+        public void run() {
+            try {
+                var url = new URI(FireClient.getServerUrl("v1/kit/download?id=" + kitId)).toURL();
+
+                var connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoInput(true);
+
+                var input = connection.getInputStream();
+                var receivedData = new String(input.readAllBytes());
+                input.close();
+
+                var code = connection.getResponseCode();
+                if(code == 400) {
+                    var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
+                    FireClient.LOGGER.info("Failed to download kit! {}", status);
+
+                    onComplete.accept(status);
+                    return;
+                }
+
+                var createStatus = KitManager.createKit(kitName, receivedData);
+
+                switch(createStatus) {
+                    case SUCCESS -> { }
+
+                    case ALREADY_EXISTS -> {
+                        onComplete.accept(KitDownloadStatus.ALREADY_EXISTS);
+                        return;
+                    }
+                    case INVALID_KIT -> {
+                        onComplete.accept(KitDownloadStatus.INVALID_KIT);
+                        return;
+                    }
+
+                    default -> {
+                        onComplete.accept(KitDownloadStatus.FAILURE);
+                        return;
+                    }
+                }
+
+                onComplete.accept(KitDownloadStatus.SUCCESS);
+            }
+            catch(Exception e) {
+                FireClient.LOGGER.error("Failed to download kit!", e);
+                onComplete.accept(KitDownloadStatus.FAILURE);
+            }
+        }
+    }
 }
