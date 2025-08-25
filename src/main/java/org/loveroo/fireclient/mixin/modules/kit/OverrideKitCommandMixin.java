@@ -72,6 +72,16 @@ public class OverrideKitCommandMixin {
 
                     code = 0;
                 }
+
+                case RATE_LIMITED -> {
+                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
+
+                    code = 0;
+
+
+                }
             }
 
             client.player.sendMessage(FKitCommand.getResult(message, code), false);
