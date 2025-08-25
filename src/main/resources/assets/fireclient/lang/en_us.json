@@ -141,6 +141,7 @@
   "fireclient.module.kit.generic.invalid_kit.contents": "Invalid kit",
   "fireclient.module.kit.generic.write_failure.contents": "Failed to write file",
   "fireclient.module.kit.load.generic.invalid_player.contents": "Invalid player",
+  "fireclient.module.kit.failure.generic_fail": "An error occurred",
 
   "fireclient.module.kit.empty_name.title": "Please set a kit name",
   "fireclient.module.kit.empty_name.contents": "Empty kit name field",
@@ -185,8 +186,7 @@
   "fireclient.module.kit.edit.revert.contents": "No changes were made",
 
   "fireclient.module.kit.share.failure.generic": "Failed to upload \"%1$s\"",
-  "fireclient.module.kit.share.failure.too_large": "%1$s. File too large",
-  "fireclient.module.kit.share.failure.invalid_kit": "%1$s. Invalid kit",
+  "fireclient.module.kit.share.failure.too_large": "Kit file too large",
 
   "fireclient.module.kit.share.message": "%1$s has shared \"%2$s\". %3$s",
   "fireclient.module.kit.share.download.name": "[Download]",
@@ -194,10 +194,7 @@
 
   "fireclient.module.kit.download.success": "Successfully downloaded \"%1$s\"",
   "fireclient.module.kit.download.failure.generic": "Failed to download \"%1$s\"",
-  "fireclient.module.kit.download.failure.no_kit": "%1$s. Kit does not exist",
-  "fireclient.module.kit.download.failure.already_exists": "%1$s. Kit name already exists",
-  "fireclient.module.kit.download.failure.invalid_kit": "%1$s. Invalid kit",
-
+  "fireclient.module.kit.download.failure.no_kit": "Kit does not exist",
 
   "fireclient.screen.edit_kit.title": "Edit \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Preview \"%1$s\"",

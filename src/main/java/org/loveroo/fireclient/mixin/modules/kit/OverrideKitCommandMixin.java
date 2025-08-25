@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.text.Text;
+import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.data.KitManager;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,54 +16,67 @@ public class OverrideKitCommandMixin {
 
     @Redirect(method = "handleTextClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendCommand(Ljava/lang/String;)Z"))
     private boolean downloadKit(ClientPlayNetworkHandler network, String command) {
-        if(!command.startsWith("fkit download_kit ")) {
+        final var prefix = "fkit download_kit ";
+        if(!command.startsWith(prefix)) {
             return network.sendCommand(command);
         }
 
-        var values = command.substring(18);
-        var kitId = values.substring(0, 36);
-        var kitName = values.substring(37);
+        var data = command.split(prefix)[1];
+        var json = RooHelper.jsonFromStringSafe(data);
 
-        var status = KitManager.downloadKit(kitName, kitId);
+        var kitName = json.optString("name", "");
+        var kitId = json.optString("id", "");
 
-        var client = MinecraftClient.getInstance();
-
-        var message = "";
-        var code = 1;
-
-        switch(status.status()) {
-            case SUCCESS -> {
-                message = Text.translatable("fireclient.module.kit.download.success", kitName).getString();
+        KitManager.downloadKit(kitName, kitId, (status) -> {
+            var client = MinecraftClient.getInstance();
+            if(client.player == null) {
+                return;
             }
 
-            case NO_KIT -> {
-                message = Text.translatable("fireclient.module.kit.download.failure.no_kit",
-                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
+            var message = "";
+            var code = 1;
 
-                code = 0;
+            switch(status) {
+                case SUCCESS -> {
+                    message = Text.translatable("fireclient.module.kit.download.success", kitName).getString();
+                }
+
+                case NO_KIT -> {
+                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.download.failure.no_kit")).getString();
+
+                    code = 0;
+                }
+
+                case INVALID_KIT -> {
+                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
+
+                    code = 0;
+                }
+
+                case ALREADY_EXISTS -> {
+                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.generic.already_exists.contents")).getString();
+
+                    code = 0;
+                }
+
+                case FAILURE -> {
+                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
+
+                    code = 0;
+                }
             }
 
-            case INVALID_KIT -> {
-                message = Text.translatable("fireclient.module.kit.download.failure.invalid_kit",
-                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
+            client.player.sendMessage(FKitCommand.getResult(message, code), false);
+        });
 
-                code = 0;
-            }
-
-            case ALREADY_EXISTS -> {
-                message = Text.translatable("fireclient.module.kit.download.failure.already_exists",
-                        Text.translatable("fireclient.module.kit.download.failure.generic", kitName)).getString();
-
-                code = 0;
-            }
-
-            case FAILURE -> {
-                message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName).getString();
-                code = 0;
-            }
-        }
-
-        client.player.sendMessage(FKitCommand.getResult(message, code), false);
         return true;
     }
 }

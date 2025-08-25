@@ -5,6 +5,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.*;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
@@ -54,5 +55,14 @@ public class RooHelper {
     public static void sendNotification(Text name, Text description) {
         var client = MinecraftClient.getInstance();
         client.getToastManager().add(new SystemToast(SystemToast.Type.PACK_LOAD_FAILURE, name, description));
+    }
+
+    public static JSONObject jsonFromStringSafe(String message) {
+        try {
+            return new JSONObject(message);
+        }
+        catch(Exception e) {
+            return new JSONObject();
+        }
     }
 }

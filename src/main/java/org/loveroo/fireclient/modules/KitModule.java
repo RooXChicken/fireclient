@@ -278,7 +278,33 @@ public class KitModule extends ModuleBase {
 
     private void uploadKitButtonPressed(ButtonWidget button, String kitName) {
         var kitContents = KitManager.getKitFromName(kitName);
-        KitManager.uploadKit(kitName, kitContents);
+        KitManager.uploadKit(kitName, kitContents, (status) -> {
+            switch(status) {
+                case SUCCESS -> { }
+
+                case INVALID_KIT -> {
+
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                            Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")
+                    );
+                }
+
+                case TOO_LARGE -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                            Text.translatable("fireclient.module.kit.share.failure.too_large")
+                    );
+                }
+
+                case FAILURE -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                            Text.translatable("fireclient.module.kit.failure.generic_fail")
+                    );
+                }
+            }
+        });
     }
 
     private void folderButtonPressed(ButtonWidget button) {

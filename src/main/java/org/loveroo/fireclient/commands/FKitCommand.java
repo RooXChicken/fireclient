@@ -93,39 +93,43 @@ public class FKitCommand {
         var kitName = StringArgumentType.getString(context, "kit_name");
         var kitContents = KitManager.getKitFromName(kitName);
 
-        var status = KitManager.uploadKit(kitName, kitContents);
+        KitManager.uploadKit(kitName, kitContents, (status) -> {
+            var message = "";
+            var code = 1;
 
-        var message = "";
-        var code = 1;
+            switch(status) {
+                case SUCCESS -> { }
 
-        switch(status.status()) {
-            case SUCCESS -> { }
+                case INVALID_KIT -> {
+                    message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
 
-            case INVALID_KIT -> {
-                message = Text.translatable("fireclient.module.kit.share.failure.invalid_kit",
-                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName)).getString();
+                    code = 0;
+                }
 
-                code = 0;
+                case TOO_LARGE -> {
+                    message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.share.failure.too_large")).getString();
+
+                    code = 0;
+                }
+
+                case FAILURE -> {
+                    message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
+                    code = 0;
+                }
             }
 
-            case TOO_LARGE -> {
-                message = Text.translatable("fireclient.module.kit.share.failure.too_large",
-                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName)).getString();
-
-                code = 0;
+            if(!message.isEmpty()) {
+                context.getSource().sendFeedback(getResult(message, code));
             }
+        });
 
-            case FAILURE -> {
-                message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName).getString();
-                code = 0;
-            }
-        }
-
-        if(!message.isEmpty()) {
-            context.getSource().sendFeedback(getResult(message, code));
-        }
-
-        return code;
+        return 1;
     }
 
     private int undoKitCommand(CommandContext<FabricClientCommandSource> context) {
