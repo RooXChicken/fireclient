@@ -2,21 +2,22 @@ package org.loveroo.fireclient.mixin.modules.kit;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.data.KitManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Screen.class)
 public class OverrideKitCommandMixin {
 
-    @Redirect(method = "handleTextClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendCommand(Ljava/lang/String;)Z"))
-    private boolean downloadKit(ClientPlayNetworkHandler network, String command) {
+    @Inject(method = "handleRunCommand", at = @At("HEAD"), cancellable = true)
+    private static void downloadKit(ClientPlayerEntity player, String command, Screen screenAfterRun, CallbackInfo info) {
         if(!command.startsWith("fkit download_kit ")) {
-            return network.sendCommand(command);
+            return;
         }
 
         var values = command.substring(18);
@@ -63,6 +64,6 @@ public class OverrideKitCommandMixin {
         }
 
         client.player.sendMessage(FKitCommand.getResult(message, code), false);
-        return true;
+        info.cancel();
     }
 }

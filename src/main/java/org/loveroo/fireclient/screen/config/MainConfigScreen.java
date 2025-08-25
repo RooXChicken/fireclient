@@ -125,7 +125,7 @@ public class MainConfigScreen extends ConfigScreenBase {
             }
 
             if(module.isPointInside(mouseX, mouseY)) {
-                setTooltip(module.getData().getTooltip(showTransform()));
+                context.drawTooltip(Tooltip.wrapLines(client, module.getData().getTooltip(showTransform())), mouseX, mouseY);
                 break;
             }
         }

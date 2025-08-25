@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.screen.modules;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -226,7 +227,7 @@ public class KitEditScreen extends KitViewScreen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderBackground(context, mouseX, mouseY, delta);
 
-        context.drawTexture(RenderLayer::getGuiTextured, trashIcon, x + trashSlotX - 1, y + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, trashIcon, x + trashSlotX - 1, y + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
     }
 
     @Override

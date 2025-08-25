@@ -10,6 +10,8 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.shape.*;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix3x2fc;
 import org.joml.Quaternionf;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,7 +101,7 @@ public class BlockOutlineModule extends ModuleBase {
         final var scale = 25.0f;
 
         var matrix = context.getMatrices();
-        matrix.push();
+        matrix.pushMatrix();
 
         rot -= delta*2.0f;
 
@@ -107,16 +109,17 @@ public class BlockOutlineModule extends ModuleBase {
             rot += 360;
         }
 
-        matrix.translate(base.width/2.0f, base.height/2.0f - 40, 0.0f);
-        matrix.scale(scale, scale, scale);
+        matrix.translate(base.width/2.0f, base.height/2.0f - 40);
+        matrix.scale(scale, scale);
 
-        matrix.multiply(new Quaternionf().rotateXYZ(0.130f, (float)Math.toRadians(rot), 0.0f));
+//        var rotQuat = new Quaternionf().rotateXYZ(0.130f, (float)Math.toRadians(rot), 0.0f);
+//        matrix.mul(new Matrix3x2f());
 
         var color = (getData().isEnabled()) ? getOutline() : defaultOutline;
 
-        var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
-        context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
-        matrix.pop();
+//        var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
+//        context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
+        matrix.popMatrix();
     }
 
     public int getOutline() {

@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.modules;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -94,11 +95,11 @@ public class ArmorDisplayModule extends ModuleBase {
             var item = items.get(i);
 
             if(item != ItemStack.EMPTY) {
-                var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickDelta(true));
+                var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickProgress(true));
                 var cooldown = (int)Math.ceil(progress * 10);
 
                 // TODO: method is named fill :3
-                context.drawTexture(RenderLayer::getGuiTexturedOverlay, cooldownTexture, 0, offset*i + 2 - cooldown + 9, 0, 0, 20, cooldown, 20, cooldown);
+                context.drawTexture(RenderPipelines.GUI_TEXTURED, cooldownTexture, 0, offset*i + 2 - cooldown + 9, 0, 0, 20, cooldown, 20, cooldown);
                 context.drawCenteredTextWithShadow(text, (item.getMaxDamage() - item.getDamage()) + "", 10, offset*i + 2, getColor(item));
             }
         }

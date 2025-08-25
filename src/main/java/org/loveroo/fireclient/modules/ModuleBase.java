@@ -1,8 +1,7 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
-import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,6 +16,7 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2fStack;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ModuleBase implements HudLayerRegistrationCallback {
+public abstract class ModuleBase {
 
     private final ModuleData data;
     private boolean drawingOverwritten = false;
@@ -42,7 +42,7 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         this.data = data;
 
         if(this.data.isGuiElement()) {
-            HudLayerRegistrationCallback.EVENT.register(this);
+            HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
         }
     }
 
@@ -50,11 +50,6 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     public ModuleData getData() {
         return data;
-    }
-
-    @Override
-    public void register(LayeredDrawerWrapper layeredDrawer) {
-        layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
     }
 
     public void update(MinecraftClient client) { }
@@ -132,15 +127,15 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
         return new int[] { x1, x2, y1, y2 };
     }
 
-    protected void transform(MatrixStack matrix) {
-        matrix.push();
+    protected void transform(Matrix3x2fStack matrix) {
+        matrix.pushMatrix();
 
-        matrix.translate(data.getPosX(), data.getPosY(), 0.0f);
-        matrix.scale((float)data.getScale(), (float)data.getScale(), 0.0f);
+        matrix.translate(data.getPosX(), data.getPosY());
+        matrix.scale((float)data.getScale(), (float)data.getScale());
     }
 
-    protected void endTransform(MatrixStack matrix) {
-        matrix.pop();
+    protected void endTransform(Matrix3x2fStack matrix) {
+        matrix.popMatrix();
     }
 
     public void loadJson(JSONObject json) throws JSONException {
