@@ -472,24 +472,25 @@ public class KitManager {
                 output.flush();
                 output.close();
 
+                var code = connection.getResponseCode();
+
+                if(code == 429) {
+                    FireClient.LOGGER.info("Failed to upload kit! Rate limited");
+
+                    onComplete.accept(KitUploadStatus.RATE_LIMITED);
+                    return;
+                }
+
                 var input = connection.getInputStream();
                 var receivedData = new String(input.readAllBytes());
                 input.close();
 
-                var code = connection.getResponseCode();
                 switch(code) {
                     case 400 -> {
                         var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
                         FireClient.LOGGER.info("Failed to upload kit! {}", status);
 
                         onComplete.accept(status);
-                        return;
-                    }
-
-                    case 429 -> {
-                        FireClient.LOGGER.info("Failed to upload kit! Rate limited");
-
-                        onComplete.accept(KitUploadStatus.RATE_LIMITED);
                         return;
                     }
                 }
@@ -533,24 +534,25 @@ public class KitManager {
                 connection.setRequestMethod("POST");
                 connection.setDoInput(true);
 
+                var code = connection.getResponseCode();
+
+                if(code == 429) {
+                    FireClient.LOGGER.info("Failed to download kit! Rate limited");
+
+                    onComplete.accept(KitDownloadStatus.RATE_LIMITED);
+                    return;
+                }
+
                 var input = connection.getInputStream();
                 var receivedData = new String(input.readAllBytes());
                 input.close();
 
-                var code = connection.getResponseCode();
                 switch(code) {
                     case 400 -> {
                         var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
                         FireClient.LOGGER.info("Failed to download kit! {}", status);
 
                         onComplete.accept(status);
-                        return;
-                    }
-
-                    case 429 -> {
-                        FireClient.LOGGER.info("Failed to download kit! Rate limited");
-
-                        onComplete.accept(KitDownloadStatus.RATE_LIMITED);
                         return;
                     }
                 }
