@@ -17,8 +17,8 @@ public class SignModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x786F59);
 
-    private boolean disableGui = true;
-    private boolean renderingDisabled = true;
+    private boolean disableGui = false;
+    private boolean renderingDisabled = false;
 
     public SignModule() {
         super(new ModuleData("sign", "\uD83E\uDEA7", color));
