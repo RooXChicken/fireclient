@@ -303,6 +303,13 @@ public class KitModule extends ModuleBase {
                             Text.translatable("fireclient.module.kit.failure.generic_fail")
                     );
                 }
+
+                case RATE_LIMITED -> {
+                    RooHelper.sendNotification(
+                            Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                            Text.translatable("fireclient.module.kit.server.fail.rate_limit")
+                    );
+                }
             }
         });
     }
