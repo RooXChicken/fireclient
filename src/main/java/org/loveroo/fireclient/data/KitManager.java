@@ -504,6 +504,7 @@ public class KitManager {
         INVALID_KIT,
         TOO_LARGE,
         FAILURE,
+        RATE_LIMITED,
     }
 
     public enum KitDownloadStatus {
@@ -512,6 +513,7 @@ public class KitManager {
         ALREADY_EXISTS,
         INVALID_KIT,
         FAILURE,
+        RATE_LIMITED,
     }
 
     static class KitUploadThread extends Thread {
@@ -543,24 +545,25 @@ public class KitManager {
                 output.flush();
                 output.close();
 
+                var code = connection.getResponseCode();
+
+                if(code == 429) {
+                    FireClient.LOGGER.info("Failed to upload kit! Rate limited");
+
+                    onComplete.accept(KitUploadStatus.RATE_LIMITED);
+                    return;
+                }
+
                 var input = connection.getInputStream();
                 var receivedData = new String(input.readAllBytes());
                 input.close();
 
-                var code = connection.getResponseCode();
                 switch(code) {
                     case 400 -> {
                         var status = KitUploadStatus.values()[Integer.parseInt(receivedData)];
                         FireClient.LOGGER.info("Failed to upload kit! {}", status);
 
                         onComplete.accept(status);
-                        return;
-                    }
-
-                    case 429 -> {
-                        FireClient.LOGGER.info("Failed to upload kit! Rate limited");
-
-                        onComplete.accept(KitUploadStatus.FAILURE);
                         return;
                     }
                 }
@@ -604,17 +607,27 @@ public class KitManager {
                 connection.setRequestMethod("POST");
                 connection.setDoInput(true);
 
+                var code = connection.getResponseCode();
+
+                if(code == 429) {
+                    FireClient.LOGGER.info("Failed to download kit! Rate limited");
+
+                    onComplete.accept(KitDownloadStatus.RATE_LIMITED);
+                    return;
+                }
+
                 var input = connection.getInputStream();
                 var receivedData = new String(input.readAllBytes());
                 input.close();
 
-                var code = connection.getResponseCode();
-                if(code == 400) {
-                    var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
-                    FireClient.LOGGER.info("Failed to download kit! {}", status);
+                switch(code) {
+                    case 400 -> {
+                        var status = KitDownloadStatus.values()[Integer.parseInt(receivedData)];
+                        FireClient.LOGGER.info("Failed to download kit! {}", status);
 
-                    onComplete.accept(status);
-                    return;
+                        onComplete.accept(status);
+                        return;
+                    }
                 }
 
                 var createStatus = KitManager.createKit(kitName, receivedData);

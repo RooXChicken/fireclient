@@ -185,6 +185,7 @@
   "fireclient.module.kit.edit.revert.name": "Successfully reverted \"%1$s\"",
   "fireclient.module.kit.edit.revert.contents": "No changes were made",
 
+  "fireclient.module.kit.server.fail.rate_limit": "Please slow down! Rate limited!",
   "fireclient.module.kit.share.failure.generic": "Failed to upload \"%1$s\"",
   "fireclient.module.kit.share.failure.too_large": "Kit file too large",
 

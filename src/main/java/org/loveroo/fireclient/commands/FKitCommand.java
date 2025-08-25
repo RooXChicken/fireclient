@@ -122,6 +122,14 @@ public class FKitCommand {
                             .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
                     code = 0;
                 }
+
+                case RATE_LIMITED -> {
+                    message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
+                            .append(" ")
+                            .append(Text.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
+
+                    code = 0;
+                }
             }
 
             if(!message.isEmpty()) {
