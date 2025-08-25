@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.PlayerScreenHandler;
@@ -85,7 +86,7 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
     }
 
     protected PlayerInventory getInventory() {
-        var inv = new PlayerInventory(MinecraftClient.getInstance().player);
+        var inv = new PlayerInventory(MinecraftClient.getInstance().player, new EntityEquipment());
 
         var slots = getScreenHandler().slots;
         for(var slot : slots) {

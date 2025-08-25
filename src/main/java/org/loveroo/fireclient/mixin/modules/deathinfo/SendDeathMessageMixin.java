@@ -69,8 +69,8 @@ public class SendDeathMessageMixin {
         var positionText = x.append(y).append(z);
 
         var command = "/execute in " + world.getDimensionEntry().getIdAsString() + " run tp " + xPos + yPos + zPos;
-        var click = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command);
-        var hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of(command));
+        var click = new ClickEvent.SuggestCommand(command);
+        var hover = new HoverEvent.ShowText(Text.of(command));
 
         var posClickable = positionText.copy().setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
 

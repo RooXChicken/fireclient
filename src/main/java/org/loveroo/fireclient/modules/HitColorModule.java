@@ -1,6 +1,6 @@
 package org.loveroo.fireclient.modules;
 
-import com.mojang.blaze3d.platform.GlConst;
+import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
@@ -141,11 +141,8 @@ public class HitColorModule extends ModuleBase {
             }
         }
 
-        RenderSystem.activeTexture(GlConst.GL_TEXTURE1);
-        overlayTexture.bindTexture();
         overlayTexture.setFilter(false, false);
         overlayTexture.setClamp(true);
-        nativeImage.upload(0, 0, 0, 0, 0, nativeImage.getWidth(), nativeImage.getHeight(), false);
-        RenderSystem.activeTexture(GlConst.GL_TEXTURE0);
+        overlayTexture.upload();
     }
 }

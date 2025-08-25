@@ -36,8 +36,8 @@ public class ReplaceSharedKitsMixin {
         var senderName = KitManager.getSharedKitSender(contents).replaceAll("[^A-Za-z0-9_]", "");
         var kitName = KitManager.getSharedKitName(contents);
 
-        var click = new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/fkit download_kit " + KitManager.getSharedKitJson(contents));
-        var hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.translatable("fireclient.module.kit.share.download.tooltip", kitName));
+        var click = new ClickEvent.RunCommand("/fkit download_kit " + KitManager.getSharedKitJson(contents));
+        var hover = new HoverEvent.ShowText(Text.translatable("fireclient.module.kit.share.download.tooltip", kitName));
 
         var chatShare = Text.translatable("fireclient.module.kit.share.download.name").setStyle(
                 Style.EMPTY.withClickEvent(click).withHoverEvent(hover).withColor(downloadColor.toInt()));

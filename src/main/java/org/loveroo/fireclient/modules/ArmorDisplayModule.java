@@ -94,7 +94,7 @@ public class ArmorDisplayModule extends ModuleBase {
             var item = items.get(i);
 
             if(item != ItemStack.EMPTY) {
-                var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickDelta(true));
+                var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickProgress(true));
                 var cooldown = (int)Math.ceil(progress * 10);
 
                 // TODO: method is named fill :3

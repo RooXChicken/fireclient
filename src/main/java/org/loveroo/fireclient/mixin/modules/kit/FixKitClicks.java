@@ -3,6 +3,7 @@ package org.loveroo.fireclient.mixin.modules.kit;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -34,10 +35,10 @@ abstract class FixKitClicks {
         info.cancel();
     }
 
-    @Redirect(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;hasCreativeInventory()Z"))
-    private boolean allowCloning(ClientPlayerInteractionManager interactionManager) {
+    @Redirect(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isInCreativeMode()Z"))
+    private boolean allowCloning(ClientPlayerEntity instance) {
         if(!(((HandledScreen<?>)(Object)this) instanceof KitViewScreen screen)) {
-            return interactionManager.hasCreativeInventory();
+            return instance.isInCreativeMode();
         }
 
         return true;

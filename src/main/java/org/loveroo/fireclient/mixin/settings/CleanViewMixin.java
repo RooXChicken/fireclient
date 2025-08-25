@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(LivingEntity.class)
 public class CleanViewMixin {
 
-    @Redirect(method = "tickStatusEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"))
+    @Redirect(method = "tickStatusEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addParticleClient(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"))
     private void preventParticles(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         if(FireClientside.getSetting(FireClientOption.CLEARVIEW) == 0 || MinecraftClient.getInstance().player != (Object)this) {
-            instance.addParticle(parameters, x, y, z, velocityX, velocityY, velocityZ);
+            instance.addParticleClient(parameters, x, y, z, velocityX, velocityY, velocityZ);
         }
     }
 }

@@ -2,9 +2,13 @@ package org.loveroo.fireclient.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -113,8 +117,32 @@ public class KitManager {
     }
 
     public static String getInventoryAsString(PlayerInventory inv) {
-        var invNbt = inv.writeNbt(new NbtList());
-        return "{\"inv\":" + invNbt.asString() + "}";
+        var nbt = new NbtList();
+        var ops = MinecraftClient.getInstance().player.getRegistryManager().getOps(NbtOps.INSTANCE);
+
+        var writeIndex = 0;
+        for(var i = 0; i < inv.size(); i++) {
+            var slot = new NbtCompound();
+            var slotIndex = i;
+
+            if(slotIndex >= PlayerInventory.MAIN_SIZE && slotIndex < PlayerInventory.OFF_HAND_SLOT) {
+                slotIndex += 100-PlayerInventory.MAIN_SIZE;
+            }
+            else if(slotIndex == PlayerInventory.OFF_HAND_SLOT) {
+                slotIndex = 150;
+            }
+
+            slot.putByte("Slot", (byte) slotIndex);
+
+            var element = ItemStack.CODEC.encode(inv.getStack(i), ops, slot).result().orElse(null);
+            if(element == null) {
+                continue;
+            }
+
+            nbt.add(writeIndex++, element);
+        }
+
+        return "{\"inv\":" + nbt + "}";
     }
 
     public static KitLoadStatus loadKit(String kitName) {
@@ -174,8 +202,51 @@ public class KitManager {
         var from = NbtHelper.fromNbtProviderString(kit);
         var invList = (NbtList)from.get("inv");
 
-        var loadedInv = new PlayerInventory(client.player);
-        loadedInv.readNbt(invList);
+        var loadedInv = new PlayerInventory(client.player, new EntityEquipment());
+        loadedInv.clear();
+
+        var ops = client.player.getRegistryManager().getOps(NbtOps.INSTANCE);
+
+        for(var i = 0; i < invList.size(); i++) {
+            var nbt = invList.getCompound(i).get();
+            var slot = i;
+
+            // store slot manually for compatibility
+            if(nbt.contains("Slot")) {
+                slot = nbt.getByte("Slot").get() & 255;
+
+                // how mc does it :/
+                if(slot >= 100 && slot < 150) {
+                    slot -= 100 - PlayerInventory.MAIN_SIZE;
+                }
+                else if(slot >= 150) {
+                    slot = PlayerInventory.OFF_HAND_SLOT;
+                }
+            }
+
+            // manual data fixing because mc doesn't do it :/
+            // checks for levels compound in enchants, which is just a sublayer for the enchants in newer versions.
+            // 0 idea why 1.21.4 supports converting from the newer to the older but the older can't do newer but it does soooo
+            if(nbt.contains("components")) {
+                var components = nbt.get("components").asCompound().orElse(null);
+
+                if(components != null && components.contains("minecraft:enchantments")) {
+                    var enchants = components.get("minecraft:enchantments").asCompound().orElse(null);
+
+                    if(enchants != null && enchants.contains("levels")) {
+                        var levels = enchants.get("levels").asCompound().orElse(null);
+
+                        if(levels != null) {
+                            components.remove("minecraft:enchantments");
+                            components.put("minecraft:enchantments", levels);
+                        }
+                    }
+                }
+            }
+
+            var item = ItemStack.CODEC.parse(ops, nbt).result().orElse(ItemStack.EMPTY);
+            loadedInv.setStack(slot, item);
+        }
 
         return loadedInv;
     }

@@ -65,7 +65,7 @@ public class KitModule extends ModuleBase {
             if(client.player != null && client.player.isInCreativeMode()) {
                 loadKitString(kitToLoadName, kitToLoad, true);
 
-                RooHelper.sendChatCommand("gamemode " + previousGameMode.getName());
+                RooHelper.sendChatCommand("gamemode " + previousGameMode.getId());
             }
         }
     }

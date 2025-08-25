@@ -34,8 +34,8 @@ public class FTextCommand {
         var text = StringArgumentType.getString(context, "text").toLowerCase();
         var small = toSmallText(text);
 
-        var click = new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, small);
-        var hover = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Text.of(small));
+        var click = new ClickEvent.CopyToClipboard(small);
+        var hover = new HoverEvent.ShowText(Text.of(small));
 
         var smallText = MutableText.of(new PlainTextContent.Literal(small)).setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
         var feedback = getResult("").copy().append(smallText);
