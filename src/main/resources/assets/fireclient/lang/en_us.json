@@ -188,7 +188,7 @@
   "fireclient.module.kit.share.failure.generic": "Failed to upload \"%1$s\"",
   "fireclient.module.kit.share.failure.too_large": "Kit file too large",
 
-  "fireclient.module.kit.share.message": "%1$s has shared \"%2$s\". %3$s",
+  "fireclient.module.kit.share.message": "%1$s has shared \"%2$s\" %3$s",
   "fireclient.module.kit.share.download.name": "[Download]",
   "fireclient.module.kit.share.download.tooltip": "Download \"%1$s\"",
 
