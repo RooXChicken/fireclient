@@ -27,7 +27,6 @@ public class ReplaceSharedKitsMixin {
     @Inject(method = "addMessage(Lnet/minecraft/text/Text;Lnet/minecraft/network/message/MessageSignatureData;Lnet/minecraft/client/gui/hud/MessageIndicator;)V", at = @At("HEAD"), cancellable = true)
     private void replaceWithKit(Text message, MessageSignatureData signatureData, MessageIndicator indicator, CallbackInfo info) {
         var contents = message.getString();
-        FireClient.LOGGER.info(contents);
 
         if(!KitManager.isSharedKit(contents)) {
             return;

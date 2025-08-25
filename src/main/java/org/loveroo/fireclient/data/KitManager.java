@@ -34,8 +34,6 @@ public class KitManager {
 
     private static final String DEFAULT_KIT = "{\"inv\":[]}";
 
-    private static final Identifier KIT_DOWNLOAD_ID = Identifier.of(FireClient.MOD_ID, "kit.download");
-
     private static final int KIT_MAX_SIZE = 4194304;
 
     public static String getKitPath(String kitName) {
@@ -44,10 +42,6 @@ public class KitManager {
 
     public static String getDeletedKitPath(String kitName) {
         return KIT_DELETED_PATH + kitName + ".json";
-    }
-
-    public static Identifier getKitDownloadId() {
-        return KIT_DOWNLOAD_ID;
     }
 
     public static KitManageStatus initializeDirectories() {
@@ -598,6 +592,11 @@ public class KitManager {
 
         @Override
         public void run() {
+            if(KitManager.kitStatus(kitName) == KitValidationStatus.SUCCESS) {
+                onComplete.accept(KitDownloadStatus.ALREADY_EXISTS);
+                return;
+            }
+
             try {
                 var url = new URI(FireClient.getServerUrl("v1/kit/download?id=" + kitId)).toURL();
 
