@@ -11,6 +11,7 @@
     "modules.shadows.RenderShadowsOnAllMixin",
     "settings.BrewingStandFuelMixin",
     "settings.CleanViewMixin",
+    "settings.FixEnchantCombineCommand",
     "settings.FixPowderSnowMixin",
     "settings.LimitParticleCountMixin"
   ],
@@ -53,8 +54,12 @@
     "modules.signs.DisableSignRendering",
     "modules.subtitles.SubtitlesMixin",
     "settings.AddCachedEntityMixin",
+    "settings.AllowReloadInputsClientMixin",
+    "settings.AllowReloadInputsKeyboardMixin",
+    "settings.AllowReloadInputsMouseMixin",
     "settings.ChatLengthMixin",
     "settings.DisableExtinguishSpamMixin",
+    "settings.DisableResourceClearMixin",
     "settings.DontResetDeathButtonsMixin",
     "settings.EntityUUIDCacheMixin",
     "settings.FixTridentShieldMixin",
@@ -65,7 +70,8 @@
     "settings.PreventUnlistingMixin",
     "settings.PreventUntoggleKeysMixin",
     "settings.RenderBrandingMixin",
-    "settings.ShowLatencyMixin"
+    "settings.ShowLatencyMixin",
+    "settings.SpeedupReloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

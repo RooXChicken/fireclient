@@ -21,6 +21,7 @@
       "org.loveroo.fireclient.FireClient"
     ]
   },
+  "accessWidener" : "fireclient.accesswidener",
   "mixins": [
     "fireclient.mixins.json"
   ],

@@ -16,10 +16,12 @@ public enum FireClientOption {
     SHOW_PING_NUMBER(new ToggleOptionData(0)),
     BLAZE_POWDER_FILL(new ToggleOptionData(0)),
     SHOW_MODULES_DEBUG(new ToggleOptionData(1)),
-    CACHE_UUID(new ToggleOptionData(0)),
-    CAP_PARTICLE_COUNT(new ToggleOptionData(0)),
+    CACHE_UUID(new ToggleOptionData(1)),
+    CAP_PARTICLE_COUNT(new ToggleOptionData(1)),
     CHAT_HISTORY(new SliderOptionData(1, 100, 2000)),
-    CLEARVIEW(new ToggleOptionData(0));
+    CLEARVIEW(new ToggleOptionData(0)),
+    NO_RELOAD_OVERLAY(new ToggleOptionData(0)),
+    PREVENT_PACK_CLEAR(new ToggleOptionData(1));
 //    DISABLE_GRADIENT(0, FireClientOptionType.TOGGLE);
 
     private final Text name;
