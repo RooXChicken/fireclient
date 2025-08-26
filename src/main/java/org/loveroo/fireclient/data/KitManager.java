@@ -29,22 +29,22 @@ import java.util.function.Consumer;
 
 public class KitManager {
 
-    public final String KIT_BASE_PATH = "fireclient/kits/";
-    public final String KIT_DELETED_PATH = "fireclient/kits/deleted/";
+    public static final String KIT_BASE_PATH = "fireclient/kits/";
+    public static final String KIT_DELETED_PATH = "fireclient/kits/deleted/";
 
-    private final String DEFAULT_KIT = "{\"inv\":[]}";
+    private static final String DEFAULT_KIT = "{\"inv\":[]}";
 
-    private final int KIT_MAX_SIZE = 4194304;
+    private static final int KIT_MAX_SIZE = 4194304;
 
-    public String getKitPath(String kitName) {
+    public static String getKitPath(String kitName) {
         return KIT_BASE_PATH + kitName + ".json";
     }
 
-    public String getDeletedKitPath(String kitName) {
+    public static String getDeletedKitPath(String kitName) {
         return KIT_DELETED_PATH + kitName + ".json";
     }
 
-    public KitManageStatus initializeDirectories() {
+    public static KitManageStatus initializeDirectories() {
         try {
             new File(KIT_BASE_PATH).mkdirs();
             new File(KIT_DELETED_PATH).mkdirs();
@@ -58,7 +58,7 @@ public class KitManager {
         return KitManageStatus.FAILURE;
     }
 
-    public KitManageStatus deleteRecycledKits() {
+    public static KitManageStatus deleteRecycledKits() {
         try {
             var deletedFolder = new File(KIT_DELETED_PATH);
             deletedFolder.mkdirs();
@@ -80,7 +80,7 @@ public class KitManager {
         return KitManageStatus.FAILURE;
     }
 
-    public KitCreateStatus createKit(String kitName, String kitContents) {
+    public static KitCreateStatus createKit(String kitName, String kitContents) {
         var validationStatus = kitStringStatus(kitContents);
 
         if(validationStatus != KitValidationStatus.SUCCESS) {
@@ -108,7 +108,7 @@ public class KitManager {
 
     // saving and loading
 
-    public String getPlayerInventoryString() {
+    public static String getPlayerInventoryString() {
         var client = MinecraftClient.getInstance();
         if(client.player == null) {
             return DEFAULT_KIT;
@@ -117,7 +117,7 @@ public class KitManager {
         return getInventoryAsString(client.player.getInventory());
     }
 
-    public String getInventoryAsString(PlayerInventory inv) {
+    public static String getInventoryAsString(PlayerInventory inv) {
         var nbt = new NbtList();
         var ops = MinecraftClient.getInstance().player.getRegistryManager().getOps(NbtOps.INSTANCE);
 
@@ -146,12 +146,12 @@ public class KitManager {
         return "{\"inv\":" + nbt + "}";
     }
 
-    public KitLoadStatus loadKit(String kitName) {
+    public static KitLoadStatus loadKit(String kitName) {
         var kit = getKitFromFile(new File(getKitPath(kitName)));
         return loadKitFromString(kit);
     }
 
-    public KitLoadStatus loadKitFromString(String kit) {
+    public static KitLoadStatus loadKitFromString(String kit) {
         if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
             return KitLoadStatus.INVALID_KIT;
         }
@@ -197,7 +197,7 @@ public class KitManager {
         return KitLoadStatus.SUCCESS;
     }
 
-    private PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
+    private static PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
         var client = MinecraftClient.getInstance();
 
         var from = NbtHelper.fromNbtProviderString(kit);
@@ -252,12 +252,12 @@ public class KitManager {
         return loadedInv;
     }
 
-    public KitViewStatus previewKit(String kitName, boolean fromCommand) {
+    public static KitViewStatus previewKit(String kitName, boolean fromCommand) {
         var kit = getKitFromFile(new File(getKitPath(kitName)));
         return previewKitFromString(kitName, kit, fromCommand);
     }
 
-    public KitViewStatus previewKitFromString(String kitName, String kit, boolean fromCommand) {
+    public static KitViewStatus previewKitFromString(String kitName, String kit, boolean fromCommand) {
         if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
             return KitViewStatus.INVALID_KIT;
         }
@@ -279,12 +279,12 @@ public class KitManager {
         return KitViewStatus.SUCCESS;
     }
 
-    public KitViewStatus editKit(String kitName, boolean fromCommand) {
+    public static KitViewStatus editKit(String kitName, boolean fromCommand) {
         var kit = getKitFromFile(new File(getKitPath(kitName)));
         return editKitFromString(kitName, kit, fromCommand);
     }
 
-    public KitViewStatus editKitFromString(String kitName, String kit, boolean fromCommand) {
+    public static KitViewStatus editKitFromString(String kitName, String kit, boolean fromCommand) {
         if(kitStringStatus(kit) != KitValidationStatus.SUCCESS) {
             return KitViewStatus.INVALID_KIT;
         }
@@ -308,11 +308,11 @@ public class KitManager {
 
     // file manager
 
-    public String getKitFromName(String kitName) {
+    public static String getKitFromName(String kitName) {
         return getKitFromFile(new File(getKitPath(kitName)));
     }
 
-    public String getKitFromFile(File file) {
+    public static String getKitFromFile(File file) {
         try {
             if(file.exists()) {
                 return Files.readString(Paths.get(file.toURI()));
@@ -325,11 +325,11 @@ public class KitManager {
         return "";
     }
 
-    public KitValidationStatus kitStatus(String kitName) {
+    public static KitValidationStatus kitStatus(String kitName) {
         return kitStatus(new File(getKitPath(kitName)));
     }
 
-    public KitValidationStatus kitStatus(File file) {
+    public static KitValidationStatus kitStatus(File file) {
         if(!file.exists()) {
             return KitValidationStatus.NO_FILE;
         }
@@ -338,7 +338,7 @@ public class KitManager {
         return kitStringStatus(kit);
     }
 
-    public KitValidationStatus kitStringStatus(String kit) {
+    public static KitValidationStatus kitStringStatus(String kit) {
         if(kit.isEmpty()) {
             return KitValidationStatus.INVALID_KIT;
         }
@@ -354,7 +354,7 @@ public class KitManager {
         return KitValidationStatus.INVALID_KIT;
     }
 
-    public List<String> getKits() {
+    public static List<String> getKits() {
         var kits = new ArrayList<String>();
 
         try {
@@ -380,7 +380,7 @@ public class KitManager {
         return kits;
     }
 
-    public KitManageStatus deleteKit(String kitName) {
+    public static KitManageStatus deleteKit(String kitName) {
         try {
             new File(KIT_DELETED_PATH).mkdirs();
             new File(getKitPath(kitName)).renameTo(new File(getDeletedKitPath(kitName)));
@@ -394,7 +394,7 @@ public class KitManager {
         return KitManageStatus.FAILURE;
     }
 
-    public void uploadKit(String kitName, String kitContents, Consumer<KitUploadStatus> onComplete) {
+    public static void uploadKit(String kitName, String kitContents, Consumer<KitUploadStatus> onComplete) {
         if(kitStringStatus(kitContents) != KitValidationStatus.SUCCESS) {
             onComplete.accept(KitUploadStatus.INVALID_KIT);
             return;
@@ -410,14 +410,14 @@ public class KitManager {
         thread.start();
     }
 
-    public void downloadKit(String kitName, String kitId, Consumer<KitDownloadStatus> onComplete) {
+    public static void downloadKit(String kitName, String kitId, Consumer<KitDownloadStatus> onComplete) {
         var thread = new KitDownloadThread(kitName, kitId, onComplete);
         thread.start();
     }
 
-    private final String SHARED_KIT_PREFIX = "__!fireclient_shared_kit_";
+    private static final String SHARED_KIT_PREFIX = "__!fireclient_shared_kit_";
 
-    public String toSharedKit(String kitName, String kitId) {
+    public static String toSharedKit(String kitName, String kitId) {
         var result = "{}";
 
         try {
@@ -433,11 +433,11 @@ public class KitManager {
         return SHARED_KIT_PREFIX + result;
     }
 
-    public boolean isSharedKit(String message) {
+    public static boolean isSharedKit(String message) {
         return message.contains(SHARED_KIT_PREFIX);
     }
 
-    public String getSharedKitSender(String message) {
+    public static String getSharedKitSender(String message) {
         if(!isSharedKit(message)) {
             return "";
         }
@@ -446,19 +446,19 @@ public class KitManager {
         return split[0];
     }
 
-    public String getSharedKitId(String message) {
+    public static String getSharedKitId(String message) {
         return getSharedKitData(message, "id");
     }
 
-    public String getSharedKitName(String message) {
+    public static String getSharedKitName(String message) {
         return getSharedKitData(message, "name");
     }
 
-    private String getSharedKitData(String message, String data) {
+    private static String getSharedKitData(String message, String data) {
         return getSharedKitJson(message).optString(data, "");
     }
 
-    public JSONObject getSharedKitJson(String message) {
+    public static JSONObject getSharedKitJson(String message) {
         if(!isSharedKit(message)) {
             return new JSONObject();
         }

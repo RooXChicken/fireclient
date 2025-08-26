@@ -29,7 +29,6 @@ import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.commands.FTextCommand;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.data.KitManager;
 import org.loveroo.fireclient.data.RecipeManager;
 import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
@@ -63,8 +62,6 @@ public class FireClientside implements ClientModInitializer {
     private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
             new KeyBinding("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
 
-    private static final KitManager kitManager;
-
     @Override
     public void onInitializeClient() {
         initModules();
@@ -77,7 +74,6 @@ public class FireClientside implements ClientModInitializer {
         }
 
         registerCommands();
-        kitManager = new KitManager();
 //        new RecipeManager();
     }
 
