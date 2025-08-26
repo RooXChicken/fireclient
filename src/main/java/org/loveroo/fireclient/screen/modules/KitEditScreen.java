@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.loveroo.fireclient.FireClient;
@@ -66,46 +67,12 @@ public class KitEditScreen extends KitViewScreen {
     private void saveButtonPressed(ButtonWidget button) {
         var deleteStatus = KitManager.deleteKit(kitName);
 
-        // TODO: convert this to use fromCommand to send a chat message or notification
-        switch(deleteStatus) {
-            case SUCCESS -> { }
-
-            case FAILURE -> {
-                RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.recycle.failure.title", kitName),
-                        Text.translatable("fireclient.module.kit.recycle.failure.contents"));
-
-                return;
-            }
+        if(!handleDeleteStatus(deleteStatus)) {
+            return;
         }
 
         var createStatus = KitManager.createKit(kitName, KitManager.getInventoryAsString(getInventory()));
-
-        switch(createStatus) {
-            case SUCCESS -> {
-                RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.edit.success.name", kitName),
-                        Text.translatable("fireclient.module.kit.edit.success.contents"));
-            }
-
-            case INVALID_KIT -> {
-                RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
-                        Text.translatable("fireclient.module.kit.edit.invalid_editor_inventory"));
-            }
-
-            case ALREADY_EXISTS -> {
-                RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
-                        Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
-            }
-
-            case WRITE_FAIL -> {
-                RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.edit.failure.name", kitName),
-                        Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
-            }
-        }
+        handleCreateStatus(createStatus);
 
         saved = true;
 
@@ -120,6 +87,81 @@ public class KitEditScreen extends KitViewScreen {
         }
 
         MinecraftClient.getInstance().setScreen(new ModuleConfigScreen(kit));
+    }
+
+    private boolean handleDeleteStatus(KitManager.KitManageStatus status) {
+        MutableText title = null;
+        MutableText contents = null;
+
+        switch(status) {
+            case SUCCESS -> { }
+
+            case FAILURE -> {
+                title = Text.translatable("fireclient.module.kit.recycle.failure.title", kitName);
+                contents = Text.translatable("fireclient.module.kit.recycle.failure.contents");
+            }
+        }
+
+        if(title == null) {
+            return true;
+        }
+
+        if(isFromCommand()) {
+            if(client == null || client.player == null) {
+                return false;
+            }
+
+            client.player.sendMessage(title.append(" ").append(contents), false);
+        }
+        else {
+            RooHelper.sendNotification(title, contents);
+        }
+
+        return false;
+    }
+
+    private boolean handleCreateStatus(KitManager.KitCreateStatus status) {
+        MutableText title = null;
+        MutableText contents = null;
+
+        switch(status) {
+            case SUCCESS -> {
+                    title = Text.translatable("fireclient.module.kit.edit.success.name", kitName);
+                    contents = Text.translatable("fireclient.module.kit.edit.success.contents");
+            }
+
+            case INVALID_KIT -> {
+                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Text.translatable("fireclient.module.kit.edit.invalid_editor_inventory");
+            }
+
+            case ALREADY_EXISTS -> {
+                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Text.translatable("fireclient.module.kit.generic.already_exists.contents");
+            }
+
+            case WRITE_FAIL -> {
+                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Text.translatable("fireclient.module.kit.generic.write_failure.contents");
+            }
+        }
+
+        if(title == null) {
+            return true;
+        }
+
+        if(isFromCommand()) {
+            if(client == null || client.player == null) {
+                return false;
+            }
+
+            client.player.sendMessage(title.append(" ").append(contents), false);
+        }
+        else {
+            RooHelper.sendNotification(title, contents);
+        }
+
+        return false;
     }
 
     private void undoButtonPressed(ButtonWidget button) {
@@ -232,11 +274,20 @@ public class KitEditScreen extends KitViewScreen {
 
     @Override
     protected void onClose() {
-        // TODO: same deal
         if(edited && !saved) {
-            RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.kit.edit.revert.name", kitName),
-                    Text.translatable("fireclient.module.kit.edit.revert.contents"));
+            var title = Text.translatable("fireclient.module.kit.edit.revert.name", kitName);
+            var contents = Text.translatable("fireclient.module.kit.edit.revert.contents");
+
+            if(isFromCommand()) {
+                if(client == null || client.player == null) {
+                    return;
+                }
+
+                client.player.sendMessage(title.append(" ").append(contents), false);
+            }
+            else {
+                RooHelper.sendNotification(title, contents);
+            }
         }
     }
 }
