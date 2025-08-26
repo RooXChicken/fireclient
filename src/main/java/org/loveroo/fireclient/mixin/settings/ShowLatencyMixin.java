@@ -55,21 +55,20 @@ public class ShowLatencyMixin {
             return;
         }
 
-        if(!entry.getProfile().getName().matches("[a-zA-Z0-9_]+")) {
+        var pingColor = getColor(entry);
+        if(pingColor == 0) {
             return;
         }
 
-        var pingColor = getColor(entry);
         var pingText = MutableText.of(new PlainTextContent.Literal(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
-
         info.setReturnValue(info.getReturnValue().copy().append(pingText));
     }
 
     @Unique
     private int getColor(PlayerListEntry entry) {
         var ping = entry.getLatency();
-        if(ping < 0) {
-            return unknownColor;
+        if(ping < 0 || ping > 9999) {
+            return 0;
         }
 
         if(ping < 150) {
