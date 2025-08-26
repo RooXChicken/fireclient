@@ -56,16 +56,19 @@ public class ShowLatencyMixin {
         }
 
         var pingColor = getColor(entry);
-        var pingText = MutableText.of(new PlainTextContent.Literal(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
+        if(pingColor == 0) {
+            return;
+        }
 
+        var pingText = MutableText.of(new PlainTextContent.Literal(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
         info.setReturnValue(info.getReturnValue().copy().append(pingText));
     }
 
     @Unique
     private int getColor(PlayerListEntry entry) {
         var ping = entry.getLatency();
-        if(ping < 0) {
-            return unknownColor;
+        if(ping < 0 || ping > 9999) {
+            return 0;
         }
 
         if(ping < 150) {
