@@ -23,6 +23,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Nullable
     private ModuleBase selectedModule = null;
+
     private ModuleBase.OldTransform oldTransform = null;
 
     public ModuleConfigScreen(ModuleBase module) {

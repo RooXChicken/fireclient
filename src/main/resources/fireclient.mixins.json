@@ -23,6 +23,7 @@
     "modules.bigitems.RegisterBigItemsMixin",
     "modules.bigitems.StoreItemTypeMixin",
     "modules.blockoutline.ChangeBlockOutlineMixin",
+    "modules.blockoutline.RenderPreviewMixin",
     "modules.deathinfo.DeathInfoMixin",
     "modules.deathinfo.SendDeathMessageMixin",
     "modules.flightspeed.ModifyFlightVerticalSpeedMixin",

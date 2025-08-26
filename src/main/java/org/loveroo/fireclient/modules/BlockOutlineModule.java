@@ -1,5 +1,7 @@
 package org.loveroo.fireclient.modules;
 
+import com.mojang.blaze3d.systems.ProjectionType;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -8,11 +10,10 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.*;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.shape.*;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix3x2fc;
-import org.joml.Quaternionf;
+import org.joml.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
@@ -20,6 +21,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,9 @@ public class BlockOutlineModule extends ModuleBase {
     private int defaultOutline = 0x66000000;
 
     private float rot = 180.0f;
+    private ProjectionMatrix2 proj = null;
+
+    private boolean screenOpen = false;
 
     public BlockOutlineModule() {
         super(new ModuleData("block_outline", "☐", color));
@@ -89,41 +94,32 @@ public class BlockOutlineModule extends ModuleBase {
     }
 
     @Override
+    public void openScreen(Screen screen) {
+        super.openScreen(screen);
+        screenOpen = true;
+    }
+
+    @Override
     public void closeScreen(Screen screen) {
         FireClientside.saveConfig();
+        screenOpen = false;
     }
 
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 80);
+    }
 
-        var shape = VoxelShapes.cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
-        final var scale = 25.0f;
-
-        var matrix = context.getMatrices();
-        matrix.pushMatrix();
-
-        rot -= delta*2.0f;
-
-        while(rot < 180) {
-            rot += 360;
-        }
-
-        matrix.translate(base.width/2.0f, base.height/2.0f - 40);
-        matrix.scale(scale, scale);
-
-//        var rotQuat = new Quaternionf().rotateXYZ(0.130f, (float)Math.toRadians(rot), 0.0f);
-//        matrix.mul(new Matrix3x2f());
-
-        var color = (getData().isEnabled()) ? getOutline() : defaultOutline;
-
-//        var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
-//        context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
-        matrix.popMatrix();
+    public int getDefaultOutline() {
+        return defaultOutline;
     }
 
     public int getOutline() {
         return outline;
+    }
+
+    public boolean isScreenOpen() {
+        return screenOpen;
     }
 
     public boolean isThick() {
