@@ -40,6 +40,11 @@ public class KitModule extends ModuleBase {
     @Nullable
     private TextFieldWidget kitNameField;
 
+    @Nullable
+    private ScrollableWidget scrollable;
+
+    private double scroll = 0.0;
+
     private final int kitWidgetWidth = 330;
     private final int kitWidgetHeight = 140;
 
@@ -153,16 +158,27 @@ public class KitModule extends ModuleBase {
             elements.add(new ScrollableWidget.ElementEntry(elementWidgets));
         }
 
-        var scrollable = new ScrollableWidget(base, kitWidgetWidth, kitWidgetHeight, 0, 25, elements);
+        scrollable = new ScrollableWidget(base, kitWidgetWidth, kitWidgetHeight, 0, 25, elements);
         scrollable.setPosition(base.width/2 - (kitWidgetWidth/2), base.height/2 - 50);
+        scrollable.setScrollY(scroll);
 
         widgets.add(scrollable);
         return widgets;
     }
 
     @Override
+    public void moduleConfigPressed(ButtonWidget button) {
+        scroll = 0.0;
+        super.moduleConfigPressed(button);
+    }
+
+    @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 95);
+
+        if(scrollable != null) {
+            scroll = scrollable.getScrollY();
+        }
     }
 
     public KitManager.KitLoadStatus loadKit(String kitName, boolean notify) {
