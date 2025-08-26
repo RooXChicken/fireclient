@@ -81,6 +81,10 @@ public class ArmorDisplayModule extends ModuleBase {
         transform(context.getMatrices());
 
         var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+
         var text = client.textRenderer;
 
         var items = new ArrayList<ItemStack>();
@@ -93,7 +97,7 @@ public class ArmorDisplayModule extends ModuleBase {
         for(var i = 0; i < 4; i++) {
             var item = items.get(i);
 
-            if(item != ItemStack.EMPTY) {
+            if(!item.isEmpty()) {
                 var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickDelta(true));
                 var cooldown = (int)Math.ceil(progress * 10);
 

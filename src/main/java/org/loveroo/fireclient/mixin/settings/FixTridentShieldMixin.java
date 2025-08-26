@@ -6,6 +6,7 @@ import net.minecraft.client.render.item.HeldItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.item.ShieldItem;
 import org.loveroo.fireclient.client.FireClientside;
@@ -27,13 +28,10 @@ public abstract class FixTridentShieldMixin {
         }
 
         var client = MinecraftClient.getInstance();
-        if(!client.player.isUsingRiptide() || !(stack.getItem() instanceof ShieldItem)) {
+        if(!client.player.isUsingRiptide() || !stack.isOf(Items.SHIELD)) {
             return;
         }
 
         info.cancel();
-
-        // TODO: make this use registries
-//        Registries.ITEM.get(Identifier.ofVanilla("shield"))
     }
 }
