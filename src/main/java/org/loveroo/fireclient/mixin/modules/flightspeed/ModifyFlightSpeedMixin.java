@@ -17,7 +17,7 @@ abstract class ModifyFlightMoveSpeedMixin {
     @Redirect(method = "getOffGroundSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerAbilities;getFlySpeed()F"))
     private float modifySpeed(PlayerAbilities abilities) {
         var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getGameMode() != GameMode.CREATIVE) {
+        if(client.player == null || client.interactionManager.getCurrentGameMode() != GameMode.CREATIVE) {
             return abilities.getFlySpeed();
         }
 
@@ -36,7 +36,7 @@ abstract class ModifyFlightVerticalSpeedMixin {
     @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerAbilities;getFlySpeed()F"))
     private float modifySpeed(PlayerAbilities abilities) {
         var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getGameMode() != GameMode.CREATIVE) {
+        if(client.player == null || client.interactionManager.getCurrentGameMode() != GameMode.CREATIVE) {
             return abilities.getFlySpeed();
         }
 
