@@ -55,6 +55,10 @@ public class ShowLatencyMixin {
             return;
         }
 
+        if(!entry.getProfile().getName().matches("[a-zA-Z0-9_]+")) {
+            return;
+        }
+
         var pingColor = getColor(entry);
         var pingText = MutableText.of(new PlainTextContent.Literal(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
 
