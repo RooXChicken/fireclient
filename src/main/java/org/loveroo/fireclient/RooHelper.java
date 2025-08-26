@@ -1,6 +1,8 @@
 package org.loveroo.fireclient;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Overlay;
+import net.minecraft.client.gui.screen.SplashOverlay;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.toast.SystemToast;
 import net.minecraft.text.*;
@@ -64,5 +66,13 @@ public class RooHelper {
         catch(Exception e) {
             return new JSONObject();
         }
+    }
+
+    public static Overlay getOverlay(MinecraftClient client) {
+        if(FireClientside.getSetting(FireClientOption.NO_RELOAD_OVERLAY) != 0 && client.getOverlay() instanceof SplashOverlay) {
+            return null;
+        }
+
+        return client.getOverlay();
     }
 }

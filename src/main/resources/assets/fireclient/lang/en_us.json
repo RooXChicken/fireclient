@@ -362,6 +362,12 @@
   "fireclient.settings.clearview.name": "Clearview",
   "fireclient.settings.clearview.description": "Hide status effect particles for yourself",
 
+  "fireclient.settings.prevent_pack_clear.name": "Prevent Pack Clear",
+  "fireclient.settings.prevent_pack_clear.description": "Prevents the resource pack list from being cleared when a load error occurs",
+
+  "fireclient.settings.no_reload_overlay.name": "No Reload Overlay",
+  "fireclient.settings.no_reload_overlay.description": "Speeds up the reload overlay and prevents it from disabling input",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",
