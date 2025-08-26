@@ -17,7 +17,7 @@ public class RenderShadowsOnAllMixin {
     @Inject(method = "isFullCube", at = @At("HEAD"), cancellable = true)
     private void setFullCube(BlockView world, BlockPos pos, CallbackInfoReturnable<Boolean> info) {
         var shadow = (ShadowModule) FireClientside.getModule("shadow");
-        if(shadow == null || !shadow.drawingShadow || !shadow.isRenderOnAll()) {
+        if(shadow == null || !ShadowModule.drawingShadow || !shadow.isRenderOnAll()) {
             return;
         }
 
