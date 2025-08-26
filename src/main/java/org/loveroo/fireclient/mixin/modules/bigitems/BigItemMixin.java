@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemEntityRenderer.class)
 public class BigItemMixin {
 
-    @Inject(method = "renderStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/item/ItemRenderState;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V"))
+    @Inject(method = "renderStack", at = @At("HEAD"))
     private static void testScale(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ItemStackEntityRenderState state, Random random, Box box, CallbackInfo ci) {
         var bigItems = (BigItemsModule) FireClientside.getModule("big_items");
         if(bigItems == null || !bigItems.getData().isEnabled()) {
