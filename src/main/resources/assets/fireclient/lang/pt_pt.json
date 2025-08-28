@@ -5,6 +5,7 @@
   "fireclient.module.generic.visibility_toggle": "Permite a renderização deste módulo",
   "fireclient.module.generic.enabled_toggle": "Permite a lógica deste módulo",
   "fireclient.module.generic.config_text": "Configuração de %1$s",
+  "fireclient.screen.generic.scale_label": "Scale",
 
   "fireclient.module.generic.back.name": "Voltar",
   "fireclient.module.generic.back.tooltip": "Voltar à seleção de Modelo",
@@ -128,21 +129,28 @@
   "fireclient.module.kit.copy_to_clipboard.tooltip": "Copiar \"%1$s\" para a área de transferência",
   "fireclient.module.kit.edit.name": "✎",
   "fireclient.module.kit.edit.tooltip": "Editar \"%1$s\"",
+  "fireclient.module.kit.share.name": "\uD83C\uDF10",
+  "fireclient.module.kit.share.tooltip": "Share \"%1$s\" in the chat",
 
   "fireclient.module.kit.load_keybind.name": "\uD83E\uDDF0",
   "fireclient.module.kit.load_keybind.tooltip": "Carregar \"%1$s\"",
 
+  "fireclient.module.kit.generic.create.success": "\"%1$s\" Criado com Sucesso",
   "fireclient.module.kit.generic.create_failure.title": "Falha ao Criar \"%1$s\"",
   "fireclient.module.kit.generic.already_exists.contents": "Nome do kit já existe",
   "fireclient.module.kit.generic.invalid_kit.contents": "Kit Inválido",
   "fireclient.module.kit.generic.write_failure.contents": "Falha ao gravar o ficheiro",
   "fireclient.module.kit.load.generic.invalid_player.contents": "Jogador Inválido",
+  "fireclient.module.kit.failure.generic_fail": "An error occurred",
 
   "fireclient.module.kit.empty_name.title": "Por favor dé um nome ao kit",
   "fireclient.module.kit.empty_name.contents": "Campo de nome do kit vazio",
 
   "fireclient.module.kit.generic.load_failure.title": "Falha ao carregar \"%1$s\"",
   "fireclient.module.kit.load.failure.invalid_permission.contents": "Permisões Inválidas",
+
+  "fireclient.module.kit.undo.success.title": "Sucesso",
+  "fireclient.module.kit.load.success.title": "Carregado com sucesso \"%1$s\"",
 
   "fireclient.module.kit.load.waiting_gmc.title": "Carregar \"%1$s\"...",
   "fireclient.module.kit.load.waiting_gmc.contents": "Esperar pelo modo Criativo",
@@ -154,7 +162,7 @@
   "fireclient.module.kit.create_clipboard.success.title": "Colado com sucesso \"%1$s\"",
   "fireclient.module.kit.create_clipboard.success.contents": "Importado via a área de transferência",
 
-  "fireclient.module.kit.create_clipboard.failure.title": "Failed to paste \"%1$s\"",
+  "fireclient.module.kit.create_clipboard.failure.title": "Não foi possível colar \"%1$s\"",
 
   "fireclient.module.kit.recycle.success.title": "Reciclado \"%1$s\"",
   "fireclient.module.kit.recycle.success.contents": "Será excluído na próxima inicialização",
@@ -176,6 +184,18 @@
 
   "fireclient.module.kit.edit.revert.name": "Revertido com sucesso \"%1$s\"",
   "fireclient.module.kit.edit.revert.contents": "Não houve mudanças",
+
+  "fireclient.module.kit.server.fail.rate_limit": "Acalma-te! Taxa Limitada!",
+  "fireclient.module.kit.share.failure.generic": "Falha a carregar \"%1$s\"",
+  "fireclient.module.kit.share.failure.too_large": "Ficheiro do kit demasiado grande",
+
+  "fireclient.module.kit.share.message": "%1$s compartilhou \"%2$s\" %3$s",
+  "fireclient.module.kit.share.download.name": "[Download]",
+  "fireclient.module.kit.share.download.tooltip": "Download de \"%1$s\"",
+
+  "fireclient.module.kit.download.success": "Download de \"%1$s\" feito com sucesso",
+  "fireclient.module.kit.download.failure.generic": "Falha ao download de \"%1$s\"",
+  "fireclient.module.kit.download.failure.no_kit": "Kit não existe",
 
   "fireclient.screen.edit_kit.title": "Editar \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Visualisar \"%1$s\"",
@@ -251,6 +271,14 @@
   "fireclient.module.shadow.render_on_all.name": "Renderizar em tudo",
   "fireclient.module.shadow.render_on_all.tooltip": "Permite que sombras sejam renderizadas em blocos de cubo não completos",
 
+  "fireclient.module.sign.name": "Placas",
+  "fireclient.module.sign.description": "Modifica o comportamento de Placas",
+
+  "fireclient.module.sign.disable_gui.name": "Desativar GUI",
+  "fireclient.module.sign.disable_gui.description": "Previne o GUI de placas a ser aberto",
+  "fireclient.module.sign.disable_rendering.name": "Desative a renderização de placas",
+  "fireclient.module.sign.disable_rendering.description": "Bloqueia a renderização de placas",
+
   "fireclient.module.subtitles.name": "Subtitulos",
   "fireclient.module.subtitles.description": "Modifica o HUD das legendas",
 
@@ -266,6 +294,8 @@
   "fireclient.screen.main_config.modules.tooltip": "Configura vários Módulos",
   "fireclient.screen.main_config.settings.name": "Configurações do FireClient",
   "fireclient.screen.main_config.settings.tooltip": "Configurar as definições do FireClient",
+  "fireclient.screen.main_config.exit.name": "Sair",
+  "fireclient.screen.main_config.exit.tooltip": "Voltar ao jogo",
 
   "fireclient.screen.settings.title": "Opções do FireClient",
   "fireclient.screen.settings.header": "Configurações",
@@ -319,6 +349,24 @@
 
   "fireclient.settings.disable_gradient.name": "Desativar gradientes",
   "fireclient.settings.disable_gradient.description": "Desativa o texto gradiente utilizado na maioria dos módulos no FireClient",
+
+  "fireclient.settings.chat_history.name": "Hstórico do Chat",
+  "fireclient.settings.chat_history.description": "Modifica o comprimento do histórico do chat",
+
+  "fireclient.settings.cap_particle_count.name": "Limita o número de particulas",
+  "fireclient.settings.cap_particle_count.description": "Limita a contagem de partículas de entrada para evitar problemas de travamento",
+
+  "fireclient.settings.chat_history.text": "Comprimento: %1$s",
+  "fireclient.settings.chat_history.unlimited": "Ilimitado",
+
+  "fireclient.settings.clearview.name": "Visão clara",
+  "fireclient.settings.clearview.description": "Oculte partículas de efeito de status para você",
+
+  "fireclient.settings.prevent_pack_clear.name": "Impedir a limpeza do pacote",
+  "fireclient.settings.prevent_pack_clear.description": "Evita que a lista de pacotes de recursos seja limpa quando ocorre um erro de carregamento",
+
+  "fireclient.settings.no_reload_overlay.name": "Sem sobreposição de recarga",
+  "fireclient.settings.no_reload_overlay.description": "Acelera a sobreposição de recarga e evita que ela desabilite a entrada",
 
   "fireclient.keybind.generic.unbound_key.long": "Não consolidado",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
