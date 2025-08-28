@@ -11,6 +11,9 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(ChatHud.class)
 public class ChatLengthMixin {
 
+    @Unique
+    private final int unlimitedLength = Integer.MAX_VALUE - 1;
+
     @ModifyConstant(method = "addToMessageHistory", constant = @Constant(intValue = 100))
     private int modify1(int original) {
         return getLength();
@@ -31,7 +34,7 @@ public class ChatLengthMixin {
         var length = FireClientside.getSetting(FireClientOption.CHAT_HISTORY);
 
         if((length >= ((FireClientOption.SliderOptionData)FireClientOption.CHAT_HISTORY.getData()).getMaxValue())) {
-            return Integer.MAX_VALUE;
+            return unlimitedLength;
         }
         else {
             return length;
