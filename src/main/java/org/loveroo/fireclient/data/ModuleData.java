@@ -36,8 +36,12 @@ public class ModuleData {
         this.id = id;
         this.emoji = Text.literal(emoji + " ").withColor(color.toInt());
 
-        this.shownName = this.emoji.copy().append(Text.translatable("fireclient.module." + id + ".name").withColor(0xFFFFFFFF));
+        this.shownName = this.emoji.copy().append(getName().withColor(0xFFFFFFFF));
         this.description = Text.translatable("fireclient.module." + id + ".description");
+    }
+
+    public MutableText getName() {
+        return Text.translatable("fireclient.module." + id + ".name");
     }
 
     public MutableText getShownName() {
