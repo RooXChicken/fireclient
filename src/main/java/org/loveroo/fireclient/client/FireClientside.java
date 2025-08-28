@@ -106,6 +106,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new PerspectiveModule());
         registerModule(new MuteSoundsModule());
         registerModule(new SignModule());
+        registerModule(new ParticlesModule());
     }
 
     public static void registerModule(ModuleBase module) {
