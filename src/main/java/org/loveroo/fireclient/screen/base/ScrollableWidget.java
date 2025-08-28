@@ -22,6 +22,14 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
         }
     }
 
+    public void setEntries(List<ElementEntry> entries) {
+        clearEntries();
+        
+        for(var entry : entries) {
+            addEntry(entry);
+        }
+    }
+
     public void update() {
         KeyBinding.updateKeysByCode();
         this.updateChildren();

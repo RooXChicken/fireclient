@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.data;
 
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
 
@@ -18,7 +19,24 @@ public enum FireClientOption {
     SHOW_MODULES_DEBUG(new ToggleOptionData(1)),
     CACHE_UUID(new ToggleOptionData(1)),
     CAP_PARTICLE_COUNT(new ToggleOptionData(1)),
-    CHAT_HISTORY(new SliderOptionData(1, 100, 2000)),
+    
+    CHAT_HISTORY(new SliderOptionData(1, 100, 2000) {
+
+        @Override
+        public Text updateMessage(FireClientOption option, int amount) {
+            MutableText amountText;
+
+            if(amount >= ((FireClientOption.SliderOptionData)option.getData()).getMaxValue()) {
+                amountText = Text.translatable("fireclient.settings.chat_history.unlimited");
+            }
+            else {
+                amountText = Text.literal(String.valueOf(amount));
+            }
+
+            return Text.translatable("fireclient.settings.chat_history.name", amountText);
+        }
+    }),
+
     CLEARVIEW(new ToggleOptionData(0)),
     NO_RELOAD_OVERLAY(new ToggleOptionData(0)),
     PREVENT_PACK_CLEAR(new ToggleOptionData(1));
@@ -105,6 +123,10 @@ public enum FireClientOption {
 
             this.minValue = minValue;
             this.maxValue = maxValue;
+        }
+
+        public Text updateMessage(FireClientOption option, int amount) {
+            return Text.translatable("fireclient.settings." + option.name().toLowerCase() + ".name", amount);
         }
 
         public int getMinValue() {
