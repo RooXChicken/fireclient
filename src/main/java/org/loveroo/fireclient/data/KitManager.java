@@ -29,7 +29,7 @@ public class KitManager {
 
     private static final String DEFAULT_KIT = "{\"inv\":[]}";
 
-    private static final int KIT_MAX_SIZE = 4194304;
+    private static final int KIT_MAX_SIZE = 102400;
 
     public static String getKitPath(String kitName) {
         return KIT_BASE_PATH + kitName + ".json";
