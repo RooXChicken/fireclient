@@ -55,7 +55,7 @@ public class ParticlesModule extends ModuleBase {
     private TextFieldWidget particleField;
 
     public ParticlesModule() {
-        super(new ModuleData("particles", "\uD83D\uDD07", color));
+        super(new ModuleData("particles", "⊹₊⋆", color));
 
         getData().setGuiElement(false);
 

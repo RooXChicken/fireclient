@@ -250,7 +250,7 @@ public class KitModule extends ModuleBase {
 
             case ALREADY_EXISTS -> {
                 RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
                         Text.translatable("fireclient.module.kit.generic.already_exists.contents"));
 
                 return;
@@ -258,13 +258,13 @@ public class KitModule extends ModuleBase {
 
             case INVALID_KIT -> {
                 RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
                         Text.translatable("fireclient.module.kit.generic.invalid_kit.contents"));
             }
 
             case WRITE_FAIL -> {
                 RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
                         Text.translatable("fireclient.module.kit.generic.write_failure.contents"));
             }
         }
@@ -286,7 +286,7 @@ public class KitModule extends ModuleBase {
 
             case INVALID_PLAYER -> {
                 RooHelper.sendNotification(
-                        Text.translatable("fireclient.module.kit.create.failure.title", kitName),
+                        Text.translatable("fireclient.module.kit.generic.create_failure.title", kitName),
                         Text.translatable("fireclient.module.kit.load.generic.invalid_player.contents"));
             }
         }
