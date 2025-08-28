@@ -9,7 +9,7 @@
       "console": "integratedTerminal",
       "stopOnEntry": false,
       "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "-Dfabric.dli.config\u003d/home/roo/Projects/mods/fireclient/.gradle/loom-cache/launch.cfg -Dfabric.dli.env\u003dclient -Dfabric.dli.main\u003dnet.fabricmc.loader.impl.launch.knot.KnotClient",
+      "vmArgs": "-XX:+AllowEnhancedClassRedefinition -Dfabric.dli.config\u003d/home/roo/Projects/mods/fireclient/.gradle/loom-cache/launch.cfg -Dfabric.dli.env\u003dclient -Dfabric.dli.main\u003dnet.fabricmc.loader.impl.launch.knot.KnotClient",
       "args": "",
       "env": {},
       "projectName": "fireclient"
@@ -22,7 +22,7 @@
       "console": "integratedTerminal",
       "stopOnEntry": false,
       "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "-Dfabric.dli.config\u003d/home/roo/Projects/mods/fireclient/.gradle/loom-cache/launch.cfg -Dfabric.dli.env\u003dserver -Dfabric.dli.main\u003dnet.fabricmc.loader.impl.launch.knot.KnotServer",
+      "vmArgs": "-XX:+AllowEnhancedClassRedefinition -Dfabric.dli.config\u003d/home/roo/Projects/mods/fireclient/.gradle/loom-cache/launch.cfg -Dfabric.dli.env\u003dserver -Dfabric.dli.main\u003dnet.fabricmc.loader.impl.launch.knot.KnotServer",
       "args": "nogui",
       "env": {},
       "projectName": "fireclient"
