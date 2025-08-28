@@ -4,7 +4,8 @@
 
   "fireclient.module.generic.visibility_toggle": "Ενεργοποιεί την εμφάνιση αυτής της μονάδας",
   "fireclient.module.generic.enabled_toggle": "Ενεργοποιεί την λογική αυτής της μονάδας",
-  "fireclient.module.generic.config_text": "Διαμόρφωση του %1$s", 
+  "fireclient.module.generic.config_text": "Διαμόρφωση του %1$s",
+  "fireclient.screen.generic.scale_label": "Κλιμάκωση",
 
   "fireclient.module.generic.back.name": "Πίσω",
   "fireclient.module.generic.back.tooltip": "Επιστροφή στην Επιλογή Μονάδων",
@@ -90,7 +91,7 @@
   "fireclient.module.highest_block.description": "Δείχνει το υψηλότερο μπλοκ του κόσμου στην τοποθεσία σας",
 
   "fireclient.module.hit_color.name": "Χρώμα Επιτυχίας",
-  "fireclient.module.hit_color.description": "Αλλάζει το χρώμα επιτυχίας των οντοτήτων", 
+  "fireclient.module.hit_color.description": "Αλλάζει το χρώμα επιτυχίας των οντοτήτων",
 
   "fireclient.module.indicators.name": "Δείκτες",
   "fireclient.module.indicators.description": "Δείχνει διάφορους δείκτες εφέ",
@@ -128,15 +129,19 @@
   "fireclient.module.kit.copy_to_clipboard.tooltip": "Αντιγραφή του \"%1$s\" στο πρόχειρο",
   "fireclient.module.kit.edit.name": "✎",
   "fireclient.module.kit.edit.tooltip": "Επεξεργασία του \"%1$s\"",
+  "fireclient.module.kit.share.name": "\uD83C\uDF10",
+  "fireclient.module.kit.share.tooltip": "Κοινή χρήση του \"%1$s\" στη συνομιλία",
 
   "fireclient.module.kit.load_keybind.name": "\uD83E\uDDF0",
   "fireclient.module.kit.load_keybind.tooltip": "Φόρτωση του \"%1$s\"",
 
+  "fireclient.module.kit.generic.create.success": "Δημιουργήθηκε με επιτυχία το \"%1$s\"",
   "fireclient.module.kit.generic.create_failure.title": "Απέτυχε η δημιουργία του \"%1$s\"",
   "fireclient.module.kit.generic.already_exists.contents": "Υπάρχει ήδη αυτό το όνομα κιτ",
   "fireclient.module.kit.generic.invalid_kit.contents": "Άκυρο κιτ",
   "fireclient.module.kit.generic.write_failure.contents": "Αποτυχία εγγραφής αρχείου",
   "fireclient.module.kit.load.generic.invalid_player.contents": "Μη έγκυρος παίκτης",
+  "fireclient.module.kit.failure.generic_fail": "Παρουσιάστηκε σφάλμα",
 
   "fireclient.module.kit.empty_name.title": "Παρακαλώ ορίστε ένα όνομα κιτ",
   "fireclient.module.kit.empty_name.contents": "Αδειάστε το πεδίο ονόματος κιτ",
@@ -144,10 +149,11 @@
   "fireclient.module.kit.generic.load_failure.title": "Απέτυχε η φόρτωση του \"%1$s\"",
   "fireclient.module.kit.load.failure.invalid_permission.contents": "Μη έγκυρα δικαιώματα",
 
+  "fireclient.module.kit.undo.success.title": "Επιτυχία",
+  "fireclient.module.kit.load.success.title": "Φορτώθηκε με επιτυχία το \"%1$s\"",
+
   "fireclient.module.kit.load.waiting_gmc.title": "Φόρτωση του \"%1$s\"...",
   "fireclient.module.kit.load.waiting_gmc.contents": "Αναμονή για τη Λειτουργία Δημιουργίας",
-
-  "fireclient.module.kit.create.failure.title": "Απέτυχε η δημιουργία του \"%1$s\"",
 
   "fireclient.module.kit.preview.failure.title": "Απέτυχε η προεπισκόπηση του \"%1$s\"",
 
@@ -176,6 +182,18 @@
 
   "fireclient.module.kit.edit.revert.name": "Έγινε επιτυχής επαναφορά του \"%1$s\"",
   "fireclient.module.kit.edit.revert.contents": "Δεν έγιναν αλλαγές",
+
+  "fireclient.module.kit.server.fail.rate_limit": "Παρακαλώ επιβραδύνετε! Η ταχύτητα σας είναι περιορισμένη!",
+  "fireclient.module.kit.share.failure.generic": "Η μεταφόρτωση του \"%1$s\" απέτυχε",
+  "fireclient.module.kit.share.failure.too_large": "Το αρχείο κιτ είναι πολύ μεγάλο",
+
+  "fireclient.module.kit.share.message": "%1$s μοιράστηκε το \"%2$s\" %3$s",
+  "fireclient.module.kit.share.download.name": "[Λήψη]",
+  "fireclient.module.kit.share.download.tooltip": "Λήψη του \"%1$s\"",
+
+  "fireclient.module.kit.download.success": "Η λήψη του \"%1$s\" ολοκληρώθηκε με επιτυχία ",
+  "fireclient.module.kit.download.failure.generic": "Η λήψη του \"%1$s\" απέτυχε",
+  "fireclient.module.kit.download.failure.no_kit": "Το κιτ δεν υπάρχει",
 
   "fireclient.screen.edit_kit.title": "Επεξεργαστείτε το \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Δείτε προεπισκόπηση του \"%1$s\"",
@@ -215,6 +233,9 @@
   "fireclient.module.nametag.text_shadow.name": "Σκιά Κειμένου",
   "fireclient.module.nametag.text_shadow.tooltip": "Εμφανίζει μια σκιά κειμένου στην ετικέτας ονόματος",
 
+  "fireclient.module.particles.name": "Σωματίδια",
+  "fireclient.module.particles.description": "Επιτρέπει την απενεργοποίηση ορισμένων σωματιδίων"
+
   "fireclient.module.perspective.name": "Προοπτική",
   "fireclient.module.perspective.description": "Σας επιτρέπει να κοιτάτε τριγύρω σε τρίτο πρόσωπο χωρίς να κουνάτε το κεφάλι του παίκτη σας",
 
@@ -251,6 +272,14 @@
   "fireclient.module.shadow.render_on_all.name": "Εμφάνιση σε όλα",
   "fireclient.module.shadow.render_on_all.tooltip": "Επιτρέπει την εμφάνιση σκιών σε μη πλήρη μπλοκ κύβου",
 
+  "fireclient.module.sign.name": "Πινακίδες",
+  "fireclient.module.sign.description": "Τροποποιεί τη συμπεριφορά των πινακίδων",
+
+  "fireclient.module.sign.disable_gui.name": "Απενεργοποίηση του GUI",
+  "fireclient.module.sign.disable_gui.description": "Αποτρέπει το άνοιγμα του GUI των πινακίδων",
+  "fireclient.module.sign.disable_rendering.name": "Απενεργοποίηση εμφάνισης",
+  "fireclient.module.sign.disable_rendering.description": "Εμποδίζει την εμφάνιση των πινακίδων",
+
   "fireclient.module.subtitles.name": "Υπότιτλοι",
   "fireclient.module.subtitles.description": "Τροποποιεί την Οθόνη Κεφαλής-Επί-Καθρέφτου (HUD) των υποτίτλων",
 
@@ -266,6 +295,8 @@
   "fireclient.screen.main_config.modules.tooltip": "Διαμορφώστε διάφορες μονάδες",
   "fireclient.screen.main_config.settings.name": "Ρυθμίσεις FireClient",
   "fireclient.screen.main_config.settings.tooltip": "Διαμόρφωση ρυθμίσεων FireClient",
+  "fireclient.screen.main_config.exit.name": "Έξοδος",
+  "fireclient.screen.main_config.exit.tooltip": "Επιστροφή στο παιχνίδι",
 
   "fireclient.screen.settings.title": "Επιλογές FireClient",
   "fireclient.screen.settings.header": "Ρυθμίσεις",
@@ -320,7 +351,25 @@
   "fireclient.settings.disable_gradient.name": "Απενεργοποίηση Διαβαθμίσεων",
   "fireclient.settings.disable_gradient.description": "Απενεργοποιεί το κείμενο διαβάθμισης που χρησιμοποιείται στις περισσότερες μονάδες στο FireClient",
 
-  "fireclient.keybind.generic.unbound_key.long": "Unbound",
+  "fireclient.settings.chat_history.name": "Ιστορικό Συνομιλίας",
+  "fireclient.settings.chat_history.description": "Τροποποιεί τη διάρκεια του ιστορικού συνομιλίας",
+
+  "fireclient.settings.cap_particle_count.name": "Περιορισμός Αριθμού Σωματιδίων",
+  "fireclient.settings.cap_particle_count.description": "Περιορίζει τον αριθμό των εισερχόμενων σωματιδίων για την αποφυγή σφαλμάτων",
+
+  "fireclient.settings.chat_history.text": "Μήκος: %1$s",
+  "fireclient.settings.chat_history.unlimited": "Απεριόριστο",
+
+  "fireclient.settings.clearview.name": "Καθαρή Όψη",
+  "fireclient.settings.clearview.description": "Απόκρυψη σωματιδίων εφέ για τον εαυτό σας",
+
+  "fireclient.settings.prevent_pack_clear.name": "Αποτροπή Εκκαθάρισης Πακέτων Πόρων",
+  "fireclient.settings.prevent_pack_clear.description": "Αποτρέπει την εκκαθάριση της λίστας πακέτων πόρων όταν παρουσιάζεται πρόβλημα με την φόρτωση",
+
+  "fireclient.settings.no_reload_overlay.name": "Απενεργοποίηση της Επικάλυψης Επαναφόρτωσης",
+  "fireclient.settings.no_reload_overlay.description": "Επιταχύνει την επικάλυψη επαναφόρτωσης και την εμποδίζει να απενεργοποιήσει την εισαγωγή",
+
+  "fireclient.keybind.generic.unbound_key.long": "Άδετος",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Εναλλαγή",
   "fireclient.keybind.generic.toggle_visibility.description": "Εναλλαγή ορατότητας %1$s's",

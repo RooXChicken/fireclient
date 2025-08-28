@@ -155,8 +155,6 @@
   "fireclient.module.kit.load.waiting_gmc.title": "Loading \"%1$s\"...",
   "fireclient.module.kit.load.waiting_gmc.contents": "Waiting for Creative Mode",
 
-  "fireclient.module.kit.create.failure.title": "Failed to create \"%1$s\"",
-
   "fireclient.module.kit.preview.failure.title": "Failed to preview \"%1$s\"",
 
   "fireclient.module.kit.create_clipboard.success.title": "Successfully pasted \"%1$s\"",
