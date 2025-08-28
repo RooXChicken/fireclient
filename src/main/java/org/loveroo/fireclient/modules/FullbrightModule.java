@@ -26,13 +26,9 @@ public class FullbrightModule extends ModuleBase {
                 Text.translatable("fireclient.keybind.generic.toggle.name"),
                 Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
-                this::useKey, null);
+                () -> getData().setEnabled(!getData().isEnabled()), null);
 
         FireClientside.getKeybindManager().registerKeybind(toggleBind);
-    }
-
-    private void useKey() {
-        getData().setEnabled(!getData().isEnabled());
     }
 
     @Override
