@@ -41,6 +41,7 @@
     "modules.mutesounds.MuteSoundsMixin",
     "modules.nametag.ModifyNametagMixin",
     "modules.nametag.ShowOwnNametagMixin",
+    "modules.particles.HideParticlesMixin",
     "modules.perspective.IncreaseZoomMixin",
     "modules.perspective.OffsetCameraMixin",
     "modules.perspective.SetPerspectiveMixin",

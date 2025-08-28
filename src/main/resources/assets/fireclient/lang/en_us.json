@@ -235,6 +235,9 @@
   "fireclient.module.nametag.text_shadow.name": "Text Shadow",
   "fireclient.module.nametag.text_shadow.tooltip": "Shows a text shadow for the nametag's text",
 
+  "fireclient.module.particles.name": "Particles",
+  "fireclient.module.particles.description": "Allows certain particles to be disabled",
+
   "fireclient.module.perspective.name": "Perspective",
   "fireclient.module.perspective.description": "Allows you to look around in Third Person without moving your player's head",
 
