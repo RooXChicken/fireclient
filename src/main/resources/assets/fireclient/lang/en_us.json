@@ -232,6 +232,8 @@
   "fireclient.module.nametag.show_own.tooltip": "Makes your own nametag visible",
   "fireclient.module.nametag.text_shadow.name": "Text Shadow",
   "fireclient.module.nametag.text_shadow.tooltip": "Shows a text shadow for the nametag's text",
+  "fireclient.module.nametag.unlimit_nametag.name": "Unlimit BelowName",
+  "fireclient.module.nametag.unlimit_nametag.tooltip": "Removes the distance limit of the below name scoreboard",
 
   "fireclient.module.particles.name": "Particles",
   "fireclient.module.particles.description": "Allows certain particles to be disabled",
@@ -368,6 +370,9 @@
 
   "fireclient.settings.no_reload_overlay.name": "No Reload Overlay",
   "fireclient.settings.no_reload_overlay.description": "Speeds up the reload overlay and prevents it from disabling input",
+
+  "fireclient.settings.dont_hit_dead.name": "Don't Hit Dead",
+  "fireclient.settings.dont_hit_dead.description": "Prevents dead entities from blocking hits",
 
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
