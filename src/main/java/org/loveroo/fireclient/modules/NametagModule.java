@@ -20,6 +20,7 @@ public class NametagModule extends ModuleBase {
     private boolean showOwn = false;
     private boolean darkerBackground = false;
     private boolean textShadow = false;
+    private boolean unlimitBelowName = false;
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7", color));
@@ -32,6 +33,7 @@ public class NametagModule extends ModuleBase {
         showOwn = json.optBoolean("show_own", showOwn);
         darkerBackground = json.optBoolean("darker_background", darkerBackground);
         textShadow = json.optBoolean("text_shadow", textShadow);
+        unlimitBelowName = json.optBoolean("unlimit_below_name", unlimitBelowName);
     }
 
     @Override
@@ -41,6 +43,7 @@ public class NametagModule extends ModuleBase {
         json.put("show_own", showOwn);
         json.put("darker_background", darkerBackground);
         json.put("text_shadow", textShadow);
+        json.put("unlimit_below_name", unlimitBelowName);
 
         return json;
     }
@@ -50,19 +53,24 @@ public class NametagModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.darker_background.name"), darkerBackground), this::darkerBackgroundButtonPressed)
-                .dimensions(base.width/2 - 130, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.darker_background.tooltip")))
-                .build());
+            .dimensions(base.width/2 - 130, base.height/2 - 10, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.darker_background.tooltip")))
+            .build());
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.show_own.name"), showOwn), this::showOwnButtonPressed)
-                .dimensions(base.width/2 + 10, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own.tooltip")))
-                .build());
+            .dimensions(base.width/2 + 10, base.height/2 - 10, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own.tooltip")))
+            .build());
 
         widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow), this::textShadowButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.text_shadow.tooltip")))
-                .build());
+            .dimensions(base.width/2 - 130, base.height/2 + 20, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.text_shadow.tooltip")))
+            .build());
+
+        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"), unlimitBelowName), this::unlimitButtonPressed)
+            .dimensions(base.width/2 + 10, base.height/2 + 20, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.unlimit_nametag.tooltip")))
+            .build());
 
         return widgets;
     }
@@ -82,6 +90,11 @@ public class NametagModule extends ModuleBase {
         button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow));
     }
 
+    private void unlimitButtonPressed(ButtonWidget button) {
+        unlimitBelowName = !unlimitBelowName;
+        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"), unlimitBelowName));
+    }
+
     public boolean isDarkerBackground() {
         return darkerBackground;
     }
@@ -92,5 +105,9 @@ public class NametagModule extends ModuleBase {
 
     public boolean isTextShadow() {
         return textShadow;
+    }
+
+    public boolean isUnlimitBelowName() {
+        return unlimitBelowName;
     }
 }
