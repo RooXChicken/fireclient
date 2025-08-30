@@ -11,33 +11,33 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(ChatHud.class)
 public class ChatLengthMixin {
 
-    @Unique
-    private final int unlimitedLength = Integer.MAX_VALUE - 1;
+    // @Unique
+    // private final int unlimitedLength = Integer.MAX_VALUE - 1;
 
-    @ModifyConstant(method = "addToMessageHistory", constant = @Constant(intValue = 100))
-    private int modify1(int original) {
-        return getLength();
-    }
+    // @ModifyConstant(method = "addToMessageHistory", constant = @Constant(intValue = 100))
+    // private int modify1(int original) {
+    //     return getLength();
+    // }
 
-    @ModifyConstant(method = "addVisibleMessage", constant = @Constant(intValue = 100))
-    private int modify2(int original) {
-        return getLength();
-    }
+    // @ModifyConstant(method = "addVisibleMessage", constant = @Constant(intValue = 100))
+    // private int modify2(int original) {
+    //     return getLength();
+    // }
 
-    @ModifyConstant(method = "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", constant = @Constant(intValue = 100))
-    private int modify3(int original) {
-        return getLength();
-    }
+    // @ModifyConstant(method = "addMessage(Lnet/minecraft/client/gui/hud/ChatHudLine;)V", constant = @Constant(intValue = 100))
+    // private int modify3(int original) {
+    //     return getLength();
+    // }
 
-    @Unique
-    private int getLength() {
-        var length = FireClientside.getSetting(FireClientOption.CHAT_HISTORY);
+    // @Unique
+    // private int getLength() {
+    //     var length = FireClientside.getSetting(FireClientOption.CHAT_HISTORY);
 
-        if((length >= ((FireClientOption.SliderOptionData)FireClientOption.CHAT_HISTORY.getData()).getMaxValue())) {
-            return unlimitedLength;
-        }
-        else {
-            return length;
-        }
-    }
+    //     if((length >= ((FireClientOption.SliderOptionData)FireClientOption.CHAT_HISTORY.getData()).getMaxValue())) {
+    //         return unlimitedLength;
+    //     }
+    //     else {
+    //         return length;
+    //     }
+    // }
 }

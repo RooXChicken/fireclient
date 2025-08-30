@@ -20,26 +20,27 @@ public enum FireClientOption {
     CACHE_UUID(new ToggleOptionData(1)),
     CAP_PARTICLE_COUNT(new ToggleOptionData(1)),
     
-    CHAT_HISTORY(new SliderOptionData(1, 100, 2000) {
+    // CHAT_HISTORY(new SliderOptionData(1, 100, 2000) {
 
-        @Override
-        public Text updateMessage(FireClientOption option, int amount) {
-            MutableText amountText;
+    //     @Override
+    //     public Text updateMessage(FireClientOption option, int amount) {
+    //         MutableText amountText;
 
-            if(amount >= ((FireClientOption.SliderOptionData)option.getData()).getMaxValue()) {
-                amountText = Text.translatable("fireclient.settings.chat_history.unlimited");
-            }
-            else {
-                amountText = Text.literal(String.valueOf(amount));
-            }
+    //         if(amount >= ((FireClientOption.SliderOptionData)option.getData()).getMaxValue()) {
+    //             amountText = Text.translatable("fireclient.settings.chat_history.unlimited");
+    //         }
+    //         else {
+    //             amountText = Text.literal(String.valueOf(amount));
+    //         }
 
-            return Text.translatable("fireclient.settings.chat_history.name", amountText);
-        }
-    }),
+    //         return Text.translatable("fireclient.settings.chat_history.name", amountText);
+    //     }
+    // }),
 
     CLEARVIEW(new ToggleOptionData(0)),
     NO_RELOAD_OVERLAY(new ToggleOptionData(0)),
-    PREVENT_PACK_CLEAR(new ToggleOptionData(1));
+    PREVENT_PACK_CLEAR(new ToggleOptionData(1)),
+    DONT_HIT_DEAD(new ToggleOptionData(0));
 //    DISABLE_GRADIENT(0, FireClientOptionType.TOGGLE);
 
     private final Text name;

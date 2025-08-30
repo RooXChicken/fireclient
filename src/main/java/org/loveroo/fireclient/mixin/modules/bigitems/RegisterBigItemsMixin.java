@@ -16,7 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ItemStackEntityRenderState.class)
 public abstract class RegisterBigItemsMixin {
 
-    @Shadow @Final public ItemRenderState itemRenderState;
+    @Shadow @Final
+    public ItemRenderState itemRenderState;
 
     @Inject(method = "update", at = @At("TAIL"))
     private void registerBigItems(Entity entity, ItemStack stack, ItemModelManager itemModelManager, CallbackInfo info) {
