@@ -22,20 +22,6 @@ public class DeathInfoModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-
-        return json;
-    }
-
-    @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 

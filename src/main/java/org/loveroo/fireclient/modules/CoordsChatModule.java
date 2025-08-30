@@ -94,8 +94,8 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
+    public void loadJson(JSONObject json) throws Exception {
+        super.loadJson(json);
 
         var list = json.optJSONObject("player_list");
         if(list == null) {
@@ -112,10 +112,8 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
+    public JSONObject saveJson() throws Exception {
+        var json = super.saveJson();
 
         var list = new JSONObject();
         for(var entry : playerList.entrySet()) {

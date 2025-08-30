@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.scrollclick.BoundKeyAccessor;
@@ -27,9 +28,13 @@ public class ScrollClickModule extends ModuleBase {
 
     private boolean disableWithPerspective = false;
 
+    @JsonOption(name = "scroll_mode")
     private ScrollMode mode = ScrollMode.SINGLE;
 
+    @JsonOption(name = "single_click_type")
     private SingleClickType singleClickType = SingleClickType.USE;
+
+    @JsonOption(name = "dual_click_type")
     private SingleClickType dualClickType = SingleClickType.USE;
 
     public ScrollClickModule() {
@@ -69,30 +74,6 @@ public class ScrollClickModule extends ModuleBase {
             var keyAccessor = (BoundKeyAccessor)client.options.attackKey;
             KeyBinding.onKeyPressed(keyAccessor.getBoundKey());
         }
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-
-        mode = ScrollMode.values()[json.optInt("scroll_mode", 0)];
-
-        singleClickType = SingleClickType.values()[json.optInt("single_click_type", 0)];
-        dualClickType = SingleClickType.values()[json.optInt("dual_click_type", 0)];
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-
-        json.put("scroll_mode", mode.ordinal());
-
-        json.put("single_click_type", singleClickType.ordinal());
-        json.put("dual_click_type", dualClickType.ordinal());
-
-        return json;
     }
 
     @Override

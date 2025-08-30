@@ -61,7 +61,9 @@ public class BigItemsModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
+    public void loadJson(JSONObject json) throws Exception {
+        super.loadJson(json);
+
         var itemList = json.optJSONArray("items");
         if(itemList == null) {
             itemList = new JSONArray();
@@ -75,13 +77,11 @@ public class BigItemsModule extends ModuleBase {
 
             bigItems.add(new BigItem(item.optString("id", ""), item.optBoolean("enabled", true)));
         }
-
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
 
     @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
+    public JSONObject saveJson() throws Exception {
+        var json = super.saveJson();
 
         var itemList = new JSONArray();
 
@@ -95,7 +95,6 @@ public class BigItemsModule extends ModuleBase {
         }
 
         json.put("items", itemList);
-        json.put("enabled", getData().isEnabled());
 
         return json;
     }
