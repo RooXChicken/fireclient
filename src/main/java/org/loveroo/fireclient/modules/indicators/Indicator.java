@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.ModuleBase;
 
@@ -18,6 +19,8 @@ import java.util.List;
 public abstract class Indicator extends ModuleBase {
 
     private boolean hasOverlay = false;
+
+    @JsonOption(name = "show_overlay")
     private boolean showOverlay = true;
 
     public Indicator(String id, String emoji, Color color, boolean hasOverlay, int index) {
@@ -54,26 +57,6 @@ public abstract class Indicator extends ModuleBase {
         context.drawText(text, getData().getEmoji(), 0, 0, 0xFFFFFFFF, true);
 
         endTransform(context.getMatrices());
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        super.loadJson(json);
-
-        if(hasOverlay) {
-            showOverlay = json.optBoolean("show_overlay", showOverlay);
-        }
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = super.saveJson();
-
-        if(hasOverlay) {
-            json.put("show_overlay", showOverlay);
-        }
-
-        return json;
     }
 
     @Override

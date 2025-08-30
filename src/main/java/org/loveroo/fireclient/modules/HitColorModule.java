@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
@@ -30,6 +31,8 @@ public class HitColorModule extends ModuleBase {
     private static final Color color = Color.fromRGB(0xFF3333);
 
     private final String defaultColor = "B2FF0000";
+
+    @JsonOption(name = "hit_color")
     private String hitColor = "B2FF0000";
 
     public HitColorModule() {
@@ -42,22 +45,6 @@ public class HitColorModule extends ModuleBase {
                 changeColor(hitColor);
             }
         });
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        hitColor = json.optString("hit_color", hitColor);
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("hit_color", hitColor);
-        json.put("enabled", getData().isEnabled());
-        
-        return json;
     }
 
     @Override

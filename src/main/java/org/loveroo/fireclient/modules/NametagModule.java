@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
@@ -17,35 +18,22 @@ public class NametagModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0xE0E7FF);
 
+    @JsonOption(name = "show_own")
     private boolean showOwn = false;
+
+    @JsonOption(name = "darker_background")
     private boolean darkerBackground = false;
+
+    @JsonOption(name = "text_shadow")
     private boolean textShadow = false;
+
+    @JsonOption(name = "unlimit_below_name")
     private boolean unlimitBelowName = false;
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7", color));
 
         getData().setGuiElement(false);
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        showOwn = json.optBoolean("show_own", showOwn);
-        darkerBackground = json.optBoolean("darker_background", darkerBackground);
-        textShadow = json.optBoolean("text_shadow", textShadow);
-        unlimitBelowName = json.optBoolean("unlimit_below_name", unlimitBelowName);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("show_own", showOwn);
-        json.put("darker_background", darkerBackground);
-        json.put("text_shadow", textShadow);
-        json.put("unlimit_below_name", unlimitBelowName);
-
-        return json;
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 
@@ -25,8 +26,10 @@ public class BlockOutlineModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x6E6E6E);
 
+    @JsonOption(name = "thick")
     private boolean thick = false;
 
+    @JsonOption(name = "outline")
     private int outline = 0x66000000;
     private int defaultOutline = 0x66000000;
 
@@ -36,30 +39,6 @@ public class BlockOutlineModule extends ModuleBase {
         super(new ModuleData("block_outline", "☐", color));
 
         getData().setGuiElement(false);
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-
-        // because i was silly and forgot to rename the variable
-        outline = json.optInt("outline", defaultOutline);
-        if(json.has("outline_color")) {
-            outline = (int)Long.parseLong(json.getString("outline_color"), 16);
-        }
-
-        thick = json.optBoolean("thick_outline", thick);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-        json.put("outline", outline);
-        json.put("thick_outline", thick);
-
-        return json;
     }
 
     @Override

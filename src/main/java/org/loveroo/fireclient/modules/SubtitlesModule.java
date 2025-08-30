@@ -35,16 +35,6 @@ public class SubtitlesModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
-
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        return new JSONObject();
-    }
-
-    @Override
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 

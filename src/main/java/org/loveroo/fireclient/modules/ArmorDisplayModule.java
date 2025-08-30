@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -28,6 +29,8 @@ public class ArmorDisplayModule extends ModuleBase {
     private static final Color color = Color.fromRGB(0xAAF089);
 
     private Identifier cooldownTexture = Identifier.of(FireClient.MOD_ID, "textures/armor_display/cooldown.png");
+
+    @JsonOption(name = "locked")
     private boolean locked = true;
 
     private int ticks = 0;
@@ -140,21 +143,6 @@ public class ArmorDisplayModule extends ModuleBase {
         }
 
         super.handleTransformation(mouseState, old, mouseX, mouseY, oldMouseX, oldMouseY, snap);
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        super.loadJson(json);
-
-        locked = json.optBoolean("locked", true);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = super.saveJson();
-        json.put("locked", locked);
-
-        return json;
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -20,6 +21,8 @@ public class PerspectiveModule extends ModuleBase {
     private static final Color color = Color.fromRGB(0x82A5AD);
 
     private boolean using = false;
+
+    @JsonOption(name = "zoom_enabled")
     private boolean zoomEnabled = false;
 
     private float yawOffset = 0.0f;
@@ -51,22 +54,6 @@ public class PerspectiveModule extends ModuleBase {
         positionOffset = 0.0f;
 
         using = true;
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-        zoomEnabled = json.optBoolean("zoom_enabled", zoomEnabled);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-        json.put("zoom_enabled", zoomEnabled);
-
-        return json;
     }
 
     @Override

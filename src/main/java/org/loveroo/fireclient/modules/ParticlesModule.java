@@ -69,7 +69,9 @@ public class ParticlesModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
+    public void loadJson(JSONObject json) throws Exception {
+        super.loadJson(json);
+
         var soundList = json.optJSONArray("particles");
         if(soundList == null) {
             soundList = new JSONArray();
@@ -83,13 +85,11 @@ public class ParticlesModule extends ModuleBase {
 
             hiddenParticles.add(new HiddenParticle(sound.optString("id", ""), sound.optBoolean("enabled", true)));
         }
-
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
 
     @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
+    public JSONObject saveJson() throws Exception {
+        var json = super.saveJson();
 
         var soundList = new JSONArray();
 
@@ -103,7 +103,6 @@ public class ParticlesModule extends ModuleBase {
         }
 
         json.put("particles", soundList);
-        json.put("enabled", getData().isEnabled());
 
         return json;
     }
