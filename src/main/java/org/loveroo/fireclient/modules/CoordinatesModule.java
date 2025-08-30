@@ -17,6 +17,7 @@ import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -42,7 +43,10 @@ public class CoordinatesModule extends ModuleBase {
     public static final Color netherColor1 = new Color(199, 57, 202, 255);
     public static final Color netherColor2 = new Color(152, 33, 149, 255);
 
+    @JsonOption(name = "show_other")
     private boolean showOther = false;
+
+    @JsonOption(name = "window_mode")
     private boolean windowMode = false;
 
     private final int windowSizeX = 480;
@@ -226,22 +230,6 @@ public class CoordinatesModule extends ModuleBase {
 
         context.drawText(text, normal, 0, 0, 0xFFFFFFFF, true);
         context.drawText(text, other, 0, 10, 0xFFFFFFFF, true);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = super.saveJson();
-        json.put("show_other", showOther);
-        json.put("window_mode", windowMode);
-
-        return json;
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        super.loadJson(json);
-        showOther = json.optBoolean("show_other", showOther);
-        windowMode = json.optBoolean("show_other", windowMode);
     }
 
     @Override

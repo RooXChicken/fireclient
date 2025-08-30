@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
@@ -17,9 +18,16 @@ public class ShadowModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x1A042E);
 
+    @JsonOption(name = "distance_effect")
     private boolean distanceEffect = true;
+    
+    @JsonOption(name = "increase_height")
     private boolean increaseHeight = false;
+
+    @JsonOption(name = "fullbright")
     private boolean fullbright = false;
+
+    @JsonOption(name = "render_on_all")
     private boolean renderOnAll = false;
 
     public static boolean drawingShadow = false;
@@ -28,26 +36,6 @@ public class ShadowModule extends ModuleBase {
         super(new ModuleData("shadow", "\uD83D\uDD73", color));
 
         getData().setGuiElement(false);
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        distanceEffect = json.optBoolean("distance_effect", distanceEffect);
-        increaseHeight = json.optBoolean("increase_height", increaseHeight);
-        fullbright = json.optBoolean("fullbright", fullbright);
-        renderOnAll = json.optBoolean("render_on_all", renderOnAll);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("distance_effect", distanceEffect);
-        json.put("increase_height", increaseHeight);
-        json.put("fullbright", fullbright);
-        json.put("render_on_all", renderOnAll);
-
-        return json;
     }
 
     @Override

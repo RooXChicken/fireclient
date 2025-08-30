@@ -63,7 +63,9 @@ public class MuteSoundsModule extends ModuleBase {
     }
 
     @Override
-    public void loadJson(JSONObject json) throws JSONException {
+    public void loadJson(JSONObject json) throws Exception {
+        super.loadJson(json);
+
         var soundList = json.optJSONArray("sounds");
         if(soundList == null) {
             soundList = new JSONArray();
@@ -77,13 +79,11 @@ public class MuteSoundsModule extends ModuleBase {
 
             mutedSounds.add(new MutedSound(sound.optString("id", ""), sound.optBoolean("enabled", true)));
         }
-
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
     }
 
     @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
+    public JSONObject saveJson() throws Exception {
+        var json = super.saveJson();
 
         var soundList = new JSONArray();
 
@@ -97,7 +97,6 @@ public class MuteSoundsModule extends ModuleBase {
         }
 
         json.put("sounds", soundList);
-        json.put("enabled", getData().isEnabled());
 
         return json;
     }

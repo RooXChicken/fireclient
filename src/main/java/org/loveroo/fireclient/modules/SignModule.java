@@ -8,6 +8,7 @@ import net.minecraft.text.Text;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 
 import java.util.ArrayList;
@@ -17,29 +18,16 @@ public class SignModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x786F59);
 
+    @JsonOption(name = "disable_gui")
     private boolean disableGui = false;
+
+    @JsonOption(name = "rendering_disabled")
     private boolean renderingDisabled = false;
 
     public SignModule() {
         super(new ModuleData("sign", "\uD83E\uDEA7", color));
 
         getData().setGuiElement(false);
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        disableGui = json.optBoolean("disable_gui", disableGui);
-        renderingDisabled = json.optBoolean("rendering_disabled", renderingDisabled);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("disable_gui", disableGui);
-        json.put("rendering_disabled", renderingDisabled);
-
-        return json;
     }
 
     @Override

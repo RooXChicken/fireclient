@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -20,9 +21,12 @@ public class FlightSpeedModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0xFFFFFF);
 
-    private float speed = 0.05f;
+    @JsonOption(name = "speed")
+    private double speed = 0.05;
 
     private int sneakTicks = 0;
+
+    @JsonOption(name = "toggle_with_sneak")
     private boolean toggleWithSneak = false;
 
     public FlightSpeedModule() {
@@ -55,26 +59,6 @@ public class FlightSpeedModule extends ModuleBase {
 
             sneakTicks = 0;
         }
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-
-        speed = (float) json.optDouble("speed", speed);
-        toggleWithSneak = json.optBoolean("toggle_with_sneak", toggleWithSneak);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-
-        json.put("speed", speed);
-        json.put("toggle_with_sneak", toggleWithSneak);
-
-        return json;
     }
 
     @Override
@@ -115,6 +99,6 @@ public class FlightSpeedModule extends ModuleBase {
     }
 
     public float getSpeed() {
-        return speed;
+        return (float)speed;
     }
 }

@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
@@ -18,6 +19,7 @@ public class RenderWorldModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x589157);
 
+    @JsonOption(name = "toggled")
     private boolean toggled = false;
 
     public RenderWorldModule() {
@@ -44,22 +46,6 @@ public class RenderWorldModule extends ModuleBase {
             toggled = false;
             return;
         }
-    }
-
-    @Override
-    public void loadJson(JSONObject json) throws JSONException {
-        getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
-        toggled = json.optBoolean("toggled", false);
-    }
-
-    @Override
-    public JSONObject saveJson() throws JSONException {
-        var json = new JSONObject();
-
-        json.put("enabled", getData().isEnabled());
-        json.put("toggled", toggled);
-
-        return json;
     }
 
     @Override

@@ -22,11 +22,13 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 
+import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,39 +140,90 @@ public abstract class ModuleBase {
         matrix.popMatrix();
     }
 
-    public void loadJson(JSONObject json) throws JSONException {
-        var posX = json.optDouble("pos_x", getData().getDefaultPosX());
-        var posY = json.optDouble("pos_y", getData().getDefaultPosY());
-
-        if(posX > 1.0) {
-            posX = getData().getDefaultPosX();
+    public void loadJson(JSONObject json) throws Exception {
+        if(getData().isGuiElement()) {
+            var posX = json.optDouble("pos_x", getData().getDefaultPosX());
+            var posY = json.optDouble("pos_y", getData().getDefaultPosY());
+    
+            if(posX > 1.0) {
+                posX = getData().getDefaultPosX();
+            }
+    
+            if(posY > 1.0) {
+                posY = getData().getDefaultPosY();
+            }
+    
+            getData().setRawPosX(posX);
+            getData().setRawPosY(posY);
+    
+            getData().setScale(json.optDouble("scale", getData().getScale()));
+            
+            getData().setVisible(json.optBoolean("visible", getData().isVisible()));
         }
-
-        if(posY > 1.0) {
-            posY = getData().getDefaultPosY();
-        }
-
-        getData().setRawPosX(posX);
-        getData().setRawPosY(posY);
-
-        getData().setScale(json.optDouble("scale", getData().getScale()));
-
-        getData().setVisible(json.optBoolean("visible", getData().isVisible()));
+        
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
+
+        var clazz = this.getClass();
+        for(var field : clazz.getDeclaredFields()) {
+            if(!field.isAnnotationPresent(JsonOption.class)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            
+            var jsonOption = field.getAnnotation(JsonOption.class);
+
+            var value = json.opt(jsonOption.name());
+            if(value == null) {
+                value = getValueFromField(field);
+            }
+            
+            // super sketchy 😬
+            if(field.getType().isEnum() && value instanceof Integer ordinal) {
+                value = field.getType().getEnumConstants()[ordinal];
+            }
+
+            field.set(this, value);
+        }
     }
 
-    public JSONObject saveJson() throws JSONException {
+    public JSONObject saveJson() throws Exception {
         var json = new JSONObject();
 
-        json.put("pos_x", getData().getRawPosX());
-        json.put("pos_y", getData().getRawPosY());
+        if(getData().isGuiElement()) {
+            json.put("pos_x", getData().getRawPosX());
+            json.put("pos_y", getData().getRawPosY());
+    
+            json.put("scale", getData().getScale());
+    
+            json.put("visible", getData().isVisible());
+            json.put("enabled", getData().isEnabled());
+        }
 
-        json.put("scale", getData().getScale());
-
-        json.put("visible", getData().isVisible());
         json.put("enabled", getData().isEnabled());
 
+        var clazz = this.getClass();
+        for(var field : clazz.getDeclaredFields()) {
+            if(!field.isAnnotationPresent(JsonOption.class)) {
+                continue;
+            }
+
+            field.setAccessible(true);
+            var jsonOption = field.getAnnotation(JsonOption.class);
+
+            var value = getValueFromField(field);
+            json.put(jsonOption.name(), value);
+        }
+
         return json;
+    }
+
+    private Object getValueFromField(Field field) throws Exception {
+        if(field.getType().isEnum()) {
+            return ((Enum<?>)field.get(this)).ordinal();
+        }
+
+        return field.get(this);
     }
 
     public void moduleConfigPressed(ButtonWidget button) {
