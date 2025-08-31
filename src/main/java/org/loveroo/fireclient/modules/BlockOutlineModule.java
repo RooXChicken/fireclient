@@ -21,6 +21,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.lang.Math;
 import java.util.ArrayList;
@@ -54,10 +55,12 @@ public class BlockOutlineModule extends ModuleBase {
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.block_outline.thick_outline.name"), thick), this::thickButtonPressed)
-                .dimensions(base.width/2 - 60,base.height / 2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.block_outline.thick_outline.tooltip")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.block_outline.thick_outline.name"))
+            .getValue(() -> { return thick; })
+            .setValue((value) -> { thick = value; })
+            .position(base.width/2 - 60,base.height / 2 + 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.block_outline.thick_outline.tooltip")))
+            .build());
 
         var colorPicker = new ColorPickerWidget(base.width/2 - 36, base.height/2 + 50, outline, (color) -> { outline = color; });
         widgets.add(colorPicker);
@@ -65,11 +68,6 @@ public class BlockOutlineModule extends ModuleBase {
         colorPicker.registerWidgets(base);
 
         return widgets;
-    }
-
-    private void thickButtonPressed(ButtonWidget button) {
-        thick = !thick;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.block_outline.thick_outline.name"), thick));
     }
 
     @Override

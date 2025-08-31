@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,27 +35,21 @@ public class SignModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.sign.disable_gui.name"), disableGui), this::disableGuiButtonPressed)
-                .dimensions(base.width/2 - 130, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_gui.description")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_gui.name"))
+            .getValue(() -> { return disableGui; })
+            .setValue((value) -> { disableGui = value; })
+            .position(base.width/2 - 130, base.height/2 - 10)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_gui.description")))
+            .build());
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.sign.disable_rendering.name"), renderingDisabled), this::disableRenderingButtonPressed)
-                .dimensions(base.width/2 + 10, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_rendering.description")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_rendering.name"))
+            .getValue(() -> { return renderingDisabled; })
+            .setValue((value) -> { renderingDisabled = value; })
+            .position(base.width/2 + 10, base.height/2 - 10)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_rendering.description")))
+            .build());
 
         return widgets;
-    }
-
-    private void disableGuiButtonPressed(ButtonWidget button) {
-        disableGui = !disableGui;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.sign.disable_gui.name"), disableGui));
-    }
-
-    private void disableRenderingButtonPressed(ButtonWidget button) {
-        renderingDisabled = !renderingDisabled;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.sign.disable_rendering.name"), renderingDisabled));
     }
 
     public boolean isGuiDisabled() {

@@ -29,7 +29,6 @@ import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.commands.FTextCommand;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.data.RecipeManager;
 import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
@@ -51,6 +50,7 @@ public class FireClientside implements ClientModInitializer {
     public static final Color mainColor2 = new Color(225, 166, 55, 255);
 
     private static final String FIRECLIENT_OLD_CONFIG_PATH = "fireclient.json";
+    
     private static final String FIRECLIENT_PATH = "fireclient/";
     private static final String FIRECLIENT_CONFIG_FILE = "config.json";
     private static final String FIRECLIENT_CONFIG_BACKUP_FILE = "config_bk.json";

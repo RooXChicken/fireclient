@@ -20,6 +20,8 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,7 @@ public class CoordinatesModule extends ModuleBase {
     private JLabel coordinatesText;
 
     @Nullable
-    private ButtonWidget windowModeButton;
+    private ToggleButtonWidget windowModeButton;
 
     public CoordinatesModule() {
         super(new ModuleData("coordinates", "\uD83E\uDDED", color));
@@ -109,11 +111,8 @@ public class CoordinatesModule extends ModuleBase {
         }
 
         if(windowMode && (window == null || !window.isVisible())) {
-            windowMode = false;
-            closeCoordsWindow();
-
             if(windowModeButton != null) {
-                windowModeButton.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode));
+                windowModeButton.onPress();
             }
         }
     }
@@ -237,17 +236,21 @@ public class CoordinatesModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
-
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.coordinates.other_dimension.name"), showOther), this::showOtherButtonPressed)
-                .dimensions(base.width/2 - 60,base.height / 2 + 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
-                .build());
 
-        windowModeButton = ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode), this::windowModeButtonPressed)
-                .dimensions(base.width/2 - 60,base.height / 2 + 40, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
-                .build();
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.other_dimension.name"))
+            .getValue(() -> { return showOther; })
+            .setValue((value) -> { showOther = value; })
+            .position(base.width/2 - 60,base.height / 2 + 10)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
+            .build());
+
+        windowModeButton = new ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
+            .getValue(() -> { return windowMode; })
+            .setValue(this::windowModeChanged)
+            .position(base.width/2 - 60,base.height / 2 + 40)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
+            .build();
 
         widgets.add(windowModeButton);
         return widgets;
@@ -257,15 +260,9 @@ public class CoordinatesModule extends ModuleBase {
     public void closeScreen(Screen screen) {
         windowModeButton = null;
     }
-
-    public void showOtherButtonPressed(ButtonWidget button) {
-        showOther = !showOther;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.other_dimension.name"), showOther));
-    }
-
-    public void windowModeButtonPressed(ButtonWidget button) {
-        windowMode = !windowMode;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.coordinates.windowed_mode.name"), windowMode));
+    
+    public void windowModeChanged(boolean value) {
+        windowMode = value;
 
         if(windowMode) {
             openCoordsWindow();
@@ -289,8 +286,8 @@ public class CoordinatesModule extends ModuleBase {
             FireClient.LOGGER.error("Failed to apply headless workaround! Coordinates window will not work!", e);
 
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.coordinates.window_fail.name"),
-                    Text.translatable("fireclient.module.coordinates.window_fail.contents"));
+                Text.translatable("fireclient.module.coordinates.window_fail.name"),
+                Text.translatable("fireclient.module.coordinates.window_fail.contents"));
         }
     }
 
