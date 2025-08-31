@@ -14,6 +14,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.List;
 
@@ -67,10 +68,12 @@ public class FlightSpeedModule extends ModuleBase {
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_speed").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"), toggleWithSneak), this::sneakButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.tooltip")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"))
+            .getValue(() -> { return toggleWithSneak; })
+            .setValue((value) -> { toggleWithSneak = value; })
+            .position(base.width/2 - 60, base.height/2 + 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.tooltip")))
+            .build());
 
         var slider = new SliderWidget(base.width / 2 - 50, base.height / 2 + 45, 100, 20, getSpeedText(), (speed - 0.05f)*5) {
 
@@ -87,11 +90,6 @@ public class FlightSpeedModule extends ModuleBase {
 
         widgets.add(slider);
         return widgets;
-    }
-
-    private void sneakButtonPressed(ButtonWidget button) {
-        toggleWithSneak = !toggleWithSneak;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"), toggleWithSneak));
     }
 
     private Text getSpeedText() {

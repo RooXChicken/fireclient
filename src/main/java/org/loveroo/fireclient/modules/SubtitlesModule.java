@@ -12,6 +12,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,10 @@ public class SubtitlesModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_subtitles",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
-                true, null,
-                this::subtitlesToggled, null);
+            Text.translatable("fireclient.keybind.generic.toggle.name"),
+            Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+            true, null,
+            this::subtitlesToggled, null);
 
         FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
@@ -40,10 +41,12 @@ public class SubtitlesModule extends ModuleBase {
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_subtitles").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.subtitles.visible.name"), isEnabled()), this::subtitlesButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.subtitles.visible.tooltip")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.subtitles.visible.name"))
+            .getValue(getData()::isEnabled)
+            .setValue(getData()::setEnabled)
+            .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.subtitles.visible.tooltip")))
+            .build());
 
         return widgets;
     }
@@ -55,10 +58,5 @@ public class SubtitlesModule extends ModuleBase {
 
     private boolean isEnabled() {
         return MinecraftClient.getInstance().options.getShowSubtitles().getValue();
-    }
-
-    private void subtitlesButtonPressed(ButtonWidget button) {
-        subtitlesToggled();
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.subtitles.visible.name"), isEnabled()));
     }
 }

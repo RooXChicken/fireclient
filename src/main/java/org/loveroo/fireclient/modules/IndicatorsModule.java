@@ -12,6 +12,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.indicators.*;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -62,10 +63,12 @@ public class IndicatorsModule extends ModuleBase {
             var x = base.width/2 - 60;
 
             if(indicator.hasOverlay()) {
-                indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.indicators.overlay.name"), indicator.doesShowOverlay()), (button) -> overlayToggled(button, indicator))
-                        .dimensions(x + 100, 0, 80, 20)
-                        .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.overlay.tooltip", indicator.getData().getShownName())))
-                        .build()
+                indicatorWidgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.overlay.name"))
+                    .getValue(indicator::doesShowOverlay)
+                    .setValue(indicator::setShowOverlay)
+                    .dimensions(x + 100, 0, 80, 20)
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.overlay.tooltip", indicator.getData().getShownName())))
+                    .build()
                 );
             }
 
@@ -75,10 +78,12 @@ public class IndicatorsModule extends ModuleBase {
 
             indicatorWidgets.add(text);
 
-            indicatorWidgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.indicators.indicator.name"), indicator.getData().isVisible()), (button) -> indicatorToggled(button, indicator))
-                    .dimensions(x, 0, 80, 20)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.indicator.tooltip", indicator.getData().getShownName())))
-                    .build()
+            indicatorWidgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.indicator.name"))
+                .getValue(indicator.getData()::isVisible)
+                .setValue(indicator.getData()::setVisible)
+                .dimensions(x, 0, 80, 20)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.indicator.tooltip", indicator.getData().getShownName())))
+                .build()
             );
 
             var entry = new ScrollableWidget.ElementEntry(indicatorWidgets);
@@ -90,15 +95,5 @@ public class IndicatorsModule extends ModuleBase {
 
         widgets.add(scrollable);
         return widgets;
-    }
-
-    private void indicatorToggled(ButtonWidget button, Indicator indicator) {
-        indicator.getData().setVisible(!indicator.getData().isVisible());
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.indicators.indicator.name"), indicator.getData().isVisible()));
-    }
-
-    private void overlayToggled(ButtonWidget button, Indicator indicator) {
-        indicator.setShowOverlay(!indicator.doesShowOverlay());
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.indicators.overlay.name"), indicator.doesShowOverlay()));
     }
 }
