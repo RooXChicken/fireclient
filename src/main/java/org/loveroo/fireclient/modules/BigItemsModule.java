@@ -26,6 +26,7 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.RenderItemWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,9 +121,9 @@ public class BigItemsModule extends ModuleBase {
         widgets.add(itemField);
 
         widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(itemField))
-                .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.add_item.tooltip")))
-                .build());
+            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.add_item.tooltip")))
+            .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var item : bigItems) {
@@ -135,15 +136,17 @@ public class BigItemsModule extends ModuleBase {
 
             entryWidgets.add(new RenderItemWidget(item.getItemEntry(), base.width/2 - 140, 0));
 
-            entryWidgets.add(ButtonWidget.builder(getToggleText(null, item.isEnabled()), (button) -> toggleItemButton(button, item))
-                    .dimensions(base.width/2 + 90, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.toggle_item.tooltip", item.getItem())))
-                    .build());
+            entryWidgets.add(new ToggleButtonBuilder(null)
+                .getValue(item::isEnabled)
+                .setValue(item::setEnabled)
+                .dimensions(base.width/2 + 90, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.toggle_item.tooltip", item.getItem())))
+                .build());
 
             entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.remove_item.name").withColor(0xD63C3C), (button) -> removeSound(item))
-                    .dimensions(base.width/2 + 115, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.remove_item.tooltip", item.getItem())))
-                    .build());
+                .dimensions(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.remove_item.tooltip", item.getItem())))
+                .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
@@ -202,8 +205,8 @@ public class BigItemsModule extends ModuleBase {
 
         if(!item.matches("[a-z0-9/._-]+")) {
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.big_items.add_item.failure.title"),
-                    Text.translatable("fireclient.module.big_items.add_item.invalid_item.contents")
+                Text.translatable("fireclient.module.big_items.add_item.failure.title"),
+                Text.translatable("fireclient.module.big_items.add_item.invalid_item.contents")
             );
 
             return;
@@ -211,8 +214,8 @@ public class BigItemsModule extends ModuleBase {
 
         if(bigItems.stream().anyMatch((bigItem -> bigItem.getItem().equalsIgnoreCase(item)))) {
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.big_items.add_item.failure.title"),
-                    Text.translatable("fireclient.module.big_items.add_item.already_exists.contents")
+                Text.translatable("fireclient.module.big_items.add_item.failure.title"),
+                Text.translatable("fireclient.module.big_items.add_item.already_exists.contents")
             );
 
             return;
@@ -227,11 +230,6 @@ public class BigItemsModule extends ModuleBase {
     private void removeSound(BigItem item) {
         bigItems.remove(item);
         reloadScreen();
-    }
-
-    private void toggleItemButton(ButtonWidget button, BigItem item) {
-        item.setEnabled(!item.isEnabled());
-        button.setMessage(getToggleText(null, item.isEnabled()));
     }
 
     @Override

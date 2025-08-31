@@ -20,6 +20,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,21 +157,18 @@ public class ArmorDisplayModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.armor_display.lock_button.name"), locked), this::lockedButtonPressed)
-                .dimensions(base.width/2 - 60, base.height/2 + 10, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button.tooltip")))
-                .build());
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.armor_display.lock_button.name"))
+            .getValue(() -> { return locked; })
+            .setValue((value) -> { locked = value; })
+            .position(base.width/2 - 60, base.height/2 + 10)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button.tooltip")))
+            .onChange(() -> {
+                if(locked) {
+                    getData().setScale(2.0/3.0);
+                }
+            })
+            .build());
 
         return widgets;
-    }
-
-    public void lockedButtonPressed(ButtonWidget button) {
-        locked = !locked;
-
-        if(locked) {
-            getData().setScale(2.0/3.0);
-        }
-
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.armor_display.lock_button.name"), locked));
     }
 }

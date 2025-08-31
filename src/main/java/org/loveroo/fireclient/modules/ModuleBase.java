@@ -27,6 +27,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -245,38 +246,21 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {
-        return ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.generic.toggle_visible"), getData().isVisible()), this::visibleButtonPressed)
-                .dimensions(x, y, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.visibility_toggle")))
-                .build();
+        return new ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_visible"))
+            .getValue(getData()::isVisible)
+            .setValue(getData()::setVisible)
+            .position(x, y)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.visibility_toggle")))
+            .build();
     }
 
     public ButtonWidget getToggleEnableButton(int x, int y) {
-        return ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.generic.toggle_enabled"), getData().isEnabled()), this::enableButtonPressed)
-                .dimensions(x, y, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
-                .build();
-    }
-
-    public void enableButtonPressed(ButtonWidget button) {
-        getData().setEnabled(!getData().isEnabled());
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.generic.toggle_enabled"), getData().isEnabled()));
-    }
-
-    public void visibleButtonPressed(ButtonWidget button) {
-        getData().setVisible(!getData().isVisible());
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.generic.toggle_visible"), getData().isVisible()));
-    }
-
-    public MutableText getToggleText(@Nullable Text message, boolean value) {
-        var toggle = ((value) ? FireClientSettingsScreen.defaultTrueText : FireClientSettingsScreen.defaultFalseText);
-
-        if(message != null) {
-            return toggle.copy().append(" ").append(message);
-        }
-        else {
-            return (MutableText) toggle;
-        }
+        return new ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_enabled"))
+            .getValue(getData()::isEnabled)
+            .setValue(getData()::setEnabled)
+            .position(x, y)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.toggle_enabled")))
+            .build();
     }
 
     public void drawScreen(Screen base, DrawContext context, float delta) {

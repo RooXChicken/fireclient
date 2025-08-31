@@ -44,6 +44,10 @@ public class HitColorModule extends ModuleBase {
             if(getData().isEnabled()) {
                 changeColor(hitColor);
             }
+
+            getData().setOnEnableChanged(() -> {
+                changeColor((getData().isEnabled()) ? hitColor : defaultColor);
+            });
         });
     }
 
@@ -58,13 +62,6 @@ public class HitColorModule extends ModuleBase {
 
         colorPicker.registerWidgets(base);
         return widgets;
-    }
-
-    @Override
-    public void enableButtonPressed(ButtonWidget button) {
-        super.enableButtonPressed(button);
-
-        changeColor((getData().isEnabled()) ? hitColor : defaultColor);
     }
 
     @Override

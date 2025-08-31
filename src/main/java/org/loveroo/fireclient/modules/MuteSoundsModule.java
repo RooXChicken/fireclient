@@ -26,6 +26,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,9 +123,9 @@ public class MuteSoundsModule extends ModuleBase {
         widgets.add(soundField);
 
         widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
-                .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
-                .build());
+            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var sound : mutedSounds) {
@@ -135,15 +136,17 @@ public class MuteSoundsModule extends ModuleBase {
 
             entryWidgets.add(text);
 
-            entryWidgets.add(ButtonWidget.builder(getToggleText(null, sound.isEnabled()), (button) -> toggleSoundButton(button, sound))
-                    .dimensions(base.width/2 + 90, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getSound())))
-                    .build());
+            entryWidgets.add(new ToggleButtonBuilder(null)
+                .getValue(sound::isEnabled)
+                .setValue(sound::setEnabled)
+                .dimensions(base.width/2 + 90, 0, 20, 15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getSound())))
+                .build());
 
             entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
-                    .dimensions(base.width/2 + 115, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getSound())))
-                    .build());
+                .dimensions(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getSound())))
+                .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
@@ -226,11 +229,6 @@ public class MuteSoundsModule extends ModuleBase {
     private void removeSound(MutedSound sound) {
         mutedSounds.remove(sound);
         reloadScreen();
-    }
-
-    private void toggleSoundButton(ButtonWidget button, MutedSound sound) {
-        sound.setEnabled(!sound.isEnabled());
-        button.setMessage(getToggleText(null, sound.isEnabled()));
     }
 
     @Override

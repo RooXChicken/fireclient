@@ -32,6 +32,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,9 +129,9 @@ public class ParticlesModule extends ModuleBase {
         widgets.add(particleField);
 
         widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addParticleButton(particleField))
-                .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
-                .build());
+            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
@@ -142,15 +143,17 @@ public class ParticlesModule extends ModuleBase {
 
             entryWidgets.add(text);
 
-            entryWidgets.add(ButtonWidget.builder(getToggleText(null, sound.isEnabled()), (button) -> toggleParticleButton(button, sound))
-                    .dimensions(base.width/2 + 90, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getParticle())))
-                    .build());
+            entryWidgets.add(new ToggleButtonBuilder(null)
+                .getValue(sound::isEnabled)
+                .setValue(sound::setEnabled)
+                .dimensions(base.width/2 + 90, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getParticle())))
+                .build());
 
             entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeParticle(sound))
-                    .dimensions(base.width/2 + 115, 0,20,15)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getParticle())))
-                    .build());
+                .dimensions(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getParticle())))
+                .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
@@ -239,11 +242,6 @@ public class ParticlesModule extends ModuleBase {
     private void removeParticle(HiddenParticle sound) {
         hiddenParticles.remove(sound);
         reloadScreen();
-    }
-
-    private void toggleParticleButton(ButtonWidget button, HiddenParticle sound) {
-        sound.setEnabled(!sound.isEnabled());
-        button.setMessage(getToggleText(null, sound.isEnabled()));
     }
 
     @Override

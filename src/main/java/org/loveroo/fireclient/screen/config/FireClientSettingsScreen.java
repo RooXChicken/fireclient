@@ -38,8 +38,8 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
     private TextFieldWidget searchBar;
     private String search = "";
 
-    public static final Text defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
-    public static final Text defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
+    public static final MutableText defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
+    public static final MutableText defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
         super(Text.translatable("fireclient.screen.settings.title"));

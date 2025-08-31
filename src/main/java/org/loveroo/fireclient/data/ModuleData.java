@@ -1,5 +1,7 @@
 package org.loveroo.fireclient.data;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
@@ -31,6 +33,12 @@ public class ModuleData {
     private boolean visible = false;
     private boolean enabled = false;
     private boolean guiElement = true;
+
+    @Nullable
+    private Runnable visibleChanged;
+
+    @Nullable
+    private Runnable enableChanged;
 
     public ModuleData(String id, String emoji, Color color) {
         this.id = id;
@@ -158,6 +166,10 @@ public class ModuleData {
 
     public void setVisible(boolean visible) {
         this.visible = visible;
+
+        if(visibleChanged != null) {
+            visibleChanged.run();
+        }
     }
 
     public boolean isSkip() {
@@ -174,6 +186,10 @@ public class ModuleData {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+
+        if(enableChanged != null) {
+            enableChanged.run();
+        }
     }
 
     public boolean isGuiElement() {
@@ -226,5 +242,13 @@ public class ModuleData {
 
     public void setDefaultPosY(double defaultPosY, int screenHeight) {
         this.defaultPosY = defaultPosY/screenHeight;
+    }
+
+    public void setOnVisibleChanged(Runnable visibleChanged) {
+        this.visibleChanged = visibleChanged;
+    }
+
+    public void setOnEnableChanged(Runnable enableChanged) {
+        this.enableChanged = enableChanged;
     }
 }

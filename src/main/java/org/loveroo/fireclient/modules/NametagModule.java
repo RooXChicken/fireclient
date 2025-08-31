@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,47 +41,35 @@ public class NametagModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.darker_background.name"), darkerBackground), this::darkerBackgroundButtonPressed)
-            .dimensions(base.width/2 - 130, base.height/2 - 10, 120, 20)
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.darker_background.name"))
+            .getValue(() -> { return darkerBackground; })
+            .setValue((value) -> { darkerBackground = value; })
+            .position(base.width/2 - 130, base.height/2 - 10)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.darker_background.tooltip")))
             .build());
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.show_own.name"), showOwn), this::showOwnButtonPressed)
-            .dimensions(base.width/2 + 10, base.height/2 - 10, 120, 20)
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.show_own.name"))
+            .getValue(() -> { return showOwn; })
+            .setValue((value) -> { showOwn = value; })
+            .position(base.width/2 + 10, base.height/2 - 10)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own.tooltip")))
             .build());
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow), this::textShadowButtonPressed)
-            .dimensions(base.width/2 - 130, base.height/2 + 20, 120, 20)
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.text_shadow.name"))
+            .getValue(() -> { return textShadow; })
+            .setValue((value) -> { textShadow = value; })
+            .position(base.width/2 - 130, base.height/2 + 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.text_shadow.tooltip")))
             .build());
 
-        widgets.add(ButtonWidget.builder(getToggleText(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"), unlimitBelowName), this::unlimitButtonPressed)
-            .dimensions(base.width/2 + 10, base.height/2 + 20, 120, 20)
+        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"))
+            .getValue(() -> { return unlimitBelowName; })
+            .setValue((value) -> { unlimitBelowName = value; })
+            .position(base.width/2 + 10, base.height/2 + 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.unlimit_nametag.tooltip")))
             .build());
 
         return widgets;
-    }
-
-    private void darkerBackgroundButtonPressed(ButtonWidget button) {
-        darkerBackground = !darkerBackground;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.darker_background.name"), darkerBackground));
-    }
-
-    private void showOwnButtonPressed(ButtonWidget button) {
-        showOwn = !showOwn;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.show_own.name"), showOwn));
-    }
-
-    private void textShadowButtonPressed(ButtonWidget button) {
-        textShadow = !textShadow;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.text_shadow.name"), textShadow));
-    }
-
-    private void unlimitButtonPressed(ButtonWidget button) {
-        unlimitBelowName = !unlimitBelowName;
-        button.setMessage(getToggleText(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"), unlimitBelowName));
     }
 
     public boolean isDarkerBackground() {
