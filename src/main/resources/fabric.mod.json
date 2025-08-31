@@ -26,8 +26,8 @@
     "fireclient.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.14",
+    "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=1.21.4"
+    "minecraft": ">=${minecraft_version}"
   }
 }
