@@ -11,8 +11,11 @@ public class ModuleData {
     private final String id;
 
     private final MutableText emoji;
+    private final MutableText name;
     private final MutableText shownName;
     private final MutableText description;
+
+    private boolean favorited = false;
 
     private double posX = 0;
     private double posY = 0;
@@ -44,12 +47,13 @@ public class ModuleData {
         this.id = id;
         this.emoji = Text.literal(emoji + " ").withColor(color.toInt());
 
+        name = Text.translatable("fireclient.module." + id + ".name");
         this.shownName = this.emoji.copy().append(getName().withColor(0xFFFFFFFF));
         this.description = Text.translatable("fireclient.module." + id + ".description");
     }
 
     public MutableText getName() {
-        return Text.translatable("fireclient.module." + id + ".name");
+        return name;
     }
 
     public MutableText getShownName() {
@@ -250,5 +254,13 @@ public class ModuleData {
 
     public void setOnEnableChanged(Runnable enableChanged) {
         this.enableChanged = enableChanged;
+    }
+
+    public boolean isFavorited() {
+        return favorited;
+    }
+
+    public void setFavorited(boolean favorited) {
+        this.favorited = favorited;
     }
 }

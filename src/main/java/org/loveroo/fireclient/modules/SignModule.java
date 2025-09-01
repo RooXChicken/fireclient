@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,17 +35,17 @@ public class SignModule extends ModuleBase {
     public List<ClickableWidget> getConfigScreen(Screen base) {
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_gui.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_gui.name"))
             .getValue(() -> { return disableGui; })
             .setValue((value) -> { disableGui = value; })
-            .position(base.width/2 - 130, base.height/2 - 10)
+            .position(base.width/2 - 60, base.height/2 - 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_gui.description")))
             .build());
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_rendering.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_rendering.name"))
             .getValue(() -> { return renderingDisabled; })
             .setValue((value) -> { renderingDisabled = value; })
-            .position(base.width/2 + 10, base.height/2 - 10)
+            .position(base.width/2 - 60, base.height/2 + 10)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_rendering.description")))
             .build());
 
