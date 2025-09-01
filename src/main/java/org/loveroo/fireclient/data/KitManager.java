@@ -132,8 +132,8 @@ public class KitManager {
         var client = MinecraftClient.getInstance();
 
         var nbt = new NbtCompound();
-        nbt.put("data_version", NbtInt.of(SharedConstants.getGameVersion().getSaveVersion().getId()));
-        nbt.put("mc_version", NbtString.of(SharedConstants.getGameVersion().getName()));
+        nbt.put("data_version", NbtInt.of(SharedConstants.getGameVersion().dataVersion().id()));
+        nbt.put("mc_version", NbtString.of(SharedConstants.getGameVersion().name()));
         nbt.put("creator", NbtString.of(client.player.getName().getString()));
         
         var kitNbt = new NbtList();
@@ -224,7 +224,7 @@ public class KitManager {
         var client = MinecraftClient.getInstance();
         var nbt = NbtHelper.fromNbtProviderString(kit);
 
-        var version = SharedConstants.getGameVersion().getSaveVersion().getId();
+        var version = SharedConstants.getGameVersion().dataVersion().id();
         var kitVersion = nbt.getInt("data_version").orElse(version);
 
         var kitInventory = (NbtList)nbt.get("inv");
