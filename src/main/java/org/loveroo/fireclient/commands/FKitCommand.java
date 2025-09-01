@@ -133,9 +133,10 @@ public class FKitCommand {
                 nbt.put("creator", NbtString.of(client.player.getName().getString()));
 
                 var writer = new StringNbtWriter();
+                writer.visitCompound(nbt);
 
                 KitManager.deleteKit(kitName);
-                KitManager.createKit(kitName, writer.apply(nbt));
+                KitManager.createKit(kitName, writer.getString());
             }
             catch(Exception e) {
                 FireClient.LOGGER.info("Error updating kit!", e);
