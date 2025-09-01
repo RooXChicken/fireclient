@@ -71,12 +71,12 @@
     "settings.HazeliNametagMixin",
     "settings.HazeliPlayerModelMixin",
     "settings.PreventHittingDeadEntitiesMixin",
-    "settings.PreventSprintSwinMixin",
     "settings.PreventUnlistingMixin",
     "settings.PreventUntoggleKeysMixin",
     "settings.RenderBrandingMixin",
     "settings.ShowLatencyMixin",
-    "settings.SpeedupReloadMixin"
+    "settings.SpeedupReloadMixin",
+    "settings.SprintPacketAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
