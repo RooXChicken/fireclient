@@ -74,7 +74,6 @@ public class FireClientside implements ClientModInitializer {
         }
 
         registerCommands();
-//        new RecipeManager();
     }
 
     private void initModules() {
