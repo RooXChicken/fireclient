@@ -77,16 +77,16 @@ public class FavoriteButtonWidget extends ButtonWidget {
             var textRenderer = MinecraftClient.getInstance().textRenderer;
 
             var matricies = context.getMatrices();
-            matricies.push();
+            matricies.pushMatrix();
 
-            matricies.translate(this.getX() + this.getWidth() - 1, this.getY() + 2, 0);
+            matricies.translate(this.getX() + this.getWidth() - 1, this.getY() + 2);
             if(isHovered()) {
-                matricies.scale(1.35f, 1.35f, 1.0f);
+                matricies.scale(1.35f, 1.35f);
             }
 
             context.drawText(textRenderer, favoriteIcon, -4, -4, enabledColor.toInt(), true);
 
-            matricies.pop();
+            matricies.popMatrix();
         }
     }
     
