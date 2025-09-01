@@ -42,7 +42,7 @@ public class KitManager {
     public static final String KIT_BASE_PATH = "fireclient/kits/";
     public static final String KIT_DELETED_PATH = "fireclient/kits/deleted/";
 
-    private static final String DEFAULT_KIT = "{\"inv\":[]}";
+    private static final String DEFAULT_KIT = "{inv:[]}";
 
     private static final int KIT_MAX_SIZE = 102400;
 
@@ -366,9 +366,7 @@ public class KitManager {
                 return KitValidationStatus.SUCCESS;
             }
         }
-        catch(Exception ignored) {
-            FireClient.LOGGER.error("", ignored);
-        }
+        catch(Exception ignored) { }
 
         return KitValidationStatus.INVALID_KIT;
     }

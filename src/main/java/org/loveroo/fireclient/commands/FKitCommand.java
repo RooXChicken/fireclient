@@ -6,13 +6,23 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
+import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtInt;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.visitor.StringNbtWriter;
 import net.minecraft.text.*;
+
+import java.util.List;
+
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.KitManager;
+import org.loveroo.fireclient.data.KitManager.KitValidationStatus;
 import org.loveroo.fireclient.modules.KitModule;
 
 public class FKitCommand {
@@ -24,54 +34,65 @@ public class FKitCommand {
         return CommandSource.suggestMatching(kits, builder);
     };
 
+    private static final SuggestionProvider<FabricClientCommandSource> versionSuggestion = (context, builder) -> {
+        return CommandSource.suggestMatching(List.of("1.21.4", "1.21.5", "1.21.6", "1.21.7", "1.21.8"), builder);
+    };
+
     public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         var loadSub = ClientCommandManager.literal("load")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .suggests(kitSuggestion)
-                        .executes(this::loadKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .suggests(kitSuggestion)
+                .executes(this::loadKitCommand)
         );
 
         var previewSub = ClientCommandManager.literal("preview")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .suggests(kitSuggestion)
-                        .executes(this::previewKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .suggests(kitSuggestion)
+                .executes(this::previewKitCommand)
         );
 
         var editSub = ClientCommandManager.literal("edit")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .suggests(kitSuggestion)
-                        .executes(this::editKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .suggests(kitSuggestion)
+                .executes(this::editKitCommand)
         );
 
         var createSub = ClientCommandManager.literal("create")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .executes(this::createKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .executes(this::createKitCommand)
         );
 
         var deleteSub = ClientCommandManager.literal("delete")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .suggests(kitSuggestion)
-                        .executes(this::deleteKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .suggests(kitSuggestion)
+                .executes(this::deleteKitCommand)
         );
 
         var undoSub = ClientCommandManager.literal("undo")
-                    .executes(this::undoKitCommand
+            .executes(this::undoKitCommand
         );
 
         var shareSub = ClientCommandManager.literal("share")
-                .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
-                        .suggests(kitSuggestion)
-                        .executes(this::shareKitCommand)
+            .then(ClientCommandManager.argument("kit_name", StringArgumentType.greedyString())
+                .suggests(kitSuggestion)
+                .executes(this::shareKitCommand)
+        );
+
+        var updateSub = ClientCommandManager.literal("update")
+            .then(ClientCommandManager.argument("kits_version", StringArgumentType.string())
+                .suggests(versionSuggestion)
+                .executes(this::updateKitCommand)
         );
 
         dispatcher.register(ClientCommandManager.literal("fkit")
-                .then(loadSub)
-                .then(createSub)
-                .then(deleteSub)
-                .then(undoSub)
-                .then(previewSub)
-                .then(editSub)
-                .then(shareSub)
+            .then(loadSub)
+            .then(createSub)
+            .then(deleteSub)
+            .then(undoSub)
+            .then(previewSub)
+            .then(editSub)
+            .then(shareSub)
+            .then(updateSub)
         );
     }
 
@@ -82,6 +103,48 @@ public class FKitCommand {
 
     public static MutableText getResult(MutableText message) {
         return fKitHeader.copy().append(" ").append(message);
+    }
+
+    private int updateKitCommand(CommandContext<FabricClientCommandSource> context) {
+        var client = MinecraftClient.getInstance();
+
+        var mcVersion = StringArgumentType.getString(context, "kits_version");
+        var version = switch(mcVersion) {
+            case "1.21.4" -> 4189;
+            case "1.21.5" -> 4325;
+            case "1.21.6" -> 4435;
+            case "1.21.7" -> 4438;
+            case "1.21.8" -> 4440;
+
+            default -> SharedConstants.getGameVersion().dataVersion().id();
+        };
+
+        for(var kitName : KitManager.getKits()) {
+            var kitContents = KitManager.getKitFromName(kitName);
+
+            try {
+                var nbt = NbtHelper.fromNbtProviderString(kitContents);
+                if(nbt.contains("data_version")) {
+                    continue;
+                }
+
+                nbt.put("data_version", NbtInt.of(version));
+                nbt.put("mc_version", NbtString.of(mcVersion));
+                nbt.put("creator", NbtString.of(client.player.getName().getString()));
+
+                var writer = new StringNbtWriter();
+                writer.visitCompound(nbt);
+
+                KitManager.deleteKit(kitName);
+                KitManager.createKit(kitName, writer.getString());
+            }
+            catch(Exception e) {
+                FireClient.LOGGER.info("Error updating kit!", e);
+            }
+        }
+
+        context.getSource().sendFeedback(getResult(Text.translatable("fireclient.module.kit.update.success").getString(), 1));
+        return 1;
     }
 
     private int shareKitCommand(CommandContext<FabricClientCommandSource> context) {
@@ -102,32 +165,32 @@ public class FKitCommand {
 
                 case INVALID_KIT -> {
                     message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
-                            .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
+                        .append(" ")
+                        .append(Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
 
                     code = 0;
                 }
 
                 case TOO_LARGE -> {
                     message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
-                            .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.share.failure.too_large")).getString();
+                        .append(" ")
+                        .append(Text.translatable("fireclient.module.kit.share.failure.too_large")).getString();
 
                     code = 0;
                 }
 
                 case FAILURE -> {
                     message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
-                            .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
+                        .append(" ")
+                        .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
 
                     code = 0;
                 }
 
                 case RATE_LIMITED -> {
                     message = Text.translatable("fireclient.module.kit.share.failure.generic", kitName)
-                            .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
+                        .append(" ")
+                        .append(Text.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
 
                     code = 0;
                 }
@@ -175,7 +238,8 @@ public class FKitCommand {
             }
 
             case NEEDS_GMC -> {
-                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", "__previous").append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
+                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", "__previous")
+                    .append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
             }
         }
 
@@ -217,7 +281,8 @@ public class FKitCommand {
             }
 
             case NEEDS_GMC -> {
-                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
+                message = Text.translatable("fireclient.module.kit.load.waiting_gmc.title", kitName)
+                    .append(" ").append(Text.translatable("fireclient.module.kit.load.waiting_gmc.contents")).getString();
             }
         }
 
@@ -300,7 +365,8 @@ public class FKitCommand {
             case SUCCESS -> message = Text.translatable("fireclient.module.kit.recycle.success.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.recycle.success.contents")).getString();
 
             case FAILURE -> {
-                message = Text.translatable("fireclient.module.kit.recycle.failure.title", kitName).append(" ").append(Text.translatable("fireclient.module.kit.recycle.failure.contents")).getString();
+                message = Text.translatable("fireclient.module.kit.recycle.failure.title", kitName)
+                    .append(" ").append(Text.translatable("fireclient.module.kit.recycle.failure.contents")).getString();
                 status = 0;
             }
         }
