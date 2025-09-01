@@ -26,7 +26,7 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.RenderItemWidget;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +136,7 @@ public class BigItemsModule extends ModuleBase {
 
             entryWidgets.add(new RenderItemWidget(item.getItemEntry(), base.width/2 - 140, 0));
 
-            entryWidgets.add(new ToggleButtonBuilder(null)
+            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
                 .getValue(item::isEnabled)
                 .setValue(item::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
@@ -183,8 +183,17 @@ public class BigItemsModule extends ModuleBase {
             return "";
         }
 
+        var input = RooHelper.filterIdInput(text);
+
+        if(bigItems.stream().noneMatch((bigItem) -> { return bigItem.getItem().equalsIgnoreCase(input); })) {
+            var itemId = Identifier.ofVanilla(input);
+            if(Registries.ITEM.containsId(itemId)) {
+                return "";
+            }
+        }
+
         var filteredItems = Registries.ITEM.getIds().stream().filter((id) ->
-                id.getPath().startsWith(text) && bigItems.stream().noneMatch((bigItem -> (bigItem.item.equalsIgnoreCase(id.getPath()))))
+            id.getPath().startsWith(input) && bigItems.stream().noneMatch((bigItem -> (bigItem.item.equalsIgnoreCase(id.getPath()))))
         ).toList();
 
         if(filteredItems.isEmpty()) {
@@ -192,7 +201,7 @@ public class BigItemsModule extends ModuleBase {
         }
 
         var item = filteredItems.getFirst().getPath();
-        return item.substring(text.length());
+        return item.substring(input.length());
     }
 
     private void addItemButtonPressed(TextFieldWidget text) {
@@ -201,16 +210,7 @@ public class BigItemsModule extends ModuleBase {
             suggestion = "";
         }
 
-        var item = text.getText() + suggestion;
-
-        if(!item.matches("[a-z0-9/._-]+")) {
-            RooHelper.sendNotification(
-                Text.translatable("fireclient.module.big_items.add_item.failure.title"),
-                Text.translatable("fireclient.module.big_items.add_item.invalid_item.contents")
-            );
-
-            return;
-        }
+        var item = RooHelper.filterIdInput(text.getText()) + suggestion;
 
         if(bigItems.stream().anyMatch((bigItem -> bigItem.getItem().equalsIgnoreCase(item)))) {
             RooHelper.sendNotification(

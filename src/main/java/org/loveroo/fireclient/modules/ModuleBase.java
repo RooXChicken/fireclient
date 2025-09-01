@@ -27,7 +27,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -163,6 +163,7 @@ public abstract class ModuleBase {
         }
         
         getData().setEnabled(json.optBoolean("enabled", getData().isEnabled()));
+        getData().setFavorited(json.optBoolean("favorited", getData().isFavorited()));
 
         var clazz = this.getClass();
         for(var field : clazz.getDeclaredFields()) {
@@ -202,6 +203,7 @@ public abstract class ModuleBase {
         }
 
         json.put("enabled", getData().isEnabled());
+        json.put("favorited", getData().isFavorited());
 
         var clazz = this.getClass();
         for(var field : clazz.getDeclaredFields()) {
@@ -241,7 +243,7 @@ public abstract class ModuleBase {
     }
 
     public ButtonWidget getToggleVisibleButton(int x, int y) {
-        return new ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_visible"))
+        return new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_visible"))
             .getValue(getData()::isVisible)
             .setValue(getData()::setVisible)
             .position(x, y)
@@ -250,7 +252,7 @@ public abstract class ModuleBase {
     }
 
     public ButtonWidget getToggleEnableButton(int x, int y) {
-        return new ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_enabled"))
+        return new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_enabled"))
             .getValue(getData()::isEnabled)
             .setValue(getData()::setEnabled)
             .position(x, y)

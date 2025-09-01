@@ -130,6 +130,6 @@ public class MainConfigScreen extends ConfigScreenBase {
             }
         }
 
-        renderSnapTutorial(context);
+        renderTutorialText(context, Text.translatable("fireclient.screen.main_config.tutorial"));
     }
 }

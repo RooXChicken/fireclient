@@ -12,7 +12,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +64,7 @@ public class PerspectiveModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_perspective").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.perspective.zoom.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.perspective.zoom.name"))
             .getValue(() -> { return zoomEnabled; })
             .setValue((value) -> { zoomEnabled = value; })
             .position(base.width/2 - 60, base.height/2 + 20)

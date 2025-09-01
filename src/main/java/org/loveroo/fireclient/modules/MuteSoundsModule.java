@@ -26,7 +26,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -136,7 +136,7 @@ public class MuteSoundsModule extends ModuleBase {
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new ToggleButtonBuilder(null)
+            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
                 .getValue(sound::isEnabled)
                 .setValue(sound::setEnabled)
                 .dimensions(base.width/2 + 90, 0, 20, 15)
@@ -182,8 +182,17 @@ public class MuteSoundsModule extends ModuleBase {
             return "";
         }
 
+        var input = RooHelper.filterIdInput(text);
+
+        if(mutedSounds.stream().noneMatch((mutedSound) -> { return mutedSound.getSound().equalsIgnoreCase(input); })) {
+            var soundId = Identifier.ofVanilla(input);
+            if(Registries.SOUND_EVENT.containsId(soundId)) {
+                return "";
+            }
+        }
+
         var filteredSounds = Registries.SOUND_EVENT.getIds().stream().filter((id) ->
-                id.getPath().startsWith(text) && mutedSounds.stream().noneMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(id.getPath())))
+            id.getPath().startsWith(input) && mutedSounds.stream().noneMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(id.getPath())))
         ).toList();
 
         if(filteredSounds.isEmpty()) {
@@ -191,7 +200,7 @@ public class MuteSoundsModule extends ModuleBase {
         }
 
         var sound = filteredSounds.getFirst().getPath();
-        return sound.substring(text.length());
+        return sound.substring(input.length());
     }
 
     private void addSoundButtonPressed(TextFieldWidget text) {
@@ -200,21 +209,12 @@ public class MuteSoundsModule extends ModuleBase {
             suggestion = "";
         }
 
-        var sound = text.getText() + suggestion;
-
-        if(!sound.matches("[a-z0-9/._-]+")) {
-            RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.invalid_id.contents")
-            );
-
-            return;
-        }
+        var sound = RooHelper.filterIdInput(text.getText()) + suggestion;
 
         if(mutedSounds.stream().anyMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(sound)))) {
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
+                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
             );
 
             return;

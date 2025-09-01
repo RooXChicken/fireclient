@@ -75,4 +75,8 @@ public class RooHelper {
 
         return client.getOverlay();
     }
+
+    public static String filterIdInput(String input) {
+        return input.replaceAll("[^a-z0-9/._-]", "");
+    }
 }

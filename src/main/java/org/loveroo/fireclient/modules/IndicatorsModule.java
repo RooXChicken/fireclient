@@ -12,7 +12,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.indicators.*;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -63,7 +63,7 @@ public class IndicatorsModule extends ModuleBase {
             var x = base.width/2 - 60;
 
             if(indicator.hasOverlay()) {
-                indicatorWidgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.overlay.name"))
+                indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.overlay.name"))
                     .getValue(indicator::doesShowOverlay)
                     .setValue(indicator::setShowOverlay)
                     .dimensions(x + 100, 0, 80, 20)
@@ -78,7 +78,7 @@ public class IndicatorsModule extends ModuleBase {
 
             indicatorWidgets.add(text);
 
-            indicatorWidgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.indicator.name"))
+            indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.indicator.name"))
                 .getValue(indicator.getData()::isVisible)
                 .setValue(indicator.getData()::setVisible)
                 .dimensions(x, 0, 80, 20)

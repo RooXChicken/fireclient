@@ -12,7 +12,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ public class SubtitlesModule extends ModuleBase {
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_subtitles").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.subtitles.visible.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.subtitles.visible.name"))
             .getValue(getData()::isEnabled)
             .setValue(getData()::setEnabled)
             .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)

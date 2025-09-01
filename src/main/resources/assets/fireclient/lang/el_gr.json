@@ -232,9 +232,11 @@
   "fireclient.module.nametag.show_own.tooltip": "Κάνει την ετικέτα ονόματός σας ορατή",
   "fireclient.module.nametag.text_shadow.name": "Σκιά Κειμένου",
   "fireclient.module.nametag.text_shadow.tooltip": "Εμφανίζει μια σκιά κειμένου στην ετικέτας ονόματος",
+  "fireclient.module.nametag.unlimit_nametag.name": "Απεριόριστο Κείμενο Κεφαλιού",
+  "fireclient.module.nametag.unlimit_nametag.tooltip": "Αφαιρεί το όριο απόστασης του κειμένου κεφαλιού του πίνακα βαθμολογίας",
 
   "fireclient.module.particles.name": "Σωματίδια",
-  "fireclient.module.particles.description": "Επιτρέπει την απενεργοποίηση ορισμένων σωματιδίων"
+  "fireclient.module.particles.description": "Επιτρέπει την απενεργοποίηση ορισμένων σωματιδίων",
 
   "fireclient.module.perspective.name": "Προοπτική",
   "fireclient.module.perspective.description": "Σας επιτρέπει να κοιτάτε τριγύρω σε τρίτο πρόσωπο χωρίς να κουνάτε το κεφάλι του παίκτη σας",
@@ -305,6 +307,7 @@
 
   "fireclient.screen.module_select.title": "Επιλογή Μονάδας",
   "fireclient.screen.module_select.header": "Διαμόρφωση Μονάδων",
+  "fireclient.screen.module_select.tutorial": "Κάντε δεξί κλικ για να προσθέσετε στα αγαπημένα",
 
   "fireclient.module.toggle_toggle_sneak.name": "Εναλλαγή Εναλλαγή-Σκυψίματος",
   "fireclient.module.toggle_toggle_sneak.description": "Σας επιτρέπει να εναλλάσσετε την επιλογή εναλλαγής σκυψίματος όταν πατάτε το πλήκτρο της επιλογής σας",
@@ -368,6 +371,9 @@
 
   "fireclient.settings.no_reload_overlay.name": "Απενεργοποίηση της Επικάλυψης Επαναφόρτωσης",
   "fireclient.settings.no_reload_overlay.description": "Επιταχύνει την επικάλυψη επαναφόρτωσης και την εμποδίζει να απενεργοποιήσει την εισαγωγή",
+
+  "fireclient.settings.dont_hit_dead.name": "Δεν Χτυπάς Νεκρούς",
+  "fireclient.settings.dont_hit_dead.description": "Αποτρέπει τις νεκρές οντότητες από το να μπλοκάρουν χτυπήματα σου",
 
   "fireclient.keybind.generic.unbound_key.long": "Άδετος",
   "fireclient.keybind.generic.unbound_key.short": "N/A",

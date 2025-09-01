@@ -93,13 +93,13 @@ public class ConfigScreenBase extends Screen {
         context.drawCenteredTextWithShadow(text, configText, width/2, 10, 0xFFFFFFFF);
     }
 
-    protected void renderSnapTutorial(DrawContext context) {
+    protected void renderTutorialText(DrawContext context, Text text) {
         if(FireClientside.getSetting(FireClientOption.SHOW_TUTORIAL_TEXT) == 0) {
             return;
         }
 
-        var tutorialText = RooHelper.gradientText(Text.translatable("fireclient.screen.main_config.tutorial").getString(), FireClientside.mainColor1, FireClientside.mainColor2);
-        context.drawText(textRenderer, tutorialText, 2, height-10, 0xFFFFFFFF, true);
+        var gradientText = RooHelper.gradientText(text.getString(), FireClientside.mainColor1, FireClientside.mainColor2);
+        context.drawText(textRenderer, gradientText, 2, height-10, 0xFFFFFFFF, true);
     }
 
     public int getMouseX() {

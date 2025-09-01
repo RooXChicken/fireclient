@@ -32,7 +32,7 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -143,7 +143,7 @@ public class ParticlesModule extends ModuleBase {
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new ToggleButtonBuilder(null)
+            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
                 .getValue(sound::isEnabled)
                 .setValue(sound::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
@@ -189,9 +189,18 @@ public class ParticlesModule extends ModuleBase {
             return "";
         }
 
-        var filteredSounds = Registries.PARTICLE_TYPE.getIds().stream()
+        var input = RooHelper.filterIdInput(text);
+
+        if(hiddenParticles.stream().noneMatch((hiddenParticle) -> { return hiddenParticle.getParticle().equalsIgnoreCase(input); })) {
+            var particleId = Identifier.ofVanilla(input);
+            if(Registries.PARTICLE_TYPE.containsId(particleId)) {
+                return "";
+            }
+        }
+
+        var filteredParticles = Registries.PARTICLE_TYPE.getIds().stream()
         .filter((id) -> {
-            var startsWith = id.getPath().startsWith(text);
+            var startsWith = id.getPath().startsWith(input);
             var exists = hiddenParticles.stream()
                 .anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(id.getPath())));
 
@@ -199,12 +208,12 @@ public class ParticlesModule extends ModuleBase {
         })
         .toList();
 
-        if(filteredSounds.isEmpty()) {
+        if(filteredParticles.isEmpty()) {
             return "";
         }
 
-        var sound = filteredSounds.getFirst().getPath();
-        return sound.substring(text.length());
+        var sound = filteredParticles.getFirst().getPath();
+        return sound.substring(input.length());
     }
 
     private void addParticleButton(TextFieldWidget text) {
@@ -213,21 +222,12 @@ public class ParticlesModule extends ModuleBase {
             suggestion = "";
         }
 
-        var particle = text.getText() + suggestion;
-
-        if(!particle.matches("[a-z0-9/._-]+")) {
-            RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.invalid_id.contents")
-            );
-
-            return;
-        }
+        var particle = RooHelper.filterIdInput(text.getText()) + suggestion;
 
         if(hiddenParticles.stream().anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(particle)))) {
             RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                    Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
+                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
             );
 
             return;
