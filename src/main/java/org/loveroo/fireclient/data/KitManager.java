@@ -1,10 +1,25 @@
 package org.loveroo.fireclient.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.DataFixer;
+import com.mojang.serialization.Dynamic;
+
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.datafixer.DataFixTypes;
+import net.minecraft.datafixer.Schemas;
+import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.visitor.StringNbtWriter;
+
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -113,8 +128,42 @@ public class KitManager {
     }
 
     public static String getInventoryAsString(PlayerInventory inv) {
-        var invNbt = inv.writeNbt(new NbtList());
-        return "{\"inv\":" + invNbt.asString() + "}";
+        var client = MinecraftClient.getInstance();
+
+        var nbt = new NbtCompound();
+        nbt.put("data_version", NbtInt.of(SharedConstants.getGameVersion().getSaveVersion().getId()));
+        nbt.put("mc_version", NbtString.of(SharedConstants.getGameVersion().getName()));
+        nbt.put("creator", NbtString.of(client.player.getName().getString()));
+        
+        var kitNbt = new NbtList();
+        var ops = MinecraftClient.getInstance().player.getRegistryManager().getOps(NbtOps.INSTANCE);
+
+        var writeIndex = 0;
+        for(var i = 0; i < inv.size(); i++) {
+            var slot = new NbtCompound();
+            var slotIndex = i;
+
+            if(slotIndex >= PlayerInventory.MAIN_SIZE && slotIndex < PlayerInventory.OFF_HAND_SLOT) {
+                slotIndex += 100-PlayerInventory.MAIN_SIZE;
+            }
+            else if(slotIndex == PlayerInventory.OFF_HAND_SLOT) {
+                slotIndex = 150;
+            }
+
+            slot.putByte("Slot", (byte) slotIndex);
+
+            var element = ItemStack.CODEC.encode(inv.getStack(i), ops, slot).result().orElse(null);
+            if(element == null) {
+                continue;
+            }
+
+            kitNbt.add(writeIndex++, element);
+        }
+
+        nbt.put("inv", kitNbt);
+
+        var writer = new StringNbtWriter();
+        return writer.apply(nbt);
     }
 
     public static KitLoadStatus loadKit(String kitName) {
@@ -170,12 +219,52 @@ public class KitManager {
 
     private static PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
         var client = MinecraftClient.getInstance();
+        var nbt = NbtHelper.fromNbtProviderString(kit);
 
-        var from = NbtHelper.fromNbtProviderString(kit);
-        var invList = (NbtList)from.get("inv");
+        var version = SharedConstants.getGameVersion().getSaveVersion().getId();
+        var kitVersion = version;
+        try {
+            kitVersion = nbt.getInt("data_version");
+        }
+        catch(Exception ignored) { }
+
+        var kitInventory = (NbtList)nbt.get("inv");
 
         var loadedInv = new PlayerInventory(client.player);
-        loadedInv.readNbt(invList);
+        loadedInv.clear();
+
+        var ops = client.player.getRegistryManager().getOps(NbtOps.INSTANCE);
+
+        for(var i = 0; i < kitInventory.size(); i++) {
+            var itemNbt = kitInventory.getCompound(i);
+            var slot = i;
+
+            // store slot manually for compatibility
+            if(itemNbt.contains("Slot")) {
+                slot = itemNbt.getByte("Slot") & 255;
+
+                // how mc does it :/
+                if(slot >= 100 && slot < 150) {
+                    slot -= 100 - PlayerInventory.MAIN_SIZE;
+                }
+                else if(slot >= 150) {
+                    slot = PlayerInventory.OFF_HAND_SLOT;
+                }
+            }
+
+            NbtElement fix;
+
+            // data fixer upper!!
+            if(version == kitVersion) {
+                fix = itemNbt;
+            }
+            else {
+                fix = client.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, itemNbt), kitVersion, version).getValue();
+            }
+
+            var item = ItemStack.CODEC.parse(ops, fix).result().orElse(ItemStack.EMPTY);
+            loadedInv.setStack(slot, item);
+        }
 
         return loadedInv;
     }
@@ -272,12 +361,14 @@ public class KitManager {
         }
 
         try {
-            var json = new JSONObject(kit);
-            if(json.optJSONArray("inv") != null) {
+            var nbt = NbtHelper.fromNbtProviderString(kit);
+            if(nbt.contains("inv")) {
                 return KitValidationStatus.SUCCESS;
             }
         }
-        catch(Exception ignored) { }
+        catch(Exception ignored) {
+            FireClient.LOGGER.error("", ignored);
+        }
 
         return KitValidationStatus.INVALID_KIT;
     }
