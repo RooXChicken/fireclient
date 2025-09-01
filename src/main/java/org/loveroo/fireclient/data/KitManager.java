@@ -18,6 +18,9 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.visitor.StringNbtWriter;
+
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -126,7 +129,14 @@ public class KitManager {
     }
 
     public static String getInventoryAsString(PlayerInventory inv) {
-        var nbt = new NbtList();
+        var client = MinecraftClient.getInstance();
+
+        var nbt = new NbtCompound();
+        nbt.put("data_version", NbtInt.of(SharedConstants.getGameVersion().getSaveVersion().getId()));
+        nbt.put("mc_version", NbtString.of(SharedConstants.getGameVersion().getName()));
+        nbt.put("creator", NbtString.of(client.player.getName().getString()));
+        
+        var kitNbt = new NbtList();
         var ops = MinecraftClient.getInstance().player.getRegistryManager().getOps(NbtOps.INSTANCE);
 
         var writeIndex = 0;
@@ -148,13 +158,15 @@ public class KitManager {
                 continue;
             }
 
-            nbt.add(writeIndex++, element);
+            kitNbt.add(writeIndex++, element);
         }
 
-        var version = SharedConstants.getGameVersion().getSaveVersion().getId();
+        nbt.put("inv", kitNbt);
 
-        // please don't shoot me dead for this atrocity
-        return "{\"inv\":" + nbt + ", version:\"" + version + "\"}";
+        var writer = new StringNbtWriter();
+        writer.visitCompound(nbt);
+
+        return writer.getString();
     }
 
     public static KitLoadStatus loadKit(String kitName) {
@@ -210,25 +222,25 @@ public class KitManager {
 
     private static PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
         var client = MinecraftClient.getInstance();
+        var nbt = NbtHelper.fromNbtProviderString(kit);
 
-        var from = NbtHelper.fromNbtProviderString(kit);
         var version = SharedConstants.getGameVersion().getSaveVersion().getId();
-        var oldVersion = from.getInt("version").orElse(version);
+        var kitVersion = nbt.getInt("data_version").orElse(version);
 
-        var invList = (NbtList)from.get("inv");
+        var kitInventory = (NbtList)nbt.get("inv");
 
         var loadedInv = new PlayerInventory(client.player, new EntityEquipment());
         loadedInv.clear();
 
         var ops = client.player.getRegistryManager().getOps(NbtOps.INSTANCE);
 
-        for(var i = 0; i < invList.size(); i++) {
-            var nbt = invList.getCompound(i).get();
+        for(var i = 0; i < kitInventory.size(); i++) {
+            var itemNbt = kitInventory.getCompound(i).get();
             var slot = i;
 
             // store slot manually for compatibility
-            if(nbt.contains("Slot")) {
-                slot = nbt.getByte("Slot").get() & 255;
+            if(itemNbt.contains("Slot")) {
+                slot = itemNbt.getByte("Slot").get() & 255;
 
                 // how mc does it :/
                 if(slot >= 100 && slot < 150) {
@@ -242,11 +254,11 @@ public class KitManager {
             NbtElement fix;
 
             // data fixer upper!!
-            if(version == oldVersion) {
-                fix = nbt;
+            if(version == kitVersion) {
+                fix = itemNbt;
             }
             else {
-                fix = client.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, nbt), oldVersion, version).getValue();
+                fix = client.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, itemNbt), kitVersion, version).getValue();
             }
 
             var item = ItemStack.CODEC.parse(ops, fix).result().orElse(ItemStack.EMPTY);
@@ -348,12 +360,14 @@ public class KitManager {
         }
 
         try {
-            var json = new JSONObject(kit);
-            if(json.optJSONArray("inv") != null) {
+            var nbt = NbtHelper.fromNbtProviderString(kit);
+            if(nbt.contains("inv")) {
                 return KitValidationStatus.SUCCESS;
             }
         }
-        catch(Exception ignored) { }
+        catch(Exception ignored) {
+            FireClient.LOGGER.error("", ignored);
+        }
 
         return KitValidationStatus.INVALID_KIT;
     }
