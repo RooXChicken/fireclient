@@ -13,6 +13,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.ModuleBase;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,7 +43,10 @@ public class ModuleSelectScreen extends ConfigScreenBase {
     @Override
     public void init() {
         for(var module : FireClientside.getModules()) {
-            var button = ButtonWidget.builder(module.getData().getShownName(), module::moduleConfigPressed)
+            var button = new FavoriteButtonBuilder(module.getData().getShownName())
+                .onPress(module::moduleConfigPressed)
+                .getValue(module.getData()::isFavorited)
+                .setValue(module.getData()::setFavorited)
                 .tooltip(Tooltip.of(module.getData().getDescription()))
                 .dimensions(0, 0, 120, 20)
                 .build();
@@ -76,7 +80,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
     private void filterModuleButtons() {
         var filter = search.toLowerCase().trim();
-        var modules = new ArrayList<>(FireClientside.getModules().stream()
+        var sortedModules = new ArrayList<>(FireClientside.getModules().stream()
         .filter((module) -> {
             var nameSplit = module.getData().getName().getString().split(" ");
 
@@ -88,11 +92,27 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             
             return false;
         })
-        .map((module) -> module.getData().getId())
+        // .map((module) -> module.getData().getId())
         .collect(Collectors.toList()));
         
-        modules.sort(Comparator.naturalOrder());
+        sortedModules.sort((module1, module2) -> {
+            var favorited1 = module1.getData().isFavorited();
+            var favorited2 = module2.getData().isFavorited();
 
+            if((favorited1 && favorited2) || (!favorited1 && !favorited2)) {
+                return module1.getData().getId().compareTo(module2.getData().getId());
+            }
+            else if(favorited1 &&! favorited2) {
+                return -1;
+            }
+            else if(!favorited1 && favorited2) {
+                return 1;
+            }
+
+            return 0;
+        });
+
+        var modules = sortedModules.stream().map((module) -> module.getData().getId()).toList();
         var buttons = new ArrayList<ButtonWidget>();
         
         var skips = 0;
@@ -170,6 +190,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         var text = MinecraftClient.getInstance().textRenderer;
 
         context.drawCenteredTextWithShadow(text, Text.translatable("fireclient.screen.module_select.header"), width/2, height/2 - (moduleSelectHeight/2 + 30), 0xFFFFFFFF);
+        renderTutorialText(context, Text.translatable("fireclient.screen.module_select.tutorial"));
     }
 
     public static void resetScroll() {

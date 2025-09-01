@@ -4,6 +4,7 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.SkinTextures;
 import net.minecraft.entity.Entity;
@@ -20,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import com.llamalad7.mixinextras.sugar.Local;
 
 import java.util.Map;
 
@@ -56,14 +59,14 @@ abstract class HazeliPlayerModelMixin {
 }
 
 @Mixin(EntityRenderer.class)
-abstract class HazeliNametagMixin {
+abstract class HazeliNametagMixin<T extends Entity, S extends EntityRenderState> {
 
     @Unique
     private final Text hazeliNametag = Text.of("Hazeli");
 
     @ModifyVariable(method = "renderLabelIfPresent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private Text changeText(Text original) {
-        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
+    private Text changeText(Text original, @Local(ordinal = 0) S renderState) {
+        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0 || renderState.displayName != original) {
             return original;
         }
 

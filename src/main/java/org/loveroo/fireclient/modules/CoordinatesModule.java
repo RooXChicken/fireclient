@@ -20,8 +20,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder.ToggleButtonWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -238,14 +237,14 @@ public class CoordinatesModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.other_dimension.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.other_dimension.name"))
             .getValue(() -> { return showOther; })
             .setValue((value) -> { showOther = value; })
             .position(base.width/2 - 60,base.height / 2 + 10)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
             .build());
 
-        windowModeButton = new ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
+        windowModeButton = new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
             .getValue(() -> { return windowMode; })
             .setValue(this::windowModeChanged)
             .position(base.width/2 - 60,base.height / 2 + 40)

@@ -14,7 +14,7 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonBuilder;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import java.util.List;
 
@@ -68,7 +68,7 @@ public class FlightSpeedModule extends ModuleBase {
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_speed").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(new ToggleButtonBuilder(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"))
             .getValue(() -> { return toggleWithSneak; })
             .setValue((value) -> { toggleWithSneak = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
