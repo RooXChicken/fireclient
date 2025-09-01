@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.data;
+package org.loveroo.fireclient.settings;
 
 import org.jetbrains.annotations.Nullable;
 
