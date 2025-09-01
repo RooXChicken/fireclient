@@ -1,12 +1,21 @@
 package org.loveroo.fireclient.data;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.datafixers.DataFixer;
+import com.mojang.serialization.Dynamic;
+
+import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.datafixer.DataFixTypes;
+import net.minecraft.datafixer.Schemas;
+import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import org.json.JSONObject;
@@ -142,7 +151,10 @@ public class KitManager {
             nbt.add(writeIndex++, element);
         }
 
-        return "{\"inv\":" + nbt + "}";
+        var version = SharedConstants.getGameVersion().getSaveVersion().getId();
+
+        // please don't shoot me dead for this atrocity
+        return "{\"inv\":" + nbt + ", version:\"" + version + "\"}";
     }
 
     public static KitLoadStatus loadKit(String kitName) {
@@ -200,6 +212,9 @@ public class KitManager {
         var client = MinecraftClient.getInstance();
 
         var from = NbtHelper.fromNbtProviderString(kit);
+        var version = SharedConstants.getGameVersion().getSaveVersion().getId();
+        var oldVersion = from.getInt("version").orElse(version);
+
         var invList = (NbtList)from.get("inv");
 
         var loadedInv = new PlayerInventory(client.player, new EntityEquipment());
@@ -224,27 +239,17 @@ public class KitManager {
                 }
             }
 
-            // manual data fixing because mc doesn't do it :/
-            // checks for levels compound in enchants, which is just a sublayer for the enchants in newer versions.
-            // 0 idea why 1.21.4 supports converting from the newer to the older but the older can't do newer but it does soooo
-            if(nbt.contains("components")) {
-                var components = nbt.get("components").asCompound().orElse(null);
+            NbtElement fix;
 
-                if(components != null && components.contains("minecraft:enchantments")) {
-                    var enchants = components.get("minecraft:enchantments").asCompound().orElse(null);
-
-                    if(enchants != null && enchants.contains("levels")) {
-                        var levels = enchants.get("levels").asCompound().orElse(null);
-
-                        if(levels != null) {
-                            components.remove("minecraft:enchantments");
-                            components.put("minecraft:enchantments", levels);
-                        }
-                    }
-                }
+            // data fixer upper!!
+            if(version == oldVersion) {
+                fix = nbt;
+            }
+            else {
+                fix = client.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, nbt), oldVersion, version).getValue();
             }
 
-            var item = ItemStack.CODEC.parse(ops, nbt).result().orElse(ItemStack.EMPTY);
+            var item = ItemStack.CODEC.parse(ops, fix).result().orElse(ItemStack.EMPTY);
             loadedInv.setStack(slot, item);
         }
 
