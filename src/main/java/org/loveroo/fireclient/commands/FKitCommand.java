@@ -116,7 +116,7 @@ public class FKitCommand {
             case "1.21.7" -> 4438;
             case "1.21.8" -> 4440;
 
-            default -> SharedConstants.getGameVersion().dataVersion().id();
+            default -> SharedConstants.getGameVersion().getSaveVersion().getId();
         };
 
         for(var kitName : KitManager.getKits()) {
@@ -133,10 +133,9 @@ public class FKitCommand {
                 nbt.put("creator", NbtString.of(client.player.getName().getString()));
 
                 var writer = new StringNbtWriter();
-                writer.visitCompound(nbt);
 
                 KitManager.deleteKit(kitName);
-                KitManager.createKit(kitName, writer.getString());
+                KitManager.createKit(kitName, writer.apply(nbt));
             }
             catch(Exception e) {
                 FireClient.LOGGER.info("Error updating kit!", e);
