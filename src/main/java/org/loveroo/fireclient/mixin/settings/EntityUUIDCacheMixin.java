@@ -3,7 +3,7 @@ package org.loveroo.fireclient.mixin.settings;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ChatScreen;
 import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.data.CachedEntityUUID;
+import org.loveroo.fireclient.settings.CachedEntityUUID;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;

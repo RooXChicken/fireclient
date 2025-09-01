@@ -32,6 +32,7 @@ import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
+import org.loveroo.fireclient.settings.SprintSwimFix;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -68,6 +69,7 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+        ClientTickEvents.START_CLIENT_TICK.register(new SprintSwimFix()::update);
 
         for(var module : getModules()) {
             module.postLoad();
