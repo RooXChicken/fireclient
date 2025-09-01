@@ -195,6 +195,8 @@
   "fireclient.module.kit.download.failure.generic": "Failed to download \"%1$s\"",
   "fireclient.module.kit.download.failure.no_kit": "Kit does not exist",
 
+  "fireclient.module.kit.update.success": "Successfully updated kits",
+
   "fireclient.screen.edit_kit.title": "Edit \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Preview \"%1$s\"",
 
