@@ -377,6 +377,9 @@
   "fireclient.settings.dont_hit_dead.name": "Don't Hit Dead",
   "fireclient.settings.dont_hit_dead.description": "Prevents dead entities from blocking hits",
 
+  "fireclient.settings.fix_sprint_swim.name": "Fix Sprint Swim",
+  "fireclient.settings.fix_sprint_swim.description": "Fixes a client-server desync where you may get stuck in a block while swimming",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",
