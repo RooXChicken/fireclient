@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -371,7 +372,7 @@ public class KitManager {
         return KitValidationStatus.INVALID_KIT;
     }
 
-    public static List<String> getKits() {
+    public static List<String> getKits(HashSet<String> favorites) {
         var kits = new ArrayList<String>();
 
         try {
@@ -393,8 +394,28 @@ public class KitManager {
             FireClient.LOGGER.error("Failed to get kits!", e);
         }
 
-        kits.sort(String::compareTo);
+        kits.sort((kit1, kit2) -> {
+            var favorited1 = favorites.contains(kit1);
+            var favorited2 = favorites.contains(kit2);
+
+            if((favorited1 && favorited2) || (!favorited1 && !favorited2)) {
+                return kit1.compareTo(kit2);
+            }
+            else if(favorited1 &&! favorited2) {
+                return -1;
+            }
+            else if(!favorited1 && favorited2) {
+                return 1;
+            }
+
+            return 0;
+        });
+        
         return kits;
+    }
+
+    public static List<String> getKits() {
+        return getKits(HashSet.newHashSet(0));
     }
 
     public static KitManageStatus deleteKit(String kitName) {
