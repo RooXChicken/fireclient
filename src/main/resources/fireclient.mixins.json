@@ -18,6 +18,7 @@
   "client": [
     "AddWidgetAccessor",
     "KeyboardMixin",
+    "MouseMixin",
     "OverlayTextureAccessor",
     "modules.bigitems.BigItemMixin",
     "modules.bigitems.RegisterBigItemsMixin",

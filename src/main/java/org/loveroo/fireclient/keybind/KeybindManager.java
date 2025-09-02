@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.keybind;
 
 import org.jetbrains.annotations.Nullable;
+import org.loveroo.fireclient.keybind.Key.KeyType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +10,9 @@ public class KeybindManager {
 
     private final List<Keybind> keybinds = new ArrayList<>();
 
-    public boolean onKey(int keyCode, int scanCode, int action, int modifiers) {
+    public boolean onKey(KeyType type, int keyCode, int scanCode, int action, int modifiers) {
         for(var keybind : keybinds) {
-            var status = keybind.onKey(keyCode, scanCode, action, modifiers);
+            var status = keybind.onKey(type, keyCode, scanCode, action, modifiers);
 
             if(status == Keybind.KeyReturnStatus.CANCEL) {
                 return false;

@@ -23,19 +23,29 @@ public class Key {
     }
 
     public boolean matches(int keyCode, int scanCode) {
-        return type == KeyType.KEY_CODE ? isKeyCode(keyCode) : isScanCode(scanCode);
+        return switch(type) {
+            case KEY_CODE -> isKeyCode(keyCode);
+            case SCAN_CODE -> isScanCode(keyCode);
+            case MOUSE -> isMouse(keyCode);
+        };
     }
 
     private boolean isKeyCode(int keyCode) {
-        return this.type == KeyType.KEY_CODE && this.code == keyCode;
+        return (this.type == KeyType.KEY_CODE && this.code == keyCode);
     }
 
     private boolean isScanCode(int scanCode) {
-        return this.type == KeyType.SCAN_CODE && this.code == scanCode;
+        return (this.type == KeyType.SCAN_CODE && this.code == scanCode);
+    }
+
+    private boolean isMouse(int keyCode) {
+        return (this.type == KeyType.MOUSE && this.code == keyCode);
     }
 
     public enum KeyType {
+        
         KEY_CODE,
         SCAN_CODE,
+        MOUSE,
     }
 }

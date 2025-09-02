@@ -1,18 +1,21 @@
 package org.loveroo.fireclient.keybind;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.keybind.Key.KeyType;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
 
 public class Keybind {
 
@@ -35,6 +38,8 @@ public class Keybind {
     private boolean rebinding = false;
     private boolean shortName = false;
 
+    private boolean initialClickReleased = false;
+
     @Nullable
     private ArrayList<Key> reboundKeys;
 
@@ -54,10 +59,15 @@ public class Keybind {
         this.onKeyRelease = onKeyRelease;
     }
 
-    public KeyReturnStatus onKey(int keyCode, int scanCode, int action, int modifiers) {
+    public KeyReturnStatus onKey(KeyType type, int keyCode, int scanCode, int action, int modifiers) {
         if(rebinding) {
             if(reboundKeys == null) {
                 reboundKeys = new ArrayList<>();
+            }
+
+            if(keyCode == GLFW.GLFW_MOUSE_BUTTON_1 && !initialClickReleased) {
+                initialClickReleased = true;
+                return KeyReturnStatus.CANCEL;
             }
 
             if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
@@ -73,7 +83,7 @@ public class Keybind {
 
             switch(action) {
                 case GLFW.GLFW_PRESS -> {
-                    var newKey = new Key(keyCode, Key.KeyType.KEY_CODE);
+                    var newKey = new Key(keyCode, type);
                     newKey.setPressed(true);
 
                     reboundKeys.add(newKey);
@@ -161,7 +171,12 @@ public class Keybind {
         for(int i = 0; i < keyList.size(); i++) {
             var key = keyList.get(i);
 
-            var name = (key.type == Key.KeyType.KEY_CODE) ? getKeyCodeName(key.code) : getScanCodeName(key.code);
+            var name = switch(key.type) {
+                case KEY_CODE -> getKeyCodeName(key.code);
+                case SCAN_CODE -> getScanCodeName(key.code);
+                case MOUSE -> getMouseName(key.code);
+            };
+
             builder.append(name);
 
             if(i < keyList.size() - 1) {
@@ -174,25 +189,60 @@ public class Keybind {
 
     private String getKeyCodeName(int key) {
         switch(key) {
-            case GLFW.GLFW_KEY_LEFT_ALT -> { return "Left Alt"; }
-            case GLFW.GLFW_KEY_RIGHT_ALT -> { return "Right Alt"; }
+            case GLFW.GLFW_KEY_LEFT_ALT -> { return (shortName) ? "LAlt" : "Left Alt"; }
+            case GLFW.GLFW_KEY_RIGHT_ALT -> { return (shortName) ? "RAlt" : "Right Alt"; }
 
-            case GLFW.GLFW_KEY_LEFT_CONTROL -> { return "Left Ctrl"; }
-            case GLFW.GLFW_KEY_RIGHT_CONTROL -> { return "Right Ctrl"; }
+            case GLFW.GLFW_KEY_LEFT_CONTROL -> { return (shortName) ? "LCtrl" : "Left Ctrl"; }
+            case GLFW.GLFW_KEY_RIGHT_CONTROL -> { return (shortName) ? "RCtrl" : "Right Ctrl"; }
 
-            case GLFW.GLFW_KEY_LEFT_SHIFT -> { return "Left Shift"; }
-            case GLFW.GLFW_KEY_RIGHT_SHIFT -> { return "Right Shift"; }
+            case GLFW.GLFW_KEY_LEFT_SHIFT -> { return (shortName) ? "LShift" : "Left Shift"; }
+            case GLFW.GLFW_KEY_RIGHT_SHIFT -> { return (shortName) ? "RShift" : "Right Shift"; }
 
-            case GLFW.GLFW_KEY_LEFT_SUPER -> { return "Left Super"; }
-            case GLFW.GLFW_KEY_RIGHT_SUPER -> { return "Right Super"; }
+            case GLFW.GLFW_KEY_LEFT_SUPER -> { return (shortName) ? "LSuper" : "Left Super"; }
+            case GLFW.GLFW_KEY_RIGHT_SUPER -> { return (shortName) ? "RSuper" : "Right Super"; }
 
-            default -> { return GLFW.glfwGetKeyName(key, -1); }
+            case GLFW.GLFW_KEY_ENTER -> { return "Enter"; }
+
+            case GLFW.GLFW_KEY_PAGE_UP -> { return (shortName) ? "PgUp" : "Page Up"; }
+            case GLFW.GLFW_KEY_PAGE_DOWN -> { return (shortName) ? "PgDn" : "Page Down"; }
+
+            case GLFW.GLFW_KEY_TAB -> { return "Tab"; }
+            case GLFW.GLFW_KEY_END -> { return "End"; }
+            case GLFW.GLFW_KEY_HOME -> { return "Home"; }
+            case GLFW.GLFW_KEY_SCROLL_LOCK -> { return (shortName) ? "ScrLk" : "Scroll Lock"; }
+            case GLFW.GLFW_KEY_INSERT -> { return (shortName) ? "Ins" : "Insert"; }
+            case GLFW.GLFW_KEY_PAUSE -> { return "Pause"; }
+            case GLFW.GLFW_KEY_PRINT_SCREEN -> { return (shortName) ? "PrtScn" : "Print Screen"; }
+
+            case GLFW.GLFW_KEY_BACKSPACE -> { return (shortName) ? "Bksp" : "Backspace"; }
+            case GLFW.GLFW_KEY_DELETE -> { return (shortName) ? "Del" : "Delete"; }
+
+            case GLFW.GLFW_KEY_SPACE -> { return "Space"; }
+
+            case GLFW.GLFW_KEY_UP -> { return (shortName) ? "↑" : "Up"; }
+            case GLFW.GLFW_KEY_DOWN -> { return (shortName) ? "↓" : "Down"; }
+            case GLFW.GLFW_KEY_LEFT -> { return (shortName) ? "←" : "Left"; }
+            case GLFW.GLFW_KEY_RIGHT -> { return (shortName) ? "→" : "Right"; }
         }
+
+        if(key >= GLFW.GLFW_KEY_F1 && key <= GLFW.GLFW_KEY_F24) {
+            return "F" + (key - GLFW.GLFW_KEY_F1 + 1);
+        }
+
+        return GLFW.glfwGetKeyName(key, -1);
+    }
+
+    private String getMouseName(int key) {
+        if(key >= GLFW.GLFW_MOUSE_BUTTON_1 && key <= GLFW.GLFW_MOUSE_BUTTON_8) {
+            return ((shortName) ? "\uD83D\uDDB1 " : "Mouse ") + (key - GLFW.GLFW_MOUSE_BUTTON_1);
+        }
+
+        return GLFW.glfwGetKeyName(key, -1);
     }
 
     private String getScanCodeName(int key) {
         switch(key) {
-            default -> { return GLFW.glfwGetKeyName(key, -1); }
+            default -> { return GLFW.glfwGetKeyName(-1, key); }
         }
     }
 
@@ -212,6 +262,7 @@ public class Keybind {
 
     private void beginRebind() {
         rebinding = true;
+        initialClickReleased = false;
         reboundKeys = new ArrayList<>();
     }
 
