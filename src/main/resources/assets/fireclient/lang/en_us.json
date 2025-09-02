@@ -380,6 +380,9 @@
   "fireclient.settings.fix_sprint_swim.name": "Fix Sprint Swim",
   "fireclient.settings.fix_sprint_swim.description": "Fixes a client-server desync where you may get stuck in a block while swimming",
 
+  "fireclient.settings.prioritize_players.name": "Prioritize Players",
+  "fireclient.settings.prioritize_players.description": "Gives players priority in the command auto-complete the more times they are used",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",

@@ -32,6 +32,7 @@ import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.keybind.KeybindManager;
 import org.loveroo.fireclient.modules.*;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
+import org.loveroo.fireclient.settings.PlayerSortPriority;
 import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
@@ -68,6 +69,7 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+        PlayerSortPriority.register();
 
         for(var module : getModules()) {
             module.postLoad();
@@ -187,6 +189,18 @@ public class FireClientside implements ClientModInitializer {
                     FireClient.LOGGER.error("Failed to load keybind {}!", keybind.getId(), e);
                 }
             }
+
+            var playerUsages = json.optJSONArray("player_usages");
+            if(playerUsages == null) {
+                playerUsages = new JSONArray();
+            }
+
+            try {
+                PlayerSortPriority.loadJson(playerUsages);
+            }
+            catch(Exception e) {
+                FireClient.LOGGER.error("Failed to load player usages!", e);
+            }
         }
         catch(Exception e) {
             FireClient.LOGGER.error("Failed to load config file!", e);
@@ -222,9 +236,12 @@ public class FireClientside implements ClientModInitializer {
                 }
             }
 
+            var playerUsages = PlayerSortPriority.saveJson();
+
             json.put("settings", settings);
             json.put("modules", modules);
             json.put("keybinds", keybinds);
+            json.put("player_usages", playerUsages);
 
             new File(FIRECLIENT_PATH).mkdir();
 

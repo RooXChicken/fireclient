@@ -463,6 +463,10 @@ public class KitModule extends ModuleBase {
     }
     
     private void deleteButtonPressed(ButtonWidget button, String kitName) {
+        if(isFavorited(kitName)) {
+            return;
+        }
+        
         if(!aboutToDelete.equals(kitName)) {
             if(lastPressed != null) {
                 lastPressed.setMessage(Text.translatable("fireclient.module.kit.delete.name"));

@@ -41,8 +41,8 @@
     "modules.mutesounds.GetSuggestionAccessor",
     "modules.mutesounds.MuteSoundsMixin",
     "modules.nametag.ModifyNametagMixin",
-    "modules.nametag.ShowOwnNametagMixin",
     "modules.nametag.ShowBelowNameMixin",
+    "modules.nametag.ShowOwnNametagMixin",
     "modules.particles.HideParticlesMixin",
     "modules.perspective.IncreaseZoomMixin",
     "modules.perspective.OffsetCameraMixin",
@@ -75,6 +75,7 @@
     "settings.PreventUntoggleKeysMixin",
     "settings.RenderBrandingMixin",
     "settings.ShowLatencyMixin",
+    "settings.SortPlayersMixin",
     "settings.SpeedupReloadMixin",
     "settings.SprintPacketAccessor"
   ],
