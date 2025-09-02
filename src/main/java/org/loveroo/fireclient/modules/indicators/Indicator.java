@@ -19,8 +19,6 @@ import java.util.List;
 public abstract class Indicator extends ModuleBase {
 
     private boolean hasOverlay = false;
-
-    @JsonOption(name = "show_overlay")
     private boolean showOverlay = true;
 
     public Indicator(String id, String emoji, Color color, boolean hasOverlay, int index) {
@@ -77,5 +75,21 @@ public abstract class Indicator extends ModuleBase {
 
     public void setShowOverlay(boolean showOverlay) {
         this.showOverlay = showOverlay;
+    }
+
+    @Override
+    public void loadJson(JSONObject json) throws Exception {
+        super.loadJson(json);
+
+        showOverlay = json.optBoolean("show_overlay", showOverlay);
+    }
+
+    @Override
+    public JSONObject saveJson() throws Exception {
+        var json = super.saveJson();
+
+        json.put("show_overlay", showOverlay);
+
+        return json;
     }
 }

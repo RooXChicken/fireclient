@@ -23,7 +23,8 @@ public enum FireClientOption {
     NO_RELOAD_OVERLAY(new ToggleOptionData(0)),
     PREVENT_PACK_CLEAR(new ToggleOptionData(1)),
     DONT_HIT_DEAD(new ToggleOptionData(0)),
-    FIX_SPRINT_SWIM(new ToggleOptionData(1));
+    FIX_SPRINT_SWIM(new ToggleOptionData(1)),
+    PRIORITIZE_PLAYERS(new ToggleOptionData(0));
 
     private final Text name;
     private final Text description;
