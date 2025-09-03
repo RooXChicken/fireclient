@@ -13,12 +13,19 @@ import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallba
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,6 +76,7 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+        new GuiDrawer();
         PlayerSortPriority.register();
 
         for(var module : getModules()) {
@@ -294,5 +302,27 @@ public class FireClientside implements ClientModInitializer {
 
     public static KeybindManager getKeybindManager() {
         return keybindManager;
+    }
+
+    static class GuiDrawer implements HudLayerRegistrationCallback {
+
+        public GuiDrawer() {
+            HudLayerRegistrationCallback.EVENT.register(this);
+        }
+
+        @Override
+        public void register(LayeredDrawerWrapper layeredDrawer) {
+            layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, "hud"), this::draw);
+        }
+
+        public void draw(DrawContext context, RenderTickCounter ticks) {
+            for(var module : FireClientside.getModules()) {
+                if(!module.getData().isGuiElement()) {
+                    continue;
+                }
+
+                module.draw(context, ticks);
+            }
+        }
     }
 }

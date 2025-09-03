@@ -34,7 +34,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ModuleBase implements HudLayerRegistrationCallback {
+public abstract class ModuleBase {
 
     private final ModuleData data;
     private boolean drawingOverwritten = false;
@@ -43,21 +43,12 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
 
     protected ModuleBase(ModuleData data) {
         this.data = data;
-
-        if(this.data.isGuiElement()) {
-            HudLayerRegistrationCallback.EVENT.register(this);
-        }
     }
 
     public void postLoad() { }
 
     public ModuleData getData() {
         return data;
-    }
-
-    @Override
-    public void register(LayeredDrawerWrapper layeredDrawer) {
-        layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
     }
 
     public void update(MinecraftClient client) { }
