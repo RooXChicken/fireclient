@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public class CoordsChatModule extends ModuleBase {
@@ -126,7 +127,13 @@ public class CoordsChatModule extends ModuleBase {
                 var playerJson = entries.getJSONObject(i);
 
                 var name = playerJson.optString("name", "");
-                var uuid = UUID.fromString(playerJson.optString("uuid", UUID.randomUUID().toString()));
+
+                UUID uuid = null;
+                var uuidString = playerJson.optString("uuid");
+                if(uuidString != null && !uuidString.isEmpty()) {
+                    uuid = UUID.fromString(uuidString);
+                }
+
                 var enabled = playerJson.optBoolean("enabled", true);
 
                 var playerEntry = new PlayerEntry(name, uuid, enabled);
@@ -150,7 +157,10 @@ public class CoordsChatModule extends ModuleBase {
                 var playerJson = new JSONObject();
 
                 playerJson.put("name", player.getName());
-                playerJson.put("uuid", player.getUUID().toString());
+                if(player.getUUID() != null) {
+                    playerJson.put("uuid", player.getUUID().toString());
+                }
+
                 playerJson.put("enabled", player.isEnabled());
 
                 entries.put(playerJson);
@@ -184,14 +194,23 @@ public class CoordsChatModule extends ModuleBase {
 
         widgets.add(playerInputField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addPlayerButtonPressed(playerInputField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addPlayerButtonPressed(playerInputField, false))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
             .build());
 
+        var online = getOnlinePlayers().stream().map((name) -> name.toLowerCase()).collect(Collectors.toSet());
+
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var player : getPlayers()) {
             var entryWidgets = new ArrayList<ClickableWidget>();
+
+            if(player.getUUID() == null) {
+                if(online.contains(player.getName().toLowerCase())) {
+                    var profile = getProfile(player.getName());
+                    player.setUUID(profile.getId());
+                }
+            }
 
             var head = new PlayerHeadWidget(player.getName(), player.getUUID(), base.width/2 - 140, 2);
             entryWidgets.add(head);
@@ -276,7 +295,7 @@ public class CoordsChatModule extends ModuleBase {
             var check = text.substring(text.length()-1);
             if(" ,|".contains(check)) {
                 widget.setText(text.substring(0, text.length()-1));
-                addPlayerButtonPressed(widget);
+                addPlayerButtonPressed(widget, true);
                 return;
             }
         }
@@ -316,13 +335,13 @@ public class CoordsChatModule extends ModuleBase {
         return playerName.substring(input.length());
     }
 
-    private void addPlayerButtonPressed(TextFieldWidget text) {
+    private void addPlayerButtonPressed(TextFieldWidget text, boolean suggest) {
         var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
         if(suggestion == null) {
             suggestion = "";
         }
 
-        var playerName = RooHelper.filterPlayerInput(text.getText()) + suggestion;
+        var playerName = RooHelper.filterPlayerInput(text.getText()) + ((suggest) ? suggestion : "");
 
         if(playerName.isEmpty()) {
             return;
@@ -338,11 +357,18 @@ public class CoordsChatModule extends ModuleBase {
         }
 
         var profile = getProfile(playerName);
+        var name = "";
+        UUID id = null;
+        
         if(profile == null) {
-            return;
+            name = playerName;
+        }
+        else {
+            name = profile.getName();
+            id = profile.getId();
         }
 
-        getPlayers().add(new PlayerEntry(profile.getName(), profile.getId(), true));
+        getPlayers().add(new PlayerEntry(name, id, true));
         text.setSuggestion("");
         
         reloadScreen();
@@ -370,11 +396,13 @@ public class CoordsChatModule extends ModuleBase {
     static class PlayerEntry {
 
         private final String name;
-        private final UUID uuid;
+
+        @Nullable
+        private UUID uuid;
 
         private boolean enabled;
 
-        public PlayerEntry(String name, UUID uuid, boolean enabled) {
+        public PlayerEntry(String name, @Nullable UUID uuid, boolean enabled) {
             this.name = name;
             this.uuid = uuid;
 
@@ -385,8 +413,13 @@ public class CoordsChatModule extends ModuleBase {
             return name;
         }
 
+        @Nullable
         public UUID getUUID() {
             return uuid;
+        }
+
+        public void setUUID(@Nullable UUID uuid) {
+            this.uuid = uuid;
         }
 
         public boolean isEnabled() {
