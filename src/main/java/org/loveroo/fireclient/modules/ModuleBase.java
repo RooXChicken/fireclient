@@ -43,10 +43,6 @@ public abstract class ModuleBase {
 
     protected ModuleBase(ModuleData data) {
         this.data = data;
-
-        if(this.data.isGuiElement()) {
-            HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, Identifier.of(FireClient.MOD_ID, getData().getId()), this::draw);
-        }
     }
 
     public void postLoad() { }
