@@ -60,7 +60,18 @@
   "fireclient.module.coordinates.windowed_mode.tooltip": "Shows a separate window for coordinates. Useful for streaming/screenshares",
 
   "fireclient.module.coords_chat.name": "Coords Chat",
-  "fireclient.module.coords_chat.description": "Sends your coordinates to everybody online (blank) or the selected players when pressing the keybind. (names split by space  , comma , , or pipe | )",
+  "fireclient.module.coords_chat.description": "Sends your coordinates to the selected players when pressing the keybind",
+
+  "fireclient.module.coords_chat.toggle_player.tooltip": "Toggle \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.name": "+",
+  "fireclient.module.coords_chat.add_player.tooltip": "Add player",
+
+  "fireclient.module.coords_chat.remove_player.name": "-",
+  "fireclient.module.coords_chat.remove_player.tooltip": "Remove \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.failure.title": "Failed to add player",
+  "fireclient.module.coords_chat.add_player.already_exists.contents": "Player already in list",
 
   "fireclient.module.death_info.name": "Death Info",
   "fireclient.module.death_info.description": "Shows your death location in the screen and in chat",
