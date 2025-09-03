@@ -11,8 +11,6 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -194,9 +192,9 @@ public class CoordsChatModule extends ModuleBase {
 
         widgets.add(playerInputField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addPlayerButtonPressed(playerInputField, false))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.coords_chat.add_player.name"), (button) -> addPlayerButtonPressed(playerInputField, false))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.coords_chat.add_player.tooltip")))
             .build());
 
         var online = getOnlinePlayers().stream().map((name) -> name.toLowerCase()).collect(Collectors.toSet());
@@ -224,12 +222,12 @@ public class CoordsChatModule extends ModuleBase {
                 .getValue(player::isEnabled)
                 .setValue(player::setEnabled)
                 .dimensions(base.width/2 + 90, 0, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", player.getName())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coords_chat.toggle_player.tooltip", player.getName())))
                 .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(player))
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.coords_chat.remove_player.name").withColor(0xD63C3C), (button) -> removeplayer(player))
                 .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", player.getName())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.coords_chat.remove_player.tooltip", player.getName())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
@@ -349,8 +347,8 @@ public class CoordsChatModule extends ModuleBase {
 
         if(getPlayers().stream().anyMatch((entry -> entry.getName().equalsIgnoreCase(playerName)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.coords_chat.add_player.failure.title"),
+                Text.translatable("fireclient.module.coords_chat.add_player.already_exists.contents")
             );
 
             return;
@@ -374,7 +372,7 @@ public class CoordsChatModule extends ModuleBase {
         reloadScreen();
     }
 
-    private void removeSound(PlayerEntry entry) {
+    private void removeplayer(PlayerEntry entry) {
         getPlayers().remove(entry);
         reloadScreen();
     }
