@@ -48,7 +48,7 @@ public class BigItemsModule extends ModuleBase {
     private TextFieldWidget itemField;
 
     public BigItemsModule() {
-        super(new ModuleData("big_items", "\uD83C\uDF1F", color));
+        super(new ModuleData("big_items", "+", color));
 
         getData().setGuiElement(false);
 
