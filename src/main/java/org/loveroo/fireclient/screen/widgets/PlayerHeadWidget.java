@@ -1,0 +1,59 @@
+package org.loveroo.fireclient.screen.widgets;
+
+import java.util.Optional;
+import java.util.UUID;
+
+import org.loveroo.fireclient.FireClient;
+
+import com.mojang.authlib.GameProfile;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.PlayerSkinDrawer;
+import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
+import net.minecraft.client.gui.screen.narration.NarrationPart;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.texture.PlayerSkinProvider;
+import net.minecraft.client.util.SkinTextures;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+public class PlayerHeadWidget extends ClickableWidget {
+
+    private final String playerName;
+    private Identifier texture = Identifier.ofVanilla("textures/entity/player/wide/steve.png");
+
+    public PlayerHeadWidget(String name, UUID uuid, int x, int y) {
+        super(x, y, 16, 16, Text.literal(name));
+        this.playerName = name;
+
+        var client = MinecraftClient.getInstance();
+        var session = client.getSessionService();
+        var skinProvider = client.getSkinProvider();
+
+        var profile = session.fetchProfile(uuid, false).profile();
+        if(profile == null) {
+            return;
+        }
+
+        skinProvider.fetchSkinTextures(profile).thenAccept((head) -> {
+            if(!head.isPresent()) {
+                return;
+            }
+
+            texture = head.get().texture();
+        });
+    }
+
+    @Override
+    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+        PlayerSkinDrawer.draw(context, texture, getX(), getY(), 12, true, false, 0xFFFFFFFF);
+    }
+
+    @Override
+    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+        builder.put(NarrationPart.TITLE, playerName);
+    }
+}

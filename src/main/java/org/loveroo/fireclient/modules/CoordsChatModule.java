@@ -1,36 +1,61 @@
 package org.loveroo.fireclient.modules;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.lwjgl.glfw.GLFW;
+import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.PlayerHeadWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
+
+import com.mojang.authlib.GameProfile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class CoordsChatModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0x89ECF0);
 
-    private final HashMap<String, String> playerList = new HashMap<>();
+    private final HashMap<String, ArrayList<PlayerEntry>> playerEntries = new HashMap<>();
 
-    private final String splitRegex = "[ ,|]+";
-    private String lastSuggestion = "";
+    private static double scrollPos = 0.0;
+    private final int playersWidgetWidth = 300;
+    private final int playersWidgetHeight = 100;
 
     @Nullable
-    private TextFieldWidget playerField;
+    private ScrollableWidget scroll;
+
+    @Nullable
+    private TextFieldWidget playerInputField;
 
     public CoordsChatModule() {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8", color));
@@ -38,19 +63,15 @@ public class CoordsChatModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_coords_chat",
-                Text.translatable("fireclient.keybind.generic.use.name"),
-                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
-                true, null,
-                this::useKey, null);
+            Text.translatable("fireclient.keybind.generic.use.name"),
+            Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+            true, null,
+            this::useKey, null);
 
         FireClientside.getKeybindManager().registerKeybind(useBind);
     }
 
     private void useKey() {
-        sendMessages();
-    }
-
-    private void sendMessages() {
         if(!getData().isEnabled()) {
             return;
         }
@@ -67,29 +88,18 @@ public class CoordsChatModule extends ModuleBase {
 
         var coords = coordsBuilder.toString();
 
-        if(getCurrent().isEmpty()) {
-            RooHelper.sendChatMessage(coords);
-        }
-        else {
-            var handler = RooHelper.getNetworkHandler();
-            var players = getPlayerList();
+        var players = getPlayers();
 
-            for(var player : players) {
-                var found = false;
-
-                for(var entry : handler.getPlayerList()) {
-                    if(entry.getProfile().getName().equalsIgnoreCase(player)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if(!found) {
-                    continue;
-                }
-
-                RooHelper.sendChatCommand("msg " + player.trim() + " " + coords);
+        for(var player : players) {
+            if(!player.isEnabled()) {
+                continue;
             }
+
+            if(getOnlinePlayers().stream().noneMatch((playerName) -> player.getName().equalsIgnoreCase(playerName))) {
+                continue;
+            }
+
+            RooHelper.sendChatCommand("msg " + player.getName().trim() + " " + coords);
         }
     }
 
@@ -97,17 +107,33 @@ public class CoordsChatModule extends ModuleBase {
     public void loadJson(JSONObject json) throws Exception {
         super.loadJson(json);
 
-        var list = json.optJSONObject("player_list");
-        if(list == null) {
-            list = new JSONObject();
+        var serverList = json.optJSONObject("entries");
+        if(serverList == null) {
+            serverList = new JSONObject();
         }
 
-        var iter = list.keys();
+        var iter = serverList.keys();
         while(iter.hasNext()) {
-            var entry = (String)iter.next();
-            var value = list.optString(entry, "");
+            var server = (String) iter.next();
 
-            playerList.put(entry, value);
+            var entries = serverList.optJSONArray(server);
+            if(entries == null) {
+                entries = new JSONArray();
+            }
+
+            var loadedPlayers = new ArrayList<PlayerEntry>();
+            for(var i = 0; i < entries.length(); i++) {
+                var playerJson = entries.getJSONObject(i);
+
+                var name = playerJson.optString("name", "");
+                var uuid = UUID.fromString(playerJson.optString("uuid", UUID.randomUUID().toString()));
+                var enabled = playerJson.optBoolean("enabled", true);
+
+                var playerEntry = new PlayerEntry(name, uuid, enabled);
+                loadedPlayers.add(playerEntry);
+            }
+
+            playerEntries.put(server, loadedPlayers);
         }
     }
 
@@ -115,14 +141,33 @@ public class CoordsChatModule extends ModuleBase {
     public JSONObject saveJson() throws Exception {
         var json = super.saveJson();
 
-        var list = new JSONObject();
-        for(var entry : playerList.entrySet()) {
-            list.put(entry.getKey(), entry.getValue().replaceAll(splitRegex, ","));
+        var serverList = new JSONObject();
+
+        for(var entry : playerEntries.entrySet()) {
+            var entries = new JSONArray();
+
+            for(var player : entry.getValue()) {
+                var playerJson = new JSONObject();
+
+                playerJson.put("name", player.getName());
+                playerJson.put("uuid", player.getUUID().toString());
+                playerJson.put("enabled", player.isEnabled());
+
+                entries.put(playerJson);
+            }
+
+            serverList.put(entry.getKey(), entries);
         }
 
-        json.put("player_list", list);
+        json.put("entries", serverList);
 
         return json;
+    }
+
+    @Override
+    public void moduleConfigPressed(ButtonWidget button) {
+        scrollPos = 0.0;
+        super.moduleConfigPressed(button);
     }
 
     @Override
@@ -131,20 +176,57 @@ public class CoordsChatModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_coords_chat").getRebindButton(5, base.height - 25, 120,20));
-        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
+        widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        playerField = new TextFieldWidget(client.textRenderer, base.width/2 - 150, base.height/2 + 20, 300, 15, Text.of(""));
-        playerField.setMaxLength(512);
+        playerInputField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, playersWidgetWidth - 50, 15, Text.of(""));
+        playerInputField.setMaxLength(24);
+        playerInputField.setChangedListener((text) -> playerInputFieldChanged(playerInputField, text));
 
-        playerField.setText(getCurrent());
-        playerField.setChangedListener(this::playerFieldChanged);
+        widgets.add(playerInputField);
 
-        widgets.add(playerField);
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addPlayerButtonPressed(playerInputField))
+            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .build());
+
+        var entries = new ArrayList<ScrollableWidget.ElementEntry>();
+        for(var player : getPlayers()) {
+            var entryWidgets = new ArrayList<ClickableWidget>();
+
+            var head = new PlayerHeadWidget(player.getName(), player.getUUID(), base.width/2 - 140, 2);
+            entryWidgets.add(head);
+
+            var text = new TextWidget(Text.literal(player.getName()), base.getTextRenderer());
+            text.setPosition(base.width/2 - 120, 4);
+
+            entryWidgets.add(text);
+
+            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
+                .getValue(player::isEnabled)
+                .setValue(player::setEnabled)
+                .dimensions(base.width/2 + 90, 0, 20, 15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", player.getName())))
+                .build());
+
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(player))
+                .dimensions(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", player.getName())))
+                .build());
+
+            entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
+        }
+
+        scroll = new ScrollableWidget(base, playersWidgetWidth, playersWidgetHeight, 0, 20, entries);
+        scroll.setScrollY(scrollPos);
+        scroll.setPosition(base.width/2 - (playersWidgetWidth/2), base.height/2 - 10);
+
+        widgets.add(scroll);
         return widgets;
     }
 
-    private String getCurrent() {
-        return playerList.getOrDefault(getIp(), "");
+    @Override
+    public void openScreen(Screen base) {
+        base.setFocused(playerInputField);
     }
 
     private String getIp() {
@@ -157,83 +239,162 @@ public class CoordsChatModule extends ModuleBase {
         }
     }
 
-    public void playerFieldChanged(String text) {
-        var playerListEntry = getCurrent();
+    private ArrayList<PlayerEntry> getPlayers() {
+        var ip = getIp();
+        if(!playerEntries.containsKey(ip)) {
+            playerEntries.put(ip, new ArrayList<>());
+        }
 
-        if(!lastSuggestion.isEmpty() && text.matches(".*" + splitRegex)) {
-            playerListEntry = playerListEntry + lastSuggestion + text.substring(text.length()-1);
-            playerList.put(getIp(), playerListEntry);
+        return playerEntries.getOrDefault(getIp(), new ArrayList<>());
+    }
 
-            lastSuggestion = "";
-            playerField.setText(playerListEntry);
+    private Set<String> getOnlinePlayers() {
+        var ownName = MinecraftClient.getInstance().player.getGameProfile().getName();
+        return RooHelper.getNetworkHandler().getPlayerList().stream()
+            .map((entry) -> {
+                return entry.getProfile().getName();
+            })
+            .filter((name) -> !ownName.equalsIgnoreCase(name))
+            .collect(Collectors.toUnmodifiableSet());
+    }
+
+    @Nullable
+    private GameProfile getProfile(String playerName) {
+        var ids = RooHelper.getNetworkHandler().getPlayerList().stream()
+            .filter((entry) -> entry.getProfile().getName().equalsIgnoreCase(playerName))
+            .toList();
+        
+        if(ids.isEmpty()) {
+            return null;
+        }
+        
+        return ids.getFirst().getProfile();
+    }
+
+    private void playerInputFieldChanged(TextFieldWidget widget, String text) {
+        if(!text.isEmpty()) {
+            var check = text.substring(text.length()-1);
+            if(" ,|".contains(check)) {
+                widget.setText(text.substring(0, text.length()-1));
+                addPlayerButtonPressed(widget);
+                return;
+            }
+        }
+
+        widget.setSuggestion(getSuggestion(text));
+    }
+
+    private String getSuggestion(String text) {
+        if(text.isEmpty()) {
+            return "";
+        }
+
+        var input = RooHelper.filterPlayerInput(text);
+
+        if(getPlayers().stream().noneMatch((player) -> { return player.getName().equalsIgnoreCase(input); })) {
+            if(getOnlinePlayers().contains(input)) {
+                return "";
+            }
+        }
+
+        var filteredPlayers = getOnlinePlayers().stream()
+            .filter((player) -> {
+                var startsWith = player.toLowerCase().startsWith(input.toLowerCase());
+                if(!startsWith) {
+                    return false;
+                }
+
+                return getPlayers().stream().noneMatch((entry -> entry.getName().equalsIgnoreCase(player)));
+            })
+            .toList();
+
+        if(filteredPlayers.isEmpty()) {
+            return "";
+        }
+
+        var playerName = filteredPlayers.getFirst();
+        return playerName.substring(input.length());
+    }
+
+    private void addPlayerButtonPressed(TextFieldWidget text) {
+        var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
+        if(suggestion == null) {
+            suggestion = "";
+        }
+
+        var playerName = RooHelper.filterPlayerInput(text.getText()) + suggestion;
+
+        if(playerName.isEmpty()) {
             return;
         }
 
-        playerListEntry = text;
-        playerList.put(getIp(), playerListEntry);
+        if(getPlayers().stream().anyMatch((entry -> entry.getName().equalsIgnoreCase(playerName)))) {
+            RooHelper.sendNotification(
+                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
+                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+            );
 
-        var list = getPlayerList();
-        var suggestion = "";
-
-        if(playerField != null) {
-            String currentEntry = "";
-
-            if(list.length > 0) {
-                currentEntry = list[list.length-1].toLowerCase();
-            }
-
-            suggestion = "";
-
-            for(var entry : filterProfiles(list)) {
-                if(entry.toLowerCase().startsWith(currentEntry)) {
-                    suggestion = entry.substring(currentEntry.length());
-                }
-            }
-
-            playerField.setSuggestion(suggestion);
+            return;
         }
 
-        lastSuggestion = suggestion;
+        var profile = getProfile(playerName);
+        if(profile == null) {
+            return;
+        }
+
+        getPlayers().add(new PlayerEntry(profile.getName(), profile.getId(), true));
+        text.setSuggestion("");
+        
+        reloadScreen();
     }
 
-    private List<String> filterProfiles(String[] list) {
-        var names = new ArrayList<String>();
-
-        var client = MinecraftClient.getInstance();
-        var handler = RooHelper.getNetworkHandler();
-
-        if(handler == null) {
-            return names;
-        }
-
-        for(var entry : handler.getPlayerList()) {
-            if(entry.getProfile().getName().equalsIgnoreCase(client.player.getGameProfile().getName())) {
-                continue;
-            }
-
-            var shown = false;
-
-            for(var name : list) {
-                if(name.equalsIgnoreCase(entry.getProfile().getName())) {
-                    shown = true;
-                    break;
-                }
-            }
-
-            if(!shown) {
-                names.add(entry.getProfile().getName());
-            }
-        }
-
-        return names;
+    private void removeSound(PlayerEntry entry) {
+        getPlayers().remove(entry);
+        reloadScreen();
     }
 
-    private String[] getPlayerList() {
-        return getCurrent().split(splitRegex);
+    @Override
+    public void drawScreen(Screen base, DrawContext context, float delta) {
+        if(scroll != null) {
+            scrollPos = scroll.getScrollY();
+        }
+
+        drawScreenHeader(context, base.width/2, base.height/2 - 70);
     }
 
     @Override
     public void closeScreen(Screen screen) {
         FireClientside.saveConfig();
+    }
+
+    static class PlayerEntry {
+
+        private final String name;
+        private final UUID uuid;
+
+        private boolean enabled;
+
+        public PlayerEntry(String name, UUID uuid, boolean enabled) {
+            this.name = name;
+            this.uuid = uuid;
+
+            this.enabled = enabled;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public UUID getUUID() {
+            return uuid;
+        }
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 }
