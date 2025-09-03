@@ -261,7 +261,7 @@ public abstract class ModuleBase implements HudLayerRegistrationCallback {
             .getValue(getData()::isEnabled)
             .setValue(getData()::setEnabled)
             .position(x, y)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.toggle_enabled")))
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
             .build();
     }
 

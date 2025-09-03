@@ -51,8 +51,10 @@ public class ConfigScreenBase extends Screen {
 
     @Override
     public void removed() {
-        escapePressed();
+        onExit();
     }
+
+    protected void onExit() { }
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {

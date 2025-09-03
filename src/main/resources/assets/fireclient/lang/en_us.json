@@ -249,6 +249,9 @@
   "fireclient.module.render_world.name": "Render World",
   "fireclient.module.render_world.description": "[CHEAT] Allows the toggling of the world rendering",
 
+  "fireclient.module.saturation_display.name": "Saturation Display",
+  "fireclient.module.saturation_display.description": "Shows your saturation",
+
   "fireclient.module.scroll_click.name": "Scroll Click",
   "fireclient.module.scroll_click.description": "Allows you to simulate a click with every scroll",
 

@@ -63,12 +63,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
     }
 
     @Override
-    public void close() {
-        closeModule();
-        super.close();
-    }
-
-    private void closeModule() {
+    protected void onExit() {
         for(var module : modules) {
             module.setDrawingOverwritten(false);
             module.closeScreen(this);
@@ -93,8 +88,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Override
     protected boolean escapePressed() {
-        closeModule();
-
+        onExit();
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
         return true;
     }
@@ -107,7 +101,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
             }
         }
 
-        closeModule();
+        onExit();
         super.exitOnInventory();
     }
 
