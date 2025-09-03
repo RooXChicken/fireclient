@@ -50,6 +50,11 @@ public class ConfigScreenBase extends Screen {
     protected void handleClick() { }
 
     @Override
+    public void removed() {
+        escapePressed();
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
             exitOnInventory();
