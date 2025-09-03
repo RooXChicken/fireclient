@@ -33,10 +33,16 @@ public class PlayerHeadWidget extends ClickableWidget {
         var session = client.getSessionService();
         var skinProvider = client.getSkinProvider();
 
-        var profile = session.fetchProfile(uuid, false).profile();
-        if(profile == null) {
+        if(uuid == null) {
             return;
         }
+
+        var profileResult = session.fetchProfile(uuid, false);
+        if(profileResult == null || profileResult.profile() == null) {
+            return;
+        }
+
+        var profile = profileResult.profile();
 
         skinProvider.fetchSkinTextures(profile).thenAccept((head) -> {
             if(!head.isPresent()) {
