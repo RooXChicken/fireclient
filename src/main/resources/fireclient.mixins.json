@@ -57,6 +57,7 @@
     "modules.signs.DisableSignGuiMixin",
     "modules.signs.DisableSignRendering",
     "modules.subtitles.SubtitlesMixin",
+    "modules.tps.UpdateTpsMixin",
     "settings.AddCachedEntityMixin",
     "settings.AllowReloadInputsClientMixin",
     "settings.AllowReloadInputsKeyboardMixin",

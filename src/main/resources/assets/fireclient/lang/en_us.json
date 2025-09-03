@@ -290,6 +290,9 @@
   "fireclient.module.subtitles.visible.name": "Visible",
   "fireclient.module.subtitles.visible.tooltip": "Toggles the subtitles' visibility",
 
+  "fireclient.module.tps_display.name": "TPS Display",
+  "fireclient.module.tps_display.description": "Shows the estimated server Ticks Per Second",
+
   "fireclient.screen.generic.header": "FireClient Config",
 
   "fireclient.screen.main_config.title": "FireClient Main Config",
