@@ -21,11 +21,14 @@ public class RooHelper {
 
         var text = MutableText.of(new PlainTextContent.Literal(""));
 
-        for(var i = 0; i < msg.length(); i++) {
+        for(var i = 0; i < msg.length();) {
             var progress = ((double)i / msg.length());
             var style = Style.EMPTY.withColor(color1.blend(color2, progress).toInt());
 
-            text.append(MutableText.of(new PlainTextContent.Literal(msg.charAt(i) + "")).setStyle(style));
+            var codePont = msg.codePointAt(i);
+            text.append(MutableText.of(new PlainTextContent.Literal(Character.toString(codePont))).setStyle(style));
+
+            i += Character.charCount(codePont);
         }
 
         return text;
