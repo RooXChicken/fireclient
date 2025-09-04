@@ -166,8 +166,6 @@
   "fireclient.module.kit.load.waiting_gmc.title": "Carregar \"%1$s\"...",
   "fireclient.module.kit.load.waiting_gmc.contents": "Esperar pelo modo Criativo",
 
-  "fireclient.module.kit.create.failure.title": "Falha ao criar \"%1$s\"",
-
   "fireclient.module.kit.preview.failure.title": "Falha na Visualisação de \"%1$s\"",
 
   "fireclient.module.kit.create_clipboard.success.title": "Colado com sucesso \"%1$s\"",
@@ -208,6 +206,8 @@
   "fireclient.module.kit.download.failure.generic": "Falha ao download de \"%1$s\"",
   "fireclient.module.kit.download.failure.no_kit": "Kit não existe",
 
+  "fireclient.module.kit.update.success": "Successfully updated kits",
+
   "fireclient.screen.edit_kit.title": "Editar \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Visualisar \"%1$s\"",
 
@@ -245,9 +245,11 @@
   "fireclient.module.nametag.show_own.tooltip": "Mostra o teu própro crachá",
   "fireclient.module.nametag.text_shadow.name": "Sombra do texto",
   "fireclient.module.nametag.text_shadow.tooltip": "Dispõe uma sombra no texto do teu crachá",
-
- "fireclient.module.nametag.unlimit_nametag.name": "Abaixo do nome Ilimitado",
+  "fireclient.module.nametag.unlimit_nametag.name": "Abaixo do nome Ilimitado",
   "fireclient.module.nametag.unlimit_nametag.tooltip": "Remove o limite de distância do placar abaixo do nome",
+
+  "fireclient.module.particles.name": "Partículas",
+  "fireclient.module.particles.description": "Permite que certas partículas sejam desligadas",
 
   "fireclient.module.perspective.name": "Perspetiva",
   "fireclient.module.perspective.description": "Permite olhar em redor em terceira pessoa sem mover a cabeça do seu jogador",
