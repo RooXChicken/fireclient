@@ -59,6 +59,7 @@ public class CoordsChatModule extends ModuleBase {
     public CoordsChatModule() {
         super(new ModuleData("coords_chat", "\uD83D\uDCE8", color));
 
+        getData().setEnabled(true);
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_coords_chat",

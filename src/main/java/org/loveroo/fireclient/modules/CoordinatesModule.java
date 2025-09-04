@@ -72,7 +72,7 @@ public class CoordinatesModule extends ModuleBase {
         getData().setWidth(110);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(14, 360);
+        getData().setDefaultPosY(13, 360);
 
         try {
             System.setProperty("awt.useSystemAAFontSettings", "off");
@@ -235,19 +235,19 @@ public class CoordinatesModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
-        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
+        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
         widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.other_dimension.name"))
             .getValue(() -> { return showOther; })
             .setValue((value) -> { showOther = value; })
-            .position(base.width/2 - 60,base.height / 2 + 10)
+            .position(base.width/2 - 60,base.height / 2 + 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
             .build());
 
         windowModeButton = new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
             .getValue(() -> { return windowMode; })
             .setValue(this::windowModeChanged)
-            .position(base.width/2 - 60,base.height / 2 + 40)
+            .position(base.width/2 - 60,base.height / 2 + 50)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
             .build();
 

@@ -38,14 +38,14 @@ public class SignModule extends ModuleBase {
         widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_gui.name"))
             .getValue(() -> { return disableGui; })
             .setValue((value) -> { disableGui = value; })
-            .position(base.width/2 - 60, base.height/2 - 20)
+            .position(base.width/2 - 60, base.height/2 - 10)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_gui.description")))
             .build());
 
         widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_rendering.name"))
             .getValue(() -> { return renderingDisabled; })
             .setValue((value) -> { renderingDisabled = value; })
-            .position(base.width/2 - 60, base.height/2 + 10)
+            .position(base.width/2 - 60, base.height/2 + 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_rendering.description")))
             .build());
 

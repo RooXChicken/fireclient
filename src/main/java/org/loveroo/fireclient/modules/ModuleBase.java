@@ -117,13 +117,17 @@ public abstract class ModuleBase {
     }
 
     protected int[] getPoints() {
-        var x1 = data.getPosX() - padding;
-        var x2 = (int)Math.round(data.getPosX() + (data.getWidth() * data.getScale())) + padding;
+        var x1 = data.getPosX() - getPadding();
+        var x2 = data.getPosX() + (data.getWidth() * data.getScale()) + getPadding() - 1;
 
-        var y1 = data.getPosY() - padding;
-        var y2 = (int)Math.round(data.getPosY() + (data.getHeight() * data.getScale())) + padding;
+        var y1 = data.getPosY() - getPadding();
+        var y2 = data.getPosY() + (data.getHeight() * data.getScale()) + getPadding() - 1;
 
-        return new int[] { x1, x2, y1, y2 };
+        return new int[] { (int)Math.round(x1), (int)Math.round(x2), (int)Math.round(y1), (int)Math.round(y2) };
+    }
+
+    protected double getPadding() {
+        return padding;
     }
 
     protected void transform(MatrixStack matrix) {

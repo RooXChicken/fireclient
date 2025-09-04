@@ -22,6 +22,11 @@
   "fireclient.module.armor_display.description": "Δείχνει την ανθεκτικότητα και τον χρόνο αναμονής της πανοπλίας σας",
   "fireclient.module.armor_display.lock_button.name": "Κλειδωμένο",
   "fireclient.module.armor_display.lock_button.tooltip": "Κλειδώνει την θέση στην γραμμή εργαλειών",
+  "fireclient.module.armor_display.mode_toggle.name": "Τρόπος: %1$s",
+  "fireclient.module.armor_display.mode_toggle.tooltip": "Αλλάζει το στυλ εμφάνισης",
+
+  "fireclient.module.armor_display.mode.text": "Κείμενο",
+  "fireclient.module.armor_display.mode.bars": "Μπάρες",
 
   "fireclient.module.auto_message.name": "Αυτόματο Μήνυμα",
   "fireclient.module.auto_message.description": "Εισάγει αυτόματα την τελευταία σας '/msg' ή ισοδύναμη εντολή, ώστε να μπορείτε να στείλετε ξανά μήνυμα γρήγορα σε κάποιον πατώντας ένα πλήκτρο της επιλογής σας",
@@ -205,6 +210,8 @@
   "fireclient.module.kit.download.success": "Η λήψη του \"%1$s\" ολοκληρώθηκε με επιτυχία ",
   "fireclient.module.kit.download.failure.generic": "Η λήψη του \"%1$s\" απέτυχε",
   "fireclient.module.kit.download.failure.no_kit": "Το κιτ δεν υπάρχει",
+
+  "fireclient.module.kit.update.success": "Τα κιτ ενημερώθηκαν με επιτυχία",
 
   "fireclient.screen.edit_kit.title": "Επεξεργαστείτε το \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Δείτε προεπισκόπηση του \"%1$s\"",
