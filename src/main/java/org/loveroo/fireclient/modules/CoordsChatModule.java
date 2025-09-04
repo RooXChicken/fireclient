@@ -247,23 +247,13 @@ public class CoordsChatModule extends ModuleBase {
         base.setFocused(playerInputField);
     }
 
-    private String getIp() {
-        var client = MinecraftClient.getInstance();
-        if(client.getCurrentServerEntry() != null) {
-            return client.getCurrentServerEntry().address;
-        }
-        else {
-            return "__local";
-        }
-    }
-
     private ArrayList<PlayerEntry> getPlayers() {
-        var ip = getIp();
+        var ip = RooHelper.getIp();
         if(!playerEntries.containsKey(ip)) {
             playerEntries.put(ip, new ArrayList<>());
         }
 
-        return playerEntries.getOrDefault(getIp(), new ArrayList<>());
+        return playerEntries.getOrDefault(RooHelper.getIp(), new ArrayList<>());
     }
 
     private Set<String> getOnlinePlayers() {

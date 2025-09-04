@@ -86,4 +86,25 @@ public class RooHelper {
     public static String filterPlayerInput(String input) {
         return input.replaceAll("[^a-zA-Z0-9_]", "");
     }
+
+    public static String getIp() {
+        var client = MinecraftClient.getInstance();
+        if(client.getCurrentServerEntry() != null) {
+            return client.getCurrentServerEntry().address;
+        }
+        else {
+            return "__local";
+        }
+    }
+
+    public static String getServerBrand() {
+        var client = MinecraftClient.getInstance();
+        var handler = getNetworkHandler();
+        if(handler == null || client.getServer() != null) {
+            return "Integrated Server";
+        }
+        else {
+            return handler.getBrand();
+        }
+    }
 }
