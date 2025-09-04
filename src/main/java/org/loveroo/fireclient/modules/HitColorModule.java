@@ -79,9 +79,11 @@ public class HitColorModule extends ModuleBase {
         super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
 
         var client = MinecraftClient.getInstance();
-        if(client.player != null) {
-            client.player.hurtTime = 11;
+        if(client.player == null) {
+            return;
         }
+        
+        client.player.hurtTime = 11;
 
         int i = base.width/4;
         int j = base.height/4;

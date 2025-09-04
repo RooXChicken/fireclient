@@ -57,15 +57,25 @@ public class EntityCountModule extends ModuleBase {
             return;
         }
 
-        transform(context.getMatrices());
-
         var client = MinecraftClient.getInstance();
+        if(client.worldRenderer == null) {
+            return;
+        }
+        
         var text = client.textRenderer;
 
         var accessor = (WorldRendererAccessor)client.worldRenderer;
-        var msg = "E: " + accessor.getRenderedEntitiesCount() + "/" + accessor.getWorld().getRegularEntityCount();
-
+        if(accessor.getWorld() == null) {
+            return;
+        }
+        
+        var drawnCount = accessor.getRenderedEntitiesCount();
+        var total = accessor.getWorld().getRegularEntityCount();
+        var msg = "E: " + drawnCount + "/" + total;
+        
         var entityText = RooHelper.gradientText(msg, color1, color2);
+        
+        transform(context.getMatrices());
 
         getData().setWidth(text.getWidth(entityText));
 

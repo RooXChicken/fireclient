@@ -72,6 +72,10 @@ public class ConfigScreenBase extends Screen {
     }
 
     protected void exitOnInventory() {
+        if(client.player == null) {
+            return;
+        }
+        
         client.setScreen(new InventoryScreen(client.player));
     }
 

@@ -55,13 +55,17 @@ public class HealthDisplayModule extends ModuleBase {
         if(!canDraw()) {
             return;
         }
+        
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
 
         transform(context.getMatrices());
 
-        var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var health = (client.player != null) ? (client.player.getHealth() + client.player.getAbsorptionAmount()) : 20.0;
+        var health = client.player.getHealth() + client.player.getAbsorptionAmount();
         var msg = String.format("❤ %.2f", health);
         var healthText = RooHelper.gradientText(msg, color1, color2);
 
