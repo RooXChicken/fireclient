@@ -28,7 +28,7 @@ public class EntityCountModule extends ModuleBase {
         getData().setWidth(30);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(50, 360);
+        getData().setDefaultPosY(46, 360);
 
         getData().setVisible(false);
 

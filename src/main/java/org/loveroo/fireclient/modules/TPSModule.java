@@ -32,7 +32,7 @@ public class TPSModule extends ModuleBase {
         getData().setWidth(40);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(74, 360);
+        getData().setDefaultPosY(68, 360);
 
         var toggleBind = new Keybind("toggle_tps_display",
             Text.translatable("fireclient.keybind.generic.toggle.name"),

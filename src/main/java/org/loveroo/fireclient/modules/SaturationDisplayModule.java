@@ -27,7 +27,7 @@ public class SaturationDisplayModule extends ModuleBase {
         getData().setWidth(30);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(86, 360);
+        getData().setDefaultPosY(79, 360);
 
         getData().setVisible(false);
 

@@ -28,7 +28,7 @@ public class HighestBlockModule extends ModuleBase {
         getData().setWidth(30);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(62, 360);
+        getData().setDefaultPosY(57, 360);
 
         getData().setVisible(false);
 

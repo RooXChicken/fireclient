@@ -27,7 +27,7 @@ public class HealthDisplayModule extends ModuleBase {
         getData().setWidth(30);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(38, 360);
+        getData().setDefaultPosY(35, 360);
 
         getData().setVisible(false);
 

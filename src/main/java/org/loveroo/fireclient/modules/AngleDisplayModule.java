@@ -28,7 +28,7 @@ public class AngleDisplayModule extends ModuleBase {
         getData().setWidth(30);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(26, 360);
+        getData().setDefaultPosY(24, 360);
 
         getData().setVisible(false);
 
