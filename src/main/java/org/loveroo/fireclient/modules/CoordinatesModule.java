@@ -122,6 +122,11 @@ public class CoordinatesModule extends ModuleBase {
             return;
         }
 
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+
         transform(context.getMatrices());
 
         if(!showOther) {

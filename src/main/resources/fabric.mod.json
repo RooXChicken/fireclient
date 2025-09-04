@@ -19,6 +19,9 @@
     ],
     "main": [
       "org.loveroo.fireclient.FireClient"
+    ],
+    "modmenu": [
+      "org.loveroo.fireclient.client.FireClientModMenuImpl"
     ]
   },
   "accessWidener" : "fireclient.accesswidener",

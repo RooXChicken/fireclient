@@ -267,8 +267,19 @@ public class CoordsChatModule extends ModuleBase {
     }
 
     private Set<String> getOnlinePlayers() {
-        var ownName = MinecraftClient.getInstance().player.getGameProfile().getName();
-        return RooHelper.getNetworkHandler().getPlayerList().stream()
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return Set.of();
+        }
+
+        var ownName = client.player.getGameProfile().getName();
+
+        var network = RooHelper.getNetworkHandler();
+        if(network == null) {
+            return Set.of();
+        }
+
+        return network.getPlayerList().stream()
             .map((entry) -> {
                 return entry.getProfile().getName();
             })
@@ -278,7 +289,12 @@ public class CoordsChatModule extends ModuleBase {
 
     @Nullable
     private GameProfile getProfile(String playerName) {
-        var ids = RooHelper.getNetworkHandler().getPlayerList().stream()
+        var network = RooHelper.getNetworkHandler();
+        if(network == null) {
+            return null;
+        }
+
+        var ids = network.getPlayerList().stream()
             .filter((entry) -> entry.getProfile().getName().equalsIgnoreCase(playerName))
             .toList();
         

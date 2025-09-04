@@ -56,12 +56,16 @@ public class SaturationDisplayModule extends ModuleBase {
             return;
         }
 
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+
         transform(context.getMatrices());
 
-        var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var saturation = (client.player != null) ? (client.player.getHungerManager().getSaturationLevel()) : 20.0;
+        var saturation = client.player.getHungerManager().getSaturationLevel();
         var msg = String.format("🍖 %.2f", saturation);
         var saturationtext = RooHelper.gradientText(msg, color1, color2);
 
