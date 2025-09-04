@@ -60,7 +60,18 @@
   "fireclient.module.coordinates.windowed_mode.tooltip": "Εμφανίζει ξεχωριστό παράθυρο για τις συντεταγμένες. Χρήσιμο για ζωντανή μετάδοση/κοινή χρήση οθόνης",
 
   "fireclient.module.coords_chat.name": "Συντεταγμένες στην Συνομιλία",
-  "fireclient.module.coords_chat.description": "Στέλνει τις συντεταγμένες σας σε όλους όσους είναι συνδεδεμένοι (κενό) ή στους επιλεγμένους παίκτες όταν πατάτε το πλήκτρο της επιλογής σας. (ονόματα χωρισμένα με κενό , κόμμα , , ή κάθετο |)",
+  "fireclient.module.coords_chat.description": "Στέλνει τις συντεταγμένες σας στους επιλεγμένους παίκτες όταν πατάτε το πλήκτρο της επιλογής σας",
+
+  "fireclient.module.coords.chat.toggle_player.toolip": "Εναλλαγή του \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.name": "+",
+  "fireclient.module.coords_chat.add_player.tooltip": "Προσθήκη Παίκτη",
+
+  "fireclient.module.coords_chat.remove_player.name": "-",
+  "fireclient.module.coords_chat.remove_player.tooltip": "Αφαίρεση του \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.failure.title": "Αποτυχία προσθήκης παίκτη",
+  "fireclient.moduke.coords_chat.add_player.already_exists.contents": "Ο παίκτης είναι ήδη στη λίστα",
 
   "fireclient.module.death_info.name": "Πληροφορίες Θανάτου",
   "fireclient.module.death_info.description": "Δείχνει την τοποθεσία θανάτου σας στην οθόνη και στη συνομιλία",
@@ -246,6 +257,9 @@
 
   "fireclient.module.render_world.name": "Εμφάνιση Κόσμου",
   "fireclient.module.render_world.description": "[CHEAT] Επιτρέπει την εναλλαγή της εμφάνισης του κόσμου",
+  
+  "fireclient.module.saturation_display.name": "Εμφάνιση Κορεσμού",
+  "fireclient.module.saturation_display.description": "Δείχνει τον κορεσμό σας",
 
   "fireclient.module.scroll_click.name": "Κλικ με Κύλιση",
   "fireclient.module.scroll_click.description": "Επιτρέπει την προσομοίωση ενός κλικ με κάθε κύλιση",
@@ -287,6 +301,9 @@
 
   "fireclient.module.subtitles.visible.name": "Ορατοί",
   "fireclient.module.subtitles.visible.tooltip": "Εναλλαγή της ορατότητας των υποτίτλων",
+
+  "fireclient.module.tps_display.name": "Εμφάνιση TPS",
+  "fireclient.module.tps_display.description": "Δείχνει τα εκτιμώμενα Ticks Ανά Δευτερόλεπτο του διακομιστή",
 
   "fireclient.screen.generic.header": "Διαμόρφωση FireClient",
 
@@ -374,6 +391,12 @@
 
   "fireclient.settings.dont_hit_dead.name": "Δεν Χτυπάς Νεκρούς",
   "fireclient.settings.dont_hit_dead.description": "Αποτρέπει τις νεκρές οντότητες από το να μπλοκάρουν χτυπήματα σου",
+
+  "fireclient.settings.fix_sprint_swim.name": "Διόρθωση Τρεξίματος-Κολύμβησης",
+  "fireclient.settings.fix_sprint_swim.description": "Διορθώνει ένα πρόβλημα αποσυγχρονισμού μεταξύ πελάτη-διακομιστή, όπου μπορεί να κολλήσετε κατά την κολύμβηση",
+
+  "fireclient.settings.prioritize_players.name": "Προτεραιότητα Παικτών",
+  "fireclient.settings.prioritize_players.description": "Δίνει στους παίκτες προτεραιότητα στην αυτόματη συμπλήρωση εντολών όσο περισσότερες φορές χρησιμοποιούνται",
 
   "fireclient.keybind.generic.unbound_key.long": "Άδετος",
   "fireclient.keybind.generic.unbound_key.short": "N/A",

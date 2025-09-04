@@ -60,7 +60,18 @@
   "fireclient.module.coordinates.windowed_mode.tooltip": "Apresenta uma janela separada para coordenadas. Útil para streaming/partilha de ecrã",
 
   "fireclient.module.coords_chat.name": "Coordendas no Chat",
-  "fireclient.module.coords_chat.description": "Manda as coordenadas no chat (blank) ou os jogadores selecionados ao premir a tecla de atalho. (nomes separados por espaço, vírgula, ou pipe |)",
+  "fireclient.module.coords_chat.description": "Envia suas coordenadas para os jogadores selecionados ao pressionar a tecla de atalho",
+
+  "fireclient.module.coords.chat.toggle_player.toolip": "Alternar \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.name": "+",
+  "fireclient.module.coords_chat.add_player.tooltip": "Adicionar Jogador",
+
+  "fireclient.module.coords_chat.remove_player.name": "-",
+  "fireclient.module.coords_chat.remove_player.tooltip": "Remover \"%1$s\"",
+
+  "fireclient.module.coords_chat.add_player.failure.title": "Falha ao adicionar jogador",
+"fireclient.moduke.coords_chat.add_player.already_exists.contents": "Jogador já existe na lista",
 
   "fireclient.module.death_info.name": "Informações sobre a morte",
   "fireclient.module.death_info.description": "Dispõe o local da sua morte no ecrã e no chat",
@@ -247,6 +258,9 @@
   "fireclient.module.render_world.name": "Renderizar mundo",
   "fireclient.module.render_world.description": "[CHEAT] Permite alternar a renderização do mundo",
 
+  "fireclient.module.saturation_display.name": "Mostar Saturação",
+  "fireclient.module.saturation_display.description": "Mostra a tua saturação",
+
   "fireclient.module.scroll_click.name": "Rolar Clique",
   "fireclient.module.scroll_click.description": "Permite simular um clique com a roda de rolagem",
 
@@ -287,6 +301,9 @@
 
   "fireclient.module.subtitles.visible.name": "Visível",
   "fireclient.module.subtitles.visible.tooltip": "Alterna a visibilidade das legendas",
+
+  "fireclient.module.tps_display.name": "Disposição de TPS",
+  "fireclient.module.tps_display.description": "Mostra a estimativa de ticks por segundo do servidor",
 
   "fireclient.screen.generic.header": "Configuração FireClient",
 
@@ -374,6 +391,12 @@
 
   "fireclient.settings.dont_hit_dead.name": "Não bater nos mortos",
   "fireclient.settings.dont_hit_dead.description": "Impede que entidades mortas bloqueiem ataques",
+
+  "fireclient.settings.fix_sprint_swim.name": "Correção de Natação",
+  "fireclient.settings.fix_sprint_swim.description": "Corrige uma dessincronização cliente-servidor onde podes ficar preso ao nadar",
+
+  "fireclient.settings.prioritize_players.name": "Priorizar jogadores",
+  "fireclient.settings.prioritize_players.description": "Dá aos jogadores prioridade no autocompletar de comandos quanto mais vezes eles são usados",
 
   "fireclient.keybind.generic.unbound_key.long": "Não consolidado",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
