@@ -34,6 +34,9 @@ public class ArmorDisplayModule extends ModuleBase {
     @JsonOption(name = "locked")
     private boolean locked = true;
 
+    @JsonOption(name = "mode")
+    private DisplayMode mode = DisplayMode.TEXT;
+
     private int ticks = 0;
     private int flashColor = 0xFFFF5656;
 
@@ -70,9 +73,38 @@ public class ArmorDisplayModule extends ModuleBase {
             }
         }
 
+        refreshPosition();
+    }
+
+    private void refreshPosition() {
+        var client = MinecraftClient.getInstance();
+
+        switch(mode) {
+            case TEXT -> {
+                getData().setWidth(20);
+                getData().setHeight(40);
+            }
+
+            case BARS -> {
+                getData().setWidth(13);
+                getData().setHeight(11);
+            }
+        }
+        
         if(locked) {
-            getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
-            getData().setPosY((int)(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale())));
+            switch(mode) {
+                case TEXT -> {
+                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
+                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale())));
+                    getData().setScale(2.0/3.0);
+                }
+
+                case BARS -> {
+                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()) + 3));
+                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 27.0 - (22 * getData().getScale())));
+                    getData().setScale(1.0);
+                }
+            }
         }
     }
 
@@ -85,29 +117,53 @@ public class ArmorDisplayModule extends ModuleBase {
         transform(context.getMatrices());
 
         var client = MinecraftClient.getInstance();
-        var text = client.textRenderer;
-
         var items = new ArrayList<ItemStack>();
+
         items.add(client.player.getEquippedStack(EquipmentSlot.HEAD));
         items.add(client.player.getEquippedStack(EquipmentSlot.CHEST));
         items.add(client.player.getEquippedStack(EquipmentSlot.LEGS));
         items.add(client.player.getEquippedStack(EquipmentSlot.FEET));
 
-        var offset = 10;
         for(var i = 0; i < 4; i++) {
             var item = items.get(i);
 
-            if(item != ItemStack.EMPTY) {
+            if(item != ItemStack.EMPTY && item.getMaxDamage() > 0) {
                 var progress = client.player.getItemCooldownManager().getCooldownProgress(item, ticks.getTickProgress(true));
                 var cooldown = (int)Math.ceil(progress * 10);
 
-                // TODO: method is named fill :3
-                context.drawTexture(RenderLayer::getGuiTexturedOverlay, cooldownTexture, 0, offset*i + 2 - cooldown + 9, 0, 0, 20, cooldown, 20, cooldown);
-                context.drawCenteredTextWithShadow(text, (item.getMaxDamage() - item.getDamage()) + "", 10, offset*i + 2, getColor(item));
+                switch(mode) {
+                    case TEXT -> drawArmorText(context, item, i, cooldown);
+                    case BARS -> drawArmorBars(context, item, i, cooldown);
+                }
             }
         }
 
         endTransform(context.getMatrices());
+    }
+
+    private void drawArmorText(DrawContext context, ItemStack item, int index, int cooldown) {
+        var client = MinecraftClient.getInstance();
+        var text = client.textRenderer;
+
+        var y = 10*index + 2;
+        if(cooldown > 0) {
+            context.fill(0, y + 9 - cooldown, 20, y+9, 0x809F9F9F);
+        }
+
+        context.drawCenteredTextWithShadow(text, (item.getMaxDamage() - item.getDamage()) + "", 10, y, getColor(item));
+    }
+
+    private void drawArmorBars(DrawContext context, ItemStack item, int index, int cooldown) {
+        var y = 3*index + 1;
+        context.fill(0, y+2, 14, y, 0xFF000000);
+
+        if(cooldown > 0) {
+            final double cooldownMult = (14.0/10.0);
+            context.fill(0, y + 1, (int)Math.ceil(cooldown*cooldownMult), y, 0x809F9F9F);
+        }
+
+        var ratio = ((item.getMaxDamage()-item.getDamage()) / (double)item.getMaxDamage());
+        context.fill(0, y+1, (int)Math.ceil(ratio*14), y, getColor(item));
     }
 
     private int getColor(ItemStack item) {
@@ -124,13 +180,13 @@ public class ArmorDisplayModule extends ModuleBase {
         if(percentage <= 0.5) {
             color = 0xFFFFFC36;
         }
-        if(percentage <= 0.2) {
+        if(percentage <= 0.3) {
             color = 0xFFD50000;
         }
-        if(percentage <= 0.1) {
+        if(percentage <= 0.2) {
             color = 0xFF970000;
         }
-        if(percentage <= 0.05) {
+        if(percentage <= 0.1) {
             color = flashColor;
         }
 
@@ -153,6 +209,11 @@ public class ArmorDisplayModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
 
+        widgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.armor_display.mode_toggle.name", mode.getName()), this::modeButtonPressed)
+            .dimensions(base.width/2 - 60, base.height/2 + 40, 120, 20)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.mode_toggle.tooltip")))
+            .build());
+
         widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.armor_display.lock_button.name"))
             .getValue(() -> { return locked; })
             .setValue((value) -> { locked = value; })
@@ -167,4 +228,30 @@ public class ArmorDisplayModule extends ModuleBase {
 
         return widgets;
     }
+
+    private void modeButtonPressed(ButtonWidget button) {
+        mode = switch(mode) {
+            case TEXT -> DisplayMode.BARS;
+            case BARS -> DisplayMode.TEXT;
+        };
+
+        button.setMessage(Text.translatable("fireclient.module.armor_display.mode_toggle.name", mode.getName()));
+        refreshPosition();
+    }
+
+    public enum DisplayMode {
+
+        TEXT(Text.translatable("fireclient.module.armor_display.mode.text")),
+        BARS(Text.translatable("fireclient.module.armor_display.mode.bars"));
+
+        private final Text name;
+
+        private DisplayMode(Text name) {
+            this.name = name;
+        }
+
+        public Text getName() {
+            return name;
+        }
+    } 
 }
