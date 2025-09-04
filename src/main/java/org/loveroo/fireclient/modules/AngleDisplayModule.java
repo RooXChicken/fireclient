@@ -57,12 +57,16 @@ public class AngleDisplayModule extends ModuleBase {
             return;
         }
 
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+
         transform(context.getMatrices());
 
-        var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var pitch = (client.player != null) ? client.player.getPitch() : 0.0;
+        var pitch = client.player.getPitch();
         var msg = String.format("%.2f°", pitch);
         var angleText = RooHelper.gradientText(msg, color1, color2);
 

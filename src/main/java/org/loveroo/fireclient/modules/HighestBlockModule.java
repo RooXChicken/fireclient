@@ -57,17 +57,21 @@ public class HighestBlockModule extends ModuleBase {
             return;
         }
 
-        transform(context.getMatrices());
-
         var client = MinecraftClient.getInstance();
-        if(client.player == null) {
+        if(client.player == null || client.player.clientWorld == null) {
             return;
         }
 
+        
         var text = client.textRenderer;
 
         var pos = client.player.getBlockPos();
         var chunk = client.player.clientWorld.getChunk(pos);
+        if(chunk == null) {
+            return;
+        
+        }
+        transform(context.getMatrices());
 
         var msg = "Height: " + chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ());
         var heightText = RooHelper.gradientText(msg, color1, color2);

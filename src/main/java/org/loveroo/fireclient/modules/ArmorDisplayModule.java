@@ -83,23 +83,19 @@ public class ArmorDisplayModule extends ModuleBase {
             case TEXT -> {
                 getData().setWidth(20);
                 getData().setHeight(38);
+
+                if(locked) {
+                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
+                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 48.0 - (22 * getData().getScale())));
+                    getData().setScale(2.0/3.0);
+                }
             }
 
             case BARS -> {
                 getData().setWidth(14);
                 getData().setHeight(11);
-            }
-        }
-        
-        if(locked) {
-            switch(mode) {
-                case TEXT -> {
-                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
-                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 48.0 - (22 * getData().getScale())));
-                    getData().setScale(2.0/3.0);
-                }
 
-                case BARS -> {
+                if(locked) {
                     getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()) + 3));
                     getData().setPosY((int)(client.getWindow().getScaledHeight() - 26.0 - (22 * getData().getScale())));
                     getData().setScale(1.0);
@@ -114,9 +110,13 @@ public class ArmorDisplayModule extends ModuleBase {
             return;
         }
 
+        var client = MinecraftClient.getInstance();
+        if(client.player == null) {
+            return;
+        }
+        
         transform(context.getMatrices());
 
-        var client = MinecraftClient.getInstance();
         var items = new ArrayList<ItemStack>();
 
         items.add(client.player.getEquippedStack(EquipmentSlot.HEAD));

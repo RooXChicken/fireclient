@@ -22,6 +22,11 @@ repositories {
     // for more information about repositories.
 
     mavenCentral()
+
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
 }
 
 dependencies {
@@ -36,6 +41,8 @@ dependencies {
     implementation 'org.json:json:20090211'
     include 'org.json:json:20090211'
     compileOnly 'org.json:json:20090211'
+
+    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
