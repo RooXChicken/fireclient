@@ -157,10 +157,10 @@ public class ArmorDisplayModule extends ModuleBase {
     private void drawArmorBars(DrawContext context, ItemStack item, int index, int cooldown) {
         var y = 3*index + 1;
         context.fill(0, y+2, 14, y, 0xFF000000);
-
+        
         if(cooldown > 0) {
             final double cooldownMult = (14.0/10.0);
-            context.fill(0, y + 1, (int)Math.ceil(cooldown*cooldownMult), y, 0x809F9F9F);
+            context.fill(0, y+2, (int)Math.ceil(cooldown*cooldownMult), y+1, 0xFF9F9F9F);
         }
 
         var ratio = ((item.getMaxDamage()-item.getDamage()) / (double)item.getMaxDamage());
