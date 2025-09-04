@@ -50,6 +50,7 @@ public class BigItemsModule extends ModuleBase {
     public BigItemsModule() {
         super(new ModuleData("big_items", "+", color));
 
+        getData().setEnabled(true);
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_big_items",

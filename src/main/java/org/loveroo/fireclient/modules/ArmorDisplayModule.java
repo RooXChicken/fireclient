@@ -29,14 +29,13 @@ public class ArmorDisplayModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0xAAF089);
 
-    private Identifier cooldownTexture = Identifier.of(FireClient.MOD_ID, "textures/armor_display/cooldown.png");
-
     @JsonOption(name = "locked")
     private boolean locked = true;
 
     @JsonOption(name = "mode")
     private DisplayMode mode = DisplayMode.TEXT;
 
+    private final double flashThreshold = 2.0/14.0;
     private int ticks = 0;
     private int flashColor = 0xFFFF5656;
 
@@ -82,11 +81,11 @@ public class ArmorDisplayModule extends ModuleBase {
         switch(mode) {
             case TEXT -> {
                 getData().setWidth(20);
-                getData().setHeight(40);
+                getData().setHeight(38);
             }
 
             case BARS -> {
-                getData().setWidth(13);
+                getData().setWidth(14);
                 getData().setHeight(11);
             }
         }
@@ -95,13 +94,13 @@ public class ArmorDisplayModule extends ModuleBase {
             switch(mode) {
                 case TEXT -> {
                     getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
-                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 50.0 - (22 * getData().getScale())));
+                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 48.0 - (22 * getData().getScale())));
                     getData().setScale(2.0/3.0);
                 }
 
                 case BARS -> {
                     getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()) + 3));
-                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 27.0 - (22 * getData().getScale())));
+                    getData().setPosY((int)(client.getWindow().getScaledHeight() - 26.0 - (22 * getData().getScale())));
                     getData().setScale(1.0);
                 }
             }
@@ -145,7 +144,7 @@ public class ArmorDisplayModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var y = 10*index + 2;
+        var y = 10*index;
         if(cooldown > 0) {
             context.fill(0, y + 9 - cooldown, 20, y+9, 0x809F9F9F);
         }
@@ -154,7 +153,7 @@ public class ArmorDisplayModule extends ModuleBase {
     }
 
     private void drawArmorBars(DrawContext context, ItemStack item, int index, int cooldown) {
-        var y = 3*index + 1;
+        var y = 3*index;
         context.fill(0, y+2, 14, y, 0xFF000000);
         
         if(cooldown > 0) {
@@ -167,30 +166,15 @@ public class ArmorDisplayModule extends ModuleBase {
     }
 
     private int getColor(ItemStack item) {
-        var percentage = (item.getMaxDamage() - item.getDamage() + 0.0) / item.getMaxDamage();
-
-        var color = 0xFF2BEE00;
-
-        if(item.getDamage() == 0) {
-            color = 0xFF099A00;
+        var ratio = ((item.getMaxDamage()-item.getDamage()) / (double)item.getMaxDamage());
+        if(ratio == 1.0) {
+            return 0xFF099A00;
         }
-        if(percentage <= 0.7) {
-            color = 0xFFFF8022;
-        }
-        if(percentage <= 0.5) {
-            color = 0xFFFFFC36;
-        }
-        if(percentage <= 0.3) {
-            color = 0xFFD50000;
-        }
-        if(percentage <= 0.2) {
-            color = 0xFF970000;
-        }
-        if(percentage <= 0.1) {
-            color = flashColor;
+        else if(ratio < flashThreshold) {
+            return flashColor;
         }
 
-        return color;
+        return 0xFF000000 + item.getItemBarColor();
     }
 
     @Override
@@ -207,17 +191,17 @@ public class ArmorDisplayModule extends ModuleBase {
         var widgets = new ArrayList<ClickableWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_armor_display").getRebindButton(5, base.height - 25, 120,20));
-        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 20));
+        widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
         widgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.armor_display.mode_toggle.name", mode.getName()), this::modeButtonPressed)
-            .dimensions(base.width/2 - 60, base.height/2 + 40, 120, 20)
+            .dimensions(base.width/2 - 60, base.height/2 + 50, 120, 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.mode_toggle.tooltip")))
             .build());
 
         widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.armor_display.lock_button.name"))
             .getValue(() -> { return locked; })
             .setValue((value) -> { locked = value; })
-            .position(base.width/2 - 60, base.height/2 + 10)
+            .position(base.width/2 - 60, base.height/2 + 20)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.lock_button.tooltip")))
             .onChange(() -> {
                 if(locked) {

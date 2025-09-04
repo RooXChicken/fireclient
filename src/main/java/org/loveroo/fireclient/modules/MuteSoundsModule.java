@@ -52,6 +52,7 @@ public class MuteSoundsModule extends ModuleBase {
     public MuteSoundsModule() {
         super(new ModuleData("mute_sounds", "\uD83D\uDD07", color));
 
+        getData().setEnabled(true);
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_mute_sounds",
