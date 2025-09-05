@@ -34,6 +34,13 @@ public class PlayerHeadWidget extends ClickableWidget {
         thread.start();
     }
 
+    public PlayerHeadWidget(String name, Identifier texture, int x, int y) {
+        super(x, y, 16, 16, Text.literal(name));
+        this.playerName = name;
+
+        this.texture = texture;
+    }
+
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         PlayerSkinDrawer.draw(context, texture, getX(), getY(), 12, true, false, 0xFFFFFFFF);

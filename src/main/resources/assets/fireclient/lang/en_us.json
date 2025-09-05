@@ -225,6 +225,17 @@
   "fireclient.module.local_difficulty.name": "Local Difficulty",
   "fireclient.module.local_difficulty.description": "Calculates an approximation of the local difficulty calculator based on Zombie Fire Ticks",
 
+  "fireclient.module.local_skin.name": "Local Skin",
+  "fireclient.module.local_skin.description": "Applies local skin files and updates them in realtime",
+  "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
+  "fireclient.module.local_skin.open_folder.tooltip": "Open skins folder",
+
+  "fireclient.module.local_skin.apply.name": "✔",
+  "fireclient.module.local_skin.apply.tooltip": "Apply \"%1$s\"",
+
+  "fireclient.module.local_skin.slim.name": "Slim",
+  "fireclient.module.local_skin.slim.tooltip": "Make \"%1$s\" slim",
+
   "fireclient.module.mute_sounds.name": "Mute Sounds",
   "fireclient.module.mute_sounds.description": "Allows certain sounds to be muted",
 
