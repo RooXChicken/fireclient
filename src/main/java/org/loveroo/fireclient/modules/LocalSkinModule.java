@@ -87,6 +87,8 @@ public class LocalSkinModule extends ModuleBase {
                 uploadSkin(skin);
             }
 
+            initializeDirectories();
+
             try {
                 fileWatch = FileSystems.getDefault().newWatchService();
                 var path = Paths.get(SKIN_PATH);
