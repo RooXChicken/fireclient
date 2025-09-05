@@ -28,12 +28,12 @@ public class CustomDrawWidget extends ClickableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         var matrix = context.getMatrices();
-        matrix.push();
+        matrix.pushMatrix();
 
-        matrix.translate(getX(), getY(), 0);
+        matrix.translate(getX(), getY());
         draw.draw(context, mouseX, mouseY, delta);
 
-        matrix.pop();
+        matrix.popMatrix();
     }
 
     @Override

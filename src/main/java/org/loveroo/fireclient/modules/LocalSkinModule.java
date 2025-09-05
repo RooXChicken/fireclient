@@ -373,7 +373,7 @@ public class LocalSkinModule extends ModuleBase {
 
                 var remapped = RemapTextureAccessor.invokeRemapTexture(image, file);
 
-                var texture = new NativeImageBackedTexture(remapped);
+                var texture = new NativeImageBackedTexture(() -> { return file; }, remapped);
                 
                 var client = MinecraftClient.getInstance();
                 client.getTextureManager().registerTexture(id, texture);
