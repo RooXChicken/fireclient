@@ -9,14 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchService;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -185,8 +184,25 @@ public class LocalSkinModule extends ModuleBase {
 
         initializeDirectories();
 
-        var thread = new SkinUploader(path);
-        thread.start();
+        RenderSystem.recordRenderCall(() -> {
+            var id = getSkinIdentifier(path);
+
+            try {
+                var data = Files.readAllBytes(Paths.get(SKIN_PATH + path + ".png"));
+                var image = NativeImage.read(data);
+                var remapped = RemapTextureAccessor.invokeRemapTexture(image, path);
+
+                var texture = new NativeImageBackedTexture(remapped);
+
+                var client = MinecraftClient.getInstance();
+                client.getTextureManager().registerTexture(id, texture);
+
+                cachedSkins.add(path);
+            }
+            catch(Exception e) {
+                FireClient.LOGGER.error("Failed to load skin {}!", path, e);
+            }
+        });
     }
 
     public void initializeDirectories() {
@@ -218,7 +234,7 @@ public class LocalSkinModule extends ModuleBase {
             FireClient.LOGGER.error("Failed to gather skin list!", e);
         }
 
-        skins.sort((skin1, skin2) -> skin1.toLowerCase().compareTo(skin2.toLowerCase()));
+        skins.sort(Comparator.comparing(String::toLowerCase));
 
         return skins;
     }
@@ -352,75 +368,5 @@ public class LocalSkinModule extends ModuleBase {
         int off = 50;
 
         InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
-    }
-
-    static class SkinUploader extends Thread {
-
-        private final String file;
-
-        public SkinUploader(String file) {
-            this.file = file;
-        }
-
-        @Override
-        public void run() {
-            var id = getSkinIdentifier(file);
-
-            try {
-                var data = Files.readAllBytes(Paths.get(SKIN_PATH + file + ".png"));
-                var image = NativeImage.read(data);
-                if(image == null) {
-                    return;
-                }
-
-                var remapped = RemapTextureAccessor.invokeRemapTexture(image, file);
-
-                var texture = new NativeImageBackedTexture(remapped);
-                
-                var client = MinecraftClient.getInstance();
-                client.getTextureManager().registerTexture(id, texture);
-
-                cachedSkins.add(file);
-            }
-            catch(Exception e) {
-                FireClient.LOGGER.error("Failed to load skin {}!", file, e);
-            }
-        }
-    }
-
-    public static class Skin {
-
-        private Identifier id = null;
-        private boolean slim = false;
-
-        public Skin(Identifier id, boolean slim) {
-            this.id = id;
-            this.slim = slim;
-        }
-
-        public Skin(String name, boolean slim) {
-            this.id = getSkinIdentifier(name);
-            this.slim = slim;
-        }
-
-        public Identifier getId() {
-            if(id == null) {
-                return (isSlim()) ? Identifier.ofVanilla("textures/entity/player/slim/alex.png") : Identifier.ofVanilla("textures/entity/player/wide/steve.png");
-            }
-
-            return id;
-        }
-
-        public void setId(Identifier id) {
-            this.id = id;
-        }
-
-        public boolean isSlim() {
-            return slim;
-        }
-
-        public void setSlim(boolean slim) {
-            this.slim = slim;
-        }
     }
 }
