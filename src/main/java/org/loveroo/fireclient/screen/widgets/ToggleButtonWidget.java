@@ -106,10 +106,10 @@ public class ToggleButtonWidget extends ButtonWidget {
         }
     
         protected MutableText getToggleText(boolean value) {
-            var toggle = ((value) ? FireClientSettingsScreen.defaultTrueText : FireClientSettingsScreen.defaultFalseText);
+            var toggle = ((value) ? FireClientSettingsScreen.getTrueText() : FireClientSettingsScreen.getFalseText());
     
             if(text != null) {
-                return toggle.copy().append(" ").append(text);
+                return toggle.append(" ").append(text);
             }
             else {
                 return toggle;

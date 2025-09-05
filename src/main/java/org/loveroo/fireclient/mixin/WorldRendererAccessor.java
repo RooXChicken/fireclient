@@ -1,4 +1,4 @@
-package org.loveroo.fireclient.mixin.modules.renderworld;
+package org.loveroo.fireclient.mixin;
 
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;

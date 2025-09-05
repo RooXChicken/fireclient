@@ -1,9 +1,10 @@
-package org.loveroo.fireclient.data;
+package org.loveroo.fireclient.settings;
+
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.modules.ShadowModule;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.modules.ShadowModule;
 
 // i have to do this because i can't mixin to WorldView (it's an interface) :c
 public interface FullbrightShadows extends WorldView {

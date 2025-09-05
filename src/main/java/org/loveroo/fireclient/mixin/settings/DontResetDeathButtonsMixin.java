@@ -1,6 +1,5 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.gui.screen.DeathScreen;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,13 +9,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.minecraft.client.gui.screen.DeathScreen;
+
 @Mixin(DeathScreen.class)
 public abstract class DontResetDeathButtonsMixin {
 
     @Shadow
     private int ticksSinceDeath;
 
-    @Shadow protected abstract void setButtonsActive(boolean active);
+    @Shadow
+    protected abstract void setButtonsActive(boolean active);
 
     @Unique
     private int realTicksSinceDeath = 0;

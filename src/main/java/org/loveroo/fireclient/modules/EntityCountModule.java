@@ -11,7 +11,7 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.mixin.modules.renderworld.WorldRendererAccessor;
+import org.loveroo.fireclient.mixin.WorldRendererAccessor;
 
 import java.util.ArrayList;
 import java.util.List;

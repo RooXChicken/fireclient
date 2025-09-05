@@ -58,6 +58,7 @@ public class ParticlesModule extends ModuleBase {
     public ParticlesModule() {
         super(new ModuleData("particles", "\uD83C\uDF1F", color));
 
+        getData().setEnabled(true);
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_particles",
