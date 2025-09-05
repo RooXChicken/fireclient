@@ -48,13 +48,15 @@ abstract class HazeliPlayerModelMixin {
     @Shadow
     private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
 
+    @SuppressWarnings("unchecked")
     @Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
     public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
         if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0 || !(entity instanceof AbstractClientPlayerEntity)) {
             return;
         }
 
-        info.setReturnValue((EntityRenderer)modelRenderers.get(SkinTextures.Model.SLIM));
+        var model = SkinTextures.Model.SLIM;
+        info.setReturnValue((EntityRenderer<? super T, ?>)modelRenderers.get(model));
     }
 }
 

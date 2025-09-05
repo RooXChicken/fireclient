@@ -91,8 +91,6 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new CoordinatesModule());
         registerModule(new ToggleToggleSneakModule());
         registerModule(new FPSDisplayModule());
-//        registerModule(new LocalDifficultyFinderModule());
-//        registerModule(new RenderWorldModule());
         registerModule(new CoordsChatModule());
         registerModule(new NametagModule());
         registerModule(new AutoMessageModule());
