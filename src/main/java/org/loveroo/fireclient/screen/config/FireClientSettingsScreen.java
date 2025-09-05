@@ -38,8 +38,8 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
     private TextFieldWidget searchBar;
     private String search = "";
 
-    public static final MutableText defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
-    public static final MutableText defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
+    private static final MutableText defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
+    private static final MutableText defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
         super(Text.translatable("fireclient.screen.settings.title"));
@@ -174,9 +174,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
                 widget.setMessage(getOptionLabel(option));
             }
 
-            case SLIDER -> {
-
-            }
+            case SLIDER -> { }
         }
     }
 
@@ -188,6 +186,8 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
                 var nameText = option.getName();
                 return ((value == 1) ? defaultTrueText : defaultFalseText).copy().append(" ").append(nameText);
             }
+
+            case SLIDER -> { }
         }
 
         return option.getName();
@@ -208,5 +208,13 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         var text = MinecraftClient.getInstance().textRenderer;
 
         context.drawCenteredTextWithShadow(text, Text.translatable("fireclient.screen.settings.header"), width/2, height/2 - (settingsHeight/2 + 30), 0xFFFFFFFF);
+    }
+
+    public static MutableText getTrueText() {
+        return defaultTrueText.copy();
+    }
+
+    public static MutableText getFalseText() {
+        return defaultFalseText.copy();
     }
 }
