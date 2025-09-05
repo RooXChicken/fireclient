@@ -63,7 +63,6 @@
     "settings.AllowReloadInputsClientMixin",
     "settings.AllowReloadInputsKeyboardMixin",
     "settings.AllowReloadInputsMouseMixin",
-    "settings.ChatLengthMixin",
     "settings.DisableExtinguishSpamMixin",
     "settings.DisableResourceClearMixin",
     "settings.DontResetDeathButtonsMixin",
