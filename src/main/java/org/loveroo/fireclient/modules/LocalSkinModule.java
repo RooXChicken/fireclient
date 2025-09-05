@@ -366,6 +366,7 @@ public class LocalSkinModule extends ModuleBase {
         float scale = 1.0f;
         int off = 50;
 
+        // TODO: fix model not updating on 1.21.6-1.21.8
         InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
     }
 }
