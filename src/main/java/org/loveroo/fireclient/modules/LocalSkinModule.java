@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
@@ -373,7 +374,7 @@ public class LocalSkinModule extends ModuleBase {
 
                 var remapped = RemapTextureAccessor.invokeRemapTexture(image, file);
 
-                var texture = new NativeImageBackedTexture(remapped);
+                var texture = new NativeImageBackedTexture(() -> { return file; }, remapped);
                 
                 var client = MinecraftClient.getInstance();
                 client.getTextureManager().registerTexture(id, texture);
