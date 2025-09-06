@@ -1,29 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.particle.FlameParticle;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.item.Item;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -34,10 +15,18 @@ import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.particle.ParticleType;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class ParticlesModule extends ModuleBase {
 
@@ -224,6 +213,9 @@ public class ParticlesModule extends ModuleBase {
         }
 
         var particle = RooHelper.filterIdInput(text.getText()) + suggestion;
+        if(particle.isEmpty()) {
+            return;
+        }
 
         if(hiddenParticles.stream().anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(particle)))) {
             RooHelper.sendNotification(
@@ -261,12 +253,14 @@ public class ParticlesModule extends ModuleBase {
 
     public boolean isHidden(ParticleType<?> particle) {
         return hiddenParticles.stream()
-            .anyMatch((hidden) -> (hidden.isEnabled() && hidden.getParticleType().equals(particle)));
+            .anyMatch((hidden) -> (hidden.isEnabled() && hidden.getParticleType() != null && hidden.getParticleType().equals(particle)));
     }
 
     static class HiddenParticle {
 
         private final String particle;
+
+        @Nullable
         private final ParticleType<?> particleType;
         private boolean enabled;
 
@@ -281,6 +275,7 @@ public class ParticlesModule extends ModuleBase {
             return particle;
         }
 
+        @Nullable
         public ParticleType<?> getParticleType() {
             return particleType;
         }
