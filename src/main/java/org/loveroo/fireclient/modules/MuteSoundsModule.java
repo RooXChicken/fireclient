@@ -1,23 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -28,10 +15,18 @@ import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class MuteSoundsModule extends ModuleBase {
 
@@ -211,6 +206,9 @@ public class MuteSoundsModule extends ModuleBase {
         }
 
         var sound = RooHelper.filterIdInput(text.getText()) + suggestion;
+        if(sound.isEmpty()) {
+            return;
+        }
 
         if(mutedSounds.stream().anyMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(sound)))) {
             RooHelper.sendNotification(
@@ -247,12 +245,14 @@ public class MuteSoundsModule extends ModuleBase {
     }
 
     public boolean isMute(SoundEvent sound) {
-        return mutedSounds.stream().anyMatch((muted) -> (muted.isEnabled() && muted.getSoundEvent().id().equals(sound.id())));
+        return mutedSounds.stream().anyMatch((muted) -> (muted.isEnabled() && muted.getSoundEvent() != null && muted.getSoundEvent().id().equals(sound.id())));
     }
 
     static class MutedSound {
 
         private final String sound;
+
+        @Nullable
         private final SoundEvent soundEvent;
         private boolean enabled;
 
@@ -267,6 +267,7 @@ public class MuteSoundsModule extends ModuleBase {
             return sound;
         }
 
+        @Nullable
         public SoundEvent getSoundEvent() {
             return soundEvent;
         }
