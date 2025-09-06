@@ -225,6 +225,17 @@
   "fireclient.module.local_difficulty.name": "Τοπική Δυσκολία",
   "fireclient.module.local_difficulty.description": "Υπολογίζει μια προσέγγιση της τοπικής δυσκολίας με βάση τα καρέ της φωτιάς των ζόμπι",
 
+  "fireclient.module.local_skin.name": "Τοπική Εμφάνιση",
+  "fireclient.module.local_skin.description": "Εφαρμόζει τοπικά αρχεία εμφάνισης και τα ενημερώνει σε πραγματικό χρόνο",
+  "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
+  "fireclient.module.local_skin.open_folder.tooltip": "Άνοιξε το φάκελο εμφανίσεων",
+
+  "fireclient.module.local_skin.apply.name": "✔",
+  "fireclient.module.local_skin.apply.tooltip": "Εφάρμοσε το \"%1$s\"",
+
+  "fireclient.module.local_skin.slim.name": "Λεπτό",
+  "fireclient.module.local_skin.slim.tooltip": "Κάνε το \"%1$s\" λεπτό",
+
   "fireclient.module.mute_sounds.name": "Σίγαση Ήχων",
   "fireclient.module.mute_sounds.description": "Επιτρέπει τη σίγαση ορισμένων ήχων",
 
