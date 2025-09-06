@@ -68,6 +68,7 @@
     "settings.DisableResourceClearMixin",
     "settings.DontResetDeathButtonsMixin",
     "settings.EntityUUIDCacheMixin",
+    "settings.FixSprintSwimMixin",
     "settings.FixTridentShieldMixin",
     "settings.ForceCursorCenterMixin",
     "settings.HazeliModeMixin",
