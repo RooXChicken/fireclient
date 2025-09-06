@@ -22,6 +22,11 @@
   "fireclient.module.armor_display.description": "Dispõe a durabilidade e o tempo de recarga da sua armadura",
   "fireclient.module.armor_display.lock_button.name": "Bloqueado",
   "fireclient.module.armor_display.lock_button.tooltip": "Bloqueia a posição na barra de atalhos",
+  "fireclient.module.armor_display.mode_toggle.name": "Modo: %1$s",
+  "fireclient.module.armor_display.mode_toggle.tooltip": "Muda o estilo de exibição",
+
+  "fireclient.module.armor_display.mode.text": "Texto",
+  "fireclient.module.armor_display.mode.bars": "Baras",
 
   "fireclient.module.auto_message.name": "Auto Mensagem",
   "fireclient.module.auto_message.description": "Introduz automaticamente o último comando digitado '/msg' ou equivalente para que possa enviar uma mensagem rapidamente a alguém quando pressiona a tecla de atalho",
@@ -206,7 +211,7 @@
   "fireclient.module.kit.download.failure.generic": "Falha ao download de \"%1$s\"",
   "fireclient.module.kit.download.failure.no_kit": "Kit não existe",
 
-  "fireclient.module.kit.update.success": "Successfully updated kits",
+  "fireclient.module.kit.update.success": "Kits atualizados com sucesso",
 
   "fireclient.screen.edit_kit.title": "Editar \"%1$s\"",
   "fireclient.screen.preview_kit.title": "Visualisar \"%1$s\"",
@@ -219,6 +224,15 @@
 
   "fireclient.module.local_difficulty.name": "Dificuldade Local",
   "fireclient.module.local_difficulty.description": "Calcula uma aproximação da calculadora de dificuldade local com base nos ticks de fogo nos Zombis",
+
+  "fireclient.module.local_skin.name": "Skin Local",
+  "fireclient.module.local_skin.description": "Aplica arquivos de skin locais e os atualiza em tempo real",
+  "fireclient.module.local_skin.open_folder.tooltip": "Abrir Pasta de Skins",
+
+  "fireclient.module.local_skin.apply.tooltip": "Applicar \"%1$s\"",
+
+  "fireclient.module.local_skin.slim.name": "Magro",
+  "fireclient.module.local_skin.slim.tooltip": "Fazer \"%1$s\" Magro",
 
   "fireclient.module.mute_sounds.name": "Silenciar Sons",
   "fireclient.module.mute_sounds.description": "Permite silenciar determinados sons",
