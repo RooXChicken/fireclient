@@ -1,8 +1,8 @@
 package org.loveroo.fireclient.data;
 
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.loveroo.fireclient.client.FireClientside;
+
+import net.minecraft.text.Text;
 
 public enum FireClientOption {
     FIX_TRIDENT_RIPTIDE(new ToggleOptionData(1)),
@@ -24,7 +24,8 @@ public enum FireClientOption {
     PREVENT_PACK_CLEAR(new ToggleOptionData(1)),
     DONT_HIT_DEAD(new ToggleOptionData(0)),
     FIX_SPRINT_SWIM(new ToggleOptionData(1)),
-    PRIORITIZE_PLAYERS(new ToggleOptionData(0));
+    PRIORITIZE_PLAYERS(new ToggleOptionData(0)),
+    AUTOFILL_LAPIS(new ToggleOptionData(0));
 
     private final Text name;
     private final Text description;
