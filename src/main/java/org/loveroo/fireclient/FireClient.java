@@ -18,7 +18,7 @@ public class FireClient implements ModInitializer {
 
     public static final String KEYBIND_CATEGORY = "key.category.fireclient";
 
-    private static final String SERVER_URL = "http://127.0.0.1:25502/api/";
+    private static final String SERVER_URL = "https://api.loveroo.org/api/fireclient/";
 
     @Override
     public void onInitialize() {
