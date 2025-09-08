@@ -11,7 +11,7 @@ import net.minecraft.client.render.entity.PlayerEntityRenderer;
 @Mixin(PlayerEntityRenderer.class)
 public abstract class ShowBelowNameMixin {
 
-    @ModifyConstant(method = "updateRenderState", constant = @Constant(doubleValue = 100.0))
+    @ModifyConstant(method = "updateRenderState*", constant = @Constant(doubleValue = 100.0))
     private double makeInfinite(double original) {
         var nametag = (NametagModule) FireClientside.getModule("nametag");
         if(nametag == null || !nametag.isUnlimitBelowName()) {
