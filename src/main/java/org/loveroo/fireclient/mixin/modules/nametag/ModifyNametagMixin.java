@@ -26,15 +26,30 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
 
+import java.util.UUID;
+
 @Mixin(EntityRenderer.class)
-public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> {
+public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> implements NametagModule.UUIDStorage {
+
+    @Unique
+    private UUID uuid = UUID.randomUUID();
+
+    @Override
+    public UUID fireclient$getUUID() {
+        return uuid;
+    }
+
+    @Override
+    public void fireclient$setUUID(UUID uuid) {
+        this.uuid = uuid;
+    }
 
     @Shadow
     public abstract TextRenderer getTextRenderer();
 
     @ModifyConstant(method = "renderLabelIfPresent", constant = @Constant(intValue = -2130706433))
-    private int changeColor(int original, @Local(ordinal = 0) S state) {
-        if(getNametagState(state) == NametagState.TEXT_COLOR) {
+    private int changeColor(int original, @Local(ordinal = 0, argsOnly = true) S state) {
+        if(getNametagState() == NametagState.TEXT_COLOR) {
             return 0xFFFFFFFF;
         }
 
@@ -47,18 +62,18 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         return 0xFFFFFFFF;
     }
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 0)
-    private Text changeAffiliateText(Text original, @Local(ordinal = 0) S state) {
-        if(getNametagState(state) != NametagState.TEXT_COLOR) {
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)V"), index = 0)
+    private Text changeAffiliateText(Text original, @Local(ordinal = 0, argsOnly = true) S state) {
+        if(getNametagState() != NametagState.TEXT_COLOR) {
             return original;
         }
         
         return RooHelper.gradientText(original.getString(), FireClientside.mainColor1, FireClientside.mainColor2);
     }
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 3)
-    private int changeAffiliateColor(int original, @Local(ordinal = 0) S state) {
-        if(getNametagState(state) != NametagState.TEXT_COLOR) {
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)V"), index = 3)
+    private int changeAffiliateColor(int original, @Local(ordinal = 0, argsOnly = true) S state) {
+        if(getNametagState() != NametagState.TEXT_COLOR) {
             return original;
         }
         
@@ -72,7 +87,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
             return original;
         }
 
-        if(getNametagState(state) == NametagState.BACKGROUND_COLOR) {
+        if(getNametagState() == NametagState.BACKGROUND_COLOR) {
             return 0;
         }
 
@@ -91,7 +106,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
 
     @Inject(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/GameOptions;getTextBackgroundOpacity(F)F", shift = At.Shift.AFTER))
     private void renderGradient(S state, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo info) {
-        if(getNametagState(state) != NametagState.BACKGROUND_COLOR) {
+        if(getNametagState() != NametagState.BACKGROUND_COLOR) {
             return;
         }
 
@@ -111,8 +126,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
     }
 
     @Unique
-    private NametagState getNametagState(S state) {
-        var store = (NametagModule.UUIDStorage)state;
-        return FireClientside.getAffiliates().getNametagState(store.fireclient$getUUID());
+    private NametagState getNametagState() {
+        return FireClientside.getAffiliates().getNametagState(fireclient$getUUID());
     }
 }
