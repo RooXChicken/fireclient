@@ -49,6 +49,7 @@
     "modules.nametag.ModifyNametagMixin",
     "modules.nametag.ShowBelowNameMixin",
     "modules.nametag.ShowOwnNametagMixin",
+    "modules.nametag.StoreUUIDMixin",
     "modules.particles.HideParticlesMixin",
     "modules.perspective.IncreaseZoomMixin",
     "modules.perspective.OffsetCameraMixin",
