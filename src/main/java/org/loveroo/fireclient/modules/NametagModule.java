@@ -2,8 +2,8 @@ package org.loveroo.fireclient.modules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import org.loveroo.fireclient.data.Affiliates.NametagState;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
@@ -29,8 +29,6 @@ public class NametagModule extends ModuleBase {
 
     @JsonOption(name = "unlimit_below_name")
     private boolean unlimitBelowName = false;
-
-    public static NametagState nametagState = NametagState.NONE;
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7", color));
@@ -87,5 +85,11 @@ public class NametagModule extends ModuleBase {
 
     public boolean isUnlimitBelowName() {
         return unlimitBelowName;
+    }
+
+    public interface UUIDStorage {
+
+        UUID fireclient$getUUID();
+        void fireclient$setUUID(UUID uuid);
     }
 }

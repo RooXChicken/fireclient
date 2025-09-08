@@ -18,8 +18,6 @@ public class ShowOwnNametagMixin<T extends LivingEntity, S extends EntityRenderS
 
     @Inject(method = "hasLabel*", at = @At("HEAD"), cancellable = true)
     private void showOwnLabel(T entity, double squaredDistanceToCamera, CallbackInfoReturnable<Boolean> info) {
-        NametagModule.nametagState = FireClientside.getAffiliates().getNametagState(entity.getUuid());
-
         var nametag = (NametagModule) FireClientside.getModule("nametag");
         if(nametag == null || !nametag.isShowOwn()) {
             return;
