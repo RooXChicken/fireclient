@@ -1,46 +1,5 @@
 package org.loveroo.fireclient.client;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.context.CommandContextBuilder;
-import com.mojang.brigadier.tree.CommandNode;
-import com.sun.jdi.connect.Connector;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.commands.FCalcCommand;
-import org.loveroo.fireclient.commands.FKitCommand;
-import org.loveroo.fireclient.commands.FTextCommand;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.keybind.KeybindManager;
-import org.loveroo.fireclient.modules.*;
-import org.loveroo.fireclient.screen.config.MainConfigScreen;
-import org.loveroo.fireclient.settings.PlayerSortPriority;
-import org.lwjgl.glfw.GLFW;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -50,6 +9,65 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.commands.FCalcCommand;
+import org.loveroo.fireclient.commands.FKitCommand;
+import org.loveroo.fireclient.commands.FTextCommand;
+import org.loveroo.fireclient.data.Affiliates;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.FireClientOption;
+import org.loveroo.fireclient.keybind.KeybindManager;
+import org.loveroo.fireclient.modules.AngleDisplayModule;
+import org.loveroo.fireclient.modules.ArmorDisplayModule;
+import org.loveroo.fireclient.modules.AutoMessageModule;
+import org.loveroo.fireclient.modules.BigItemsModule;
+import org.loveroo.fireclient.modules.BlockOutlineModule;
+import org.loveroo.fireclient.modules.CoordinatesModule;
+import org.loveroo.fireclient.modules.CoordsChatModule;
+import org.loveroo.fireclient.modules.DeathInfoModule;
+import org.loveroo.fireclient.modules.ElytraSwapModule;
+import org.loveroo.fireclient.modules.EntityCountModule;
+import org.loveroo.fireclient.modules.FPSDisplayModule;
+import org.loveroo.fireclient.modules.FlightSpeedModule;
+import org.loveroo.fireclient.modules.FullbrightModule;
+import org.loveroo.fireclient.modules.HealthDisplayModule;
+import org.loveroo.fireclient.modules.HighestBlockModule;
+import org.loveroo.fireclient.modules.HitColorModule;
+import org.loveroo.fireclient.modules.IndicatorsModule;
+import org.loveroo.fireclient.modules.KitModule;
+import org.loveroo.fireclient.modules.LocalSkinModule;
+import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.modules.MuteSoundsModule;
+import org.loveroo.fireclient.modules.NametagModule;
+import org.loveroo.fireclient.modules.ParticlesModule;
+import org.loveroo.fireclient.modules.PerspectiveModule;
+import org.loveroo.fireclient.modules.SaturationDisplayModule;
+import org.loveroo.fireclient.modules.ScrollClickModule;
+import org.loveroo.fireclient.modules.ShadowModule;
+import org.loveroo.fireclient.modules.SignModule;
+import org.loveroo.fireclient.modules.SubtitlesModule;
+import org.loveroo.fireclient.modules.TPSModule;
+import org.loveroo.fireclient.modules.ToggleToggleSneakModule;
+import org.loveroo.fireclient.screen.config.MainConfigScreen;
+import org.loveroo.fireclient.settings.PlayerSortPriority;
+import org.lwjgl.glfw.GLFW;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.util.Identifier;
 
 public class FireClientside implements ClientModInitializer {
 
@@ -65,6 +83,8 @@ public class FireClientside implements ClientModInitializer {
     private static final HashMap<String, ModuleBase> modules = new HashMap<>();
     private static final HashMap<FireClientOption, Integer> settings = new HashMap<>();
 
+    private static final Affiliates affiliates = new Affiliates();
+
     private static final KeybindManager keybindManager = new KeybindManager();
     private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
             new KeyBinding("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
@@ -75,6 +95,10 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            affiliates.fetchAffiliates();
+        });
+
         new GuiDrawer();
         PlayerSortPriority.register();
 
@@ -301,6 +325,10 @@ public class FireClientside implements ClientModInitializer {
 
     public static KeybindManager getKeybindManager() {
         return keybindManager;
+    }
+
+    public static Affiliates getAffiliates() {
+        return affiliates;
     }
 
     static class GuiDrawer {

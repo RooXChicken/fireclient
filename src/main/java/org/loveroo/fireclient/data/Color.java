@@ -114,6 +114,14 @@ public record Color(int r, int g, int b, int a) {
     }
 
     /**
+     * Returns a new copy of this Color
+     * @return The copied Color
+     */
+    public Color clone() {
+        return new Color(r, g, b, a);
+    }
+
+    /**
      * Converts this Color into an <b>RGB</b> hex string
      * @return The Color hex string
      */

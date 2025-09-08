@@ -1,5 +1,14 @@
 package org.loveroo.fireclient.screen.modules;
 
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.KitManager;
+import org.loveroo.fireclient.mixin.modules.kit.AddSlotAccessor;
+import org.loveroo.fireclient.mixin.modules.kit.GetSlotAccessor;
+import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.lwjgl.glfw.GLFW;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -16,14 +25,6 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.KitManager;
-import org.loveroo.fireclient.mixin.modules.kit.AddSlotAccessor;
-import org.loveroo.fireclient.mixin.modules.kit.GetSlotAccessor;
-import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
-import org.lwjgl.glfw.GLFW;
 
 public class KitEditScreen extends KitViewScreen {
 
@@ -50,16 +51,16 @@ public class KitEditScreen extends KitViewScreen {
         super.init();
 
         var saveButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.save.name"), this::saveButtonPressed)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.save.tooltip", kitName)))
-                .dimensions(width/2 + 10, height/2 + 90,80, 20)
-                .build();
+            .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.save.tooltip", kitName)))
+            .dimensions(width/2 + 10, height/2 + 90,80, 20)
+            .build();
 
         addDrawableChild(saveButton);
 
         var undoButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.undo.name"), this::undoButtonPressed)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.undo.tooltip", kitName)))
-                .dimensions(width/2 - 90, height/2 + 90,80, 20)
-                .build();
+            .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.undo.tooltip", kitName)))
+            .dimensions(width/2 - 90, height/2 + 90,80, 20)
+            .build();
 
         addDrawableChild(undoButton);
     }

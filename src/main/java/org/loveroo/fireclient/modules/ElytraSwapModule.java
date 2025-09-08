@@ -1,5 +1,13 @@
 package org.loveroo.fireclient.modules;
 
+import java.util.List;
+import java.util.function.Predicate;
+
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -8,15 +16,6 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Keybind;
-
-import java.util.List;
-import java.util.function.Predicate;
 
 public class ElytraSwapModule extends ModuleBase {
 
@@ -30,10 +29,10 @@ public class ElytraSwapModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_elytra_swap",
-                Text.translatable("fireclient.keybind.generic.use.name"),
-                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
-                true, null,
-                this::useKey, null);
+            Text.translatable("fireclient.keybind.generic.use.name"),
+            Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+            true, null,
+            this::useKey, null);
 
         FireClientside.getKeybindManager().registerKeybind(useBind);
     }

@@ -1,13 +1,27 @@
 package org.loveroo.fireclient.data;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.json.JSONObject;
+import org.loveroo.fireclient.FireClient;
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.screen.modules.KitEditScreen;
+import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
+
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.datafixers.DataFixer;
 import com.mojang.serialization.Dynamic;
 
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.datafixer.DataFixTypes;
-import net.minecraft.datafixer.Schemas;
 import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.player.PlayerInventory;
@@ -20,24 +34,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.visitor.StringNbtWriter;
-
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.screen.modules.KitEditScreen;
-import org.loveroo.fireclient.screen.modules.KitPreviewScreen;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.function.Consumer;
 
 public class KitManager {
 
@@ -569,7 +565,7 @@ public class KitManager {
         @Override
         public void run() {
             try {
-                var url = new URI(FireClient.getServerUrl("v1/kit/upload")).toURL();
+                var url = new URI(FireClient.getServerUrl("kit/upload")).toURL();
 
                 var connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
@@ -637,10 +633,10 @@ public class KitManager {
             }
 
             try {
-                var url = new URI(FireClient.getServerUrl("v1/kit/download?id=" + kitId)).toURL();
+                var url = new URI(FireClient.getServerUrl("kit/download?id=" + kitId)).toURL();
 
                 var connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("GET");
                 connection.setDoInput(true);
 
                 var code = connection.getResponseCode();

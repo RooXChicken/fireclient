@@ -416,6 +416,9 @@
   "fireclient.settings.prioritize_players.name": "Prioritize Players",
   "fireclient.settings.prioritize_players.description": "Gives players priority in the command auto-complete the more times they are used",
 
+  "fireclient.settings.autofill_lapis.name": "Autofill Lapis",
+  "fireclient.settings.autofill_lapis.description": "Automatically puts Lapis Lazuli into the enchanting screen when opened",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",

@@ -1,8 +1,9 @@
 package org.loveroo.fireclient;
 
-import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.fabricmc.api.ModInitializer;
 
 public class FireClient implements ModInitializer {
 
@@ -17,7 +18,7 @@ public class FireClient implements ModInitializer {
 
     public static final String KEYBIND_CATEGORY = "key.category.fireclient";
 
-    private static final String SERVER_URL = "https://api.loveroo.org/api/fireclient/";
+    private static final String SERVER_URL = "http://127.0.0.1:25502/api/";
 
     @Override
     public void onInitialize() {
