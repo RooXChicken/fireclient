@@ -1,19 +1,18 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.screen.BrewingStandScreenHandler;
-import net.minecraft.screen.slot.SlotActionType;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.screen.BrewingStandScreenHandler;
+import net.minecraft.screen.slot.SlotActionType;
 
 @Mixin(BrewingStandScreenHandler.class)
 public abstract class BrewingStandFuelMixin {
@@ -42,27 +41,27 @@ public abstract class BrewingStandFuelMixin {
         }
 
         client.interactionManager.clickSlot(
-                screen.syncId,
-                slotIndex,
-                0,
-                SlotActionType.PICKUP,
-                client.player
+            screen.syncId,
+            slotIndex,
+            0,
+            SlotActionType.PICKUP,
+            client.player
         );
 
         client.interactionManager.clickSlot(
-                screen.syncId,
-                target.getIndex(),
-                0,
-                SlotActionType.PICKUP,
-                client.player
+            screen.syncId,
+            target.getIndex(),
+            0,
+            SlotActionType.PICKUP,
+            client.player
         );
 
         client.interactionManager.clickSlot(
-                screen.syncId,
-                slotIndex,
-                0,
-                SlotActionType.PICKUP,
-                client.player
+            screen.syncId,
+            slotIndex,
+            0,
+            SlotActionType.PICKUP,
+            client.player
         );
     }
 }

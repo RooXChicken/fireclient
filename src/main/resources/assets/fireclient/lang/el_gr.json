@@ -416,6 +416,9 @@
   "fireclient.settings.prioritize_players.name": "Προτεραιότητα Παικτών",
   "fireclient.settings.prioritize_players.description": "Δίνει στους παίκτες προτεραιότητα στην αυτόματη συμπλήρωση εντολών όσο περισσότερες φορές χρησιμοποιούνται",
 
+  "fireclient.settings.autofill_lapis.name": "Αυτόματη Συμπλήρωση Λάπις Λαζούλι",
+  "fireclient.settings.autofill_lapis.description": "Αυτόματα συμπληρώνει λάπις λαζούλι στην οθόνη μαγεύματος κατά το ανοίγμα της",
+
   "fireclient.keybind.generic.unbound_key.long": "Άδετος",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Εναλλαγή",

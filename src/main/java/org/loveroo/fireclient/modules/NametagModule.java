@@ -1,19 +1,18 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.data.Affiliates.NametagState;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 
 public class NametagModule extends ModuleBase {
 
@@ -30,6 +29,8 @@ public class NametagModule extends ModuleBase {
 
     @JsonOption(name = "unlimit_below_name")
     private boolean unlimitBelowName = false;
+
+    public static NametagState nametagState = NametagState.NONE;
 
     public NametagModule() {
         super(new ModuleData("nametag", "\uD83C\uDFF7", color));

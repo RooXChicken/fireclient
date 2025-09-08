@@ -414,6 +414,9 @@
   "fireclient.settings.prioritize_players.name": "Priorizar jogadores",
   "fireclient.settings.prioritize_players.description": "Dá aos jogadores prioridade no autocompletar de comandos quanto mais vezes eles são usados",
 
+  "fireclient.settings.autofill_lapis.name": "Preenchimento Automático de Lápis-Lazúli",
+  "fireclient.settings.autofill_lapis.description": "Coloca automaticamente o Lápis Lazuli na tela de encantamento quando aberto",
+
   "fireclient.keybind.generic.unbound_key.long": "Não consolidado",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Alternar",
