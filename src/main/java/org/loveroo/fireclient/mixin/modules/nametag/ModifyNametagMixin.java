@@ -62,7 +62,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         return 0xFFFFFFFF;
     }
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)V"), index = 0)
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 0)
     private Text changeAffiliateText(Text original, @Local(ordinal = 0, argsOnly = true) S state) {
         if(getNametagState() != NametagState.TEXT_COLOR) {
             return original;
@@ -71,7 +71,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         return RooHelper.gradientText(original.getString(), FireClientside.mainColor1, FireClientside.mainColor2);
     }
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)V"), index = 3)
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 3)
     private int changeAffiliateColor(int original, @Local(ordinal = 0, argsOnly = true) S state) {
         if(getNametagState() != NametagState.TEXT_COLOR) {
             return original;
