@@ -20,3 +20,7 @@ FireClient is open source but ARR (All Rights Reserved) so people don't steal my
 Feel free to read it, learn from it, or use it as a basis for your own projects (within reason). I just don't want theft. Please use this as a tool for your learning, I would love that 😊
 
 You may also fork the project, but not redistribute modified versions. If you want to add features, just submit a PR! I would love to help! You will even get Affiliate status (just a custom nametag text color for now)
+
+## Notes
+* Feel free to ask any questions about the code. I would love to answer
+* The name is derived from a player's username from an old SMP. You know who you are :3
