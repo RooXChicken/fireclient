@@ -1,21 +1,8 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
@@ -23,8 +10,16 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
 
 public class ArmorDisplayModule extends ModuleBase {
 
@@ -35,6 +30,9 @@ public class ArmorDisplayModule extends ModuleBase {
 
     @JsonOption(name = "mode")
     private DisplayMode mode = DisplayMode.TEXT;
+
+    @JsonOption(name = "show_items")
+    private boolean showItems = false;
 
     private final double flashThreshold = 2.0/14.0;
     private int ticks = 0;
@@ -81,11 +79,11 @@ public class ArmorDisplayModule extends ModuleBase {
 
         switch(mode) {
             case TEXT -> {
-                getData().setWidth(20);
+                getData().setWidth((!showItems) ? 20 : 30);
                 getData().setHeight(38);
 
                 if(locked) {
-                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale())));
+                    getData().setPosX((int)(client.getWindow().getScaledWidth()/2.0 - (10 * getData().getScale()) - ((!showItems) ? 0 : 3)));
                     getData().setPosY((int)(client.getWindow().getScaledHeight() - 48.0 - (22 * getData().getScale())));
                     getData().setScale(2.0/3.0);
                 }
@@ -145,12 +143,23 @@ public class ArmorDisplayModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
+        var x = (showItems) ? 20 : 10;
         var y = 10*index;
         if(cooldown > 0) {
-            context.fill(0, y + 9 - cooldown, 20, y+9, 0x809F9F9F);
+            context.fill(x-10, y + 9 - cooldown, x+10, y+9, 0x809F9F9F);
         }
 
-        context.drawCenteredTextWithShadow(text, (item.getMaxDamage() - item.getDamage()) + "", 10, y, getColor(item));
+        context.drawCenteredTextWithShadow(text, String.valueOf(item.getMaxDamage() - item.getDamage()), x, y, getColor(item));
+
+        if(showItems) {
+            var matrix = context.getMatrices();
+            matrix.push();
+
+            matrix.scale(0.6f, 0.6f, 1.0f);
+            context.drawItem(client.player, item, 0, (int)(y*1.6f), index);
+
+            matrix.pop();
+        }
     }
 
     private void drawArmorBars(DrawContext context, ItemStack item, int index, int cooldown) {
@@ -209,6 +218,13 @@ public class ArmorDisplayModule extends ModuleBase {
                     getData().setScale(2.0/3.0);
                 }
             })
+            .build());
+        
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.armor_display.show_items.name"))
+            .getValue(() -> { return showItems; })
+            .setValue((value) -> { showItems = value; })
+            .position(base.width/2 - 60, base.height/2 + 80)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.armor_display.show_items.tooltip")))
             .build());
 
         return widgets;

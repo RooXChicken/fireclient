@@ -1,21 +1,8 @@
 package org.loveroo.fireclient.modules;
 
-import com.mojang.blaze3d.systems.ProjectionType;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
-import net.minecraft.util.shape.*;
-import org.joml.*;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
@@ -23,9 +10,12 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.lang.Math;
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.ProjectionMatrix2;
+import net.minecraft.text.Text;
 
 public class BlockOutlineModule extends ModuleBase {
 

@@ -1,7 +1,19 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+import java.lang.reflect.Field;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.joml.Matrix3x2fStack;
+import org.json.JSONObject;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.FireClientOption;
+import org.loveroo.fireclient.data.JsonOption;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,30 +21,7 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3x2fStack;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.data.JsonOption;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
-import org.loveroo.fireclient.screen.config.MainConfigScreen;
-import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
-
-import java.lang.reflect.Field;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class ModuleBase {
 
@@ -133,8 +122,8 @@ public abstract class ModuleBase {
     protected void transform(Matrix3x2fStack matrix) {
         matrix.pushMatrix();
 
-        matrix.translate(data.getPosX(), data.getPosY());
-        matrix.scale((float)data.getScale(), (float)data.getScale());
+        matrix.translate(data.getPosX(), data.getPosY(), 0.0f);
+        matrix.scale((float)data.getScale(), (float)data.getScale(), 0.0f);
     }
 
     protected void endTransform(Matrix3x2fStack matrix) {
