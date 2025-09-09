@@ -1,20 +1,18 @@
 package org.loveroo.fireclient.modules.indicators;
 
+import java.util.List;
+
+import org.json.JSONObject;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.modules.ModuleBase;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.*;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.JsonOption;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.modules.ModuleBase;
-
-import java.util.List;
 
 public abstract class Indicator extends ModuleBase {
 
@@ -29,7 +27,7 @@ public abstract class Indicator extends ModuleBase {
         getData().setHeight(6);
 
         getData().setDefaultPosX(2, 640);
-        getData().setDefaultPosY(100 + (index * 9), 360);
+        getData().setDefaultPosY(120 + (index * 9), 360);
 
         getData().setSkip(true);
 
