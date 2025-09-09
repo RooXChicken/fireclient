@@ -341,7 +341,7 @@ public class FireClientside implements ClientModInitializer {
 
         @Override
         public void register(LayeredDrawerWrapper layeredDrawer) {
-            layeredDrawer.attachLayerAfter(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, "hud"), this::draw);
+            layeredDrawer.attachLayerBefore(IdentifiedLayer.HOTBAR_AND_BARS, Identifier.of(FireClient.MOD_ID, "hud"), this::draw);
         }
 
         public void draw(DrawContext context, RenderTickCounter ticks) {

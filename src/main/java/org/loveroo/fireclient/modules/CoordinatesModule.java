@@ -1,18 +1,15 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.world.dimension.DimensionTypes;
+import java.awt.Font;
+import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -22,11 +19,15 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import java.awt.*;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
+import net.minecraft.world.dimension.DimensionTypes;
 
 public class CoordinatesModule extends ModuleBase {
 

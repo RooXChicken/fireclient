@@ -1,18 +1,9 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.*;
-import net.minecraft.text.Text;
-import net.minecraft.util.shape.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.joml.Quaternionf;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
@@ -20,8 +11,14 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexRendering;
+import net.minecraft.text.Text;
+import net.minecraft.util.shape.VoxelShapes;
 
 public class BlockOutlineModule extends ModuleBase {
 

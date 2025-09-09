@@ -24,6 +24,8 @@
   "fireclient.module.armor_display.lock_button.tooltip": "Locks the position to the hotbar",
   "fireclient.module.armor_display.mode_toggle.name": "Mode: %1$s",
   "fireclient.module.armor_display.mode_toggle.tooltip": "Changes the display style",
+  "fireclient.module.armor_display.show_items.name": "Show Items",
+  "fireclient.module.armor_display.show_items.tooltip": "Makes the Text mode show the equipped items",
 
   "fireclient.module.armor_display.mode.text": "Text",
   "fireclient.module.armor_display.mode.bars": "Bars",
