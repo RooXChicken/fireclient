@@ -273,6 +273,12 @@
   "fireclient.module.perspective.zoom.name": "Zoom In/Out",
   "fireclient.module.perspective.zoom.tooltip": "Zooms the Perspective in and out when using the scroll wheel",
 
+  "fireclient.module.reach_display.name": "Reach Display",
+  "fireclient.module.reach_display.description": "Shows how far away your target is",
+
+  "fireclient.module.reach_display.hit_only.name": "Hit Only",
+  "fireclient.module.reach_display.hit_only.tooltip": "Makes the reach only update when you attack an entity",
+
   "fireclient.module.render_world.name": "Render World",
   "fireclient.module.render_world.description": "[CHEAT] Allows the toggling of the world rendering",
 

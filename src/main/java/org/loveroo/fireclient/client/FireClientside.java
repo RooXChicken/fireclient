@@ -45,6 +45,7 @@ import org.loveroo.fireclient.modules.MuteSoundsModule;
 import org.loveroo.fireclient.modules.NametagModule;
 import org.loveroo.fireclient.modules.ParticlesModule;
 import org.loveroo.fireclient.modules.PerspectiveModule;
+import org.loveroo.fireclient.modules.ReachDisplayModule;
 import org.loveroo.fireclient.modules.SaturationDisplayModule;
 import org.loveroo.fireclient.modules.ScrollClickModule;
 import org.loveroo.fireclient.modules.ShadowModule;
@@ -141,6 +142,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new TPSModule());
         registerModule(new SaturationDisplayModule());
         registerModule(new LocalSkinModule());
+        registerModule(new ReachDisplayModule());
     }
 
     public static void registerModule(ModuleBase module) {

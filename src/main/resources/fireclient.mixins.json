@@ -54,6 +54,8 @@
     "modules.perspective.IncreaseZoomMixin",
     "modules.perspective.OffsetCameraMixin",
     "modules.perspective.SetPerspectiveMixin",
+    "modules.reachdisplay.FindCrosshairTargetAccessor",
+    "modules.reachdisplay.GetReachMixin",
     "modules.scrollclick.BoundKeyAccessor",
     "modules.scrollclick.ScrollClickMixin",
     "modules.shadows.FullbrightShadowsMixin",
