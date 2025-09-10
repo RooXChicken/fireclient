@@ -53,6 +53,7 @@ import org.loveroo.fireclient.modules.SignModule;
 import org.loveroo.fireclient.modules.SubtitlesModule;
 import org.loveroo.fireclient.modules.TPSModule;
 import org.loveroo.fireclient.modules.ToggleToggleSneakModule;
+import org.loveroo.fireclient.modules.ZoomModule;
 import org.loveroo.fireclient.screen.config.MainConfigScreen;
 import org.loveroo.fireclient.settings.PlayerSortPriority;
 import org.lwjgl.glfw.GLFW;
@@ -143,6 +144,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new SaturationDisplayModule());
         registerModule(new LocalSkinModule());
         registerModule(new ReachDisplayModule());
+        registerModule(new ZoomModule());
     }
 
     public static void registerModule(ModuleBase module) {

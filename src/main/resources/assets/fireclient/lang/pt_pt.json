@@ -24,6 +24,8 @@
   "fireclient.module.armor_display.lock_button.tooltip": "Bloqueia a posição na barra de atalhos",
   "fireclient.module.armor_display.mode_toggle.name": "Modo: %1$s",
   "fireclient.module.armor_display.mode_toggle.tooltip": "Muda o estilo de exibição",
+  "fireclient.module.armor_display.show_items.name": "Mostrar Armadura Equipada",
+  "fireclient.module.armor_display.show_items.tooltip": "Faz que o modo texto mostre as peças de armadura equipadas", 
 
   "fireclient.module.armor_display.mode.text": "Texto",
   "fireclient.module.armor_display.mode.bars": "Baras",
@@ -270,6 +272,12 @@
 
   "fireclient.module.perspective.zoom.name": "Ampliar Zoom",
   "fireclient.module.perspective.zoom.tooltip": "Aumenta e diminui o zoom da perspetiva ao utilizar a roda de rolagem",
+
+  "fireclient.module.reach_display.name": "Exibição de Alcance",
+  "fireclient.module.reach_display.description": "Mostra o alcance do teu ataque",
+
+  "fireclient.module.reach_display.hit_only.name": "Só o ataque",
+  "fireclient.module.reach_display.hit_only.tooltip": "Faz que o módulo só muda se alguem fôr acertado",
 
   "fireclient.module.render_world.name": "Renderizar mundo",
   "fireclient.module.render_world.description": "[CHEAT] Permite alternar a renderização do mundo",
