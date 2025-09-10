@@ -33,7 +33,13 @@ public class RooHelper {
 
             var codePont = msg.codePointAt(i);
             var letter = Character.toString(codePont);
+
+            // skip color codes for now
+            // TODO: somehow make color codes work (or just end it all)
             if(letter.equals(colorCodeCharacter)) {
+                // var type = msg.codePointAt(i+1);
+                // text.append(MutableText.of(new PlainTextContent.Literal(letter + type)));
+
                 i += 2;
                 continue;
             }
