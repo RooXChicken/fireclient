@@ -92,4 +92,10 @@ public class NametagModule extends ModuleBase {
         UUID fireclient$getUUID();
         void fireclient$setUUID(UUID uuid);
     }
+
+    public interface NameStorage {
+
+        String fireclient$getName();
+        void fireclient$setName(String name);
+    }
 }

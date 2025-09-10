@@ -331,6 +331,9 @@
   "fireclient.module.tps_display.name": "TPS Display",
   "fireclient.module.tps_display.description": "Shows the estimated server Ticks Per Second",
 
+  "fireclient.module.zoom.name": "Zoom",
+  "fireclient.module.zoom.description": "Increases the camera's zoom level",
+
   "fireclient.screen.generic.header": "FireClient Config",
 
   "fireclient.screen.main_config.title": "FireClient Main Config",

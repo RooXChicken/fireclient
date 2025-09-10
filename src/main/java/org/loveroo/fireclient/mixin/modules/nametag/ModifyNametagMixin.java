@@ -26,13 +26,18 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 
 @Mixin(EntityRenderer.class)
-public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> implements NametagModule.UUIDStorage {
+public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> implements NametagModule.UUIDStorage, NametagModule.NameStorage {
 
     @Unique
     private UUID uuid = UUID.randomUUID();
+
+    @Unique
+    private String name = "";
 
     @Override
     public UUID fireclient$getUUID() {
@@ -42,6 +47,16 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
     @Override
     public void fireclient$setUUID(UUID uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public String fireclient$getName() {
+        return name;
+    }
+
+    @Override
+    public void fireclient$setName(String name) {
+        this.name = name;
     }
 
     @Shadow
@@ -67,8 +82,20 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         if(getNametagState() != NametagState.TEXT_COLOR) {
             return original;
         }
+
+        var finalText = MutableText.of(PlainTextContent.of(""));
+        for(var text : original.getSiblings()) {
+            var string = text.getString();
+
+            if(string.equals(name)) {
+                finalText.append(RooHelper.gradientText(string, FireClientside.mainColor1, FireClientside.mainColor2));
+            }
+            else {
+                finalText.append(text);
+            }
+        }
         
-        return RooHelper.gradientText(original.getString(), FireClientside.mainColor1, FireClientside.mainColor2);
+        return finalText;
     }
 
     @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/font/TextRenderer;draw(Lnet/minecraft/text/Text;FFIZLorg/joml/Matrix4f;Lnet/minecraft/client/render/VertexConsumerProvider;Lnet/minecraft/client/font/TextRenderer$TextLayerType;II)I"), index = 3)
@@ -119,6 +146,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         var matrix = matrices.peek().getPositionMatrix();
         var vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getTextBackgroundSeeThrough());
 
+        // z value is super small but non-zero as to fix a depth issue but not cause it to be off-center
 		vertexConsumer.vertex(matrix, textWidth, -1, 0.000001f).color(color1).light(15); // TL
 		vertexConsumer.vertex(matrix, textWidth, 9, 0.000001f).color(color1).light(15); // BL
 		vertexConsumer.vertex(matrix, textWidth*-1, 9, 0.000001f).color(color2).light(15); // BR

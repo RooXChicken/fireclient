@@ -24,7 +24,7 @@ public class ZoomModule extends ModuleBase {
     private int zoomLevel = 0;
 
     public ZoomModule() {
-        super(new ModuleData("zoom", "\uD83D\uDC5F", color));
+        super(new ModuleData("zoom", "📷", color));
 
         getData().setGuiElement(false);
 
@@ -75,6 +75,6 @@ public class ZoomModule extends ModuleBase {
             return;
         }
 
-        zoomLevel += value;
+        zoomLevel = Math.max(3, value);
     }
 }
