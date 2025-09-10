@@ -427,6 +427,9 @@
   "fireclient.settings.autofill_lapis.name": "Autofill Lapis",
   "fireclient.settings.autofill_lapis.description": "Automatically puts Lapis Lazuli into the enchanting screen when opened",
 
+  "fireclient.settings.hide_item_names.name": "Hide Item Names",
+  "fireclient.settings.hide_item_names.description": "Hides the item select tooltip above the hotbar",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",

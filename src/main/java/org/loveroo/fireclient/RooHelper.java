@@ -1,18 +1,24 @@
 package org.loveroo.fireclient;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Overlay;
-import net.minecraft.client.gui.screen.SplashOverlay;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.text.*;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Overlay;
+import net.minecraft.client.gui.screen.SplashOverlay;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.toast.SystemToast;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.PlainTextContent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
+
 public class RooHelper {
+
+    private static final String colorCodeCharacter = "§";
 
     public static MutableText gradientText(String msg, Color color1, Color color2) {
 //        if(FireClientside.getSetting(FireClientOption.DISABLE_GRADIENT) == 1) {
@@ -26,7 +32,13 @@ public class RooHelper {
             var style = Style.EMPTY.withColor(color1.blend(color2, progress).toInt());
 
             var codePont = msg.codePointAt(i);
-            text.append(MutableText.of(new PlainTextContent.Literal(Character.toString(codePont))).setStyle(style));
+            var letter = Character.toString(codePont);
+            if(letter.equals(colorCodeCharacter)) {
+                i += 2;
+                continue;
+            }
+
+            text.append(MutableText.of(new PlainTextContent.Literal(letter)).setStyle(style));
 
             i += Character.charCount(codePont);
         }

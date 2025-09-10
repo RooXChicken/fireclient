@@ -24,6 +24,8 @@
   "fireclient.module.armor_display.lock_button.tooltip": "Κλειδώνει την θέση στην γραμμή εργαλειών",
   "fireclient.module.armor_display.mode_toggle.name": "Τρόπος: %1$s",
   "fireclient.module.armor_display.mode_toggle.tooltip": "Αλλάζει το στυλ εμφάνισης",
+  "fireclient.module.armor_display.show_items.name": "Εμφάνιση Εξοπλισμένων Αντικειμένων",
+  "fireclient.module.armor_display.show_items.tooltip": "Κάνει τη λειτουργία Κειμένου να εμφανίζει τα εξοπλισμένα αντικείμενα",
 
   "fireclient.module.armor_display.mode.text": "Κείμενο",
   "fireclient.module.armor_display.mode.bars": "Μπάρες",
@@ -273,6 +275,12 @@
   "fireclient.module.perspective.zoom.name": "Μεγέθυνση/Σμίκρυνση",
   "fireclient.module.perspective.zoom.tooltip": "Μεγεθύνει και σμικρύνει την Προοπτική με την χρήση του τροχού κύλισης",
 
+  "fireclient.module.reach_display.name": "Εμφάνιση Εμβέλειας",
+  "fireclient.module.reach_display.description": "Δείχνει πόσο μακριά βρίσκεται ο στόχος σας",
+
+  "fireclient.module.reach_display.hit_only.name": "Μόνο Επί Επίθεση",
+  "fireclient.module.reach_display.hit_only.tooltip": "Κάνει την εμφάνιση της εμβέλειας να ενημερώνεται μόνο όταν επιτίθεστε σε μια οντότητα",
+
   "fireclient.module.render_world.name": "Εμφάνιση Κόσμου",
   "fireclient.module.render_world.description": "[CHEAT] Επιτρέπει την εναλλαγή της εμφάνισης του κόσμου",
   
@@ -418,6 +426,9 @@
 
   "fireclient.settings.autofill_lapis.name": "Αυτόματη Συμπλήρωση Λάπις Λαζούλι",
   "fireclient.settings.autofill_lapis.description": "Αυτόματα συμπληρώνει λάπις λαζούλι στην οθόνη μαγεύματος κατά το ανοίγμα της",
+
+  "fireclient.settings.hide_item_names.name": "Κρυμμένα Ονόματα Αντικειμένων",
+  "fireclient.settings.hide_item_names.description": "Αποκρύπτει την επεξήγηση επιλογής αντικείμενου πάνω από την γραμμή εργασιών",
 
   "fireclient.keybind.generic.unbound_key.long": "Άδετος",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
