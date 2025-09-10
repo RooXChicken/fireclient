@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -25,6 +26,11 @@ abstract class LocalSkinMixin {
     public void getTexture(CallbackInfoReturnable<Identifier> info) {
         var localSkin = (LocalSkinModule) FireClientside.getModule("local_skin");
         if(localSkin == null || !localSkin.getData().isEnabled()) {
+            return;
+        }
+
+        var client = MinecraftClient.getInstance();
+        if(client.player == null || client.player.getSkinTextures() != (Object)this) {
             return;
         }
 
@@ -46,7 +52,8 @@ abstract class LocalSkinModelMixin {
     @SuppressWarnings("unchecked")
     @Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
     public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
-        if(!(entity instanceof AbstractClientPlayerEntity)) {
+        var client = MinecraftClient.getInstance();
+        if(!(entity instanceof AbstractClientPlayerEntity) || client.player == null || entity.getUuid() != client.player.getUuid()) {
             return;
         }
         
