@@ -64,6 +64,8 @@
     "modules.signs.DisableSignRendering",
     "modules.subtitles.SubtitlesMixin",
     "modules.tps.UpdateTpsMixin",
+    "modules.zoom.ZoomInMixin",
+    "modules.zoom.ZoomLevelMixin",
     "settings.AddCachedEntityMixin",
     "settings.AllowReloadInputsClientMixin",
     "settings.AllowReloadInputsKeyboardMixin",

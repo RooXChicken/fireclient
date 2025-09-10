@@ -1,5 +1,7 @@
 package org.loveroo.fireclient.mixin.modules.nametag;
 
+import java.util.UUID;
+
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Affiliates.NametagState;
@@ -25,8 +27,6 @@ import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.text.Text;
-
-import java.util.UUID;
 
 @Mixin(EntityRenderer.class)
 public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> implements NametagModule.UUIDStorage {

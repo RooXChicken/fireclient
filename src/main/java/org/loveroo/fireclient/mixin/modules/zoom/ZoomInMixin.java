@@ -1,8 +1,7 @@
-package org.loveroo.fireclient.mixin.modules.scrollclick;
+package org.loveroo.fireclient.mixin.modules.zoom;
 
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.PerspectiveModule;
-import org.loveroo.fireclient.modules.ScrollClickModule;
 import org.loveroo.fireclient.modules.ZoomModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -13,7 +12,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 
 @Mixin(Mouse.class)
-public abstract class ScrollClickMixin {
+public abstract class ZoomInMixin {
 
     @Inject(method = "onMouseScroll(JDD)V", at = @At("HEAD"), cancellable = true)
     private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo info) {
@@ -22,22 +21,17 @@ public abstract class ScrollClickMixin {
             return;
         }
 
-        var scrollClick = (ScrollClickModule)FireClientside.getModule("scroll_click");
-        if(scrollClick == null || !scrollClick.getData().isEnabled()) {
+        var zoom = (ZoomModule)FireClientside.getModule("zoom");
+        if(zoom == null || !zoom.getData().isEnabled()) {
             return;
         }
-
+        
         var perspective = (PerspectiveModule) FireClientside.getModule("perspective");
         if(perspective != null && perspective.isUsing() && perspective.isZoomEnabled()) {
             return;
         }
 
-        var zoom = (ZoomModule) FireClientside.getModule("zoom");
-        if(zoom != null && zoom.isZooming() && zoom.doesScrollToZoom()) {
-            return;
-        }
-
-        scrollClick.incrementClicks(vertical);
+        zoom.incrementZoom((int)Math.round(vertical) * -1);
         info.cancel();
     }
 }
