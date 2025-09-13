@@ -13,7 +13,6 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -21,6 +20,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.registry.Registries;
@@ -28,7 +28,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class MuteSoundsModule extends ModuleBase {
+public class SoundsModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0xFA8A73);
 
@@ -44,13 +44,13 @@ public class MuteSoundsModule extends ModuleBase {
     @Nullable
     private TextFieldWidget soundField;
 
-    public MuteSoundsModule() {
-        super(new ModuleData("mute_sounds", "\uD83D\uDD07", color));
+    public SoundsModule() {
+        super(new ModuleData("sounds", "\uD83D\uDD07", color));
 
         getData().setEnabled(true);
         getData().setGuiElement(false);
 
-        var toggleBind = new Keybind("toggle_mute_sounds",
+        var toggleBind = new Keybind("toggle_sounds",
                 Text.translatable("fireclient.keybind.generic.toggle.name"),
                 Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
@@ -74,7 +74,12 @@ public class MuteSoundsModule extends ModuleBase {
                 continue;
             }
 
-            mutedSounds.add(new MutedSound(sound.optString("id", ""), sound.optBoolean("enabled", true)));
+            var volume = sound.optDouble("volume", 1.0);
+            if(sound.optBoolean("enabled", false)) {
+                volume = 0.0;
+            }
+
+            mutedSounds.add(new MutedSound(sound.optString("id", ""), volume));
         }
     }
 
@@ -88,7 +93,7 @@ public class MuteSoundsModule extends ModuleBase {
             var soundJson = new JSONObject();
 
             soundJson.put("id", sound.getSound());
-            soundJson.put("enabled", sound.isEnabled());
+            soundJson.put("volume", sound.getVolume());
 
             soundList.put(soundJson);
         }
@@ -109,7 +114,7 @@ public class MuteSoundsModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var widgets = new ArrayList<ClickableWidget>();
 
-        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_mute_sounds").getRebindButton(5, base.height - 25, 120,20));
+        widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_sounds").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
         soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
@@ -118,9 +123,9 @@ public class MuteSoundsModule extends ModuleBase {
 
         widgets.add(soundField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.add_sound.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
@@ -132,16 +137,30 @@ public class MuteSoundsModule extends ModuleBase {
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
-                .getValue(sound::isEnabled)
-                .setValue(sound::setEnabled)
-                .dimensions(base.width/2 + 90, 0, 20, 15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getSound())))
-                .build());
+            var slider = new SliderWidget(base.width / 2 + 60, 0, 50, 15, getVolumeText(sound.volume), (sound.volume)/2) {
+                @Override
+                protected void updateMessage() {
+                    setMessage(getVolumeText(sound.volume));
+                }
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
+                @Override
+                protected void applyValue() {
+                    sound.volume = value * 2;
+                }
+            };
+
+            entryWidgets.add(slider);
+
+            // entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
+            //     .getValue(sound::isEnabled)
+            //     .setValue(sound::setEnabled)
+            //     .dimensions(base.width/2 + 90, 0, 20, 15)
+            //     .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.toggle_sound.tooltip", sound.getSound())))
+            //     .build());
+
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
                 .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getSound())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.remove_sound.tooltip", sound.getSound())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
@@ -158,6 +177,10 @@ public class MuteSoundsModule extends ModuleBase {
     @Override
     public void openScreen(Screen base) {
         base.setFocused(soundField);
+    }
+
+    private Text getVolumeText(double volume) {
+        return Text.translatable("fireclient.module.sounds.volume.message", (int)Math.round(volume*100) + "%");
     }
 
     private void soundTextChanged(TextFieldWidget widget, String text) {
@@ -212,14 +235,14 @@ public class MuteSoundsModule extends ModuleBase {
 
         if(mutedSounds.stream().anyMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(sound)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.sounds.add_sound.failure.title"),
+                Text.translatable("fireclient.module.sounds.add_sound.already_exists.contents")
             );
 
             return;
         }
 
-        mutedSounds.add(new MutedSound(sound, true));
+        mutedSounds.add(new MutedSound(sound, 1.0));
         text.setSuggestion("");
         
         reloadScreen();
@@ -244,8 +267,14 @@ public class MuteSoundsModule extends ModuleBase {
         FireClientside.saveConfig();
     }
 
-    public boolean isMute(SoundEvent sound) {
-        return mutedSounds.stream().anyMatch((muted) -> (muted.isEnabled() && muted.getSoundEvent() != null && muted.getSoundEvent().id().equals(sound.id())));
+    public double getVolume(SoundEvent sound) {
+        for(var muted : mutedSounds) {
+            if(muted.getSoundEvent() != null && muted.getSoundEvent().id().equals(sound.id())) {
+                return muted.volume;
+            }
+        }
+
+        return 1.0;
     }
 
     static class MutedSound {
@@ -254,11 +283,11 @@ public class MuteSoundsModule extends ModuleBase {
 
         @Nullable
         private final SoundEvent soundEvent;
-        private boolean enabled;
+        private double volume;
 
-        public MutedSound(String sound, boolean enabled) {
+        public MutedSound(String sound, double volume) {
             this.sound = sound;
-            this.enabled = enabled;
+            this.volume = volume;
 
             this.soundEvent = SoundEvent.of(Identifier.ofVanilla(this.sound));
         }
@@ -272,12 +301,12 @@ public class MuteSoundsModule extends ModuleBase {
             return soundEvent;
         }
 
-        public boolean isEnabled() {
-            return enabled;
+        public double getVolume() {
+            return this.volume;
         }
 
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
+        public void setVolume(double volume) {
+            this.volume = volume;
         }
     }
 }

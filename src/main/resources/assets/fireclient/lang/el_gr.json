@@ -238,21 +238,21 @@
   "fireclient.module.local_skin.slim.name": "Λεπτό",
   "fireclient.module.local_skin.slim.tooltip": "Κάνε το \"%1$s\" λεπτό",
 
-  "fireclient.module.mute_sounds.name": "Σίγαση Ήχων",
-  "fireclient.module.mute_sounds.description": "Επιτρέπει τη σίγαση ορισμένων ήχων",
+  "fireclient.module.sounds.name": "Σίγαση Ήχων",
+  "fireclient.module.sounds.description": "Επιτρέπει τη σίγαση ορισμένων ήχων",
 
-  "fireclient.module.mute_sounds.toggle_sound.tooltip": "Εναλλαγή του \"%1$s\"",
+  "fireclient.module.sounds.toggle_sound.tooltip": "Εναλλαγή του \"%1$s\"",
 
-  "fireclient.module.mute_sounds.add_sound.name": "+",
-  "fireclient.module.mute_sounds.add_sound.tooltip": "Προσθήκη ήχου",
+  "fireclient.module.sounds.add_sound.name": "+",
+  "fireclient.module.sounds.add_sound.tooltip": "Προσθήκη ήχου",
 
-  "fireclient.module.mute_sounds.remove_sound.name": "-",
-  "fireclient.module.mute_sounds.remove_sound.tooltip": "Αφαίρεση του \"%1$s\"",
+  "fireclient.module.sounds.remove_sound.name": "-",
+  "fireclient.module.sounds.remove_sound.tooltip": "Αφαίρεση του \"%1$s\"",
 
-  "fireclient.module.mute_sounds.add_sound.failure.title": "Αποτυχία προσθήκης ήχου",
-  "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Μη έγκυρο αναγνωριστικό",
-  "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Ο ήχος δεν βρέθηκε",
-  "fireclient.module.mute_sounds.add_sound.already_exists.contents": "Ο ήχος είναι ήδη στη λίστα",
+  "fireclient.module.sounds.add_sound.failure.title": "Αποτυχία προσθήκης ήχου",
+  "fireclient.module.sounds.add_sound.invalid_id.contents": "Μη έγκυρο αναγνωριστικό",
+  "fireclient.module.sounds.add_sound.invalid_sound.contents": "Ο ήχος δεν βρέθηκε",
+  "fireclient.module.sounds.add_sound.already_exists.contents": "Ο ήχος είναι ήδη στη λίστα",
 
   "fireclient.module.nametag.name": "Ετικέτα Ονόματος",
   "fireclient.module.nametag.description": "Επιτρέπει την τροποποίηση ετικετών ονομάτων",

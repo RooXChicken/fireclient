@@ -1,20 +1,20 @@
 package org.loveroo.fireclient.screen.config;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import org.loveroo.fireclient.modules.ModuleBase;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.modules.ModuleBase;
-import org.loveroo.fireclient.screen.base.ConfigScreenBase;
-
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ModuleConfigScreen extends ConfigScreenBase {
 
@@ -91,18 +91,6 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         onExit();
         MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
         return true;
-    }
-
-    @Override
-    protected void exitOnInventory() {
-        for(var widget : children()) {
-            if(widget instanceof TextFieldWidget text && text.isSelected()) {
-                return;
-            }
-        }
-
-        onExit();
-        super.exitOnInventory();
     }
 
     @Override
