@@ -1,15 +1,16 @@
 package org.loveroo.fireclient.screen.base;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.lwjgl.glfw.GLFW;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.text.Text;
 
 public class ConfigScreenBase extends Screen {
 
@@ -72,10 +73,16 @@ public class ConfigScreenBase extends Screen {
     }
 
     protected void exitOnInventory() {
-        if(client.player == null) {
+        if(client.player == null || getFocused() instanceof TextFieldWidget) {
             return;
         }
-        
+
+        if(getFocused() instanceof ScrollableWidget scroll) {
+            if(scroll.getFocused().getFocused() instanceof TextFieldWidget) {
+                return;
+            }
+        }
+
         client.setScreen(new InventoryScreen(client.player));
     }
 

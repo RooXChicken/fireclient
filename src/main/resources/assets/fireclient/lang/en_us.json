@@ -55,6 +55,16 @@
   "fireclient.module.block_outline.thick_outline.name": "Thick Outline",
   "fireclient.module.block_outline.thick_outline.tooltip": "Makes the block outline thicker",
 
+  "fireclient.module.command_keys.name": "Command Keys",
+  "fireclient.module.command_keys.description": "Runs commands when you press their respective keybind",
+
+  "fireclient.module.command_keys.add_command.name": "Add new command",
+  "fireclient.module.command_keys.add_command.tooltip": "Add a new command to the list",
+  "fireclient.module.command_keys.remove_command.name": "-",
+  "fireclient.module.command_keys.remove_command.tooltip": "Remove \"%1$s\"",
+  "fireclient.module.command_keys.run_command.name": "🛠",
+  "fireclient.module.command_keys.run_command.tooltip": "Run \"%1$s\"",
+
   "fireclient.module.coordinates.name": "Coordinates",
   "fireclient.module.coordinates.description": "Shows your in game coordinates, coordinates for the other dimension, and supports a separate window",
 
@@ -238,21 +248,23 @@
   "fireclient.module.local_skin.slim.name": "Slim",
   "fireclient.module.local_skin.slim.tooltip": "Make \"%1$s\" slim",
 
-  "fireclient.module.mute_sounds.name": "Mute Sounds",
-  "fireclient.module.mute_sounds.description": "Allows certain sounds to be muted",
+  "fireclient.module.sounds.name": "Mute Sounds",
+  "fireclient.module.sounds.description": "Allows certain sounds to be muted",
 
-  "fireclient.module.mute_sounds.toggle_sound.tooltip": "Toggle \"%1$s\"",
+  "fireclient.module.sounds.toggle_sound.tooltip": "Toggle \"%1$s\"",
 
-  "fireclient.module.mute_sounds.add_sound.name": "+",
-  "fireclient.module.mute_sounds.add_sound.tooltip": "Add sound",
+  "fireclient.module.sounds.add_sound.name": "+",
+  "fireclient.module.sounds.add_sound.tooltip": "Add sound",
 
-  "fireclient.module.mute_sounds.remove_sound.name": "-",
-  "fireclient.module.mute_sounds.remove_sound.tooltip": "Remove \"%1$s\"",
+  "fireclient.module.sounds.remove_sound.name": "-",
+  "fireclient.module.sounds.remove_sound.tooltip": "Remove \"%1$s\"",
 
-  "fireclient.module.mute_sounds.add_sound.failure.title": "Failed to add sound",
-  "fireclient.module.mute_sounds.add_sound.invalid_id.contents": "Invalid identifier",
-  "fireclient.module.mute_sounds.add_sound.invalid_sound.contents": "Sound not found",
-  "fireclient.module.mute_sounds.add_sound.already_exists.contents": "Sound already in list",
+  "fireclient.module.sounds.add_sound.failure.title": "Failed to add sound",
+  "fireclient.module.sounds.add_sound.invalid_id.contents": "Invalid identifier",
+  "fireclient.module.sounds.add_sound.invalid_sound.contents": "Sound not found",
+  "fireclient.module.sounds.add_sound.already_exists.contents": "Sound already in list",
+
+  "fireclient.module.sounds.volume.message": "%1$s",
 
   "fireclient.module.nametag.name": "Nametag",
   "fireclient.module.nametag.description": "Allows the modification of nametags",

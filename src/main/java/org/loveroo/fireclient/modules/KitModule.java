@@ -1,5 +1,24 @@
 package org.loveroo.fireclient.modules;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.KitManager;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
+import org.lwjgl.glfw.GLFW;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,24 +29,6 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.world.GameMode;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.*;
-import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.modules.MuteSoundsModule.MutedSound;
-import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget;
-import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
-import org.lwjgl.glfw.GLFW;
-
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 public class KitModule extends ModuleBase {
     
@@ -359,29 +360,29 @@ public class KitModule extends ModuleBase {
                 case INVALID_KIT -> {
                     
                     RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
-                    Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                        Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")
                     );
                 }
                 
                 case TOO_LARGE -> {
                     RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
-                    Text.translatable("fireclient.module.kit.share.failure.too_large")
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                        Text.translatable("fireclient.module.kit.share.failure.too_large")
                     );
                 }
                 
                 case FAILURE -> {
                     RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
-                    Text.translatable("fireclient.module.kit.failure.generic_fail")
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                        Text.translatable("fireclient.module.kit.failure.generic_fail")
                     );
                 }
                 
                 case RATE_LIMITED -> {
                     RooHelper.sendNotification(
-                    Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
-                    Text.translatable("fireclient.module.kit.server.fail.rate_limit")
+                        Text.translatable("fireclient.module.kit.share.failure.generic", kitName),
+                        Text.translatable("fireclient.module.kit.server.fail.rate_limit")
                     );
                 }
             }
@@ -453,8 +454,8 @@ public class KitModule extends ModuleBase {
     private boolean checkField() {
         if(kitNameField == null || kitNameField.getText().isEmpty()) {
             RooHelper.sendNotification(
-            Text.translatable("fireclient.module.kit.empty_name.title"),
-            Text.translatable("fireclient.module.kit.empty_name.contents"));
+                Text.translatable("fireclient.module.kit.empty_name.title"),
+                Text.translatable("fireclient.module.kit.empty_name.contents"));
             
             return false;
         }

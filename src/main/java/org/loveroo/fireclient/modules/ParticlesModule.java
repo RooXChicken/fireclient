@@ -118,9 +118,9 @@ public class ParticlesModule extends ModuleBase {
 
         widgets.add(particleField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.add_sound.name"), (button) -> addParticleButton(particleField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addParticleButton(particleField))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.add_sound.tooltip")))
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.add_sound.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
@@ -137,12 +137,12 @@ public class ParticlesModule extends ModuleBase {
                 .getValue(sound::isEnabled)
                 .setValue(sound::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.toggle_sound.tooltip", sound.getParticle())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.toggle_sound.tooltip", sound.getParticle())))
                 .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.mute_sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeParticle(sound))
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeParticle(sound))
                 .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.mute_sounds.remove_sound.tooltip", sound.getParticle())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.remove_sound.tooltip", sound.getParticle())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
@@ -219,8 +219,8 @@ public class ParticlesModule extends ModuleBase {
 
         if(hiddenParticles.stream().anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(particle)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.mute_sounds.add_sound.failure.title"),
-                Text.translatable("fireclient.module.mute_sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.sounds.add_sound.failure.title"),
+                Text.translatable("fireclient.module.sounds.add_sound.already_exists.contents")
             );
 
             return;

@@ -63,7 +63,8 @@ public class RooHelper {
             return;
         }
 
-        handler.sendChatCommand(msg);
+        var command = (msg.startsWith("/")) ? msg.substring(1) : msg;
+        handler.sendChatCommand(command);
     }
 
     public static void sendChatMessage(String msg) {
