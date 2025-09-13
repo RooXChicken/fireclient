@@ -1,36 +1,51 @@
 {
-  "schemaVersion": 1,
-  "id": "fireclient",
-  "version": "${version}",
-  "name": "FireClient",
-  "description": "Not a client. Helps with SMPs [ made with love by roo ]\n\n* Greek translation: AlexOinks\n* Portuguese translation: VioletMeows",
-  "authors": [ "RooXChicken" ],
-  "contact": {
-    "homepage": "https://loveroo.org",
-    "sources": "https://github.com/RooXChicken/fireclient",
-    "issues": "https://github.com/RooXChicken/fireclient/issues"
-  },
-  "license": "All-Rights-Reserved",
-  "icon": "assets/fireclient/icon.png",
-  "environment": "client",
-  "entrypoints": {
-    "client": [
-      "org.loveroo.fireclient.client.FireClientside"
-    ],
-    "main": [
-      "org.loveroo.fireclient.FireClient"
-    ],
-    "modmenu": [
-      "org.loveroo.fireclient.client.FireClientModMenuImpl"
-    ]
-  },
-  "accessWidener" : "fireclient.accesswidener",
-  "mixins": [
-    "fireclient.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric": "*",
-    "minecraft": ">=${minecraft_version}"
-  }
+	"schemaVersion": 1,
+	"id": "fireclient",
+	"version": "${version}",
+
+	"name": "FireClient",
+	"description": "Not a client. Helps with SMPs [ made with love by roo ]\n\n* Greek translation: AlexOinks\n* Portuguese translation: VioletMeows",
+
+	"authors": [
+		"RooXChicken"
+	],
+
+	"contact": {
+		"homepage": "https://loveroo.org",
+		"sources": "https://github.com/RooXChicken/fireclient",
+		"issues": "https://github.com/RooXChicken/fireclient/issues"
+	},
+
+	"license": "All-Rights-Reserved",
+	"icon": "assets/fireclient/icon.png",
+	
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"org.loveroo.fireclient.client.FireClientside"
+		],
+		"main": [
+			"org.loveroo.fireclient.FireClient"
+		],
+		"modmenu": [
+			"org.loveroo.fireclient.client.FireClientModMenuImpl"
+		]
+	},
+	
+	"accessWidener" : "fireclient.accesswidener",
+	"mixins": [
+		"fireclient.mixins.json"
+	],
+	
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"fabric": "*",
+		"minecraft": ">=${minecraft_version}"
+	},
+	
+	"custom": {
+		"modmenu": {
+			"modmenu.modrinth": "https://modrinth.com/mod/fireclient-smp"
+		}
+	}
 }
