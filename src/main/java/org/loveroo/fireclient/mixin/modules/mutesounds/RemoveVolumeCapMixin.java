@@ -14,7 +14,7 @@ import net.minecraft.client.sound.Source;
 @Mixin(SoundSystem.class)
 public abstract class RemoveVolumeCapMixin {
 
-    @ModifyConstant(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", constant = @Constant(floatValue = 1.0f))
+    @ModifyConstant(method = "play(Lnet/minecraft/client/sound/SoundInstance;)Lnet/minecraft/client/sound/SoundSystem$PlayResult;", constant = @Constant(floatValue = 1.0f))
     private float removeCap(float original) {
         return 2.0f;
     }

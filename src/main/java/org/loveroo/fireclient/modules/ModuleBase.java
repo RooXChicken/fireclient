@@ -122,8 +122,8 @@ public abstract class ModuleBase {
     protected void transform(Matrix3x2fStack matrix) {
         matrix.pushMatrix();
 
-        matrix.translate(data.getPosX(), data.getPosY(), 0.0f);
-        matrix.scale((float)data.getScale(), (float)data.getScale(), 0.0f);
+        matrix.translate(data.getPosX(), data.getPosY());
+        matrix.scale((float)data.getScale(), (float)data.getScale());
     }
 
     protected void endTransform(Matrix3x2fStack matrix) {

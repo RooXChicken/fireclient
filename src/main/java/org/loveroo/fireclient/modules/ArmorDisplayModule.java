@@ -153,12 +153,12 @@ public class ArmorDisplayModule extends ModuleBase {
 
         if(showItems) {
             var matrix = context.getMatrices();
-            matrix.push();
+            matrix.pushMatrix();
 
-            matrix.scale(0.6f, 0.6f, 1.0f);
+            matrix.scale(0.6f, 0.6f);
             context.drawItem(client.player, item, 0, (int)(y*1.6f), index);
 
-            matrix.pop();
+            matrix.popMatrix();
         }
     }
 
