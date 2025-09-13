@@ -1,33 +1,27 @@
 package org.loveroo.fireclient.mixin.modules.mutesounds;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.FireClientOption;
-import org.loveroo.fireclient.modules.MuteSoundsModule;
+import org.loveroo.fireclient.modules.SoundsModule;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.sound.SoundEvent;
 
 @Mixin(ClientWorld.class)
 public abstract class MuteSoundsMixin {
 
-    @Inject(method = "playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZJ)V", at = @At("HEAD"), cancellable = true)
-    private void stopSpam(double x, double y, double z, SoundEvent event, SoundCategory category, float volume, float pitch, boolean useDistance, long seed, CallbackInfo info) {
-        var muteSounds = (MuteSoundsModule) FireClientside.getModule("mute_sounds");
+    @ModifyVariable(method = "playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZJ)V", at = @At("HEAD"), ordinal = 0)
+    private float decreaseVolume(float volume, @Local(ordinal = 0, argsOnly = true) SoundEvent event) {
+        var muteSounds = (SoundsModule) FireClientside.getModule("sounds");
         if(muteSounds == null || !muteSounds.getData().isEnabled()) {
-            return;
+            return volume;
         }
 
-        if(!muteSounds.isMute(event)) {
-            return;
-        }
-
-        info.cancel();
+        var volumeMult = muteSounds.getVolume(event);
+        return (float)(volume * volumeMult);
     }
 }

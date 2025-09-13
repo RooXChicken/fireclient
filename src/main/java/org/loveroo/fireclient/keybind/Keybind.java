@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.keybind.Key.KeyType;
 import org.lwjgl.glfw.GLFW;
@@ -20,8 +19,8 @@ import net.minecraft.text.Text;
 public class Keybind {
 
     private final String id;
-    private final Text name;
-    private final Text description;
+    private Text name;
+    private Text description;
 
     private List<Key> keys;
     private final boolean inGame;
@@ -355,6 +354,22 @@ public class Keybind {
 
     public void setShortName(boolean shortName) {
         this.shortName = shortName;
+    }
+
+    public Text getName() {
+        return name;
+    }
+
+    public Text getDescription() {
+        return description;
+    }
+
+    public void setName(Text name) {
+        this.name = name;
+    }
+
+    public void setDescription(Text description) {
+        this.description = description;
     }
 
     public interface KeyEvent {

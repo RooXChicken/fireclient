@@ -26,6 +26,7 @@ import org.loveroo.fireclient.modules.ArmorDisplayModule;
 import org.loveroo.fireclient.modules.AutoMessageModule;
 import org.loveroo.fireclient.modules.BigItemsModule;
 import org.loveroo.fireclient.modules.BlockOutlineModule;
+import org.loveroo.fireclient.modules.CommandKeysModule;
 import org.loveroo.fireclient.modules.CoordinatesModule;
 import org.loveroo.fireclient.modules.CoordsChatModule;
 import org.loveroo.fireclient.modules.DeathInfoModule;
@@ -41,7 +42,6 @@ import org.loveroo.fireclient.modules.IndicatorsModule;
 import org.loveroo.fireclient.modules.KitModule;
 import org.loveroo.fireclient.modules.LocalSkinModule;
 import org.loveroo.fireclient.modules.ModuleBase;
-import org.loveroo.fireclient.modules.MuteSoundsModule;
 import org.loveroo.fireclient.modules.NametagModule;
 import org.loveroo.fireclient.modules.ParticlesModule;
 import org.loveroo.fireclient.modules.PerspectiveModule;
@@ -50,6 +50,7 @@ import org.loveroo.fireclient.modules.SaturationDisplayModule;
 import org.loveroo.fireclient.modules.ScrollClickModule;
 import org.loveroo.fireclient.modules.ShadowModule;
 import org.loveroo.fireclient.modules.SignModule;
+import org.loveroo.fireclient.modules.SoundsModule;
 import org.loveroo.fireclient.modules.SubtitlesModule;
 import org.loveroo.fireclient.modules.TPSModule;
 import org.loveroo.fireclient.modules.ToggleToggleSneakModule;
@@ -137,7 +138,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new SubtitlesModule());
         registerModule(new FullbrightModule());
         registerModule(new PerspectiveModule());
-        registerModule(new MuteSoundsModule());
+        registerModule(new SoundsModule());
         registerModule(new SignModule());
         registerModule(new ParticlesModule());
         registerModule(new TPSModule());
@@ -145,6 +146,7 @@ public class FireClientside implements ClientModInitializer {
         registerModule(new LocalSkinModule());
         registerModule(new ReachDisplayModule());
         registerModule(new ZoomModule());
+        registerModule(new CommandKeysModule());
     }
 
     public static void registerModule(ModuleBase module) {
