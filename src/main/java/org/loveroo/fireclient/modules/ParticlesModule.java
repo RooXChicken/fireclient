@@ -118,31 +118,31 @@ public class ParticlesModule extends ModuleBase {
 
         widgets.add(particleField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addParticleButton(particleField))
+        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.particles.add_particle.name"), (button) -> addParticleButton(particleField))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.add_sound.tooltip")))
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.add_particle.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
-        for(var sound : hiddenParticles) {
+        for(var particle : hiddenParticles) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(sound.getParticle()), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(particle.getParticle()), base.getTextRenderer());
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
 
             entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
-                .getValue(sound::isEnabled)
-                .setValue(sound::setEnabled)
+                .getValue(particle::isEnabled)
+                .setValue(particle::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.toggle_sound.tooltip", sound.getParticle())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.toggle_particle.tooltip", particle.getParticle())))
                 .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeParticle(sound))
+            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.particles.remove_particle.name").withColor(0xD63C3C), (button) -> removeParticle(particle))
                 .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.remove_sound.tooltip", sound.getParticle())))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.remove_particle.tooltip", particle.getParticle())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
@@ -219,8 +219,8 @@ public class ParticlesModule extends ModuleBase {
 
         if(hiddenParticles.stream().anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(particle)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.sounds.add_sound.failure.title"),
-                Text.translatable("fireclient.module.sounds.add_sound.already_exists.contents")
+                Text.translatable("fireclient.module.particles.add_particle.failure.title"),
+                Text.translatable("fireclient.module.particles.add_particle.already_exists.contents")
             );
 
             return;
