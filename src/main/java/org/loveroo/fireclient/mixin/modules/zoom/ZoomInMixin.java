@@ -31,7 +31,7 @@ public abstract class ZoomInMixin {
             return;
         }
 
-        zoom.incrementZoom((int)Math.round(vertical) * -1);
+        zoom.incrementZoom((int)vertical * -1);
         info.cancel();
     }
 }
