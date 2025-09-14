@@ -75,6 +75,6 @@ public class ZoomModule extends ModuleBase {
             return;
         }
 
-        zoomLevel = Math.max(3, value);
+        zoomLevel = Math.max(3, zoomLevel + value);
     }
 }
