@@ -81,6 +81,7 @@
     "settings.HazeliModeMixin",
     "settings.HazeliNametagMixin",
     "settings.HazeliPlayerModelMixin",
+    "settings.HideItemNameMixin",
     "settings.PreventHittingDeadEntitiesMixin",
     "settings.PreventUnlistingMixin",
     "settings.PreventUntoggleKeysMixin",

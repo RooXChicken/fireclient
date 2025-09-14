@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.mixin.modules.nametag;
 
+import java.util.HashSet;
 import java.util.UUID;
 
 import org.loveroo.fireclient.RooHelper;
@@ -84,7 +85,16 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
         }
 
         var finalText = MutableText.of(PlainTextContent.of(""));
-        for(var text : original.getSiblings()) {
+
+        var textList = new HashSet<Text>();
+        if(original.getSiblings().size() <= 0) {
+            textList.add(original);
+        }
+        else {
+            textList.addAll(original.getSiblings());
+        }
+
+        for(var text : textList) {
             var string = text.getString();
 
             if(string.equals(name)) {
