@@ -248,8 +248,8 @@
   "fireclient.module.local_skin.slim.name": "Slim",
   "fireclient.module.local_skin.slim.tooltip": "Make \"%1$s\" slim",
 
-  "fireclient.module.sounds.name": "Mute Sounds",
-  "fireclient.module.sounds.description": "Allows certain sounds to be muted",
+  "fireclient.module.sounds.name": "Sounds",
+  "fireclient.module.sounds.description": "Allows the volume of sounds to be changed and even muted",
 
   "fireclient.module.sounds.toggle_sound.tooltip": "Toggle \"%1$s\"",
 
@@ -280,6 +280,17 @@
 
   "fireclient.module.particles.name": "Particles",
   "fireclient.module.particles.description": "Allows certain particles to be disabled",
+
+  "fireclient.module.particles.add_particle.name": "+",
+  "fireclient.module.particles.add_particle.tooltip": "Add particle",
+
+  "fireclient.module.particles.remove_particle.name": "-",
+  "fireclient.module.particles.remove_particle.tooltip": "Remove \"%1$s\"",
+
+  "fireclient.module.particles.toggle_particle.tooltip": "Toggle \"%1$s\"",
+
+  "fireclient.module.particles.add_particle.failure.title": "Failed to add particle",
+  "fireclient.module.particles.add_particle.already_exists.contents": "Particle already in list",
 
   "fireclient.module.perspective.name": "Perspective",
   "fireclient.module.perspective.description": "Allows you to look around in Third Person without moving your player's head",
@@ -345,6 +356,9 @@
 
   "fireclient.module.zoom.name": "Zoom",
   "fireclient.module.zoom.description": "Increases the camera's zoom level",
+
+  "fireclient.module.zoom.scroll_zoom.name": "Scroll Zoom",
+  "fireclient.module.zoom.scroll_zoom.tooltip": "Changes the zoom amount when scrolling the mouse wheel",
 
   "fireclient.screen.generic.header": "FireClient Config",
 
