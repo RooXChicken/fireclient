@@ -11,7 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 
 @Mixin(InGameHud.class)
-public class HideItemNameMixin {
+public abstract class HideItemNameMixin {
     
     @Inject(method = "renderHeldItemTooltip", at = @At("HEAD"), cancellable = true)
     private void hideTooltip(DrawContext context, CallbackInfo info) {
