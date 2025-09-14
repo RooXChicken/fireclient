@@ -22,7 +22,7 @@ public abstract class ZoomInMixin {
         }
 
         var zoom = (ZoomModule)FireClientside.getModule("zoom");
-        if(zoom == null || !zoom.getData().isEnabled()) {
+        if(zoom == null || !zoom.getData().isEnabled() || !zoom.isZooming()) {
             return;
         }
         
