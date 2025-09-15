@@ -261,15 +261,15 @@
   "fireclient.module.sounds.remove_sound.name": "-",
   "fireclient.module.sounds.remove_sound.tooltip": "Remove \"%1$s\"",
 
-  "fireclient.module.sounds.technical_names.name": "👁",
-  "fireclient.module.sounds.technical_names.tooltip": "Shows the sound's name in readable form instead of its in-game ID",
-
   "fireclient.module.sounds.add_sound.failure.title": "Failed to add sound",
   "fireclient.module.sounds.add_sound.invalid_id.contents": "Invalid identifier",
   "fireclient.module.sounds.add_sound.invalid_sound.contents": "Sound not found",
   "fireclient.module.sounds.add_sound.already_exists.contents": "Sound already in list",
-
+  
   "fireclient.module.sounds.volume.message": "%1$s",
+  
+  "fireclient.module.sounds.technical_names.name": "👁",
+  "fireclient.module.sounds.technical_names.tooltip": "Shows the sound's name in readable form instead of its in-game ID",
 
   "fireclient.module.nametag.name": "Nametag",
   "fireclient.module.nametag.description": "Allows the modification of nametags",

@@ -54,6 +54,16 @@
 
   "fireclient.module.block_outline.thick_outline.name": "Contorno Grosso",
   "fireclient.module.block_outline.thick_outline.tooltip": "Torna o contorno do bloco mais espesso",
+  
+  "fireclient.module.command_keys.name": "Teclas de comando",
+  "fireclient.module.command_keys.description": "Executa comandos quando pressions  a respectiva tecla de atalho",
+
+  "fireclient.module.command_keys.add_command.name": "Adicionar Novo Comando",
+  "fireclient.module.command_keys.add_command.tooltip": "Adicionar novo comando à lista",
+  "fireclient.module.command_keys.remove_command.name": "-",
+  "fireclient.module.command_keys.remove_command.tooltip": "Remover \"%1$s\"",
+  "fireclient.module.command_keys.run_command.name": "🛠",
+  "fireclient.module.command_keys.run_command.tooltip": "Mandar \"%1$s\"",
 
   "fireclient.module.coordinates.name": "Coordenadas",
   "fireclient.module.coordinates.description": "Dispõe as coordenadas do jogo, as das outras dimensões e suporta o modo janela separada",
@@ -78,7 +88,7 @@
   "fireclient.module.coords_chat.remove_player.tooltip": "Remover \"%1$s\"",
 
   "fireclient.module.coords_chat.add_player.failure.title": "Falha ao adicionar jogador",
-"fireclient.moduke.coords_chat.add_player.already_exists.contents": "Jogador já existe na lista",
+  "fireclient.moduke.coords_chat.add_player.already_exists.contents": "Jogador já existe na lista",
 
   "fireclient.module.death_info.name": "Informações sobre a morte",
   "fireclient.module.death_info.description": "Dispõe o local da sua morte no ecrã e no chat",
@@ -224,17 +234,21 @@
   "fireclient.screen.edit_kit.undo.name": "↶ Refazer",
   "fireclient.screen.edit_kit.undo.tooltip": "Refazer mudanças do \"%1$s\"",
 
-  "fireclient.module.local_difficulty.name": "Dificuldade Local",
-  "fireclient.module.local_difficulty.description": "Calcula uma aproximação da calculadora de dificuldade local com base nos ticks de fogo nos Zombis",
-
   "fireclient.module.local_skin.name": "Skin Local",
   "fireclient.module.local_skin.description": "Aplica arquivos de skin locais e os atualiza em tempo real",
-  "fireclient.module.local_skin.open_folder.tooltip": "Abrir Pasta de Skins",
+  "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
+  "fireclient.module.local_skin.open_folder.tooltip": "Abrir Pasta",
 
+  "fireclient.module.local_skin.apply.name": "✔",
   "fireclient.module.local_skin.apply.tooltip": "Applicar \"%1$s\"",
 
   "fireclient.module.local_skin.slim.name": "Magro",
   "fireclient.module.local_skin.slim.tooltip": "Fazer \"%1$s\" Magro",
+
+  "fireclient.module.local_skin.select_skin.name": "Skin",
+  "fireclient.module.local_skin.select_skin.tooltip": "Mostrar skins",
+  "fireclient.module.local_skin.select_cape.name": "Capa",
+  "fireclient.module.local_skin.select_cape.tooltip": "Mostrar Capas",
 
   "fireclient.module.sounds.name": "Silenciar Sons",
   "fireclient.module.sounds.description": "Permite silenciar determinados sons",
@@ -252,6 +266,11 @@
   "fireclient.module.sounds.add_sound.invalid_sound.contents": "Som não encontrado",
   "fireclient.module.sounds.add_sound.already_exists.contents": "Som já existe",
 
+  "fireclient.module.sounds.volume.message": "%1$s",
+
+  "fireclient.module.sounds.technical_names.name": "👁",
+  "fireclient.module.sounds.technical_names.tooltip": "Mostrar o formato legível do som em vez do ID no jogo",
+
   "fireclient.module.nametag.name": "Crachás",
   "fireclient.module.nametag.description": "Permite a modificação de crachás",
 
@@ -267,6 +286,17 @@
   "fireclient.module.particles.name": "Partículas",
   "fireclient.module.particles.description": "Permite que certas partículas sejam desligadas",
 
+  "fireclient.module.particles.add_particle.name": "+",
+  "fireclient.module.particles.add_particle.tooltip": "Adicionar Particula",
+
+  "fireclient.module.particles.remove_particle.name": "-",
+  "fireclient.module.particles.remove_particle.tooltip": "Eliminar \"%1$s\"",
+
+  "fireclient.module.particles.toggle_particle.tooltip": "Alternar \"%1$s\"",
+
+  "fireclient.module.particles.add_particle.failure.title": "Falha ao adicionar particula",
+  "fireclient.module.particles.add_particle.already_exists.contents": "Particula já se encontra na lista",
+
   "fireclient.module.perspective.name": "Perspetiva",
   "fireclient.module.perspective.description": "Permite olhar em redor em terceira pessoa sem mover a cabeça do seu jogador",
 
@@ -278,9 +308,6 @@
 
   "fireclient.module.reach_display.hit_only.name": "Só o ataque",
   "fireclient.module.reach_display.hit_only.tooltip": "Faz que o módulo só muda se alguem fôr acertado",
-
-  "fireclient.module.render_world.name": "Renderizar mundo",
-  "fireclient.module.render_world.description": "[CHEAT] Permite alternar a renderização do mundo",
 
   "fireclient.module.saturation_display.name": "Mostar Saturação",
   "fireclient.module.saturation_display.description": "Mostra a tua saturação",
@@ -328,6 +355,12 @@
 
   "fireclient.module.tps_display.name": "Disposição de TPS",
   "fireclient.module.tps_display.description": "Mostra a estimativa de ticks por segundo do servidor",
+
+  "fireclient.module.zoom.name": "Zoom",
+  "fireclient.module.zoom.description": "Aumenta o nível de zoom da câmera",
+
+  "fireclient.module.zoom.scroll_zoom.name": "Zoom de rolagem",
+  "fireclient.module.zoom.scroll_zoom.tooltip": "Altera a quantidade de zoom ao rolar a roda do rato",
 
   "fireclient.screen.generic.header": "Configuração FireClient",
 
@@ -424,6 +457,9 @@
 
   "fireclient.settings.autofill_lapis.name": "Preenchimento Automático de Lápis-Lazúli",
   "fireclient.settings.autofill_lapis.description": "Coloca automaticamente o Lápis Lazuli na tela de encantamento quando aberto",
+
+  "fireclient.settings.hide_item_names.name": "Esconder Nomes de Itens",
+  "fireclient.settings.hide_item_names.description": "Esconde a dica de ferramenta de seleção do item acima da barra de atalhos",
 
   "fireclient.keybind.generic.unbound_key.long": "Não consolidado",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
