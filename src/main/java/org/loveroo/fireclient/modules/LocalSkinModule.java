@@ -461,15 +461,18 @@ public class LocalSkinModule extends ModuleBase {
         int j = base.height/4 - 7;
 
         float pitchOffset;
+        float mouseX;
         if(selectedMenu == TextureType.SKIN) {
             pitchOffset = 0.0f;
+            mouseX = ((ConfigScreenBase)base).getMouseX();
         }
         else {
             pitchOffset = 180.0f;
+            mouseX = base.width-((ConfigScreenBase)base).getMouseX();
         }
 
         // TODO: fix model not updating in 1.21.6-1.21.8
-        RooHelper.drawPlayer(context, i, j, 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), pitchOffset, 0f);
+        RooHelper.drawPlayer(context, i, j, 0.0625F, mouseX, ((ConfigScreenBase)base).getMouseY(), pitchOffset, 0f);
     }
 
     public static enum TextureType {
