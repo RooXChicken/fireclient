@@ -237,13 +237,18 @@
   "fireclient.module.local_skin.name": "Τοπική Εμφάνιση",
   "fireclient.module.local_skin.description": "Εφαρμόζει τοπικά αρχεία εμφάνισης και τα ενημερώνει σε πραγματικό χρόνο",
   "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
-  "fireclient.module.local_skin.open_folder.tooltip": "Άνοιξε το φάκελο εμφανίσεων",
+  "fireclient.module.local_skin.open_folder.tooltip": "Άνοιγμα φακέλου",
 
   "fireclient.module.local_skin.apply.name": "✔",
   "fireclient.module.local_skin.apply.tooltip": "Εφάρμοσε το \"%1$s\"",
 
   "fireclient.module.local_skin.slim.name": "Λεπτό",
   "fireclient.module.local_skin.slim.tooltip": "Κάνε το \"%1$s\" λεπτό",
+
+  "fireclient.module.local_skin.select_skin.name": "Εμφάνιση",
+  "fireclient.module.local_skin.select_skin.tooltip": "Εμφάνιση εμφανίσεων",
+  "fireclient.module.local_skin.select_cape.name": "Κάπα",
+  "fireclient.module.local_skin.select_cape.tooltip": "Εμφάνιση καπών",
 
   "fireclient.module.sounds.name": "Σίγαση Ήχων",
   "fireclient.module.sounds.description": "Επιτρέπει τη σίγαση ορισμένων ήχων",
@@ -261,7 +266,10 @@
   "fireclient.module.sounds.add_sound.invalid_sound.contents": "Ο ήχος δεν βρέθηκε",
   "fireclient.module.sounds.add_sound.already_exists.contents": "Ο ήχος είναι ήδη στη λίστα",
 
-  
+  "fireclient.module.sounds.volume.message": "%1$s",
+
+  "fireclient.module.sounds.technical_names.name": "👁",
+  "fireclient.module.sounds.technical_names.tooltip": "Εμφανίζει το όνομα του ήχου σε αναγνώσιμη μορφή αντί για το ID του εντός παιχνιδιού",
 
   "fireclient.module.nametag.name": "Ετικέτα Ονόματος",
   "fireclient.module.nametag.description": "Επιτρέπει την τροποποίηση ετικετών ονομάτων",
