@@ -186,25 +186,25 @@ public class RooHelper {
 		float j = entity.bodyYaw;
 		float k = entity.getYaw();
 		float l = entity.getPitch();
-		float m = entity.lastHeadYaw;
+		float m = entity.prevHeadYaw;
 		float n = entity.headYaw;
 		entity.bodyYaw = 180.0F + h * 20.0F + yawOffset;
 		entity.setYaw(180.0F + h * 40.0F + yawOffset);
 		entity.setPitch(-i * 20.0F + pitchOffset);
 		entity.headYaw = entity.getYaw();
-		entity.lastHeadYaw = entity.getYaw();
+		entity.prevHeadYaw = entity.getYaw();
 		float o = entity.getScale();
 		Vector3f vector3f = new Vector3f(0.0F, entity.getHeight() / 2.0F + scale * o, 0.0F);
 		float p = size / o;
 
         mod.apply(entity);
 
-		InventoryScreen.drawEntity(context, x1, y1, x2, y2, p, vector3f, quaternionf, quaternionf2, entity);
+		InventoryScreen.drawEntity(context, f, g, p, vector3f, quaternionf, quaternionf2, entity);
 		
         entity.bodyYaw = j;
 		entity.setYaw(k);
 		entity.setPitch(l);
-		entity.lastHeadYaw = m;
+		entity.prevHeadYaw = m;
 		entity.headYaw = n;
 		context.disableScissor();
 

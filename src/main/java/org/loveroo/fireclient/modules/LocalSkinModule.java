@@ -22,7 +22,6 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.mixin.modules.localskin.RemapTextureAccessor;
-import org.loveroo.fireclient.modules.LocalSkinModule.TextureType;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.CapeRenderWidget;
@@ -222,7 +221,7 @@ public class LocalSkinModule extends ModuleBase {
         initializeDirectories();
 
         RenderSystem.recordRenderCall(() -> {
-            var id = getSkinIdentifier(path);
+            var id = getIdentifier(type, path);
 
             try {
                 var data = Files.readAllBytes(Paths.get(TEXTURE_PATHS.get(type) + path + ".png"));
@@ -232,7 +231,7 @@ public class LocalSkinModule extends ModuleBase {
                     image = RemapTextureAccessor.invokeRemapTexture(image, path);
                 }
 
-                var texture = new NativeImageBackedTexture(remapped);
+                var texture = new NativeImageBackedTexture(image);
 
                 var client = MinecraftClient.getInstance();
                 client.getTextureManager().registerTexture(id, texture);
