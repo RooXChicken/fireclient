@@ -199,7 +199,7 @@ public class RooHelper {
 
         mod.apply(entity);
 
-		InventoryScreen.drawEntity(context, x1, y1, x2, y2, p, vector3f, quaternionf, quaternionf2, entity);
+		InventoryScreen.drawEntity(context, f, g, p, vector3f, quaternionf, quaternionf2, entity);
 		
         entity.bodyYaw = j;
 		entity.setYaw(k);
