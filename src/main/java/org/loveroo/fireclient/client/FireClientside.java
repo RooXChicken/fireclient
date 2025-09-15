@@ -110,7 +110,6 @@ public class FireClientside implements ClientModInitializer {
         }
 
         registerCommands();
-//        new RecipeManager();
     }
 
     private void initModules() {
@@ -193,6 +192,11 @@ public class FireClientside implements ClientModInitializer {
             var modules = json.optJSONObject("modules");
             if(modules == null) {
                 modules = new JSONObject();
+            }
+
+            // backwards compatibility
+            if(modules.has("mute_sounds")) {
+                modules.put("sounds", modules.get("mute_sounds"));
             }
 
             for(var module : getModules()) {

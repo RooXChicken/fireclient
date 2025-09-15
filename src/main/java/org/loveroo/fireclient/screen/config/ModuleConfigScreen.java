@@ -21,6 +21,8 @@ public class ModuleConfigScreen extends ConfigScreenBase {
     private final List<ModuleBase> modules;
     private final Text about;
 
+    private boolean reloading = false;
+
     @Nullable
     private ModuleBase selectedModule = null;
 
@@ -65,10 +67,18 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Override
     protected void onExit() {
+        if(reloading) {
+            return;
+        }
+
         for(var module : modules) {
             module.setDrawingOverwritten(false);
             module.closeScreen(this);
         }
+    }
+
+    public void setReloading() {
+        reloading = true;
     }
 
     @Override
