@@ -154,11 +154,13 @@ public class LocalSkinModule extends ModuleBase {
                 var path = (Path) event.context();
                 key.reset();
 
-                if(!skin.equals(filterName(path.toString()))) {
+                var texture = getTextureName(type);
+
+                if(!texture.equals(filterName(path.toString()))) {
                     continue;
                 }
     
-                uploadTexture(type, skin);
+                uploadTexture(type, texture);
             }
 
         }
