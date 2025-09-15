@@ -55,6 +55,16 @@
   "fireclient.module.block_outline.thick_outline.name": "Παχύ Περίγραμμα",
   "fireclient.module.block_outline.thick_outline.tooltip": "Κάνει το περίγραμμα του μπλοκ πιο παχύ",
 
+  "fireclient.module.command_keys.name": "Εντολές Πλήκτρων",
+  "fireclient.module.command_keys.description": "Εκτελεί εντολές όταν πατάτε το αντίστοιχο πλήκτρο",
+
+  "fireclient.module.command_keys.add_command.name": "Προσθήκη νέας εντολής",
+  "fireclient.module.command_keys.add_command.tooltip": "Προσθήκη νέας εντολής στη λίστα",
+  "fireclient.module.command_keys.remove_command.name": "-",
+  "fireclient.module.command_keys.remove_command.tooltip": "Αφαίρεση του \"%1$s\"",
+  "fireclient.module.command_keys.run_command.name": "🛠",
+  "fireclient.module.command_keys.run_command.tooltip": "Εκτέλεση του \"%1$s\"",
+
   "fireclient.module.coordinates.name": "Συντεταγμένες",
   "fireclient.module.coordinates.description": "Δείχνει τις συντεταγμένες σας, τις συντεταγμένες για την άλλη διάσταση και υποστηρίζει ξεχωριστό παράθυρο",
 
@@ -224,9 +234,6 @@
   "fireclient.screen.edit_kit.undo.name": "↶ Αναίρεση",
   "fireclient.screen.edit_kit.undo.tooltip": "Αναίρεση αλλαγών σε \"%1$s\"",
 
-  "fireclient.module.local_difficulty.name": "Τοπική Δυσκολία",
-  "fireclient.module.local_difficulty.description": "Υπολογίζει μια προσέγγιση της τοπικής δυσκολίας με βάση τα καρέ της φωτιάς των ζόμπι",
-
   "fireclient.module.local_skin.name": "Τοπική Εμφάνιση",
   "fireclient.module.local_skin.description": "Εφαρμόζει τοπικά αρχεία εμφάνισης και τα ενημερώνει σε πραγματικό χρόνο",
   "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
@@ -254,6 +261,8 @@
   "fireclient.module.sounds.add_sound.invalid_sound.contents": "Ο ήχος δεν βρέθηκε",
   "fireclient.module.sounds.add_sound.already_exists.contents": "Ο ήχος είναι ήδη στη λίστα",
 
+  
+
   "fireclient.module.nametag.name": "Ετικέτα Ονόματος",
   "fireclient.module.nametag.description": "Επιτρέπει την τροποποίηση ετικετών ονομάτων",
 
@@ -269,6 +278,17 @@
   "fireclient.module.particles.name": "Σωματίδια",
   "fireclient.module.particles.description": "Επιτρέπει την απενεργοποίηση ορισμένων σωματιδίων",
 
+  "fireclient.module.particles.add_particle.name": "+",
+  "fireclient.module.particles.add_particle.tooltip": "Προσθήκη σωματίδιου",
+
+  "fireclient.module.particles.remove_particle.name": "-",
+  "fireclient.module.particles.remove_particle.tooltip": "Αφαίρεση του \"%1$s\"",
+
+  "fireclient.module.particles.toggle_particle.tooltip": "Εναλλαγή του \"%1$s\"",
+
+  "fireclient.module.particles.add_particle.failure.title": "Αποτυχία προσθήκης σωματιδίου",
+  "fireclient.module.particles.add_particle.already_exists.contents": "Το σωματίδιο είναι ήδη στη λίστα",
+
   "fireclient.module.perspective.name": "Προοπτική",
   "fireclient.module.perspective.description": "Σας επιτρέπει να κοιτάτε τριγύρω σε τρίτο πρόσωπο χωρίς να κουνάτε το κεφάλι του παίκτη σας",
 
@@ -280,9 +300,6 @@
 
   "fireclient.module.reach_display.hit_only.name": "Μόνο Επί Επίθεση",
   "fireclient.module.reach_display.hit_only.tooltip": "Κάνει την εμφάνιση της εμβέλειας να ενημερώνεται μόνο όταν επιτίθεστε σε μια οντότητα",
-
-  "fireclient.module.render_world.name": "Εμφάνιση Κόσμου",
-  "fireclient.module.render_world.description": "[CHEAT] Επιτρέπει την εναλλαγή της εμφάνισης του κόσμου",
   
   "fireclient.module.saturation_display.name": "Εμφάνιση Κορεσμού",
   "fireclient.module.saturation_display.description": "Δείχνει τον κορεσμό σας",
@@ -330,6 +347,12 @@
 
   "fireclient.module.tps_display.name": "Εμφάνιση TPS",
   "fireclient.module.tps_display.description": "Δείχνει τα εκτιμώμενα Ticks Ανά Δευτερόλεπτο του διακομιστή",
+
+  "fireclient.module.zoom.name": "Μεγένθυση",
+  "fireclient.module.zoom.description": "Αυξάνει το επίπεδο μεγένθυσης της κάμερας",
+
+  "fireclient.module.zoom.scroll_zoom.name": "Μεγένθυση κατά Κύλιση",
+  "fireclient.module.zoom.scroll_zoom.tooltip": "Αλλάζει το μέγεθος μεγένθυσης κατά την κύλιση του τροχού του ποντικιού",
 
   "fireclient.screen.generic.header": "Διαμόρφωση FireClient",
 
