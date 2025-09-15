@@ -195,6 +195,11 @@ public class FireClientside implements ClientModInitializer {
                 modules = new JSONObject();
             }
 
+            // backwards compatibility
+            if(modules.has("mute_sounds")) {
+                modules.put("sounds", modules.get("mute_sounds"));
+            }
+
             for(var module : getModules()) {
                 try {
                     var moduleJson = modules.optJSONObject(module.getData().getId());

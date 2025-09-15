@@ -49,7 +49,7 @@ abstract class HazeliPlayerModelMixin {
     private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
 
     @SuppressWarnings("unchecked")
-    @Inject(method = "getRenderer", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getRenderer(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/render/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
     public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
         if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0 || !(entity instanceof AbstractClientPlayerEntity)) {
             return;

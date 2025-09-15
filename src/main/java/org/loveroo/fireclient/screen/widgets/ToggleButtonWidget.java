@@ -1,10 +1,6 @@
 package org.loveroo.fireclient.screen.widgets;
 
-import java.lang.reflect.Field;
-import java.util.function.Consumer;
-
 import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -23,6 +19,9 @@ public class ToggleButtonWidget extends ButtonWidget {
     
         @Nullable
         private final Text text;
+
+        private MutableText trueText = FireClientSettingsScreen.getTrueText();
+        private MutableText falseText = FireClientSettingsScreen.getFalseText();
     
         private GetValue getValue;
         private SetValue setValue;
@@ -93,6 +92,18 @@ public class ToggleButtonWidget extends ButtonWidget {
     
             return this;
         }
+
+        public ToggleButtonBuilder trueText(MutableText trueText) {
+            this.trueText = trueText;
+
+            return this;
+        }
+
+        public ToggleButtonBuilder falseText(MutableText falseText) {
+            this.falseText = falseText;
+
+            return this;
+        }
         
         private void onPress(ButtonWidget button) {
             var value = !getValue.get();
@@ -106,7 +117,7 @@ public class ToggleButtonWidget extends ButtonWidget {
         }
     
         protected MutableText getToggleText(boolean value) {
-            var toggle = ((value) ? FireClientSettingsScreen.getTrueText() : FireClientSettingsScreen.getFalseText());
+            var toggle = ((value) ? trueText.copy() : falseText.copy());
     
             if(text != null) {
                 return toggle.append(" ").append(text);
