@@ -1,16 +1,12 @@
 package org.loveroo.fireclient.screen.config;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.data.FireClientOption.SliderOptionData;
@@ -18,12 +14,15 @@ import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.SettingsSlider;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 public class FireClientSettingsScreen extends ConfigScreenBase {
 
@@ -38,8 +37,8 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
     private TextFieldWidget searchBar;
     private String search = "";
 
-    private static final MutableText defaultTrueText = MutableText.of(new PlainTextContent.Literal("✔")).setStyle(Style.EMPTY.withColor(0x57D647));
-    private static final MutableText defaultFalseText = MutableText.of(new PlainTextContent.Literal("❌")).setStyle(Style.EMPTY.withColor(0xD63C3C));
+    private static final MutableText defaultTrueText = Text.literal("✔").setStyle(Style.EMPTY.withColor(0x57D647));
+    private static final MutableText defaultFalseText = Text.literal("❌").setStyle(Style.EMPTY.withColor(0xD63C3C));
 
     public FireClientSettingsScreen() {
         super(Text.translatable("fireclient.screen.settings.title"));

@@ -264,6 +264,10 @@ public abstract class ModuleBase {
 
     protected void reloadScreen() {
         var client = MinecraftClient.getInstance();
+        if(client.currentScreen instanceof ModuleConfigScreen screen) {
+            screen.setReloading();
+        }
+
         client.setScreen(new ModuleConfigScreen(this));
     }
 

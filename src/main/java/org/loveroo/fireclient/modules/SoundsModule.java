@@ -1,7 +1,9 @@
 package org.loveroo.fireclient.modules;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -9,10 +11,12 @@ import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.CustomDrawWidget;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -25,6 +29,7 @@ import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -38,11 +43,50 @@ public class SoundsModule extends ModuleBase {
     private final int soundsWidgetWidth = 300;
     private final int soundsWidgetHeight = 100;
 
+    @JsonOption(name = "use_human_names")
+    private boolean useHumanNames = true;
+
     @Nullable
     private ScrollableWidget scroll;
 
     @Nullable
     private TextFieldWidget soundField;
+
+    @Nullable
+    private TextWidget suggestionField;
+
+    private static final HashMap<String, String> idToHuman = new HashMap<>();
+    private static final HashMap<String, String> humanToId = new HashMap<>();
+
+    static {
+        // makes sound ids into human understandable names
+        for(var sound : Registries.SOUND_EVENT) {
+            var path = sound.id().getPath();
+            var spaced = path.replaceAll("[\\s.-_]", " ");
+
+            // var firstSpaceIndex = spaced.indexOf(" ");
+            // if(firstSpaceIndex == -1) {
+            //     firstSpaceIndex = 0;
+            // }
+
+            var name = new StringBuilder();
+
+            var words = spaced.split(" ");
+            for(var word : words) {
+                if(word.isBlank()) {
+                    continue;
+                }
+
+                name.append(Character.toUpperCase(word.charAt(0)));
+                name.append(word.substring(1));
+
+                name.append(" ");
+            }
+
+            idToHuman.put(path, name.toString());
+            humanToId.put(name.toString().toLowerCase(), path);
+        }
+    }
 
     public SoundsModule() {
         super(new ModuleData("sounds", "\uD83D\uDD07", color));
@@ -117,22 +161,61 @@ public class SoundsModule extends ModuleBase {
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_sounds").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        soundField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
-        soundField.setMaxLength(128);
-        soundField.setChangedListener((text) -> soundTextChanged(soundField, text));
+        if(soundField == null) {
+            soundField = new TextFieldWidget(client.textRenderer, 0, 0, soundsWidgetWidth - 50, 15, Text.of(""));
+            soundField.setMaxLength(128);
+            soundField.setChangedListener((text) -> soundTextChanged(soundField, text));
+        }
 
+        soundField.setPosition(base.width/2 - 140, base.height/2 - 40);
+        
         widgets.add(soundField);
+
+        var background = new CustomDrawWidget.CustomDrawBuilder()
+            .position(base.width/2 - 138, base.height/2 - 52)
+            .onDraw((context, mouseX, mouseY, ticks) -> {
+                context.fill(-2, -7, 248, 6, 0x66000000);
+            })
+            .build();
+        
+        widgets.add(background);
+
+        if(suggestionField == null) {
+            suggestionField = new TextWidget(Text.literal(""), client.textRenderer);
+            suggestionField.alignLeft();
+            suggestionField.setWidth(240);
+        }
+
+        suggestionField.setPosition(base.width/2 - 138, base.height/2 - 56);
+        
+        widgets.add(suggestionField);
 
         widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
             .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.add_sound.tooltip")))
             .build());
 
+        widgets.add(new ToggleButtonBuilder(null)
+            .getValue(() -> { return useHumanNames; })
+            .setValue((value) -> {
+                useHumanNames = value;
+
+                soundField.setText("");
+                suggestionField.setMessage(Text.literal(""));
+
+                reloadScreen();
+            })
+            .trueText(Text.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0x57D647)))
+            .falseText(Text.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0xD63C3C)))
+            .dimensions(base.width/2 + 115, base.height/2 - 60, 20, 15)
+            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.technical_names.tooltip")))
+            .build());
+
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var sound : mutedSounds) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(sound.getSound()), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(toHuman(sound.getSound())), base.getTextRenderer());
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
@@ -150,13 +233,6 @@ public class SoundsModule extends ModuleBase {
             };
 
             entryWidgets.add(slider);
-
-            // entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(null)
-            //     .getValue(sound::isEnabled)
-            //     .setValue(sound::setEnabled)
-            //     .dimensions(base.width/2 + 90, 0, 20, 15)
-            //     .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.toggle_sound.tooltip", sound.getSound())))
-            //     .build());
 
             entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
                 .dimensions(base.width/2 + 115, 0,20,15)
@@ -186,14 +262,14 @@ public class SoundsModule extends ModuleBase {
     private void soundTextChanged(TextFieldWidget widget, String text) {
         if(!text.isEmpty()) {
             var check = text.substring(text.length()-1);
-            if(" ,|".contains(check)) {
+            if(",|".contains(check)) {
                 widget.setText(text.substring(0, text.length()-1));
                 addSoundButtonPressed(widget);
                 return;
             }
         }
 
-        widget.setSuggestion(getSuggestion(text));
+        suggestionField.setMessage(Text.literal(getSuggestion(text)));
     }
 
     private String getSuggestion(String text) {
@@ -201,34 +277,34 @@ public class SoundsModule extends ModuleBase {
             return "";
         }
 
-        var input = RooHelper.filterIdInput(text);
+        var id = toId(RooHelper.filterIdInput(text));
 
-        if(mutedSounds.stream().noneMatch((mutedSound) -> { return mutedSound.getSound().equalsIgnoreCase(input); })) {
-            var soundId = Identifier.ofVanilla(input);
+        if(mutedSounds.stream().noneMatch((mutedSound) -> { return mutedSound.getSound().equalsIgnoreCase(id); })) {
+            var soundId = Identifier.ofVanilla(id);
             if(Registries.SOUND_EVENT.containsId(soundId)) {
                 return "";
             }
         }
 
-        var filteredSounds = Registries.SOUND_EVENT.getIds().stream().filter((id) ->
-            id.getPath().startsWith(input) && mutedSounds.stream().noneMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(id.getPath())))
-        ).toList();
+        var filteredSounds = getSoundList().filter((soundId) ->
+            soundId.toLowerCase().contains(text.toLowerCase()) && mutedSounds.stream()
+                .noneMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(toId(soundId))))
+        )
+        .sorted()
+        .toList();
 
         if(filteredSounds.isEmpty()) {
             return "";
         }
 
-        var sound = filteredSounds.getFirst().getPath();
-        return sound.substring(input.length());
+        var sound = filteredSounds.getFirst();
+        return sound;
     }
 
     private void addSoundButtonPressed(TextFieldWidget text) {
-        var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
-        if(suggestion == null) {
-            suggestion = "";
-        }
+        var suggestion = suggestionField.getMessage().getString();
+        var sound = RooHelper.filterIdInput(toId(suggestion));
 
-        var sound = RooHelper.filterIdInput(text.getText()) + suggestion;
         if(sound.isEmpty()) {
             return;
         }
@@ -248,6 +324,27 @@ public class SoundsModule extends ModuleBase {
         reloadScreen();
     }
 
+    private Stream<String> getSoundList() {
+        if(useHumanNames) {
+            return idToHuman.values().stream();
+        }
+        else {
+            return Registries.SOUND_EVENT.getIds().stream().map(sound -> sound.getPath());
+        }
+    }
+
+    private String toId(String value) {
+        return humanToId.getOrDefault(value.toLowerCase(), value);
+    }
+    
+    private String toHuman(String value) {
+        if(!useHumanNames) {
+            return value;
+        }
+
+        return idToHuman.getOrDefault(value.toLowerCase(), value);
+    }
+    
     private void removeSound(MutedSound sound) {
         mutedSounds.remove(sound);
         reloadScreen();
@@ -264,6 +361,9 @@ public class SoundsModule extends ModuleBase {
 
     @Override
     public void closeScreen(Screen screen) {
+        suggestionField = null;
+        soundField = null;
+
         FireClientside.saveConfig();
     }
 

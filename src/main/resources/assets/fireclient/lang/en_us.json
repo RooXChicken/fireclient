@@ -234,19 +234,21 @@
   "fireclient.screen.edit_kit.undo.name": "↶ Undo",
   "fireclient.screen.edit_kit.undo.tooltip": "Undo changes to \"%1$s\"",
 
-  "fireclient.module.local_difficulty.name": "Local Difficulty",
-  "fireclient.module.local_difficulty.description": "Calculates an approximation of the local difficulty calculator based on Zombie Fire Ticks",
-
   "fireclient.module.local_skin.name": "Local Skin",
   "fireclient.module.local_skin.description": "Applies local skin files and updates them in realtime",
   "fireclient.module.local_skin.open_folder.name": "\uD83D\uDCC2",
-  "fireclient.module.local_skin.open_folder.tooltip": "Open skins folder",
+  "fireclient.module.local_skin.open_folder.tooltip": "Open folder",
 
   "fireclient.module.local_skin.apply.name": "✔",
   "fireclient.module.local_skin.apply.tooltip": "Apply \"%1$s\"",
 
   "fireclient.module.local_skin.slim.name": "Slim",
   "fireclient.module.local_skin.slim.tooltip": "Make \"%1$s\" slim",
+
+  "fireclient.module.local_skin.select_skin.name": "Skin",
+  "fireclient.module.local_skin.select_skin.tooltip": "Show skins",
+  "fireclient.module.local_skin.select_cape.name": "Cape",
+  "fireclient.module.local_skin.select_cape.tooltip": "Show capes",
 
   "fireclient.module.sounds.name": "Sounds",
   "fireclient.module.sounds.description": "Allows the volume of sounds to be changed and even muted",
@@ -258,6 +260,9 @@
 
   "fireclient.module.sounds.remove_sound.name": "-",
   "fireclient.module.sounds.remove_sound.tooltip": "Remove \"%1$s\"",
+
+  "fireclient.module.sounds.technical_names.name": "👁",
+  "fireclient.module.sounds.technical_names.tooltip": "Shows the sound's name in readable form instead of its in-game ID",
 
   "fireclient.module.sounds.add_sound.failure.title": "Failed to add sound",
   "fireclient.module.sounds.add_sound.invalid_id.contents": "Invalid identifier",
@@ -303,9 +308,6 @@
 
   "fireclient.module.reach_display.hit_only.name": "Hit Only",
   "fireclient.module.reach_display.hit_only.tooltip": "Makes the reach only update when you attack an entity",
-
-  "fireclient.module.render_world.name": "Render World",
-  "fireclient.module.render_world.description": "[CHEAT] Allows the toggling of the world rendering",
 
   "fireclient.module.saturation_display.name": "Saturation Display",
   "fireclient.module.saturation_display.description": "Shows your saturation",

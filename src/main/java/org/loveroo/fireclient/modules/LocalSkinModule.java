@@ -1,80 +1,94 @@
 package org.loveroo.fireclient.modules;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchService;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
-import org.loveroo.fireclient.data.KitManager;
-import org.loveroo.fireclient.data.KitManager.KitValidationStatus;
-import org.loveroo.fireclient.mixin.modules.localskin.RemapTextureAccessor;
 import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.mixin.modules.localskin.RemapTextureAccessor;
+import org.loveroo.fireclient.modules.LocalSkinModule.TextureType;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.CustomDrawWidget;
+import org.loveroo.fireclient.screen.widgets.CapeRenderWidget;
 import org.loveroo.fireclient.screen.widgets.CustomDrawWidget.CustomDrawBuilder;
 import org.loveroo.fireclient.screen.widgets.PlayerHeadWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.util.SkinTextures;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
 public class LocalSkinModule extends ModuleBase {
 
-    private static final String SKIN_PATH = "fireclient/skins/";
-    private static final String SKIN_ID = "fireclient_skin_";
+    private static final HashMap<TextureType, String> TEXTURE_PATHS = new HashMap<>();
+    private static final HashMap<TextureType, String> TEXTURE_IDS = new HashMap<>();
+
+    private static final HashMap<TextureType, WatchService> FILE_WATCHES = new HashMap<>();
     
     private static final Color color = Color.fromRGB(0xEBEDA6);
     
     @JsonOption(name = "skin")
     private String skin = "";
 
+    @JsonOption(name = "cape")
+    private String cape = "";
+
+    // @JsonOption(name = "elytra")
+    // private String elytra = "";
+
     private static final HashMap<String, Boolean> slimSkins = new HashMap<>();
-    private static final HashSet<String> cachedSkins = new HashSet<>();
+    private static final HashMap<TextureType, HashSet<String>> cache = new HashMap<>();
 
     private final int skinWidgetWidth = 300;
     private final int skinWidgetHeight = 100;
 
+    private TextureType selectedMenu = TextureType.SKIN;
+
     @Nullable
     private ScrollableWidget scroll;
 
-    @Nullable
-    private WatchService fileWatch = null;
+    static {
+        // init for all textures
+        for(var type : TextureType.values()) {
+            cache.put(type, new HashSet<>());
+        }
+
+        TEXTURE_PATHS.put(TextureType.SKIN, "fireclient/skins/");
+        TEXTURE_PATHS.put(TextureType.CAPE, "fireclient/skins/capes/");
+        // TEXTURE_PATHS.put(TextureType.ELYTRA, "fireclient/skins/elytras/");
+
+        TEXTURE_IDS.put(TextureType.SKIN, "fireclient_skin_");
+        TEXTURE_IDS.put(TextureType.CAPE, "fireclient_cape_");
+        // TEXTURE_IDS.put(TextureType.ELYTRA, "fireclient_elytra_");
+    }
 
     public LocalSkinModule() {
         super(new ModuleData("local_skin", "✨", color));
@@ -82,32 +96,53 @@ public class LocalSkinModule extends ModuleBase {
         getData().setGuiElement(false);
 
         ClientLifecycleEvents.CLIENT_STARTED.register((client) -> {
-            if(getData().isEnabled() && !skin.isBlank()) {
-                uploadSkin(skin);
+            if(getData().isEnabled()) {
+                for(var type : TextureType.values()) {
+                    var texture = getTextureName(type);
+                    if(texture.isBlank()) {
+                        continue;
+                    }
+                    
+                    uploadTexture(type, texture);
+                }
             }
 
             initializeDirectories();
 
-            try {
-                fileWatch = FileSystems.getDefault().newWatchService();
-                var path = Paths.get(SKIN_PATH);
+            for(var type : TextureType.values()) {
+                try {
+                    var watch = FileSystems.getDefault().newWatchService();
+                    var path = Paths.get(TEXTURE_PATHS.get(type));
+    
+                    path.register(watch, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
 
-                path.register(fileWatch, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_CREATE);
-            }
-            catch(Exception e) {
-                FireClient.LOGGER.error("Failed to initialize file watch!", e);
+                    FILE_WATCHES.put(type, watch);
+                }
+                catch(Exception e) {
+                    FireClient.LOGGER.error("Failed to initialize file watch for {}!", type.name(), e);
+                }
             }
         });
     }
 
     @Override
     public void update(MinecraftClient client) {
-        if(!getData().isEnabled() || fileWatch == null) {
+        if(!getData().isEnabled()) {
+            return;
+        }
+
+        for(var type : TextureType.values()) {
+            pollWatch(type, FILE_WATCHES.get(type));
+        }
+    }
+
+    private void pollWatch(TextureType type, @Nullable WatchService watch) {
+        if(watch == null) {
             return;
         }
 
         try {
-            var key = fileWatch.poll();
+            var key = watch.poll();
             if(key == null) {
                 return;
             }
@@ -124,7 +159,7 @@ public class LocalSkinModule extends ModuleBase {
                     continue;
                 }
     
-                uploadSkin(skin);
+                uploadTexture(type, skin);
             }
 
         }
@@ -177,7 +212,7 @@ public class LocalSkinModule extends ModuleBase {
         return json;
     }
 
-    private void uploadSkin(String path) {
+    private void uploadTexture(TextureType type, String path) {
         if(path.isBlank()) {
             return;
         }
@@ -188,55 +223,60 @@ public class LocalSkinModule extends ModuleBase {
             var id = getSkinIdentifier(path);
 
             try {
-                var data = Files.readAllBytes(Paths.get(SKIN_PATH + path + ".png"));
+                var data = Files.readAllBytes(Paths.get(TEXTURE_PATHS.get(type) + path + ".png"));
                 var image = NativeImage.read(data);
-                var remapped = RemapTextureAccessor.invokeRemapTexture(image, path);
+
+                if(type == TextureType.SKIN) {
+                    image = RemapTextureAccessor.invokeRemapTexture(image, path);
+                }
 
                 var texture = new NativeImageBackedTexture(() -> { return path; }, remapped);
 
                 var client = MinecraftClient.getInstance();
                 client.getTextureManager().registerTexture(id, texture);
 
-                cachedSkins.add(path);
+                cache.get(type).add(path);
             }
             catch(Exception e) {
-                FireClient.LOGGER.error("Failed to load skin {}!", path, e);
+                FireClient.LOGGER.error("Failed to load {} {}!", type.name(), path, e);
             }
         });
     }
 
     public void initializeDirectories() {
         try {
-            new File(SKIN_PATH).mkdirs();
+            for(var type : TextureType.values()) {
+                new File(TEXTURE_PATHS.get(type)).mkdirs();
+            }
         }
         catch(Exception ignored) { }
     }
 
-    public List<String> getSkins() {
-        var skins = new ArrayList<String>();
+    public List<String> getTextures(TextureType type) {
+        var textures = new ArrayList<String>();
         initializeDirectories();
 
         try {
-            var skinFolder = new File(SKIN_PATH);
+            var textureFolder = new File(TEXTURE_PATHS.get(type));
 
-            for(var skinFile : skinFolder.listFiles()) {
-                var skin = skinFile.getName();
-                var skinName = filterName(skin);
+            for(var textureFile : textureFolder.listFiles()) {
+                var texture = textureFile.getName();
+                var textureName = filterName(texture);
 
-                if(skinName.isEmpty()) {
+                if(textureName.isEmpty()) {
                     continue;
                 }
 
-                skins.add(skinName);
+                textures.add(textureName);
             }
         }
         catch(Exception e) {
-            FireClient.LOGGER.error("Failed to gather skin list!", e);
+            FireClient.LOGGER.error("Failed to gather {} list!", type.name(), e);
         }
 
-        skins.sort(Comparator.comparing(String::toLowerCase));
+        textures.sort(Comparator.comparing(String::toLowerCase));
 
-        return skins;
+        return textures;
     }
 
     private String filterName(String fileName) {
@@ -258,48 +298,80 @@ public class LocalSkinModule extends ModuleBase {
             .dimensions(base.width/2 - 147, base.height/2 - 30, 20, 15)
             .build());
 
-        var skins = getSkins();
+        var index = 0;
+        for(var type : TextureType.values()) {
+            var selectButton = new ButtonWidget.Builder(Text.translatable(String.format("fireclient.module.local_skin.select_%s.name", type.name().toLowerCase())), (button) -> setSubMenu(type))
+                .tooltip(Tooltip.of(Text.translatable(String.format("fireclient.module.local_skin.select_%s.tooltip", type.name().toLowerCase()))))
+                .dimensions(base.width/2 - 122 + (index * 45), base.height/2 - 30, 40, 15)
+                .build();
+            
+            if(type == selectedMenu) {
+                selectButton.active = false;
+            }
+
+            widgets.add(selectButton);
+
+            index++;
+        }
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
-        for(var skin : skins) {
+        var textures = getTextures(selectedMenu);
+        
+        for(var texture : textures) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            if(!cachedSkins.contains(skin)) {
-                uploadSkin(skin);
+            if(!cache.get(selectedMenu).contains(texture)) {
+                uploadTexture(selectedMenu, texture);
             }
 
             var selectedSkin = new CustomDrawBuilder()
                 .position(base.width/2, 0)
                 .onDraw((context, mx, my, d) -> {
-                    if(!this.skin.equals(skin)) {
+                    if(!getTextureName(selectedMenu).equals(texture)) {
                         return;
                     }
 
-                    context.fill(-142, 0, 68, 16, 0x55FFFFFF);
+                    var x2 = switch(selectedMenu) {
+                        case TextureType.SKIN -> 68;
+                        case TextureType.CAPE -> 113;
+                    };
+
+                    context.fill(-142, 0, x2, 16, 0x55FFFFFF);
                 })
                 .build();
 
             entryWidgets.add(selectedSkin);
 
-            var head = new PlayerHeadWidget(skin, getSkinIdentifier(skin), base.width/2 - 140, 2);
-            entryWidgets.add(head);
+            switch(selectedMenu) {
+                case TextureType.SKIN -> {
+                    var head = new PlayerHeadWidget(texture, getIdentifier(selectedMenu, texture), base.width/2 - 140, 2);
+                    entryWidgets.add(head);
+                }
 
-            var text = new TextWidget(Text.literal(skin), base.getTextRenderer());
+                case TextureType.CAPE -> {
+                    var cape = new CapeRenderWidget(texture, getIdentifier(selectedMenu, texture), base.width/2 - 136, 2, 0.7f);
+                    entryWidgets.add(cape);
+                }
+            }
+
+            var text = new TextWidget(Text.literal(texture), base.getTextRenderer());
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.local_skin.apply.name"), (button) -> applySkin(skin))
+            entryWidgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.local_skin.apply.name"), (button) -> applyTexture(selectedMenu, texture))
                 .dimensions(base.width/2 + 115, 0, 20, 16)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.apply.tooltip", skin)))
+                .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.apply.tooltip", texture)))
                 .build());
 
-            entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.local_skin.slim.name"))
-                .getValue(() -> { return slimSkins.getOrDefault(skin, false); })
-                .setValue((value) -> { slimSkins.put(skin, value); })
-                .dimensions(base.width/2 + 70, 0, 40, 16)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.slim.tooltip", skin)))
-                .build());
+            if(selectedMenu == TextureType.SKIN) {
+                entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.local_skin.slim.name"))
+                    .getValue(() -> { return slimSkins.getOrDefault(texture, false); })
+                    .setValue((value) -> { slimSkins.put(texture, value); })
+                    .dimensions(base.width/2 + 70, 0, 40, 16)
+                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.slim.tooltip", texture)))
+                    .build());
+            }
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
@@ -312,39 +384,61 @@ public class LocalSkinModule extends ModuleBase {
     }
 
     private void folderButtonPressed(ButtonWidget button) {
-        Util.getOperatingSystem().open(new File(SKIN_PATH));
+        Util.getOperatingSystem().open(new File(TEXTURE_PATHS.get(selectedMenu)));
     }
 
-    private void applySkin(String skin) {
-        if(this.skin.equals(skin)) {
-            this.skin = "";
+    private void setSubMenu(TextureType type) {
+        selectedMenu = type;
+        reloadScreen();
+    }
+
+    private void applyTexture(TextureType type, String texture) {
+        var current = getTextureName(type);
+        if(current.equals(texture)) {
+            switch(type) {
+                case TextureType.SKIN -> skin = "";
+                case TextureType.CAPE -> cape = "";
+                // case TextureType.ELYTRA -> elytra = "";
+            }
         }
         else {
-            this.skin = skin;
+            switch(type) {
+                case TextureType.SKIN -> skin = texture;
+                case TextureType.CAPE -> cape = texture;
+                // case TextureType.ELYTRA -> elytra = texture;
+            }
         }
     }
 
     @Nullable
-    public static Identifier getSkinIdentifier(String filePath) {
+    public static Identifier getIdentifier(TextureType type, String filePath) {
         if(filePath.isBlank()) {
             return null;
         }
 
-        return Identifier.of(FireClient.MOD_ID, pathToSkin(filePath));
+        return Identifier.of(FireClient.MOD_ID, pathToTexture(type, filePath));
     }
 
-    public static String pathToSkin(String filePath) {
-        return SKIN_ID + RooHelper.filterIdInput(filePath.toLowerCase());
+    public static String pathToTexture(TextureType type, String filePath) {
+        return TEXTURE_IDS.get(type) + RooHelper.filterIdInput(filePath.toLowerCase());
     }
 
     @Nullable
-    public Identifier getSkin() {
-        return getSkinIdentifier(skin);
+    public Identifier getTexture(TextureType type) {
+        return getIdentifier(type, getTextureName(type));
+    }
+
+    private String getTextureName(TextureType type) {
+        return switch(type) {
+            case TextureType.SKIN -> skin;
+            case TextureType.CAPE -> cape;
+            // case TextureType.ELYTRA -> elytra;
+        };
     }
 
     @Nullable
     public String getModel() {
-        if(getSkin() == null) {
+        if(getTexture(TextureType.SKIN) == null) {
             return null;
         }
 
@@ -364,9 +458,22 @@ public class LocalSkinModule extends ModuleBase {
         int i = base.width/4;
         int j = base.height/4 - 7;
 
-        float scale = 1.0f;
-        int off = 50;
+        float pitchOffset;
+        if(selectedMenu == TextureType.SKIN) {
+            pitchOffset = 0.0f;
+        }
+        else {
+            pitchOffset = 180.0f;
+        }
 
-        InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
+        // TODO: fix model not updating in 1.21.6-1.21.8
+        RooHelper.drawPlayer(context, i, j, 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), pitchOffset, 0f);
+    }
+
+    public static enum TextureType {
+        
+        SKIN,
+        CAPE,
+        // ELYTRA,
     }
 }
