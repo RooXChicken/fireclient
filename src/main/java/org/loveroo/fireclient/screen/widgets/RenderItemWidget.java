@@ -6,7 +6,6 @@ import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
 
 public class RenderItemWidget extends ClickableWidget {
 
@@ -24,6 +23,6 @@ public class RenderItemWidget extends ClickableWidget {
 
     @Override
     protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, item.getItemName());
+        builder.put(NarrationPart.TITLE, item.getName());
     }
 }

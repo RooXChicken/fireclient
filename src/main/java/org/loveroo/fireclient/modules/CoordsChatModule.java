@@ -1,23 +1,15 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -30,15 +22,15 @@ import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import com.mojang.authlib.GameProfile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 
 public class CoordsChatModule extends ModuleBase {
 
@@ -214,7 +206,7 @@ public class CoordsChatModule extends ModuleBase {
             var head = new PlayerHeadWidget(player.getName(), player.getUUID(), base.width/2 - 140, 2);
             entryWidgets.add(head);
 
-            var text = new TextWidget(Text.literal(player.getName()), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(player.getName()), client.textRenderer);
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);
@@ -235,7 +227,7 @@ public class CoordsChatModule extends ModuleBase {
         }
 
         scroll = new ScrollableWidget(base, playersWidgetWidth, playersWidgetHeight, 0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (playersWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -387,7 +379,7 @@ public class CoordsChatModule extends ModuleBase {
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.getScrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);

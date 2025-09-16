@@ -1,13 +1,14 @@
 package org.loveroo.fireclient.mixin.modules.bigitems;
 
-import net.minecraft.client.render.item.ItemRenderState;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import org.loveroo.fireclient.modules.BigItemsModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(ItemRenderState.class)
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+
+@Mixin(ItemRenderer.class)
 public abstract class StoreItemTypeMixin implements BigItemsModule.ItemTypeStorage {
 
     @Unique

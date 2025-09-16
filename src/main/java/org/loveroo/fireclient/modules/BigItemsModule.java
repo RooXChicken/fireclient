@@ -1,22 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -28,8 +16,18 @@ import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.RenderItemWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 
 public class BigItemsModule extends ModuleBase {
 
@@ -130,7 +128,7 @@ public class BigItemsModule extends ModuleBase {
         for(var item : bigItems) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(item.getItem()), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(item.getItem()), client.textRenderer);
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);
@@ -153,7 +151,7 @@ public class BigItemsModule extends ModuleBase {
         }
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight,  0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -236,7 +234,7 @@ public class BigItemsModule extends ModuleBase {
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.getScrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);

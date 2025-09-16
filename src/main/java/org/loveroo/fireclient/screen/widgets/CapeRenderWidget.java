@@ -4,7 +4,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.screen.narration.NarrationPart;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -30,7 +29,7 @@ public class CapeRenderWidget extends ClickableWidget {
         matrix.translate(getX(), getY(), 0.0f);
         matrix.scale(scale, scale, 1.0f);
         
-        context.drawTexture(RenderLayer::getGuiTextured, texture, 0, 0, 0, 0, 12, 17, 64, 32);
+        context.drawTexture(texture, 0, 0, 0, 0, 12, 17, 64, 32);
 
         matrix.pop();
     }

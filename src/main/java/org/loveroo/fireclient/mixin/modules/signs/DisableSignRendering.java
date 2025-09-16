@@ -1,12 +1,5 @@
 package org.loveroo.fireclient.mixin.modules.signs;
 
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.AbstractSignBlockEntityRenderer;
-import net.minecraft.client.render.block.entity.SignBlockEntityRenderer;
-import net.minecraft.client.util.SpriteIdentifier;
-import net.minecraft.client.util.math.MatrixStack;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.SignModule;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,7 +7,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AbstractSignBlockEntityRenderer.class)
+import net.minecraft.block.entity.SignBlockEntity;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.block.entity.SignBlockEntityRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+
+@Mixin(SignBlockEntityRenderer.class)
 public class DisableSignRendering {
 
     @Inject(method = "render(Lnet/minecraft/block/entity/SignBlockEntity;FLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;II)V", at = @At("HEAD"), cancellable = true)

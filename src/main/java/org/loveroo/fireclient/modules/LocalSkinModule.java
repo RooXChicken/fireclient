@@ -21,7 +21,6 @@ import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.mixin.modules.localskin.RemapTextureAccessor;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.CapeRenderWidget;
@@ -228,7 +227,7 @@ public class LocalSkinModule extends ModuleBase {
                 var image = NativeImage.read(data);
 
                 if(type == TextureType.SKIN) {
-                    image = RemapTextureAccessor.invokeRemapTexture(image, path);
+                    // image = RemapTextureAccessor.invokeRemapTexture(image, path);
                 }
 
                 var texture = new NativeImageBackedTexture(image);
@@ -355,7 +354,7 @@ public class LocalSkinModule extends ModuleBase {
                 }
             }
 
-            var text = new TextWidget(Text.literal(texture), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(texture), MinecraftClient.getInstance().textRenderer);
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);

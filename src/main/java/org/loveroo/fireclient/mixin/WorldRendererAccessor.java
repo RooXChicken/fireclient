@@ -1,9 +1,10 @@
 package org.loveroo.fireclient.mixin;
 
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.world.ClientWorld;
 
 @Mixin(WorldRenderer.class)
 public interface WorldRendererAccessor {
@@ -11,6 +12,6 @@ public interface WorldRendererAccessor {
     @Accessor("world")
     public ClientWorld getWorld();
 
-    @Accessor("renderedEntitiesCount")
+    @Accessor("regularEntityCount")
     public int getRenderedEntitiesCount();
 }

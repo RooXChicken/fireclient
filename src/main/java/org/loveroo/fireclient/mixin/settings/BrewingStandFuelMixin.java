@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.item.Items;
 import net.minecraft.screen.BrewingStandScreenHandler;
 import net.minecraft.screen.slot.SlotActionType;
 
@@ -26,7 +26,7 @@ public abstract class BrewingStandFuelMixin {
         var screen = (BrewingStandScreenHandler)(Object)this;
         var slot = screen.slots.get(slotIndex);
 
-        if(slot == null || !slot.hasStack() || !slot.getStack().isIn(ItemTags.BREWING_FUEL)) {
+        if(slot == null || !slot.hasStack() || !slot.getStack().isOf(Items.BLAZE_POWDER)) {
             return;
         }
 

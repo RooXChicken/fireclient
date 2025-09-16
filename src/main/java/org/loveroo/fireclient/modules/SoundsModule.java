@@ -61,7 +61,7 @@ public class SoundsModule extends ModuleBase {
     static {
         // makes sound ids into human understandable names
         for(var sound : Registries.SOUND_EVENT) {
-            var path = sound.id().getPath();
+            var path = sound.getId().getPath();
             var spaced = path.replaceAll("[\\s.-_]", " ");
 
             // var firstSpaceIndex = spaced.indexOf(" ");
@@ -215,7 +215,7 @@ public class SoundsModule extends ModuleBase {
         for(var sound : mutedSounds) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(toHuman(sound.getSound())), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(toHuman(sound.getSound())), client.textRenderer);
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
@@ -243,7 +243,7 @@ public class SoundsModule extends ModuleBase {
         }
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -353,7 +353,7 @@ public class SoundsModule extends ModuleBase {
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.getScrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
@@ -369,7 +369,7 @@ public class SoundsModule extends ModuleBase {
 
     public double getVolume(SoundEvent sound) {
         for(var muted : mutedSounds) {
-            if(muted.getSoundEvent() != null && muted.getSoundEvent().id().equals(sound.id())) {
+            if(muted.getSoundEvent() != null && muted.getSoundEvent().getId().equals(sound.getId())) {
                 return muted.volume;
             }
         }

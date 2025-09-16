@@ -128,7 +128,7 @@ public class ParticlesModule extends ModuleBase {
         for(var particle : hiddenParticles) {
             var entryWidgets = new ArrayList<ClickableWidget>();
 
-            var text = new TextWidget(Text.literal(particle.getParticle()), base.getTextRenderer());
+            var text = new TextWidget(Text.literal(particle.getParticle()), client.textRenderer);
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
@@ -149,7 +149,7 @@ public class ParticlesModule extends ModuleBase {
         }
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -240,7 +240,7 @@ public class ParticlesModule extends ModuleBase {
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.getScrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);

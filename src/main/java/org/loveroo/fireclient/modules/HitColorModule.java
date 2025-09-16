@@ -1,30 +1,21 @@
 package org.loveroo.fireclient.modules;
 
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.JsonOption;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.ColorHelper;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.JsonOption;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.mixin.OverlayTextureAccessor;
-import org.loveroo.fireclient.screen.base.ConfigScreenBase;
-import org.loveroo.fireclient.screen.widgets.ColorPickerWidget;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HitColorModule extends ModuleBase {
 
@@ -111,27 +102,27 @@ public class HitColorModule extends ModuleBase {
     }
 
     public void changeColor(int color) {
-        var client = MinecraftClient.getInstance();
+        // var client = MinecraftClient.getInstance();
 
-        var overlayTexture = ((OverlayTextureAccessor)client.gameRenderer.getOverlayTexture()).getTexture();
-        var nativeImage = overlayTexture.getImage();
+        // var overlayTexture = ((OverlayTextureAccessor)client.gameRenderer.getOverlayTexture()).getTexture();
+        // var nativeImage = overlayTexture.getImage();
 
-        for (int i = 0; i < 16; i++) {
-            for (int j = 0; j < 16; j++) {
-                if (i < 8) {
-                    nativeImage.setColorArgb(j, i, color);
-                } else {
-                    int k = (int)((1.0F - j / 15.0F * 0.75F) * 255.0F);
-                    nativeImage.setColorArgb(j, i, ColorHelper.withAlpha(k, Colors.WHITE));
-                }
-            }
-        }
+        // for (int i = 0; i < 16; i++) {
+        //     for (int j = 0; j < 16; j++) {
+        //         if (i < 8) {
+        //             nativeImage.setColorArgb(j, i, color);
+        //         } else {
+        //             int k = (int)((1.0F - j / 15.0F * 0.75F) * 255.0F);
+        //             nativeImage.setColorArgb(j, i, ColorHelper.withAlpha(k, Colors.WHITE));
+        //         }
+        //     }
+        // }
 
-        RenderSystem.activeTexture(GlConst.GL_TEXTURE1);
-        overlayTexture.bindTexture();
-        overlayTexture.setFilter(false, false);
-        overlayTexture.setClamp(true);
-        nativeImage.upload(0, 0, 0, 0, 0, nativeImage.getWidth(), nativeImage.getHeight(), false);
-        RenderSystem.activeTexture(GlConst.GL_TEXTURE0);
+        // RenderSystem.activeTexture(GlConst.GL_TEXTURE1);
+        // overlayTexture.bindTexture();
+        // overlayTexture.setFilter(false, false);
+        // overlayTexture.setClamp(true);
+        // nativeImage.upload(0, 0, 0, 0, 0, nativeImage.getWidth(), nativeImage.getHeight(), false);
+        // RenderSystem.activeTexture(GlConst.GL_TEXTURE0);
     }
 }

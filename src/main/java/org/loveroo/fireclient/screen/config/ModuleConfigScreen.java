@@ -104,7 +104,7 @@ public class ModuleConfigScreen extends ConfigScreenBase {
     }
 
     @Override
-    public void onFilesDropped(List<Path> paths) {
+    public void filesDragged(List<Path> paths) {
         for(var module : modules) {
             module.onFilesDropped(paths);
         }

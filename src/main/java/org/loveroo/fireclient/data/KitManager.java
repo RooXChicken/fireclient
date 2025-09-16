@@ -179,7 +179,7 @@ public class KitManager {
         }
 
         if(!client.player.isInCreativeMode()) {
-            if(client.player.getPermissionLevel() >= 2) {
+            if(!client.player.hasPermissionLevel(2)) {
                 return KitLoadStatus.NEEDS_GMC;
             }
 

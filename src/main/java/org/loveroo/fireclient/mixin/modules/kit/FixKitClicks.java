@@ -1,5 +1,14 @@
 package org.loveroo.fireclient.mixin.modules.kit;
 
+import org.loveroo.fireclient.screen.modules.KitViewScreen;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -11,14 +20,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.world.GameMode;
-import org.loveroo.fireclient.screen.modules.KitViewScreen;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HandledScreen.class)
 abstract class FixKitClicks {
@@ -107,7 +108,6 @@ abstract class FixDropItems {
         }
 
         networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(-1, stack));
-        client.player.getItemDropCooldown().increment();
 
         info.cancel();
     }

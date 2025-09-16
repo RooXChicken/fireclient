@@ -15,8 +15,6 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexRendering;
 import net.minecraft.text.Text;
 import net.minecraft.util.shape.VoxelShapes;
 
@@ -88,8 +86,8 @@ public class BlockOutlineModule extends ModuleBase {
 
         var color = (getData().isEnabled()) ? getOutline() : defaultOutline;
 
-        var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
-        context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
+        // var layer = (getData().isEnabled() && thick) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
+        // context.draw(vertex -> VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color));
         matrix.pop();
     }
 

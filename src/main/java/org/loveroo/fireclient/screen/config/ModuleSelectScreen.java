@@ -1,5 +1,15 @@
 package org.loveroo.fireclient.screen.config;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.screen.base.ConfigScreenBase;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -7,19 +17,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.text.Text;
-
-import org.loveroo.fireclient.FireClient;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.modules.ModuleBase;
-import org.loveroo.fireclient.screen.base.ConfigScreenBase;
-import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class ModuleSelectScreen extends ConfigScreenBase {
 
@@ -63,7 +60,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
             
         modulesWidget = new ScrollableWidget(this, moduleSelectWidth, moduleSelectHeight, 0, 30, List.of());
         modulesWidget.setPosition(width/2 - (moduleSelectWidth/2), height/2 - (moduleSelectHeight/2));
-        modulesWidget.setScrollY(scroll);
+        modulesWidget.setScrollAmount(scroll);
         
         addDrawableChild(modulesWidget);
         
@@ -154,10 +151,10 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
         modulesWidget.setEntries(entries);
         if(modules.size() == moduleButtons.size()) {
-            modulesWidget.setScrollY(scroll);
+            modulesWidget.setScrollAmount(scroll);
         }
         else {
-            modulesWidget.setScrollY(0);
+            modulesWidget.setScrollAmount(0);
         }
     }
 
@@ -175,7 +172,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
     @Override
     public void tick() {
-        scroll = modulesWidget.getScrollY();
+        scroll = modulesWidget.getScrollAmount();
     }
 
     @Override

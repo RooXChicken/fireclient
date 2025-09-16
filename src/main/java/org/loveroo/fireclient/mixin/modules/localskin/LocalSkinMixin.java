@@ -85,11 +85,11 @@ abstract class LocalSkinMixin {
 abstract class LocalSkinModelMixin {
 
     @Shadow
-    private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
+    private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity>> modelRenderers;
 
     @SuppressWarnings("unchecked")
     @Inject(method = "getRenderer(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/render/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
-    public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
+    public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T>> info) {
         var client = MinecraftClient.getInstance();
         if(client.player != entity) {
             return;
@@ -106,6 +106,6 @@ abstract class LocalSkinModelMixin {
         }
 
         var model = SkinTextures.Model.valueOf(modelType);
-        info.setReturnValue((EntityRenderer<? super T, ?>)modelRenderers.get(model));
+        info.setReturnValue((EntityRenderer<? super T>)modelRenderers.get(model));
     }
 }

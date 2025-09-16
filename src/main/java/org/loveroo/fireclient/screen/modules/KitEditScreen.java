@@ -13,7 +13,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.RecipeInputInventory;
@@ -269,7 +268,7 @@ public class KitEditScreen extends KitViewScreen {
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
         super.renderBackground(context, mouseX, mouseY, delta);
 
-        context.drawTexture(RenderLayer::getGuiTextured, trashIcon, x + trashSlotX - 1, y + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
+        context.drawTexture(trashIcon, x + trashSlotX - 1, y + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
     }
 
     @Override

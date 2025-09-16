@@ -156,7 +156,7 @@ public class FireClientSettingsScreen extends ConfigScreenBase {
         }
 
         settingsWidget.setEntries(entries);
-        settingsWidget.setScrollY(0);
+        settingsWidget.setScrollAmount(0);
     }
 
     private void refreshSearch(String input) {

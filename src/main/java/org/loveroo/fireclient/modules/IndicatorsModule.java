@@ -1,5 +1,20 @@
 package org.loveroo.fireclient.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.modules.indicators.BlindnessIndicator;
+import org.loveroo.fireclient.modules.indicators.FireIndicator;
+import org.loveroo.fireclient.modules.indicators.FrostIndicator;
+import org.loveroo.fireclient.modules.indicators.Indicator;
+import org.loveroo.fireclient.modules.indicators.NauseaIndicator;
+import org.loveroo.fireclient.modules.indicators.PortalIndicator;
+import org.loveroo.fireclient.screen.base.ScrollableWidget;
+import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
+import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
@@ -7,16 +22,6 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.modules.indicators.*;
-import org.loveroo.fireclient.screen.base.ScrollableWidget;
-import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 public class IndicatorsModule extends ModuleBase {
 
@@ -72,7 +77,7 @@ public class IndicatorsModule extends ModuleBase {
                 );
             }
 
-            var text = new TextWidget(indicator.getData().getShownName(), base.getTextRenderer());
+            var text = new TextWidget(indicator.getData().getShownName(), MinecraftClient.getInstance().textRenderer);
             text.setX(x - 70);
             text.setY(8);
 

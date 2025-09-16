@@ -142,7 +142,7 @@ public class CommandKeysModule extends ModuleBase {
         entries.add(new ScrollableWidget.ElementEntry(List.of(addButton)));
 
         scroll = new ScrollableWidget(base, commandsWidgetWidth, commandsWidgetHeight, 0, 25, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (commandsWidgetWidth/2), base.height/2 - 50);
 
         widgets.add(scroll);
@@ -195,7 +195,7 @@ public class CommandKeysModule extends ModuleBase {
     @Override
     public void drawScreen(Screen base, DrawContext context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.getScrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);

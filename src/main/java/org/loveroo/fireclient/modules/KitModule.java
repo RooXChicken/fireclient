@@ -206,7 +206,7 @@ public class KitModule extends ModuleBase {
         
         scrollable = new ScrollableWidget(base, kitWidgetWidth, kitWidgetHeight, 0, 25, elements);
         scrollable.setPosition(base.width/2 - (kitWidgetWidth/2), base.height/2 - 50);
-        scrollable.setScrollY(scroll);
+        scrollable.setScrollAmount(scroll);
         
         widgets.add(scrollable);
         return widgets;
@@ -223,7 +223,7 @@ public class KitModule extends ModuleBase {
         drawScreenHeader(context, base.width/2, base.height/2 - 95);
         
         if(scrollable != null) {
-            scroll = scrollable.getScrollY();
+            scroll = scrollable.getScrollAmount();
         }
     }
 
