@@ -8,6 +8,7 @@ import org.loveroo.fireclient.modules.LocalSkinModule;
 import org.loveroo.fireclient.modules.LocalSkinModule.TextureType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -23,9 +24,23 @@ import net.minecraft.util.Identifier;
 @Mixin(SkinTextures.class)
 abstract class LocalSkinMixin {
 
+    // for a stackoverflow crash fix with essential
+    @Unique
+    private boolean checkingSkin = false;
+
+    @Unique
+    private boolean checkingCape = false;
+
     @Inject(method = "texture", at = @At("HEAD"), cancellable = true)
     public void getTexture(CallbackInfoReturnable<Identifier> info) {
+        if(checkingSkin) {
+            return;
+        }
+
+        checkingSkin = true;
         var skin = verifySelf(TextureType.SKIN);
+        checkingSkin = false;
+
         if(skin == null) {
             return;
         }
@@ -35,24 +50,20 @@ abstract class LocalSkinMixin {
 
     @Inject(method = "capeTexture", at = @At("HEAD"), cancellable = true)
     public void getCape(CallbackInfoReturnable<Identifier> info) {
+        if(checkingCape) {
+            return;
+        }
+
+        checkingCape = true;
         var cape = verifySelf(TextureType.CAPE);
+        checkingCape = false;
+
         if(cape == null) {
             return;
         }
 
         info.setReturnValue(cape);
     }
-
-    // @Inject(method = "elytraTexture", at = @At("HEAD"), cancellable = true)
-    // public void getElytra(CallbackInfoReturnable<Identifier> info) {
-    //     var localSkin = (LocalSkinModule) FireClientside.getModule("local_skin");
-    //     var cape = verifySelf(localSkin, TextureType.ELYTRA);
-    //     if(cape == null) {
-    //         return;
-    //     }
-
-    //     info.setReturnValue(cape);
-    // }
 
     @Nullable
     private Identifier verifySelf(TextureType type) {
