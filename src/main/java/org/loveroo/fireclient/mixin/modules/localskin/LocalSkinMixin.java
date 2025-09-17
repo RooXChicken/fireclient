@@ -31,6 +31,9 @@ abstract class LocalSkinMixin {
     @Unique
     private boolean checkingCape = false;
 
+    @Unique
+    private boolean verifying = false;
+
     @Inject(method = "texture", at = @At("HEAD"), cancellable = true)
     public void getTexture(CallbackInfoReturnable<Identifier> info) {
         if(checkingSkin) {
@@ -39,13 +42,14 @@ abstract class LocalSkinMixin {
 
         checkingSkin = true;
         var skin = verifySelf(TextureType.SKIN);
-        checkingSkin = false;
-
+        
         if(skin == null) {
+            checkingSkin = false;
             return;
         }
 
         info.setReturnValue(skin);
+        checkingSkin = false;
     }
 
     @Inject(method = "capeTexture", at = @At("HEAD"), cancellable = true)
@@ -56,27 +60,37 @@ abstract class LocalSkinMixin {
 
         checkingCape = true;
         var cape = verifySelf(TextureType.CAPE);
-        checkingCape = false;
-
+        
         if(cape == null) {
+            checkingCape = false;
             return;
         }
 
         info.setReturnValue(cape);
+        checkingCape = false;
     }
 
     @Nullable
     private Identifier verifySelf(TextureType type) {
+        if(verifying) {
+            return null;
+        }
+
+        verifying = true;
+
         var localSkin = (LocalSkinModule) FireClientside.getModule("local_skin");
         if(localSkin == null || !localSkin.getData().isEnabled()) {
+            verifying = false;
             return null;
         }
 
         var client = MinecraftClient.getInstance();
         if(client.player == null || client.player.getSkinTextures() != (Object)this) {
+            verifying = false;
             return null;
         }
 
+        verifying = false;
         return localSkin.getTexture(type);
     }
 }
