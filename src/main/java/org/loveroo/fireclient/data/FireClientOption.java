@@ -27,7 +27,8 @@ public enum FireClientOption {
     PRIORITIZE_PLAYERS(new ToggleOptionData(0)),
     AUTOFILL_LAPIS(new ToggleOptionData(0)),
     HIDE_ITEM_NAMES(new ToggleOptionData(0)),
-    EXTRA_SCREENSHOT_OPTIONS(new ToggleOptionData(1));
+    EXTRA_SCREENSHOT_OPTIONS(new ToggleOptionData(1)),
+    FOG_MODE(new ToggleOptionData(0));
 
     private final Text name;
     private final Text description;
