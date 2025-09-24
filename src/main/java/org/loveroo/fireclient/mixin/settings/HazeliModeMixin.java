@@ -1,16 +1,7 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.SkinTextures;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.Map;
+
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
@@ -20,11 +11,24 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import java.util.Map;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.TropicalFishEntityRenderer;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.TropicalFishEntityRenderState;
+import net.minecraft.client.util.SkinTextures;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.TropicalFishEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 
 @Mixin(SkinTextures.class)
 abstract class HazeliModeMixin {
@@ -74,4 +78,20 @@ abstract class HazeliNametagMixin<T extends Entity, S extends EntityRenderState>
 
         return hazeliNametag;
     }
+}
+
+@Mixin(TropicalFishEntityRenderer.class)
+abstract class HazeliFishMixin {
+
+    @Inject(method = "updateRenderState", at = @At("TAIL"))
+    public void makeHazeliFish(TropicalFishEntity tropicalFishEntity, TropicalFishEntityRenderState tropicalFishEntityRenderState, float f, CallbackInfo info) {
+        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
+            return;
+        }
+
+        tropicalFishEntityRenderState.variety = TropicalFishEntity.Pattern.DASHER;
+        tropicalFishEntityRenderState.baseColor = DyeColor.CYAN.getEntityColor();
+        tropicalFishEntityRenderState.patternColor = DyeColor.BLUE.getEntityColor();
+    }
+
 }
