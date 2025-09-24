@@ -4,16 +4,13 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder.GetFavoriteStatus;
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder.SetFavoriteStatus;
-import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
 public class FavoriteButtonWidget extends ButtonWidget {

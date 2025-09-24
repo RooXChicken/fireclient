@@ -461,6 +461,11 @@
   "fireclient.settings.hide_item_names.name": "Hide Item Names",
   "fireclient.settings.hide_item_names.description": "Hides the item select tooltip above the hotbar",
 
+  "fireclient.settings.extra_screenshot_options.name": "Screenshot Options",
+  "fireclient.settings.extra_screenshot_options.description": "Provides clickable options when screenshotting",
+  "fireclient.settings.extra_screenshot_options.copy.message": "[COPY]",
+  "fireclient.settings.extra_screenshot_options.copy.hover": "Copy \"%1$s\" to the clipboard",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",
