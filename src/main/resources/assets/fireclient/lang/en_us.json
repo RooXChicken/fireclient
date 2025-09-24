@@ -466,6 +466,9 @@
   "fireclient.settings.extra_screenshot_options.copy.message": "[COPY]",
   "fireclient.settings.extra_screenshot_options.copy.hover": "Copy \"%1$s\" to the clipboard",
 
+  "fireclient.settings.fog_mode.name": "F0g Mode",
+  "fireclient.settings.fog_mode.description": "...",
+
   "fireclient.keybind.generic.unbound_key.long": "Unbound",
   "fireclient.keybind.generic.unbound_key.short": "N/A",
   "fireclient.keybind.generic.toggle.name": "Toggle",
