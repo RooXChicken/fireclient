@@ -154,9 +154,9 @@ public class Keybind {
 
     public ButtonWidget getRebindButton(int x, int y, int width, int height) {
         return ButtonWidget.builder(getKeysCombo(keys), this::rebindPressed)
-                .dimensions(x, y, width, height)
-                .tooltip(Tooltip.of(description))
-                .build();
+            .dimensions(x, y, width, height)
+            .tooltip(Tooltip.of(description))
+            .build();
     }
 
     public Text getKeysCombo(List<Key> keyList) {
@@ -169,12 +169,7 @@ public class Keybind {
 
         for(int i = 0; i < keyList.size(); i++) {
             var key = keyList.get(i);
-
-            var name = switch(key.type) {
-                case KEY_CODE -> getKeyCodeName(key.code);
-                case SCAN_CODE -> getScanCodeName(key.code);
-                case MOUSE -> getMouseName(key.code);
-            };
+            var name = key.getName(shortName);
 
             builder.append(name);
 
@@ -184,65 +179,6 @@ public class Keybind {
         }
 
         return name.copy().append(": " + builder);
-    }
-
-    private String getKeyCodeName(int key) {
-        switch(key) {
-            case GLFW.GLFW_KEY_LEFT_ALT -> { return (shortName) ? "LAlt" : "Left Alt"; }
-            case GLFW.GLFW_KEY_RIGHT_ALT -> { return (shortName) ? "RAlt" : "Right Alt"; }
-
-            case GLFW.GLFW_KEY_LEFT_CONTROL -> { return (shortName) ? "LCtrl" : "Left Ctrl"; }
-            case GLFW.GLFW_KEY_RIGHT_CONTROL -> { return (shortName) ? "RCtrl" : "Right Ctrl"; }
-
-            case GLFW.GLFW_KEY_LEFT_SHIFT -> { return (shortName) ? "LShift" : "Left Shift"; }
-            case GLFW.GLFW_KEY_RIGHT_SHIFT -> { return (shortName) ? "RShift" : "Right Shift"; }
-
-            case GLFW.GLFW_KEY_LEFT_SUPER -> { return (shortName) ? "LSuper" : "Left Super"; }
-            case GLFW.GLFW_KEY_RIGHT_SUPER -> { return (shortName) ? "RSuper" : "Right Super"; }
-
-            case GLFW.GLFW_KEY_ENTER -> { return "Enter"; }
-
-            case GLFW.GLFW_KEY_PAGE_UP -> { return (shortName) ? "PgUp" : "Page Up"; }
-            case GLFW.GLFW_KEY_PAGE_DOWN -> { return (shortName) ? "PgDn" : "Page Down"; }
-
-            case GLFW.GLFW_KEY_TAB -> { return "Tab"; }
-            case GLFW.GLFW_KEY_END -> { return "End"; }
-            case GLFW.GLFW_KEY_HOME -> { return "Home"; }
-            case GLFW.GLFW_KEY_SCROLL_LOCK -> { return (shortName) ? "ScrLk" : "Scroll Lock"; }
-            case GLFW.GLFW_KEY_INSERT -> { return (shortName) ? "Ins" : "Insert"; }
-            case GLFW.GLFW_KEY_PAUSE -> { return "Pause"; }
-            case GLFW.GLFW_KEY_PRINT_SCREEN -> { return (shortName) ? "PrtScn" : "Print Screen"; }
-
-            case GLFW.GLFW_KEY_BACKSPACE -> { return (shortName) ? "Bksp" : "Backspace"; }
-            case GLFW.GLFW_KEY_DELETE -> { return (shortName) ? "Del" : "Delete"; }
-
-            case GLFW.GLFW_KEY_SPACE -> { return "Space"; }
-
-            case GLFW.GLFW_KEY_UP -> { return (shortName) ? "↑" : "Up"; }
-            case GLFW.GLFW_KEY_DOWN -> { return (shortName) ? "↓" : "Down"; }
-            case GLFW.GLFW_KEY_LEFT -> { return (shortName) ? "←" : "Left"; }
-            case GLFW.GLFW_KEY_RIGHT -> { return (shortName) ? "→" : "Right"; }
-        }
-
-        if(key >= GLFW.GLFW_KEY_F1 && key <= GLFW.GLFW_KEY_F24) {
-            return "F" + (key - GLFW.GLFW_KEY_F1 + 1);
-        }
-
-        return GLFW.glfwGetKeyName(key, -1);
-    }
-
-    private String getMouseName(int key) {
-        if(key >= GLFW.GLFW_MOUSE_BUTTON_1 && key <= GLFW.GLFW_MOUSE_BUTTON_8) {
-            return ((shortName) ? "\uD83D\uDDB1 " : "Mouse ") + (key - GLFW.GLFW_MOUSE_BUTTON_1);
-        }
-
-        return GLFW.glfwGetKeyName(key, -1);
-    }
-
-    private String getScanCodeName(int key) {
-        switch(key) {
-            default -> { return GLFW.glfwGetKeyName(-1, key); }
-        }
     }
 
     private void rebindPressed(ButtonWidget button) {
