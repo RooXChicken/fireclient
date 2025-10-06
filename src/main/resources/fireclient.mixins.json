@@ -83,7 +83,6 @@
     "settings.FogModeMixin",
     "settings.FogNametagMixin",
     "settings.FogPlayerModelMixin",
-    "settings.FogSkyColorMixin",
     "settings.ForceCursorCenterMixin",
     "settings.HazeliFishMixin",
     "settings.HazeliModeMixin",
