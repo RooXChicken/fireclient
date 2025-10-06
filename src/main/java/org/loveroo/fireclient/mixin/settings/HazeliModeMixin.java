@@ -89,7 +89,7 @@ abstract class HazeliFishMixin {
             return;
         }
 
-        tropicalFishEntityRenderState.variety = TropicalFishEntity.Pattern.DASHER;
+        tropicalFishEntityRenderState.variety = TropicalFishEntity.Variety.DASHER;
         tropicalFishEntityRenderState.baseColor = DyeColor.CYAN.getEntityColor();
         tropicalFishEntityRenderState.patternColor = DyeColor.BLUE.getEntityColor();
     }
