@@ -1,14 +1,13 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ClickableWidget;
 
 public class DeathInfoModule extends ModuleBase {
 
