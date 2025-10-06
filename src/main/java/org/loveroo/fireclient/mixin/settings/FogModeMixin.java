@@ -98,7 +98,7 @@ abstract class FogFishMixin {
             return;
         }
 
-        tropicalFishEntityRenderState.variety = TropicalFishEntity.Variety.SNOOPER;
+        tropicalFishEntityRenderState.variety = TropicalFishEntity.Pattern.SNOOPER;
         tropicalFishEntityRenderState.baseColor = DyeColor.GRAY.getEntityColor();
         tropicalFishEntityRenderState.patternColor = DyeColor.RED.getEntityColor();
     }
