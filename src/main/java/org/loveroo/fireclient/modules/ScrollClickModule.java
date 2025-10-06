@@ -1,14 +1,9 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.Text;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.JsonOption;
@@ -16,8 +11,14 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.scrollclick.BoundKeyAccessor;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.text.Text;
 
 public class ScrollClickModule extends ModuleBase {
 
@@ -27,6 +28,9 @@ public class ScrollClickModule extends ModuleBase {
     private int rightClicks = 0;
 
     private boolean disableWithPerspective = false;
+
+    private boolean activeSinceJoined = false;
+    private boolean usedSinceJoined = false;
 
     @JsonOption(name = "scroll_mode")
     private ScrollMode mode = ScrollMode.SINGLE;
@@ -43,11 +47,16 @@ public class ScrollClickModule extends ModuleBase {
         getData().setGuiElement(false);
         getData().setEnabled(false);
 
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            activeSinceJoined = false;
+            usedSinceJoined = false;
+        });
+
         var toggleBind = new Keybind("toggle_scroll_click",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
-                true, null,
-                () -> getData().setEnabled(!getData().isEnabled()), null);
+            Text.translatable("fireclient.keybind.generic.toggle.name"),
+            Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+            true, null,
+            () -> getData().setEnabled(!getData().isEnabled()), null);
 
         FireClientside.getKeybindManager().registerKeybind(toggleBind);
     }
@@ -61,7 +70,13 @@ public class ScrollClickModule extends ModuleBase {
             return;
         }
 
+        if(!activeSinceJoined) {
+            activeSinceJoined = true;
+            FireClient.LOGGER.info("ScrollClick is enabled!");
+        }
+
         if(rightClicks > 0) {
+            detectUsage();
             rightClicks = Math.min(3, rightClicks - 1);
 
             var keyAccessor = (BoundKeyAccessor)client.options.useKey;
@@ -69,10 +84,18 @@ public class ScrollClickModule extends ModuleBase {
         }
 
         if(leftClicks > 0) {
+            detectUsage();
             leftClicks = Math.min(3, leftClicks - 1);
 
             var keyAccessor = (BoundKeyAccessor)client.options.attackKey;
             KeyBinding.onKeyPressed(keyAccessor.getBoundKey());
+        }
+    }
+
+    private void detectUsage() {
+        if(!usedSinceJoined) {
+            usedSinceJoined = true;
+            FireClient.LOGGER.info("ScrollClick was used!");
         }
     }
 

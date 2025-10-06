@@ -3,11 +3,13 @@ package org.loveroo.fireclient.modules;
 import java.util.List;
 import java.util.function.Predicate;
 
+import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
@@ -21,12 +23,20 @@ public class ElytraSwapModule extends ModuleBase {
 
     private static final Color color = Color.fromRGB(0xFFFFFF);
 
+    private boolean activeSinceJoined = false;
+    private boolean usedSinceJoined = false;
+
     public ElytraSwapModule() {
         // the butterfly was the best i could find i promise
         super(new ModuleData("elytra_swap", "\uD83E\uDD8B", color));
 
         getData().setEnabled(false);
         getData().setGuiElement(false);
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
+            activeSinceJoined = false;
+            usedSinceJoined = false;
+        });
 
         var useBind = new Keybind("use_elytra_swap",
             Text.translatable("fireclient.keybind.generic.use.name"),
@@ -35,6 +45,14 @@ public class ElytraSwapModule extends ModuleBase {
             this::useKey, null);
 
         FireClientside.getKeybindManager().registerKeybind(useBind);
+    }
+
+    @Override
+    public void update(MinecraftClient client) {
+        if(!activeSinceJoined && getData().isEnabled()) {
+            activeSinceJoined = true;
+            FireClient.LOGGER.info("ElytraSwap is enabled!");
+        }
     }
 
     private void useKey() {
@@ -52,6 +70,11 @@ public class ElytraSwapModule extends ModuleBase {
 
         if(slot == -1) {
             return;
+        }
+
+        if(!usedSinceJoined) {
+            usedSinceJoined = true;
+            FireClient.LOGGER.info("ElytraSwap was used!");
         }
 
         swapArmor(slot, 6);
