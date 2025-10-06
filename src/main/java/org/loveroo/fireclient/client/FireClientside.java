@@ -98,6 +98,7 @@ public class FireClientside implements ClientModInitializer {
         loadConfig();
 
         ClientTickEvents.END_CLIENT_TICK.register(this::update);
+        
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             affiliates.fetchAffiliates();
         });

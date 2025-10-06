@@ -84,14 +84,16 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
             return original;
         }
 
+        // copy the original to prevent a concurrent modification exception
+        var originalCopy = original.copy();
         var finalText = MutableText.of(PlainTextContent.of(""));
 
         var textList = new HashSet<Text>();
-        if(original.getSiblings().size() <= 0) {
-            textList.add(original);
+        if(originalCopy.getSiblings().size() <= 0) {
+            textList.add(originalCopy);
         }
         else {
-            textList.addAll(original.getSiblings());
+            textList.addAll(originalCopy.getSiblings());
         }
 
         for(var text : textList) {
