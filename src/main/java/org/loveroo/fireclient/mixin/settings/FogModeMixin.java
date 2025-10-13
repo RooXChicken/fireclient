@@ -2,6 +2,9 @@ package org.loveroo.fireclient.mixin.settings;
 
 import java.util.Map;
 
+import net.minecraft.client.render.entity.EntityRenderManager;
+import net.minecraft.entity.player.PlayerSkinType;
+import net.minecraft.entity.player.SkinTextures;
 import org.joml.Vector4f;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
@@ -11,6 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -20,13 +24,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.TropicalFishEntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.TropicalFishEntityRenderState;
 import net.minecraft.client.render.fog.FogRenderer;
-import net.minecraft.client.util.SkinTextures;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.TropicalFishEntity;
@@ -42,7 +44,7 @@ abstract class FogModeMixin {
     @Unique
     private final Identifier fogSkin = Identifier.of(FireClient.MOD_ID, "textures/skin/fog.png");
 
-    @Inject(method = "texture", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
     public void getTexture(CallbackInfoReturnable<Identifier> info) {
         if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
             return;
@@ -52,11 +54,11 @@ abstract class FogModeMixin {
     }
 }
 
-@Mixin(EntityRenderDispatcher.class)
+@Mixin(EntityRenderManager.class)
 abstract class FogPlayerModelMixin {
 
     @Shadow
-    private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
+    private Map<PlayerSkinType, EntityRenderer<? extends PlayerEntity, ?>> playerRenderers;
 
     @SuppressWarnings("unchecked")
     @Inject(method = "getRenderer(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/render/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
@@ -65,8 +67,8 @@ abstract class FogPlayerModelMixin {
             return;
         }
 
-        var model = SkinTextures.Model.SLIM;
-        info.setReturnValue((EntityRenderer<? super T, ?>)modelRenderers.get(model));
+        var model = PlayerSkinType.SLIM;
+        info.setReturnValue((EntityRenderer<? super T, ?>)playerRenderers.get(model));
     }
 }
 
@@ -76,8 +78,8 @@ abstract class FogNametagMixin<T extends Entity, S extends EntityRenderState> {
     @Unique
     private final Text fogNametag = Text.of("NeF0Geo");
 
-    @ModifyVariable(method = "renderLabelIfPresent", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private Text changeText(Text original, @Local(ordinal = 0) S renderState) {
+    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitLabel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/math/Vec3d;ILnet/minecraft/text/Text;ZIDLnet/minecraft/client/render/state/CameraRenderState;)V"), index = 3)
+    private Text changeText(Text original, @Local(ordinal = 0, argsOnly = true) S renderState) {
         if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0 || renderState.displayName != original) {
             return original;
         }
@@ -89,7 +91,7 @@ abstract class FogNametagMixin<T extends Entity, S extends EntityRenderState> {
 @Mixin(TropicalFishEntityRenderer.class)
 abstract class FogFishMixin {
 
-    @Inject(method = "updateRenderState", at = @At("TAIL"))
+    @Inject(method = "updateRenderState*", at = @At("TAIL"))
     public void makeHazeliFish(TropicalFishEntity tropicalFishEntity, TropicalFishEntityRenderState tropicalFishEntityRenderState, float f, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
             return;
