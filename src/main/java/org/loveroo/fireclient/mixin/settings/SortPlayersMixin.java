@@ -1,27 +1,22 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import com.mojang.brigadier.suggestion.Suggestion;
-import com.mojang.brigadier.suggestion.Suggestions;
-import net.minecraft.client.gui.screen.ChatInputSuggestor;
-import net.minecraft.client.network.ClientCommandSource;
-import net.minecraft.text.OrderedText;
-import org.loveroo.fireclient.FireClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.settings.PlayerSortPriority;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.mojang.brigadier.suggestion.Suggestion;
+import com.mojang.brigadier.suggestion.Suggestions;
+
+import net.minecraft.client.gui.screen.ChatInputSuggestor;
 
 @Mixin(ChatInputSuggestor.class)
 public class SortPlayersMixin {
@@ -33,7 +28,7 @@ public class SortPlayersMixin {
         }
 
         var players = RooHelper.getNetworkHandler().getPlayerList().stream()
-                .map((entry) -> entry.getProfile().getName().toLowerCase())
+                .map((entry) -> entry.getProfile().name().toLowerCase())
                 .collect(Collectors.toUnmodifiableSet());
 
         var sorted = new ArrayList<>(info.getReturnValue()).stream()

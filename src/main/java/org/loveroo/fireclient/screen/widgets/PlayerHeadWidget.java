@@ -55,26 +55,24 @@ public class PlayerHeadWidget extends ClickableWidget {
         @Override
         public void run() {
             var client = MinecraftClient.getInstance();
-            var session = client.getSessionService();
+            var session = client.getApiServices();
             var skinProvider = client.getSkinProvider();
 
             if(uuid == null) {
                 return;
             }
 
-            var profileResult = session.fetchProfile(uuid, false);
-            if(profileResult == null || profileResult.profile() == null) {
+            var profile = session.profileResolver().getProfileById(uuid).orElse(null);
+            if(profile == null) {
                 return;
             }
-
-            var profile = profileResult.profile();
 
             skinProvider.fetchSkinTextures(profile).thenAccept((head) -> {
                 if(!head.isPresent()) {
                     return;
                 }
 
-                afterFetch.accept(head.get().texture());
+                afterFetch.accept(head.get().body().texturePath());
             });
         }
     }

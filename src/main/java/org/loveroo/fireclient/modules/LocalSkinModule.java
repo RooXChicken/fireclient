@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -42,6 +43,8 @@ import net.minecraft.client.gui.widget.TextWidget;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.text.Text;
+import net.minecraft.util.AssetInfo;
+import net.minecraft.util.AssetInfo.TextureAssetInfo;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 
@@ -59,6 +62,9 @@ public class LocalSkinModule extends ModuleBase {
 
     @JsonOption(name = "cape")
     private String cape = "";
+
+    private Optional<AssetInfo.TextureAsset> skinAsset = Optional.empty();
+    private Optional<AssetInfo.TextureAsset> capeAsset = Optional.empty();
 
     // @JsonOption(name = "elytra")
     // private String elytra = "";
@@ -237,11 +243,13 @@ public class LocalSkinModule extends ModuleBase {
                 client.getTextureManager().registerTexture(id, texture);
 
                 cache.get(type).add(path);
+                applyTexture(type, path);
             }
             catch(Exception e) {
                 FireClient.LOGGER.error("Failed to load {} {}!", type.name(), path, e);
             }
         });
+
     }
 
     public void initializeDirectories() {
@@ -397,21 +405,35 @@ public class LocalSkinModule extends ModuleBase {
         var current = getTextureName(type);
         if(current.equals(texture)) {
             switch(type) {
-                case TextureType.SKIN -> skin = "";
-                case TextureType.CAPE -> cape = "";
-                // case TextureType.ELYTRA -> elytra = "";
+                case TextureType.SKIN -> { skin = ""; skinAsset = Optional.empty(); }
+                case TextureType.CAPE -> { cape = ""; capeAsset = Optional.empty(); }
             }
         }
         else {
             switch(type) {
-                case TextureType.SKIN -> skin = texture;
-                case TextureType.CAPE -> cape = texture;
-                // case TextureType.ELYTRA -> elytra = texture;
+                case TextureType.SKIN -> {
+                    skin = texture;
+
+                    var id = getIdentifier(type, texture);
+                    skinAsset = Optional.of(new TextureAssetInfo(
+                        id,
+                        id
+                    ));
+                }
+                
+                case TextureType.CAPE -> {
+                    cape = texture;
+
+                    var id = getIdentifier(type, texture);
+                    capeAsset = Optional.of(new TextureAssetInfo(
+                        id,
+                        id
+                    ));
+                }
             }
         }
     }
 
-    @Nullable
     public static Identifier getIdentifier(TextureType type, String filePath) {
         if(filePath.isBlank()) {
             return null;
@@ -424,9 +446,11 @@ public class LocalSkinModule extends ModuleBase {
         return TEXTURE_IDS.get(type) + RooHelper.filterIdInput(filePath.toLowerCase());
     }
 
-    @Nullable
-    public Identifier getTexture(TextureType type) {
-        return getIdentifier(type, getTextureName(type));
+    public Optional<AssetInfo.TextureAsset> getAsset(TextureType type) {
+        return switch(type) {
+            case SKIN -> skinAsset;
+            case CAPE -> capeAsset;
+        };
     }
 
     private String getTextureName(TextureType type) {
@@ -439,7 +463,7 @@ public class LocalSkinModule extends ModuleBase {
 
     @Nullable
     public String getModel() {
-        if(getTexture(TextureType.SKIN) == null) {
+        if(getAsset(TextureType.SKIN).isEmpty()) {
             return null;
         }
 

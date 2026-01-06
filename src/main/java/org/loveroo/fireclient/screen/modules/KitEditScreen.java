@@ -11,10 +11,11 @@ import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.RecipeInputInventory;
@@ -175,46 +176,46 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         if(!edited) {
-            var slot = ((GetSlotAccessor)this).getSlotAtAccessed(mouseX, mouseY);
+            var slot = ((GetSlotAccessor)this).getSlotAtAccessed(click.x(), click.y());
             if(slot != null) {
                 edited = true;
             }
         }
 
-        if(preventCrafting(mouseX, mouseY)) {
+        if(preventCrafting(click.x(), click.y())) {
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if(preventCrafting(mouseX, mouseY)) {
+    public boolean mouseReleased(Click click) {
+        if(preventCrafting(click.x(), click.y())) {
             return true;
         }
 
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
-        if(preventCrafting(mouseX, mouseY)) {
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        if(preventCrafting(click.x(), click.y())) {
             return true;
         }
 
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return super.mouseDragged(click, offsetX, offsetY);
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(!edited && (keyCode != GLFW.GLFW_KEY_ESCAPE && !client.options.inventoryKey.matchesKey(keyCode, scanCode))) {
+    public boolean keyPressed(KeyInput input) {
+        if(!edited && (input.key() != GLFW.GLFW_KEY_ESCAPE && !client.options.inventoryKey.matchesKey(input))) {
             edited = true;
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     @Override
@@ -227,12 +228,12 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    protected boolean handleHotbarKeyPressed(int keyCode, int scanCode) {
+    protected boolean handleHotbarKeyPressed(KeyInput input) {
         if(!handler.getCursorStack().isEmpty() || focusedSlot == null) {
             return false;
         }
 
-        if(client.options.swapHandsKey.matchesKey(keyCode, scanCode)) {
+        if(client.options.swapHandsKey.matchesKey(input)) {
             onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
 
             var offhandSlot = getScreenHandler().slots.get(PlayerScreenHandler.OFFHAND_ID);
@@ -243,7 +244,7 @@ public class KitEditScreen extends KitViewScreen {
         }
 
         for(int i = 0; i < 9; i++) {
-            if(client.options.hotbarKeys[i].matchesKey(keyCode, scanCode)) {
+            if(client.options.hotbarKeys[i].matchesKey(input)) {
                 onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
 
                 var hotbarSlot = getScreenHandler().slots.get(PlayerScreenHandler.HOTBAR_START + i);

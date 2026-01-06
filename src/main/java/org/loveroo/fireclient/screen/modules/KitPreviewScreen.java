@@ -1,9 +1,12 @@
 package org.loveroo.fireclient.screen.modules;
 
+import org.lwjgl.glfw.GLFW;
+
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 
 public class KitPreviewScreen extends KitViewScreen {
 
@@ -12,24 +15,24 @@ public class KitPreviewScreen extends KitViewScreen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
         return false;
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         return false;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
         return false;
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(keyCode == GLFW.GLFW_KEY_ESCAPE || client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
-            return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyInput input) {
+        if(input.key() == GLFW.GLFW_KEY_ESCAPE || client.options.inventoryKey.matchesKey(input)) {
+            return super.keyPressed(input);
         }
 
         return true;

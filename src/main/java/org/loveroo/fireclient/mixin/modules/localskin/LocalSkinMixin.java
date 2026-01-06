@@ -7,19 +7,19 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.LocalSkinModule;
 import org.loveroo.fireclient.modules.LocalSkinModule.TextureType;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.util.SkinTextures;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.network.ClientPlayerLikeEntity;
+import net.minecraft.client.render.entity.EntityRenderManager;
+import net.minecraft.client.render.entity.PlayerEntityRenderer;
+import net.minecraft.entity.PlayerLikeEntity;
+import net.minecraft.entity.player.PlayerSkinType;
+import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.util.AssetInfo;
 
 @Mixin(SkinTextures.class)
 abstract class LocalSkinMixin {
@@ -34,8 +34,8 @@ abstract class LocalSkinMixin {
     @Unique
     private boolean verifying = false;
 
-    @Inject(method = "texture", at = @At("HEAD"), cancellable = true)
-    public void getTexture(CallbackInfoReturnable<Identifier> info) {
+    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
+    public void getTexture(CallbackInfoReturnable<AssetInfo.TextureAsset> info) {
         if(checkingSkin) {
             return;
         }
@@ -52,8 +52,8 @@ abstract class LocalSkinMixin {
         checkingSkin = false;
     }
 
-    @Inject(method = "capeTexture", at = @At("HEAD"), cancellable = true)
-    public void getCape(CallbackInfoReturnable<Identifier> info) {
+    @Inject(method = "cape", at = @At("HEAD"), cancellable = true)
+    public void getCape(CallbackInfoReturnable<AssetInfo.TextureAsset> info) {
         if(checkingCape) {
             return;
         }
@@ -71,7 +71,7 @@ abstract class LocalSkinMixin {
     }
 
     @Nullable
-    private Identifier verifySelf(TextureType type) {
+    private AssetInfo.TextureAsset verifySelf(TextureType type) {
         if(verifying) {
             return null;
         }
@@ -85,27 +85,26 @@ abstract class LocalSkinMixin {
         }
 
         var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getSkinTextures() != (Object)this) {
+        if(client.player == null || client.player.getSkin() != (Object) this) {
             verifying = false;
             return null;
         }
 
         verifying = false;
-        return localSkin.getTexture(type);
+
+        var asset = localSkin.getAsset(type);
+        return asset.orElse(null);
+
     }
 }
 
-@Mixin(EntityRenderDispatcher.class)
+@Mixin(EntityRenderManager.class)
 abstract class LocalSkinModelMixin {
 
-    @Shadow
-    private Map<SkinTextures.Model, EntityRenderer<? extends PlayerEntity, ?>> modelRenderers;
-
-    @SuppressWarnings("unchecked")
-    @Inject(method = "getRenderer(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/render/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
-    public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
+    @Inject(method = "getPlayerRenderer(Ljava/util/Map;Lnet/minecraft/entity/PlayerLikeEntity;)Lnet/minecraft/client/render/entity/PlayerEntityRenderer;", at = @At("HEAD"), cancellable = true)
+    public <T extends PlayerLikeEntity & ClientPlayerLikeEntity> void fireclient$modifyPlayerModel(Map<PlayerSkinType, PlayerEntityRenderer<T>> skinTypeToRenderer, T player, CallbackInfoReturnable<PlayerEntityRenderer<T>> info) {
         var client = MinecraftClient.getInstance();
-        if(client.player != entity) {
+        if(client.player != player) {
             return;
         }
         
@@ -119,7 +118,7 @@ abstract class LocalSkinModelMixin {
             return;
         }
 
-        var model = SkinTextures.Model.valueOf(modelType);
-        info.setReturnValue((EntityRenderer<? super T, ?>)modelRenderers.get(model));
+        var model = PlayerSkinType.valueOf(modelType);
+        info.setReturnValue(skinTypeToRenderer.get(model));
     }
 }

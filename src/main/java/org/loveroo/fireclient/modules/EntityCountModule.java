@@ -1,20 +1,21 @@
 package org.loveroo.fireclient.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
+import org.loveroo.fireclient.mixin.WorldAccessor;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Keybind;
-import org.loveroo.fireclient.mixin.WorldRendererAccessor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntityCountModule extends ModuleBase {
 
@@ -64,12 +65,12 @@ public class EntityCountModule extends ModuleBase {
         
         var text = client.textRenderer;
 
-        var accessor = (WorldRendererAccessor)client.worldRenderer;
+        var accessor = (WorldAccessor)client.worldRenderer;
         if(accessor.getWorld() == null) {
             return;
         }
         
-        var drawnCount = accessor.getRenderedEntitiesCount();
+        var drawnCount = accessor.getworldRenderState().entityRenderStates.size();
         var total = accessor.getWorld().getRegularEntityCount();
         var msg = "E: " + drawnCount + "/" + total;
         

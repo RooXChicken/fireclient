@@ -1,13 +1,9 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
@@ -15,9 +11,12 @@ import org.loveroo.fireclient.keybind.Key;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ChatScreen;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.text.Text;
 
 public class AutoMessageModule extends ModuleBase {
 
@@ -75,7 +74,7 @@ public class AutoMessageModule extends ModuleBase {
         openGui = false;
 
         if(!lastMessage.isEmpty()) {
-            client.setScreen(new ChatScreen(lastMessage + " "));
+            client.setScreen(new ChatScreen(lastMessage + " ", false));
         }
     }
 

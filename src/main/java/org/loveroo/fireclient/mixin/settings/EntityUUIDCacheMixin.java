@@ -16,7 +16,7 @@ import java.util.UUID;
 public abstract class EntityUUIDCacheMixin {
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void cacheUUID(String originalChatText, CallbackInfo info) {
+    private void cacheUUID(String text, boolean draft, CallbackInfo ci) {
         var client = MinecraftClient.getInstance();
 
         if(client.targetedEntity != null) {

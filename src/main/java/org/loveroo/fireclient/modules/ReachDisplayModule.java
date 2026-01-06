@@ -84,7 +84,7 @@ public class ReachDisplayModule extends ModuleBase {
         }
 
         var client = MinecraftClient.getInstance();
-        if(client.player == null || client.cameraEntity == null) {
+        if(client.player == null || client.getCameraEntity() == null) {
             return;
         }
 
@@ -94,7 +94,7 @@ public class ReachDisplayModule extends ModuleBase {
         
         if(!hitOnly) {
             var crosshairAccessor = (FindCrosshairTargetAccessor) client.gameRenderer;
-            var result = crosshairAccessor.findCrosshairTargetInvoker(client.cameraEntity, 100, 100, ticks.getTickProgress(false));
+            var result = crosshairAccessor.findCrosshairTargetInvoker(client.getCameraEntity(), 100, 100, ticks.getTickProgress(false));
 
             calculateReach(result);
         }

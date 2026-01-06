@@ -1,23 +1,15 @@
 package org.loveroo.fireclient.modules;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -30,15 +22,15 @@ import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import com.mojang.authlib.GameProfile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.widget.TextWidget;
+import net.minecraft.text.Text;
 
 public class CoordsChatModule extends ModuleBase {
 
@@ -82,9 +74,9 @@ public class CoordsChatModule extends ModuleBase {
         }
 
         var coordsBuilder = new StringBuilder();
-        coordsBuilder.append(String.format("X: %.2f ", client.player.getPos().getX()));
-        coordsBuilder.append(String.format("Y: %.2f ", client.player.getPos().getY()));
-        coordsBuilder.append(String.format("Z: %.2f ", client.player.getPos().getZ()));
+        coordsBuilder.append(String.format("X: %.2f ", client.player.getX()));
+        coordsBuilder.append(String.format("Y: %.2f ", client.player.getY()));
+        coordsBuilder.append(String.format("Z: %.2f ", client.player.getZ()));
 
         var coords = coordsBuilder.toString();
 
@@ -207,7 +199,7 @@ public class CoordsChatModule extends ModuleBase {
             if(player.getUUID() == null) {
                 if(online.contains(player.getName().toLowerCase())) {
                     var profile = getProfile(player.getName());
-                    player.setUUID(profile.getId());
+                    player.setUUID(profile.id());
                 }
             }
 
@@ -262,7 +254,7 @@ public class CoordsChatModule extends ModuleBase {
             return Set.of();
         }
 
-        var ownName = client.player.getGameProfile().getName();
+        var ownName = client.player.getGameProfile().name();
 
         var network = RooHelper.getNetworkHandler();
         if(network == null) {
@@ -271,7 +263,7 @@ public class CoordsChatModule extends ModuleBase {
 
         return network.getPlayerList().stream()
             .map((entry) -> {
-                return entry.getProfile().getName();
+                return entry.getProfile().name();
             })
             .filter((name) -> !ownName.equalsIgnoreCase(name))
             .collect(Collectors.toUnmodifiableSet());
@@ -285,7 +277,7 @@ public class CoordsChatModule extends ModuleBase {
         }
 
         var ids = network.getPlayerList().stream()
-            .filter((entry) -> entry.getProfile().getName().equalsIgnoreCase(playerName))
+            .filter((entry) -> entry.getProfile().name().equalsIgnoreCase(playerName))
             .toList();
         
         if(ids.isEmpty()) {
@@ -369,8 +361,8 @@ public class CoordsChatModule extends ModuleBase {
             name = playerName;
         }
         else {
-            name = profile.getName();
-            id = profile.getId();
+            name = profile.name();
+            id = profile.id();
         }
 
         getPlayers().add(new PlayerEntry(name, id, true));

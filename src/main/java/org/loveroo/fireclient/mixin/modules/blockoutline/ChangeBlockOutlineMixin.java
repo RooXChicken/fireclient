@@ -1,6 +1,7 @@
 package org.loveroo.fireclient.mixin.modules.blockoutline;
 
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.state.WorldRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.BlockOutlineModule;
@@ -18,8 +19,8 @@ public class ChangeBlockOutlineMixin {
     private VertexConsumerProvider.Immediate consumer;
 
     @Inject(method = "renderTargetBlockOutline", at = @At("HEAD"))
-    private void getConsumer(Camera camera, VertexConsumerProvider.Immediate vertexConsumers, MatrixStack matrices, boolean translucent, CallbackInfo info) {
-        consumer = vertexConsumers;
+    private void getConsumer(VertexConsumerProvider.Immediate immediate, MatrixStack matrices, boolean renderBlockOutline, WorldRenderState renderStates, CallbackInfo ci) {
+        consumer = immediate;
     }
 
     @ModifyVariable(method = "drawBlockOutline", at = @At("HEAD"), ordinal = 0, argsOnly = true)

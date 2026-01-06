@@ -1,10 +1,5 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,6 +7,12 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 
 @Mixin(ClientWorld.class)
 public abstract class DisableExtinguishSpamMixin {
@@ -32,7 +33,7 @@ public abstract class DisableExtinguishSpamMixin {
             return;
         }
 
-        var time = client.player.clientWorld.getTime();
+        var time = client.player.getEntityWorld().getTime();
         var difference = time - lastExtinguish;
 
         if(difference < 10) {

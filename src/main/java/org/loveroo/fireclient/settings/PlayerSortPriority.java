@@ -1,13 +1,14 @@
 package org.loveroo.fireclient.settings;
 
-import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
+import java.util.HashMap;
+import java.util.stream.Collectors;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 
-import java.util.HashMap;
-import java.util.stream.Collectors;
+import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
 
 public class PlayerSortPriority {
 
@@ -16,7 +17,7 @@ public class PlayerSortPriority {
     public static void register() {
         ClientSendMessageEvents.COMMAND.register((command) -> {
             var players = RooHelper.getNetworkHandler().getPlayerList().stream()
-                    .map((entry) -> entry.getProfile().getName().toLowerCase())
+                    .map((entry) -> entry.getProfile().name().toLowerCase())
                     .collect(Collectors.toUnmodifiableSet());
 
             var incremented = false;

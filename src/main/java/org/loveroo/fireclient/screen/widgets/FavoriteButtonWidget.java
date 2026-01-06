@@ -8,9 +8,11 @@ import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButton
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder.SetFavoriteStatus;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.text.Text;
 
 public class FavoriteButtonWidget extends ButtonWidget {
@@ -39,9 +41,9 @@ public class FavoriteButtonWidget extends ButtonWidget {
     }
 
     @Override
-	public void onClick(double mouseX, double mouseY) {
+	public void onClick(Click click, boolean doubled) {
         if(lastButton == 0) {
-            this.onPress();
+            this.onPress(click);
             return;
         }
 
@@ -50,20 +52,20 @@ public class FavoriteButtonWidget extends ButtonWidget {
 	}
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        lastButton = button;
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        lastButton = click.button();
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        lastButton = button;
-        return super.mouseReleased(mouseX, mouseY, button);
+    public boolean mouseReleased(Click click) {
+        lastButton = click.button();
+        return super.mouseReleased(click);
     }
 
     @Override
-    protected boolean isValidClickButton(int button) {
-		return button == 0 || button == 1;
+    protected boolean isValidClickButton(MouseInput input) {
+		return input.button() == 0 || input.button() == 1;
 	}
 
     @Override

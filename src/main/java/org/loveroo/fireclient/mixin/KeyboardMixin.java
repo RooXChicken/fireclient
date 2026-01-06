@@ -2,6 +2,7 @@ package org.loveroo.fireclient.mixin;
 
 import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.input.KeyInput;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.keybind.Key.KeyType;
 import org.spongepowered.asm.mixin.Final;
@@ -18,9 +19,9 @@ public abstract class KeyboardMixin {
     private MinecraftClient client;
 
     @Inject(method = "onKey", at = @At("HEAD"), cancellable = true)
-    private void onKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo info) {
+    private void onKey(long window, int action, KeyInput input, CallbackInfo info) {
         if (window == client.getWindow().getHandle()) {
-            var status = FireClientside.getKeybindManager().onKey(KeyType.KEY_CODE, key, scancode, action, modifiers);
+            var status = FireClientside.getKeybindManager().onKey(KeyType.KEY_CODE, input.key(), input.scancode(), action, input.modifiers());
 
             if(!status) {
                 info.cancel();

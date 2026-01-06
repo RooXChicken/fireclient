@@ -1,21 +1,21 @@
 package org.loveroo.fireclient.screen.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.entity.EntityEquipment;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.input.KeyInput;
+import net.minecraft.entity.EntityEquipment;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.PlayerScreenHandler;
+import net.minecraft.text.Text;
 
 public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
 
@@ -54,9 +54,9 @@ public abstract class KitViewScreen extends HandledScreen<PlayerScreenHandler> {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(keyCode != GLFW.GLFW_KEY_ESCAPE) {
-            return super.keyPressed(keyCode, scanCode, modifiers);
+    public boolean keyPressed(KeyInput input) {
+        if(input.key() != GLFW.GLFW_KEY_ESCAPE) {
+            return super.keyPressed(input);
         }
 
         if(!fromCommand) {

@@ -4,6 +4,7 @@ import net.minecraft.client.Keyboard;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 
+import net.minecraft.client.input.MouseInput;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.keybind.Key.KeyType;
@@ -22,10 +23,10 @@ public abstract class MouseMixin {
     private MinecraftClient client;
 
     @Inject(method = "onMouseButton", at = @At("HEAD"), cancellable = true)
-    private void onKey(long window, int button, int action, int mods, CallbackInfo info) {
+    private void onKey(long window, MouseInput input, int action, CallbackInfo info) {
         if (window == client.getWindow().getHandle()) {
-            var key = GLFW.GLFW_MOUSE_BUTTON_1 + button;
-            var status = FireClientside.getKeybindManager().onKey(KeyType.MOUSE, key, -1, action, mods);
+            var key = GLFW.GLFW_MOUSE_BUTTON_1 + input.button();
+            var status = FireClientside.getKeybindManager().onKey(KeyType.MOUSE, key, -1, action, input.modifiers());
 
             if(!status) {
                 info.cancel();

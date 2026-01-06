@@ -1,5 +1,14 @@
 package org.loveroo.fireclient.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.loveroo.fireclient.RooHelper;
+import org.loveroo.fireclient.client.FireClientside;
+import org.loveroo.fireclient.data.Color;
+import org.loveroo.fireclient.data.ModuleData;
+import org.loveroo.fireclient.keybind.Keybind;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -7,14 +16,6 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import net.minecraft.world.Heightmap;
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.ModuleData;
-import org.loveroo.fireclient.keybind.Keybind;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class HighestBlockModule extends ModuleBase {
 
@@ -58,7 +59,7 @@ public class HighestBlockModule extends ModuleBase {
         }
 
         var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.clientWorld == null) {
+        if(client.player == null || client.player.getEntityWorld() == null) {
             return;
         }
 
@@ -66,7 +67,7 @@ public class HighestBlockModule extends ModuleBase {
         var text = client.textRenderer;
 
         var pos = client.player.getBlockPos();
-        var chunk = client.player.clientWorld.getChunk(pos);
+        var chunk = client.player.getEntityWorld().getChunk(pos);
         if(chunk == null) {
             return;
         

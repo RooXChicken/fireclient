@@ -1,9 +1,5 @@
 package org.loveroo.fireclient.mixin.modules.deathinfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.DeathScreen;
-import net.minecraft.text.*;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.CoordinatesModule;
@@ -13,6 +9,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.text.MutableText;
 
 @Mixin(DeathScreen.class)
 public abstract class DeathInfoMixin {
@@ -37,9 +38,9 @@ public abstract class DeathInfoMixin {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var xPos = String.format("%.2f ", client.player.getPos().getX());
-        var yPos = String.format("%.2f ", client.player.getPos().getY());
-        var zPos = String.format("%.2f ", client.player.getPos().getZ());
+        var xPos = String.format("%.2f ", client.player.getX());
+        var yPos = String.format("%.2f ", client.player.getY());
+        var zPos = String.format("%.2f ", client.player.getZ());
 
         var xText = String.format("X: " + xPos);
         var yText = String.format("Y: " + yPos);

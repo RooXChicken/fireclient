@@ -1,13 +1,5 @@
 package org.loveroo.fireclient.mixin.modules.deathinfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -19,6 +11,15 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.Style;
+import net.minecraft.text.Text;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class SendDeathMessageMixin {
@@ -47,7 +48,7 @@ public class SendDeathMessageMixin {
             return;
         }
 
-        var deathTime = client.player.clientWorld.getTime();
+        var deathTime = client.player.getEntityWorld().getTime();
         var oldDeathTime = lastDeath;
 
         lastDeath = deathTime;
@@ -56,9 +57,9 @@ public class SendDeathMessageMixin {
             return;
         }
 
-        var xPos = String.format("%.2f ", client.player.getPos().getX());
-        var yPos = String.format("%.2f ", client.player.getPos().getY());
-        var zPos = String.format("%.2f ", client.player.getPos().getZ());
+        var xPos = String.format("%.2f ", client.player.getX());
+        var yPos = String.format("%.2f ", client.player.getY());
+        var zPos = String.format("%.2f ", client.player.getZ());
 
         var xText = String.format("X: " + xPos);
         var yText = String.format("Y: " + yPos);

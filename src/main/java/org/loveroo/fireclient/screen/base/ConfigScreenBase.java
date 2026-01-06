@@ -6,10 +6,12 @@ import org.loveroo.fireclient.data.FireClientOption;
 import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 public class ConfigScreenBase extends Screen {
@@ -27,25 +29,25 @@ public class ConfigScreenBase extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        mouseState = button;
+    public boolean mouseClicked(Click click, boolean doubled) {
+        mouseState = click.button();
 
         this.oldMouseX = this.mouseX;
         this.oldMouseY = this.mouseY;
 
         handleClick();
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
         mouseState = -1;
         handleClick();
 
         FireClientside.saveConfig();
 
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(click);
     }
 
     protected void handleClick() { }
@@ -58,18 +60,18 @@ public class ConfigScreenBase extends Screen {
     protected void onExit() { }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(client.options.inventoryKey.matchesKey(keyCode, scanCode)) {
+    public boolean keyPressed(KeyInput input) {
+        if(client.options.inventoryKey.matchesKey(input)) {
             exitOnInventory();
         }
 
-        if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
+        if(input.key() == GLFW.GLFW_KEY_ESCAPE) {
             if(escapePressed()) {
                 return true;
             }
         }
 
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 
     protected void exitOnInventory() {

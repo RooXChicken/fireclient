@@ -20,10 +20,12 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -112,7 +114,7 @@ public class CoordinatesModule extends ModuleBase {
 
         if(windowMode && (window == null || !window.isVisible())) {
             if(windowModeButton != null) {
-                windowModeButton.onPress();
+                windowModeButton.onPress(new Click(0, 0, new MouseInput(0, 0)));
             }
         }
     }
@@ -170,7 +172,7 @@ public class CoordinatesModule extends ModuleBase {
             return;
         }
 
-        var dimensionEntry = client.player.getWorld().getDimensionEntry().getKey();
+        var dimensionEntry = client.player.getEntityWorld().getDimensionEntry().getKey();
         if(dimensionEntry.isEmpty()) {
             return;
         }

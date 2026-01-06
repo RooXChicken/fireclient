@@ -182,7 +182,8 @@ public class SoundsModule extends ModuleBase {
 
         if(suggestionField == null) {
             suggestionField = new TextWidget(Text.literal(""), client.textRenderer);
-            suggestionField.alignLeft();
+            // TODO: fix
+            // suggestionField.alignLeft();
             suggestionField.setWidth(240);
         }
 

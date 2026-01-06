@@ -1,0 +1,4 @@
+TODO:
+local skin not changing model
+borked nametag
+sign

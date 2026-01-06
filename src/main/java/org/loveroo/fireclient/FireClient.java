@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.util.Identifier;
 
 public class FireClient implements ModInitializer {
 
@@ -16,7 +18,7 @@ public class FireClient implements ModInitializer {
     public static final String FIRECLIENT_VERSION = "1.3.2";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-    public static final String KEYBIND_CATEGORY = "key.category.fireclient";
+    public static final KeyBinding.Category KEYBIND_CATEGORY = KeyBinding.Category.create(Identifier.of(MOD_ID, "key.category.fireclient"));
 
     private static final String SERVER_URL = "https://api.loveroo.org/api/fireclient/v1/";
 

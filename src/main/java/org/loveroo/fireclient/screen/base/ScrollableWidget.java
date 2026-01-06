@@ -1,5 +1,8 @@
 package org.loveroo.fireclient.screen.base;
 
+import java.util.HashMap;
+import java.util.List;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -9,17 +12,19 @@ import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.ElementListWidget;
 import net.minecraft.client.option.KeyBinding;
 
-import java.util.HashMap;
-import java.util.List;
-
 public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> {
 
     public ScrollableWidget(Screen base, int width, int contentHeight, int y, int itemHeight, List<ElementEntry> entries) {
         super(MinecraftClient.getInstance(), width, contentHeight, y, itemHeight);
-
+        // FireClient.LOGGER.info("{}", getScrollY());
+        
         for(var entry : entries) {
             addEntry(entry);
         }
+
+
+        // setScrollY(getScrollY());
+        // recalculateAllChildrenPositions();
     }
 
     public void setEntries(List<ElementEntry> entries) {
@@ -42,6 +47,12 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
     @Override
     public int getRowWidth() {
         return width - 31;
+    }
+
+    @Override
+    public void setPosition(int x, int y) {
+        super.setPosition(x, y);
+        setScrollY(getScrollY());
     }
 
     public abstract static class Entry extends ElementListWidget.Entry<ScrollableWidget.Entry> {
@@ -75,10 +86,11 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
         }
 
         @Override
-        public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+            // TODO: might be this#getContentY
             for(var widget : widgets) {
-                widget.setPosition(widget.getX(), y + heightOffset.getOrDefault(widget, 0));
-                widget.render(context, mouseX, mouseY, tickDelta);
+                widget.setPosition(widget.getX(), getY() + heightOffset.getOrDefault(widget, 0));
+                widget.render(context, mouseX, mouseY, deltaTicks);
             }
         }
     }
