@@ -69,10 +69,10 @@ public class RenderPreviewMixin {
 
         var color = (outline.getData().isEnabled()) ? outline.getOutline() : outline.getDefaultOutline();
 
-        var layer = (outline.getData().isEnabled() && outline.isThick()) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
+        var layer = (outline.getData().isEnabled() && outline.isThick()) ? RenderLayers.secondaryBlockOutline() : RenderLayers.lines();
         var vertex = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
 
-        VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color);
+        VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color, 1.0f);
         vertex.drawCurrentLayer();
 
         matrix.pop();

@@ -127,8 +127,8 @@ public class HitColorModule extends ModuleBase {
             }
         }
 
-        overlayTexture.setFilter(false, false);
-        overlayTexture.setClamp(true);
+//        overlayTexture(false, false);
+//        overlayTexture.setClamp(true);
         overlayTexture.upload();
     }
 }

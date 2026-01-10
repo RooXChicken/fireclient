@@ -38,21 +38,21 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
-@Mixin(SkinTextures.class)
-abstract class FogModeMixin {
-
-    @Unique
-    private final Identifier fogSkin = Identifier.of(FireClient.MOD_ID, "textures/skin/fog.png");
-
-    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
-    public void getTexture(CallbackInfoReturnable<Identifier> info) {
-        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
-            return;
-        }
-
-        info.setReturnValue(fogSkin);
-    }
-}
+//@Mixin(SkinTextures.class)
+//abstract class FogModeMixin {
+//
+//    @Unique
+//    private final Identifier fogSkin = Identifier.of(FireClient.MOD_ID, "textures/skin/fog.png");
+//
+//    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
+//    public void getTexture(CallbackInfoReturnable<Identifier> info) {
+//        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
+//            return;
+//        }
+//
+//        info.setReturnValue(fogSkin);
+//    }
+//}
 
 @Mixin(EntityRenderManager.class)
 abstract class FogPlayerModelMixin {
@@ -165,18 +165,18 @@ abstract class FogAmplifierMixin {
     }
 }
 
-@Mixin(ClientWorld.class)
-abstract class FogCloudColorMixin {
-
-    @Inject(method = "getSkyColor", at = @At("HEAD"), cancellable = true)
-    private void modifySkyColor(Vec3d cameraPos, float tickProgress, CallbackInfoReturnable<Integer> info) {
-        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
-            return;
-        }
-
-        info.setReturnValue(0xFFFF0000);
-    }
-}
+//@Mixin(ClientWorld.class)
+//abstract class FogCloudColorMixin {
+//
+//    @Inject(method = "", at = @At("HEAD"), cancellable = true)
+//    private void modifySkyColor(Vec3d cameraPos, float tickProgress, CallbackInfoReturnable<Integer> info) {
+//        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
+//            return;
+//        }
+//
+//        info.setReturnValue(0xFFFF0000);
+//    }
+//}
 
 @Mixin(WorldRenderer.class)
 abstract class FogSkyColorMixin {

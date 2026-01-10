@@ -93,7 +93,7 @@ public class ReachDisplayModule extends ModuleBase {
         var text = client.textRenderer;
         
         if(!hitOnly) {
-            var crosshairAccessor = (FindCrosshairTargetAccessor) client.gameRenderer;
+            var crosshairAccessor = (FindCrosshairTargetAccessor) client.player;
             var result = crosshairAccessor.findCrosshairTargetInvoker(client.getCameraEntity(), 100, 100, ticks.getTickProgress(false));
 
             calculateReach(result);

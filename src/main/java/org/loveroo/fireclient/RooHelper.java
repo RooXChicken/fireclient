@@ -20,6 +20,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
+import org.loveroo.fireclient.mixin.DrawEntityAccessor;
 
 public class RooHelper {
 
@@ -199,7 +200,10 @@ public class RooHelper {
 
         mod.apply(entity);
 
-		InventoryScreen.drawEntity(context, x1, y1, x2, y2, p, vector3f, quaternionf, quaternionf2, entity);
+//        context.addEntity(en, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+        var state = DrawEntityAccessor.getEntityRenderState(entity);
+        context.addEntity(state, scale, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+//		InventoryScreen.drawEntity(context, x1, y1, x2, y2, size, o, quaternionf, quaternionf2, entity);
 		
         entity.bodyYaw = j;
 		entity.setYaw(k);

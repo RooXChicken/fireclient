@@ -15,9 +15,9 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.input.MouseInput;
 import net.minecraft.text.Text;
 
-public class FavoriteButtonWidget extends ButtonWidget {
+public class FavoriteButtonWidget extends ButtonWidget.Text {
 
-    private static final Text favoriteIcon = Text.literal("⭐");
+    private static final net.minecraft.text.Text favoriteIcon = net.minecraft.text.Text.literal("⭐");
 
     private static final Color enabledColor = Color.fromRGB(0xF2EF8D);
     private static final Color hoveredColor = Color.fromRGB(0xD9D768);
@@ -29,7 +29,7 @@ public class FavoriteButtonWidget extends ButtonWidget {
 
     private int lastButton = -1;
 
-    protected FavoriteButtonWidget(int x, int y, int width, int height, Text message, Tooltip tooltip, Consumer<ButtonWidget> onPress, GetFavoriteStatus getFavoriteStatus, SetFavoriteStatus setFavoriteStatus) {
+    protected FavoriteButtonWidget(int x, int y, int width, int height, net.minecraft.text.Text message, Tooltip tooltip, Consumer<ButtonWidget> onPress, GetFavoriteStatus getFavoriteStatus, SetFavoriteStatus setFavoriteStatus) {
         super(x, y, width, height, message, (button) -> onPress.accept(button), ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
 
         setTooltip(tooltip);
@@ -69,8 +69,8 @@ public class FavoriteButtonWidget extends ButtonWidget {
 	}
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderWidget(context, mouseX, mouseY, delta);
+    protected void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+        super.drawIcon(context, mouseX, mouseY, deltaTicks);
 
         if(favorited) {
             var textRenderer = MinecraftClient.getInstance().textRenderer;
@@ -88,11 +88,11 @@ public class FavoriteButtonWidget extends ButtonWidget {
             matricies.popMatrix();
         }
     }
-    
+
     public static class FavoriteButtonBuilder {
 
         @Nullable
-        private final Text text;
+        private final net.minecraft.text.Text text;
     
         private GetFavoriteStatus getFavoriteStatus;
         private SetFavoriteStatus setFavoriteStatus;
@@ -108,7 +108,7 @@ public class FavoriteButtonWidget extends ButtonWidget {
         private int width = 120;
         private int height = 20;
     
-        public FavoriteButtonBuilder(@Nullable Text text) {
+        public FavoriteButtonBuilder(@Nullable net.minecraft.text.Text text) {
             this.text = text;
         }
     

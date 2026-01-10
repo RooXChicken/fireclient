@@ -40,7 +40,7 @@ public class ChangeBlockOutlineMixin {
             return original;
         }
 
-        var layer = (outline.isThick()) ? RenderLayer.getSecondaryBlockOutline() : RenderLayer.getLines();
+        var layer = (outline.isThick()) ? RenderLayers.secondaryBlockOutline() : RenderLayers.lines();
         return consumer.getBuffer(layer);
     }
 }

@@ -11,6 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
+import net.minecraft.command.DefaultPermissions;
+import net.minecraft.command.permission.Permission;
+import net.minecraft.command.permission.PermissionLevel;
+import net.minecraft.command.permission.Permissions;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -182,7 +186,7 @@ public class KitManager {
         }
 
         if(!client.player.isInCreativeMode()) {
-            if(client.player.getPermissionLevel() >= 2) {
+            if(client.player.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS)) {
                 return KitLoadStatus.NEEDS_GMC;
             }
 

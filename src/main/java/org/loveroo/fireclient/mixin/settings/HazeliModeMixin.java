@@ -32,21 +32,21 @@ import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
-@Mixin(SkinTextures.class)
-abstract class HazeliModeMixin {
-
-    @Unique
-    private final Identifier hazeli = Identifier.of(FireClient.MOD_ID, "textures/skin/hazeli.png");
-
-    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
-    public void getTexture(CallbackInfoReturnable<Identifier> info) {
-        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
-            return;
-        }
-
-        info.setReturnValue(hazeli);
-    }
-}
+//@Mixin(SkinTextures.class)
+//abstract class HazeliModeMixin {
+//
+//    @Unique
+//    private final Identifier hazeli = Identifier.of(FireClient.MOD_ID, "textures/skin/hazeli.png");
+//
+//    @Inject(method = "body", at = @At("HEAD"), cancellable = true)
+//    public void getTexture(CallbackInfoReturnable<Identifier> info) {
+//        if(FireClientside.getSetting(FireClientOption.HAZELI_MODE) == 0) {
+//            return;
+//        }
+//
+//        info.setReturnValue(hazeli);
+//    }
+//}
 
 @Mixin(EntityRenderManager.class)
 abstract class HazeliPlayerModelMixin {

@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.screen.widgets;
 
+import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.Nullable;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 
@@ -8,17 +9,17 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-public class ToggleButtonWidget extends ButtonWidget {
+public class ToggleButtonWidget extends ButtonWidget.Text {
 
-    protected ToggleButtonWidget(int x, int y, int width, int height, Text message, Tooltip tooltip, PressAction onPress) {
+    protected ToggleButtonWidget(int x, int y, int width, int height, net.minecraft.text.Text message, Tooltip tooltip, PressAction onPress) {
         super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
         setTooltip(tooltip);
     }
-    
+
     public static class ToggleButtonBuilder {
     
         @Nullable
-        private final Text text;
+        private final net.minecraft.text.Text text;
 
         private MutableText trueText = FireClientSettingsScreen.getTrueText();
         private MutableText falseText = FireClientSettingsScreen.getFalseText();
@@ -37,7 +38,7 @@ public class ToggleButtonWidget extends ButtonWidget {
         private int width = 120;
         private int height = 20;
     
-        public ToggleButtonBuilder(@Nullable Text text) {
+        public ToggleButtonBuilder(@Nullable net.minecraft.text.Text text) {
             this.text = text;
         }
     
