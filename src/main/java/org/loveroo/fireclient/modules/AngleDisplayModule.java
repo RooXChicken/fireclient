@@ -1,11 +1,11 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -33,8 +33,8 @@ public class AngleDisplayModule extends ModuleBase {
         getData().setVisible(false);
 
         var toggleBind = new Keybind("toggle_angle_display",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
                 true, null,
                 () -> getData().setVisible(!getData().isVisible()), null);
 
@@ -42,8 +42,8 @@ public class AngleDisplayModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_angle_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
@@ -52,28 +52,28 @@ public class AngleDisplayModule extends ModuleBase {
     }
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw()) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
 
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
-        var text = client.textRenderer;
+        var text = client.font;
 
-        var pitch = client.player.getPitch();
+        var pitch = client.player.getXRot();
         var msg = String.format("%.2f°", pitch);
         var angleText = RooHelper.gradientText(msg, color1, color2);
 
-        getData().setWidth(text.getWidth(angleText));
+        getData().setWidth(text.width(angleText));
 
-        context.drawText(text, angleText, 0, 0, 0xFFFFFFFF, true);
+        graphics.text(text, angleText, 0, 0, 0xFFFFFFFF, true);
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 }

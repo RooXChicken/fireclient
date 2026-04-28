@@ -3,22 +3,23 @@ package org.loveroo.fireclient.screen.widgets;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.PlayerSkinDrawer;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.PlayerFaceExtractor;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.NonNull;
 
-public class PlayerHeadWidget extends ClickableWidget {
+public class PlayerHeadWidget extends AbstractWidget {
 
     private final String playerName;
-    private Identifier texture = Identifier.ofVanilla("textures/entity/player/wide/steve.png");
+    private Identifier texture = Identifier.withDefaultNamespace("textures/entity/player/wide/steve.png");
 
     public PlayerHeadWidget(String name, UUID uuid, int x, int y) {
-        super(x, y, 16, 16, Text.literal(name));
+        super(x, y, 16, 16, Component.literal(name));
         this.playerName = name;
 
         var thread = new ProfileFetchThread(uuid, (newTexture) -> { texture = newTexture; });
@@ -26,20 +27,20 @@ public class PlayerHeadWidget extends ClickableWidget {
     }
 
     public PlayerHeadWidget(String name, Identifier texture, int x, int y) {
-        super(x, y, 16, 16, Text.literal(name));
+        super(x, y, 16, 16, Component.literal(name));
         this.playerName = name;
 
         this.texture = texture;
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        PlayerSkinDrawer.draw(context, texture, getX(), getY(), 12, true, false, 0xFFFFFFFF);
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        PlayerFaceExtractor.extractRenderState(graphics, texture, getX(), getY(), 12, true, false, 0xFFFFFFFF);
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, playerName);
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
+        builder.add(NarratedElementType.TITLE, playerName);
     }
 
     static class ProfileFetchThread extends Thread {
@@ -54,20 +55,20 @@ public class PlayerHeadWidget extends ClickableWidget {
 
         @Override
         public void run() {
-            var client = MinecraftClient.getInstance();
-            var session = client.getApiServices();
-            var skinProvider = client.getSkinProvider();
+            var client = Minecraft.getInstance();
+            var session = client.services();
+            var skinProvider = client.getSkinManager();
 
             if(uuid == null) {
                 return;
             }
 
-            var profile = session.profileResolver().getProfileById(uuid).orElse(null);
+            var profile = session.profileResolver().fetchById(uuid).orElse(null);
             if(profile == null) {
                 return;
             }
 
-            skinProvider.fetchSkinTextures(profile).thenAccept((head) -> {
+            skinProvider.get(profile).thenAccept((head) -> {
                 if(!head.isPresent()) {
                     return;
                 }

@@ -6,8 +6,8 @@ import java.util.List;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
 
 public class DeathInfoModule extends ModuleBase {
 
@@ -21,8 +21,8 @@ public class DeathInfoModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 

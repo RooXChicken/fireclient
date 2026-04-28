@@ -1,28 +1,29 @@
 package org.loveroo.fireclient.screen.widgets;
 
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button.OnPress;
 import org.jetbrains.annotations.Nullable;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
-public class ToggleButtonWidget extends ButtonWidget.Text {
+public class ToggleButtonWidget extends Button.Plain {
 
-    protected ToggleButtonWidget(int x, int y, int width, int height, net.minecraft.text.Text message, Tooltip tooltip, PressAction onPress) {
-        super(x, y, width, height, message, onPress, ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+    protected ToggleButtonWidget(int x, int y, int width, int height, net.minecraft.network.chat.Component message, Tooltip tooltip, OnPress onPress) {
+        super(x, y, width, height, message, onPress, Button.DEFAULT_NARRATION);
         setTooltip(tooltip);
     }
 
     public static class ToggleButtonBuilder {
     
         @Nullable
-        private final net.minecraft.text.Text text;
+        private final net.minecraft.network.chat.Component text;
 
-        private MutableText trueText = FireClientSettingsScreen.getTrueText();
-        private MutableText falseText = FireClientSettingsScreen.getFalseText();
+        private MutableComponent trueText = FireClientSettingsScreen.getTrueText();
+        private MutableComponent falseText = FireClientSettingsScreen.getFalseText();
     
         private GetValue getValue;
         private SetValue setValue;
@@ -38,7 +39,7 @@ public class ToggleButtonWidget extends ButtonWidget.Text {
         private int width = 120;
         private int height = 20;
     
-        public ToggleButtonBuilder(@Nullable net.minecraft.text.Text text) {
+        public ToggleButtonBuilder(@Nullable net.minecraft.network.chat.Component text) {
             this.text = text;
         }
     
@@ -94,19 +95,19 @@ public class ToggleButtonWidget extends ButtonWidget.Text {
             return this;
         }
 
-        public ToggleButtonBuilder trueText(MutableText trueText) {
+        public ToggleButtonBuilder trueText(MutableComponent trueText) {
             this.trueText = trueText;
 
             return this;
         }
 
-        public ToggleButtonBuilder falseText(MutableText falseText) {
+        public ToggleButtonBuilder falseText(MutableComponent falseText) {
             this.falseText = falseText;
 
             return this;
         }
         
-        private void onPress(ButtonWidget button) {
+        private void onPress(Button button) {
             var value = !getValue.get();
             setValue.set(value);
     
@@ -117,7 +118,7 @@ public class ToggleButtonWidget extends ButtonWidget.Text {
             }
         }
     
-        protected MutableText getToggleText(boolean value) {
+        protected MutableComponent getToggleText(boolean value) {
             var toggle = ((value) ? trueText.copy() : falseText.copy());
     
             if(text != null) {

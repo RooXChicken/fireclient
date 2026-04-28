@@ -3,7 +3,7 @@ package org.loveroo.fireclient.mixin.modules.nametag;
 import java.util.HashSet;
 import java.util.UUID;
 
-import net.minecraft.client.render.command.LabelCommandRenderer;
+import net.minecraft.client.renderer.feature.NameTagFeatureRenderer;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Affiliates.NametagState;
@@ -21,16 +21,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Component;
 
 @Mixin(EntityRenderer.class)
 public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRenderState> implements NametagModule.UUIDStorage, NametagModule.NameStorage {
@@ -62,7 +62,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
     }
 
     @Shadow
-    public abstract TextRenderer getTextRenderer();
+    public abstract Font getFont();
 
 //    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitLabel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/math/Vec3d;ILnet/minecraft/text/Text;ZIDLnet/minecraft/client/render/state/CameraRenderState;)V"), index = 0)
 //    private MatrixStack changeAffiliateText(MatrixStack original, @Local(ordinal = 0, argsOnly = true) S state) {
@@ -119,7 +119,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
 //        return (128 << 24);
 //    }
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitLabel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/math/Vec3d;ILnet/minecraft/text/Text;ZIDLnet/minecraft/client/render/state/CameraRenderState;)V"), index = 4)
+    @ModifyArg(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitNameTag(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/phys/Vec3;ILnet/minecraft/network/chat/Component;ZIDLnet/minecraft/client/renderer/state/level/CameraRenderState;)V"), index = 4)
     private boolean showShadow(boolean shadow) {
         var nametag = (NametagModule) FireClientside.getModule("nametag");
         if(nametag == null || !nametag.isTextShadow()) {
@@ -157,7 +157,7 @@ public abstract class ModifyNametagMixin<T extends Entity, S extends EntityRende
     }
 }
 
-@Mixin(LabelCommandRenderer.Commands.class)
+@Mixin(NameTagFeatureRenderer.Storage.class)
 class ChangeNametagColor {
 
     @ModifyConstant(method = "add", constant = @Constant(intValue = -2130706433))

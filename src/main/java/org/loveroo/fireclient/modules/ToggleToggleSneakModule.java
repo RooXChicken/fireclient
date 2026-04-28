@@ -1,10 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -25,8 +25,8 @@ public class ToggleToggleSneakModule extends ModuleBase {
     private static final Color onColor1 = new Color(47, 216, 39, 255);
     private static final Color onColor2 = new Color(28, 158, 21, 255);
 
-    private final MutableText onText = RooHelper.gradientText("Sneak Toggled: On", onColor1, onColor2);
-    private final MutableText offText = RooHelper.gradientText("Sneak Toggled: Off", offColor1, offColor2);
+    private final MutableComponent onText = RooHelper.gradientText("Sneak Toggled: On", onColor1, onColor2);
+    private final MutableComponent offText = RooHelper.gradientText("Sneak Toggled: Off", offColor1, offColor2);
 
     public ToggleToggleSneakModule() {
         super(new ModuleData("toggle_toggle_sneak", "\uD83D\uDC5F", color));
@@ -34,8 +34,8 @@ public class ToggleToggleSneakModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_toggle_toggle_sneak",
-                Text.translatable("fireclient.keybind.generic.use.name"),
-                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.use.name"),
+                Component.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
                 true, null,
                 this::useKey, null);
 
@@ -47,17 +47,17 @@ public class ToggleToggleSneakModule extends ModuleBase {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
 
-        var toggled = !client.options.getSneakToggled().getValue();
-        client.options.getSneakToggled().setValue(toggled);
+        var toggled = !client.options.toggleCrouch().get();
+        client.options.toggleCrouch().set(toggled);
 
-        client.player.sendMessage((toggled ? onText : offText), true);
+        client.player.sendSystemMessage((toggled ? onText : offText));
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_toggle_toggle_sneak").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));

@@ -12,20 +12,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.network.packet.s2c.play.DeathMessageS2CPacket;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.protocol.game.ClientboundPlayerCombatKillPacket;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public class SendDeathMessageMixin {
 
     @Shadow
-    private ClientWorld world;
+    private ClientLevel level;
     
     @Unique
     private long lastDeath = 0;
@@ -36,9 +36,9 @@ public class SendDeathMessageMixin {
     @Unique
     private final Color deathColor2 = new Color(184, 48, 48, 255);
 
-    @Inject(method = "onDeathMessage", at = @At("HEAD"))
-    private void sendMessage(DeathMessageS2CPacket packet, CallbackInfo ci) {
-        var client = MinecraftClient.getInstance();
+    @Inject(method = "handlePlayerCombatKill", at = @At("HEAD"))
+    private void sendMessage(ClientboundPlayerCombatKillPacket packet, CallbackInfo ci) {
+        var client = Minecraft.getInstance();
         if(client.player == null || packet.playerId() != client.player.getId()) {
             return;
         }
@@ -48,7 +48,7 @@ public class SendDeathMessageMixin {
             return;
         }
 
-        var deathTime = client.player.getEntityWorld().getTime();
+        var deathTime = client.player.level().getGameTime();
         var oldDeathTime = lastDeath;
 
         lastDeath = deathTime;
@@ -71,13 +71,13 @@ public class SendDeathMessageMixin {
 
         var positionText = x.append(y).append(z);
 
-        var command = "/execute in " + world.getDimensionEntry().getIdAsString() + " run tp " + xPos + yPos + zPos;
+        var command = "/execute in " + level.dimensionTypeRegistration().getRegisteredName() + " run tp " + xPos + yPos + zPos;
         var click = new ClickEvent.SuggestCommand(command);
-        var hover = new HoverEvent.ShowText(Text.of(command));
+        var hover = new HoverEvent.ShowText(Component.nullToEmpty(command));
 
         var posClickable = positionText.copy().setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
 
         var deathText = RooHelper.gradientText("You died at: ", deathColor1, deathColor2).append(posClickable);
-        client.player.sendMessage(deathText, false);
+        client.player.sendSystemMessage(deathText);
     }
 }

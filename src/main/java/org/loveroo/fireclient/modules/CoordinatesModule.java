@@ -19,17 +19,17 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.world.dimension.DimensionTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.input.MouseButtonInfo;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 
 public class CoordinatesModule extends ModuleBase {
 
@@ -95,8 +95,8 @@ public class CoordinatesModule extends ModuleBase {
         }
 
         var toggleBind = new Keybind("toggle_coordinates",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
                 true, null,
                 () -> getData().setVisible(!getData().isVisible()), null);
 
@@ -104,7 +104,7 @@ public class CoordinatesModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
+    public void update(Minecraft client) {
         if(showOther) {
             getData().setHeight(18);
         }
@@ -114,37 +114,37 @@ public class CoordinatesModule extends ModuleBase {
 
         if(windowMode && (window == null || !window.isVisible())) {
             if(windowModeButton != null) {
-                windowModeButton.onPress(new Click(0, 0, new MouseInput(0, 0)));
+                windowModeButton.onPress(new MouseButtonEvent(0, 0, new MouseButtonInfo(0, 0)));
             }
         }
     }
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw() && (window == null || !window.isVisible())) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
 
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
         if(!showOther) {
-            drawNormal(context);
+            drawNormal(graphics);
         }
         else {
-            drawWithOther(context);
+            drawWithOther(graphics);
         }
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 
-    private void drawNormal(DrawContext context) {
-        var client = MinecraftClient.getInstance();
-        var text = client.textRenderer;
+    private void drawNormal(GuiGraphicsExtractor context) {
+        var client = Minecraft.getInstance();
+        var text = client.font;
 
         var xText = String.format("X: %.2f ", client.player.getX());
         var yText = String.format("Y: %.2f ", client.player.getY());
@@ -161,30 +161,30 @@ public class CoordinatesModule extends ModuleBase {
         var z = RooHelper.gradientText(zText, zColor1, zColor2);
 
         var coordsText = x.append(y).append(z);
-        getData().setWidth(text.getWidth(xText + yText + zText));
+        getData().setWidth(text.width(xText + yText + zText));
 
-        context.drawText(text, coordsText, 0, 0, 0xFFFFFFFF, true);
+        context.text(text, coordsText, 0, 0, 0xFFFFFFFF, true);
     }
 
-    private void drawWithOther(DrawContext context) {
-        var client = MinecraftClient.getInstance();
+    private void drawWithOther(GuiGraphicsExtractor context) {
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
 
-        var dimensionEntry = client.player.getEntityWorld().getDimensionEntry().getKey();
+        var dimensionEntry = client.player.level().dimensionTypeRegistration().unwrapKey();
         if(dimensionEntry.isEmpty()) {
             return;
         }
 
         var dimension = dimensionEntry.get();
 
-        if(dimension != DimensionTypes.OVERWORLD && dimension != DimensionTypes.THE_NETHER) {
+        if(dimension != BuiltinDimensionTypes.OVERWORLD && dimension != BuiltinDimensionTypes.NETHER) {
             drawNormal(context);
             return;
         }
 
-        var text = client.textRenderer;
+        var text = client.font;
 
         var xPos = client.player.getX();
         var yPos = client.player.getY();
@@ -196,7 +196,7 @@ public class CoordinatesModule extends ModuleBase {
 
         var order = false;
 
-        if(dimension == DimensionTypes.OVERWORLD) {
+        if(dimension == BuiltinDimensionTypes.OVERWORLD) {
             xPos /= 8.0;
             zPos /= 8.0;
             order = true;
@@ -220,8 +220,8 @@ public class CoordinatesModule extends ModuleBase {
             return;
         }
 
-        MutableText normal;
-        MutableText other;
+        MutableComponent normal;
+        MutableComponent other;
 
         if(order) {
             normal = RooHelper.gradientText(finalNormal, yColor1, yColor2);
@@ -232,31 +232,31 @@ public class CoordinatesModule extends ModuleBase {
             other = RooHelper.gradientText(finalOther, yColor1, yColor2);
         }
 
-        getData().setWidth(Math.max(text.getWidth(finalNormal), text.getWidth(finalOther)));
+        getData().setWidth(Math.max(text.width(finalNormal), text.width(finalOther)));
 
-        context.drawText(text, normal, 0, 0, 0xFFFFFFFF, true);
-        context.drawText(text, other, 0, 10, 0xFFFFFFFF, true);
+        context.text(text, normal, 0, 0, 0xFFFFFFFF, true);
+        context.text(text, other, 0, 10, 0xFFFFFFFF, true);
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_coordinates").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.other_dimension.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.coordinates.other_dimension.name"))
             .getValue(() -> { return showOther; })
             .setValue((value) -> { showOther = value; })
             .position(base.width/2 - 60,base.height / 2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
             .build());
 
-        windowModeButton = new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
+        windowModeButton = new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.coordinates.windowed_mode.name"))
             .getValue(() -> { return windowMode; })
             .setValue(this::windowModeChanged)
             .position(base.width/2 - 60,base.height / 2 + 50)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
             .build();
 
         widgets.add(windowModeButton);
@@ -293,8 +293,8 @@ public class CoordinatesModule extends ModuleBase {
             FireClient.LOGGER.error("Failed to apply headless workaround! Coordinates window will not work!", e);
 
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.coordinates.window_fail.name"),
-                Text.translatable("fireclient.module.coordinates.window_fail.contents"));
+                Component.translatable("fireclient.module.coordinates.window_fail.name"),
+                Component.translatable("fireclient.module.coordinates.window_fail.contents"));
         }
     }
 

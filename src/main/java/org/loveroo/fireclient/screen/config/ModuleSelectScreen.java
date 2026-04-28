@@ -1,22 +1,20 @@
 package org.loveroo.fireclient.screen.config;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 
-import org.loveroo.fireclient.FireClient;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.client.FireClientside;
-import org.loveroo.fireclient.modules.ModuleBase;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,12 +22,12 @@ import java.util.stream.Collectors;
 public class ModuleSelectScreen extends ConfigScreenBase {
 
     private ScrollableWidget modulesWidget;
-    private ButtonWidget backButton;
-    private TextFieldWidget searchBar;
+    private Button backButton;
+    private EditBox searchBar;
 
     private String search = "";
 
-    private final HashMap<String, ButtonWidget> moduleButtons = new HashMap<>();
+    private final HashMap<String, Button> moduleButtons = new HashMap<>();
 
     private final int moduleSelectWidth = 400;
     private final int moduleSelectHeight = 140;
@@ -37,7 +35,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
     private static double scroll = 0.0;
 
     public ModuleSelectScreen() {
-        super(Text.translatable("fireclient.screen.module_select.title"));
+        super(Component.translatable("fireclient.screen.module_select.title"));
     }
 
     @Override
@@ -47,34 +45,34 @@ public class ModuleSelectScreen extends ConfigScreenBase {
                 .onPress(module::moduleConfigPressed)
                 .getValue(module.getData()::isFavorited)
                 .setValue(module.getData()::setFavorited)
-                .tooltip(Tooltip.of(module.getData().getDescription()))
+                .tooltip(Tooltip.create(module.getData().getDescription()))
                 .dimensions(0, 0, 120, 20)
                 .build();
             
             moduleButtons.put(module.getData().getId(), button);
         }
 
-        backButton = ButtonWidget.builder(Text.translatable("fireclient.screen.settings.back.name"), this::backButtonPressed)
-            .dimensions(width/2 - 40, height/2 + moduleSelectHeight/2 + 20, 80, 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.screen.settings.back.tooltip")))
+        backButton = Button.builder(Component.translatable("fireclient.screen.settings.back.name"), this::backButtonPressed)
+            .bounds(width/2 - 40, height/2 + moduleSelectHeight/2 + 20, 80, 20)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.screen.settings.back.tooltip")))
             .build();
             
-        addDrawableChild(backButton);
+        addRenderableWidget(backButton);
             
         modulesWidget = new ScrollableWidget(this, moduleSelectWidth, moduleSelectHeight, 0, 30, List.of());
         modulesWidget.setPosition(width/2 - (moduleSelectWidth/2), height/2 - (moduleSelectHeight/2));
-        modulesWidget.setScrollY(scroll);
+        modulesWidget.setScrollAmount(scroll);
         
-        addDrawableChild(modulesWidget);
+        addRenderableWidget(modulesWidget);
         
         var barWidth = moduleSelectWidth - 120;
-        searchBar = new TextFieldWidget(client.textRenderer, barWidth, 15, Text.literal(""));
+        searchBar = new EditBox(minecraft.font, barWidth, 15, Component.literal(""));
         searchBar.setPosition(width/2 - (barWidth/2), height/2 - (moduleSelectHeight/2) - 20);
         
-        searchBar.setChangedListener(this::refreshSearch);
-        searchBar.setText(search);
+        searchBar.setResponder(this::refreshSearch);
+        searchBar.setValue(search);
 
-        addDrawableChild(searchBar);
+        addRenderableWidget(searchBar);
         setFocused(searchBar);
     }
 
@@ -113,7 +111,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         });
 
         var modules = sortedModules.stream().map((module) -> module.getData().getId()).toList();
-        var buttons = new ArrayList<ButtonWidget>();
+        var buttons = new ArrayList<Button>();
         
         var skips = 0;
         for(var i = 0; i < modules.size(); i++) {
@@ -139,7 +137,7 @@ public class ModuleSelectScreen extends ConfigScreenBase {
         var lineCount = (int)Math.ceil(size/3.0);
 
         for(int i = 0; i < lineCount; i++) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
             var moduleEntryIndex = (i*3);
             var moduleEntryCount = Math.min(3, size - moduleEntryIndex);
@@ -154,10 +152,10 @@ public class ModuleSelectScreen extends ConfigScreenBase {
 
         modulesWidget.setEntries(entries);
         if(modules.size() == moduleButtons.size()) {
-            modulesWidget.setScrollY(scroll);
+            modulesWidget.setScrollAmount(scroll);
         }
         else {
-            modulesWidget.setScrollY(0);
+            modulesWidget.setScrollAmount(0);
         }
     }
 
@@ -169,28 +167,28 @@ public class ModuleSelectScreen extends ConfigScreenBase {
     @Override
     public void exitOnInventory() { }
 
-    private void backButtonPressed(ButtonWidget button) {
-        MinecraftClient.getInstance().setScreen(new MainConfigScreen());
+    private void backButtonPressed(Button button) {
+        Minecraft.getInstance().setScreen(new MainConfigScreen());
     }
 
     @Override
     public void tick() {
-        scroll = modulesWidget.getScrollY();
+        scroll = modulesWidget.scrollAmount();
     }
 
     @Override
     protected boolean escapePressed() {
-        MinecraftClient.getInstance().setScreen(new MainConfigScreen());
+        Minecraft.getInstance().setScreen(new MainConfigScreen());
         return true;
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        var text = MinecraftClient.getInstance().textRenderer;
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        var text = Minecraft.getInstance().font;
 
-        context.drawCenteredTextWithShadow(text, Text.translatable("fireclient.screen.module_select.header"), width/2, height/2 - (moduleSelectHeight/2 + 30), 0xFFFFFFFF);
-        renderTutorialText(context, Text.translatable("fireclient.screen.module_select.tutorial"));
+        graphics.centeredText(text, Component.translatable("fireclient.screen.module_select.header"), width/2, height/2 - (moduleSelectHeight/2 + 30), 0xFFFFFFFF);
+        renderTutorialText(graphics, Component.translatable("fireclient.screen.module_select.tutorial"));
     }
 
     public static void resetScroll() {

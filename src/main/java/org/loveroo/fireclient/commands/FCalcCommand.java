@@ -10,53 +10,53 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 
 public class FCalcCommand {
 
-    private static final Text fCalcHeader = RooHelper.gradientText("[FCALC]", FireClientside.mainColor1, FireClientside.mainColor2);
+    private static final Component fCalcHeader = RooHelper.gradientText("[FCALC]", FireClientside.mainColor1, FireClientside.mainColor2);
 
-    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        var stackSub = ClientCommandManager.literal("stack")
-            .then(ClientCommandManager.argument("item_count", IntegerArgumentType.integer())
+    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
+        var stackSub = ClientCommands.literal("stack")
+            .then(ClientCommands.argument("item_count", IntegerArgumentType.integer())
                 .executes(context -> stackSubCommand(context, 64))
 
-            .then(ClientCommandManager.argument("stack_size", IntegerArgumentType.integer())
+            .then(ClientCommands.argument("stack_size", IntegerArgumentType.integer())
                 .executes(context -> stackSubCommand(context)))
         );
 
-        var itemCountSub = ClientCommandManager.literal("item")
-            .then(ClientCommandManager.argument("stack_count", IntegerArgumentType.integer())
+        var itemCountSub = ClientCommands.literal("item")
+            .then(ClientCommands.argument("stack_count", IntegerArgumentType.integer())
                 .executes(context -> itemSubCommand(context, 64))
 
-            .then(ClientCommandManager.argument("stack_size", IntegerArgumentType.integer())
+            .then(ClientCommands.argument("stack_size", IntegerArgumentType.integer())
                 .executes(context -> itemSubCommand(context)))
         );
 
-        var mathSub = ClientCommandManager.literal("math")
-            .then(ClientCommandManager.argument("equation", StringArgumentType.greedyString())
+        var mathSub = ClientCommands.literal("math")
+            .then(ClientCommands.argument("equation", StringArgumentType.greedyString())
                 .executes(this::mathSubCommand)
         );
 
-        var coordsSub = ClientCommandManager.literal("coords")
-            .then(ClientCommandManager.literal("to_nether")
-                .then(ClientCommandManager.argument("x", DoubleArgumentType.doubleArg())
-                .then(ClientCommandManager.argument("z", DoubleArgumentType.doubleArg())
+        var coordsSub = ClientCommands.literal("coords")
+            .then(ClientCommands.literal("to_nether")
+                .then(ClientCommands.argument("x", DoubleArgumentType.doubleArg())
+                .then(ClientCommands.argument("z", DoubleArgumentType.doubleArg())
                     .executes(this::toNetherCommand))))
 
-            .then(ClientCommandManager.literal("to_overworld")
-                .then(ClientCommandManager.argument("x", DoubleArgumentType.doubleArg())
-                .then(ClientCommandManager.argument("z", DoubleArgumentType.doubleArg())
+            .then(ClientCommands.literal("to_overworld")
+                .then(ClientCommands.argument("x", DoubleArgumentType.doubleArg())
+                .then(ClientCommands.argument("z", DoubleArgumentType.doubleArg())
                     .executes(this::toOverworldCommand)))
         );
 
-        dispatcher.register(ClientCommandManager.literal("fcalc")
+        dispatcher.register(ClientCommands.literal("fcalc")
             .then(stackSub)
             .then(itemCountSub)
             .then(mathSub)
@@ -98,8 +98,8 @@ public class FCalcCommand {
         return coords.toString();
     }
 
-    private MutableText getResult(String message) {
-        var messageText = MutableText.of(new PlainTextContent.Literal(" " + message)).setStyle(Style.EMPTY).withColor(0xFFFFFFFF);
+    private MutableComponent getResult(String message) {
+        var messageText = MutableComponent.create(new PlainTextContents.LiteralContents(" " + message)).setStyle(Style.EMPTY).withColor(0xFFFFFFFF);
         return fCalcHeader.copy().append(messageText);
     }
 

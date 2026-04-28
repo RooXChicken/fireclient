@@ -2,11 +2,9 @@ package org.loveroo.fireclient.mixin.settings;
 
 import java.util.Map;
 
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.entity.player.PlayerSkinType;
-import net.minecraft.entity.player.SkinTextures;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.world.entity.player.PlayerModelType;
 import org.joml.Vector4f;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,22 +19,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.TropicalFishEntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.TropicalFishEntityRenderState;
-import net.minecraft.client.render.fog.FogRenderer;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.TropicalFishEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.TropicalFishRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.TropicalFishRenderState;
+import net.minecraft.client.renderer.fog.FogRenderer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.animal.fish.TropicalFish;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.DyeColor;
 
 //@Mixin(SkinTextures.class)
 //abstract class FogModeMixin {
@@ -54,20 +49,20 @@ import net.minecraft.util.math.Vec3d;
 //    }
 //}
 
-@Mixin(EntityRenderManager.class)
+@Mixin(EntityRenderDispatcher.class)
 abstract class FogPlayerModelMixin {
 
     @Shadow
-    private Map<PlayerSkinType, EntityRenderer<? extends PlayerEntity, ?>> playerRenderers;
+    private Map<PlayerModelType, EntityRenderer<? extends Player, ?>> playerRenderers;
 
     @SuppressWarnings("unchecked")
-    @Inject(method = "getRenderer(Lnet/minecraft/entity/Entity;)Lnet/minecraft/client/render/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getRenderer(Lnet/minecraft/world/entity/Entity;)Lnet/minecraft/client/renderer/entity/EntityRenderer;", at = @At("HEAD"), cancellable = true)
     public <T extends Entity> void getRenderer(T entity, CallbackInfoReturnable<EntityRenderer<? super T, ?>> info) {
-        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0 || !(entity instanceof AbstractClientPlayerEntity)) {
+        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0 || !(entity instanceof AbstractClientPlayer)) {
             return;
         }
 
-        var model = PlayerSkinType.SLIM;
+        var model = PlayerModelType.SLIM;
         info.setReturnValue((EntityRenderer<? super T, ?>)playerRenderers.get(model));
     }
 }
@@ -76,11 +71,11 @@ abstract class FogPlayerModelMixin {
 abstract class FogNametagMixin<T extends Entity, S extends EntityRenderState> {
 
     @Unique
-    private final Text fogNametag = Text.of("NeF0Geo");
+    private final Component fogNametag = Component.nullToEmpty("NeF0Geo");
 
-    @ModifyArg(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;submitLabel(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/util/math/Vec3d;ILnet/minecraft/text/Text;ZIDLnet/minecraft/client/render/state/CameraRenderState;)V"), index = 3)
-    private Text changeText(Text original, @Local(ordinal = 0, argsOnly = true) S renderState) {
-        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0 || renderState.displayName != original) {
+    @ModifyArg(method = "submitNameDisplay(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;I)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/SubmitNodeCollector;submitNameTag(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/world/phys/Vec3;ILnet/minecraft/network/chat/Component;ZIDLnet/minecraft/client/renderer/state/level/CameraRenderState;)V"), index = 3)
+    private Component changeText(Component original, @Local(argsOnly = true, name = "state") S state) {
+        if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0 || state.nameTag != original) {
             return original;
         }
 
@@ -88,80 +83,83 @@ abstract class FogNametagMixin<T extends Entity, S extends EntityRenderState> {
     }
 }
 
-@Mixin(TropicalFishEntityRenderer.class)
+@Mixin(TropicalFishRenderer.class)
 abstract class FogFishMixin {
 
-    @Inject(method = "updateRenderState*", at = @At("TAIL"))
-    public void makeHazeliFish(TropicalFishEntity tropicalFishEntity, TropicalFishEntityRenderState tropicalFishEntityRenderState, float f, CallbackInfo info) {
+    // TODO(Ravel): wildcard and regex target are not supported
+// TODO(Ravel): wildcard and regex target are not supported
+    @Inject(method = "extractRenderState*", at = @At("TAIL"))
+    public void makeHazeliFish(TropicalFish entity, TropicalFishRenderState state, float partialTicks, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
             return;
         }
 
-        tropicalFishEntityRenderState.variety = TropicalFishEntity.Pattern.SNOOPER;
-        tropicalFishEntityRenderState.baseColor = DyeColor.GRAY.getEntityColor();
-        tropicalFishEntityRenderState.patternColor = DyeColor.RED.getEntityColor();
+        state.pattern = TropicalFish.Pattern.SNOOPER;
+        state.baseColor = DyeColor.GRAY.getTextureDiffuseColor();
+        state.patternColor = DyeColor.RED.getTextureDiffuseColor();
     }
 }
 
 @Mixin(FogRenderer.class)
 abstract class FogAmplifierMixin {
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private Vector4f modifyFogColor(Vector4f original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "fogColor")
+    private Vector4f modifyFogColor(Vector4f fogColor) {
         if(!fogModeEnabled()) {
-            return original;
+            return fogColor;
         }
 
         return new Vector4f(1.0f, 0.0f, 0.0f, 0.8f);
     }
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private float modifyEnvironmentStart(float original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "environmentalStart")
+    private float modifyEnvironmentStart(float environmentalStart) {
         if(!fogModeEnabled()) {
-            return original;
+            return environmentalStart;
         }
 
         return 8.0f;
     }
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 1, argsOnly = true)
-    private float modifyEnvironmentEnd(float original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "environmentalEnd")
+    private float modifyEnvironmentEnd(float environmentalEnd) {
         if(!fogModeEnabled()) {
-            return original;
+            return environmentalEnd;
         }
 
         return 32.0f;
     }
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 2, argsOnly = true)
-    private float modifyRenderStart(float original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "renderDistanceStart")
+    private float modifyRenderStart(float renderDistanceStart) {
         if(!fogModeEnabled()) {
-            return original;
+            return renderDistanceStart;
         }
 
         return 8.0f;
     }
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 3, argsOnly = true)
-    private float modifyRenderEnd(float original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "renderDistanceEnd")
+    private float modifyRenderEnd(float renderDistanceEnd) {
         if(!fogModeEnabled()) {
-            return original;
+            return renderDistanceEnd;
         }
 
         return 32.0f;
     }
 
-    @ModifyVariable(method = "applyFog(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), ordinal = 4, argsOnly = true)
-    private float modifySkyEnd(float original) {
+    @ModifyVariable(method = "updateBuffer(Ljava/nio/ByteBuffer;ILorg/joml/Vector4f;FFFFFF)V", at = @At("HEAD"), argsOnly = true, name = "skyEnd")
+    private float modifySkyEnd(float skyEnd) {
         if(!fogModeEnabled()) {
-            return original;
+            return skyEnd;
         }
 
         return 128f;
     }
 
+    @Unique
     private boolean fogModeEnabled() {
-        return (FireClientside.getSetting(FireClientOption.FOG_MODE) == 1 && MinecraftClient.getInstance().world != null);
+        return (FireClientside.getSetting(FireClientOption.FOG_MODE) == 1 && Minecraft.getInstance().level != null);
     }
 }
 
@@ -178,13 +176,13 @@ abstract class FogAmplifierMixin {
 //    }
 //}
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 abstract class FogSkyColorMixin {
 
-    @ModifyVariable(method = "render", at = @At("HEAD"), ordinal = 0)
-    private Vector4f modifyFogColor(Vector4f original) {
+    @ModifyVariable(method = "renderLevel", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    private Vector4f modifyFogColor(Vector4f fogColor) {
         if(FireClientside.getSetting(FireClientOption.FOG_MODE) == 0) {
-            return original;
+            return fogColor;
         }
 
         return new Vector4f(1.0f, 0.0f, 0.0f, 0.8f);

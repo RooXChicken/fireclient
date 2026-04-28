@@ -11,16 +11,16 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.keybind.Key.KeyType;
 import org.lwjgl.glfw.GLFW;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
 public class Keybind {
 
     private final String id;
-    private Text name;
-    private Text description;
+    private Component name;
+    private Component description;
 
     private List<Key> keys;
     private final boolean inGame;
@@ -32,7 +32,7 @@ public class Keybind {
     protected KeyEvent onKeyRelease;
 
     @Nullable
-    private ButtonWidget activeRebindButton;
+    private Button activeRebindButton;
 
     private boolean rebinding = false;
     private boolean shortName = false;
@@ -42,7 +42,7 @@ public class Keybind {
     @Nullable
     private ArrayList<Key> reboundKeys;
 
-    public Keybind(String id, Text name, Text description, boolean inGame, List<Key> keys) {
+    public Keybind(String id, Component name, Component description, boolean inGame, List<Key> keys) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -51,7 +51,7 @@ public class Keybind {
         this.inGame = inGame;
     }
 
-    public Keybind(String id, Text name, Text description, boolean inGame, List<Key> keys, KeyEvent onKeyPress, KeyEvent onKeyRelease) {
+    public Keybind(String id, Component name, Component description, boolean inGame, List<Key> keys, KeyEvent onKeyPress, KeyEvent onKeyRelease) {
         this(id, name, description, inGame, keys);
 
         this.onKeyPress = onKeyPress;
@@ -76,7 +76,7 @@ public class Keybind {
                 return KeyReturnStatus.CANCEL;
             }
 
-            if(activeRebindButton != null && !activeRebindButton.isSelected()) {
+            if(activeRebindButton != null && !activeRebindButton.isHoveredOrFocused()) {
                 completeRebind();
             }
 
@@ -142,9 +142,9 @@ public class Keybind {
 
     private boolean inGameCheck() {
         if(inGame) {
-            var client = MinecraftClient.getInstance();
+            var client = Minecraft.getInstance();
 
-            if(client.currentScreen != null) {
+            if(client.screen != null) {
                 return false;
             }
         }
@@ -152,17 +152,17 @@ public class Keybind {
         return true;
     }
 
-    public ButtonWidget getRebindButton(int x, int y, int width, int height) {
-        return ButtonWidget.builder(getKeysCombo(keys), this::rebindPressed)
-            .dimensions(x, y, width, height)
-            .tooltip(Tooltip.of(description))
+    public Button getRebindButton(int x, int y, int width, int height) {
+        return Button.builder(getKeysCombo(keys), this::rebindPressed)
+            .bounds(x, y, width, height)
+            .tooltip(Tooltip.create(description))
             .build();
     }
 
-    public Text getKeysCombo(List<Key> keyList) {
+    public Component getKeysCombo(List<Key> keyList) {
         var builder = new StringBuilder();
         if(keyList == null || keyList.isEmpty()) {
-            builder.append((shortName) ? Text.translatable("fireclient.keybind.generic.unbound_key.short").getString() : Text.translatable("fireclient.keybind.generic.unbound_key.long").getString());
+            builder.append((shortName) ? Component.translatable("fireclient.keybind.generic.unbound_key.short").getString() : Component.translatable("fireclient.keybind.generic.unbound_key.long").getString());
 
             return name.copy().append(": " + builder);
         }
@@ -181,7 +181,7 @@ public class Keybind {
         return name.copy().append(": " + builder);
     }
 
-    private void rebindPressed(ButtonWidget button) {
+    private void rebindPressed(Button button) {
         if(rebinding) {
             rebinding = false;
             button.setMessage(getKeysCombo(keys));
@@ -292,19 +292,19 @@ public class Keybind {
         this.shortName = shortName;
     }
 
-    public Text getName() {
+    public Component getName() {
         return name;
     }
 
-    public Text getDescription() {
+    public Component getDescription() {
         return description;
     }
 
-    public void setName(Text name) {
+    public void setName(Component name) {
         this.name = name;
     }
 
-    public void setDescription(Text description) {
+    public void setDescription(Component description) {
         this.description = description;
     }
 

@@ -1,24 +1,21 @@
 package org.loveroo.fireclient.mixin.modules.perspective;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.PerspectiveModule;
-import org.loveroo.fireclient.modules.ScrollClickModule;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Mouse.class)
+@Mixin(MouseHandler.class)
 public abstract class IncreaseZoomMixin {
 
-    @Inject(method = "onMouseScroll(JDD)V", at = @At("HEAD"), cancellable = true)
-    private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(window != client.getWindow().getHandle() || client.player == null || client.currentScreen != null) {
+    @Inject(method = "onScroll(JDD)V", at = @At("HEAD"), cancellable = true)
+    private void onMouseScroll(long handle, double xoffset, double yoffset, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(handle != client.getWindow().handle() || client.player == null || client.screen != null) {
             return;
         }
 
@@ -27,7 +24,7 @@ public abstract class IncreaseZoomMixin {
             return;
         }
 
-        perspective.addPositionOffset(vertical);
+        perspective.addPositionOffset(yoffset);
         info.cancel();
     }
 }

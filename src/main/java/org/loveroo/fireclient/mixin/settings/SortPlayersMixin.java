@@ -16,18 +16,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 
-import net.minecraft.client.gui.screen.ChatInputSuggestor;
+import net.minecraft.client.gui.components.CommandSuggestions;
 
-@Mixin(ChatInputSuggestor.class)
+@Mixin(CommandSuggestions.class)
 public class SortPlayersMixin {
 
     @Inject(method = "sortSuggestions", at = @At("RETURN"), cancellable = true)
-    private void sortPlayers(Suggestions old, CallbackInfoReturnable<List<Suggestion>> info) {
+    private void sortPlayers(Suggestions suggestions, CallbackInfoReturnable<List<Suggestion>> info) {
         if(FireClientside.getSetting(FireClientOption.PRIORITIZE_PLAYERS) == 0) {
             return;
         }
 
-        var players = RooHelper.getNetworkHandler().getPlayerList().stream()
+        var players = RooHelper.getNetworkHandler().getOnlinePlayers().stream()
                 .map((entry) -> entry.getProfile().name().toLowerCase())
                 .collect(Collectors.toUnmodifiableSet());
 

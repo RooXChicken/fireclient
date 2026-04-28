@@ -1,11 +1,12 @@
 package org.loveroo.fireclient.screen.config;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.modules.ModuleBase;
@@ -17,7 +18,7 @@ public class MainConfigScreen extends ConfigScreenBase {
     private ModuleBase.OldTransform oldTransform = null;
 
     public MainConfigScreen() {
-        super(Text.translatable("fireclient.screen.main_config.title"));
+        super(Component.translatable("fireclient.screen.main_config.title"));
     }
 
     @Override
@@ -26,37 +27,37 @@ public class MainConfigScreen extends ConfigScreenBase {
             module.setDrawingOverwritten(true);
         }
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.modules.name"), this::modulesButtonPressed)
-                .dimensions(width/2 - 50, height/2 - 10, 100, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.modules.tooltip")))
+        addRenderableWidget(Button.builder(Component.translatable("fireclient.screen.main_config.modules.name"), this::modulesButtonPressed)
+                .bounds(width/2 - 50, height/2 - 10, 100, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.screen.main_config.modules.tooltip")))
                 .build());
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.settings.name"), this::settingsButtonPressed)
-                .dimensions(width/2 - 60, height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.settings.tooltip")))
+        addRenderableWidget(Button.builder(Component.translatable("fireclient.screen.main_config.settings.name"), this::settingsButtonPressed)
+                .bounds(width/2 - 60, height/2 + 20, 120, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.screen.main_config.settings.tooltip")))
                 .build());
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.screen.main_config.exit.name"), this::exitButtonPressed)
-                .dimensions(width - 85, height - 25, 80, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.screen.main_config.exit.tooltip")))
+        addRenderableWidget(Button.builder(Component.translatable("fireclient.screen.main_config.exit.name"), this::exitButtonPressed)
+                .bounds(width - 85, height - 25, 80, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.screen.main_config.exit.tooltip")))
                 .build());
     }
 
-    private void modulesButtonPressed(ButtonWidget button) {
+    private void modulesButtonPressed(Button button) {
         removeOverwrite();
 
         ModuleSelectScreen.resetScroll();
-        MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
+        Minecraft.getInstance().setScreen(new ModuleSelectScreen());
     }
 
-    private void settingsButtonPressed(ButtonWidget button) {
+    private void settingsButtonPressed(Button button) {
         removeOverwrite();
-        MinecraftClient.getInstance().setScreen(new FireClientSettingsScreen());
+        Minecraft.getInstance().setScreen(new FireClientSettingsScreen());
     }
 
-    private void exitButtonPressed(ButtonWidget button) {
+    private void exitButtonPressed(Button button) {
         removeOverwrite();
-        MinecraftClient.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(null);
     }
 
     @Override
@@ -84,9 +85,9 @@ public class MainConfigScreen extends ConfigScreenBase {
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         removeOverwrite();
-        super.close();
+        super.onClose();
     }
 
     private void removeOverwrite() {
@@ -96,8 +97,8 @@ public class MainConfigScreen extends ConfigScreenBase {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
 
         if(selectedModule != null) {
             selectedModule.handleTransformation(mouseState, oldTransform, this.mouseX, this.mouseY, oldMouseX, oldMouseY, doSnap());
@@ -112,10 +113,10 @@ public class MainConfigScreen extends ConfigScreenBase {
                 continue;
             }
 
-            module.drawOutline(context);
+            module.drawOutline(graphics);
 
             module.setDrawingOverwritten(false);
-            module.draw(context, RenderTickCounter.ZERO);
+            module.draw(graphics, DeltaTracker.ZERO);
             module.setDrawingOverwritten(true);
         }
 
@@ -125,11 +126,11 @@ public class MainConfigScreen extends ConfigScreenBase {
             }
 
             if(module.isPointInside(mouseX, mouseY)) {
-                context.drawTooltip(Tooltip.wrapLines(client, module.getData().getTooltip(showTransform())), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(Tooltip.splitTooltip(minecraft, module.getData().getTooltip(showTransform())), mouseX, mouseY);
                 break;
             }
         }
 
-        renderTutorialText(context, Text.translatable("fireclient.screen.main_config.tutorial"));
+        renderTutorialText(graphics, Component.translatable("fireclient.screen.main_config.tutorial"));
     }
 }

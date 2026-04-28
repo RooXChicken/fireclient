@@ -16,7 +16,7 @@ public class PlayerSortPriority {
 
     public static void register() {
         ClientSendMessageEvents.COMMAND.register((command) -> {
-            var players = RooHelper.getNetworkHandler().getPlayerList().stream()
+            var players = RooHelper.getNetworkHandler().getOnlinePlayers().stream()
                     .map((entry) -> entry.getProfile().name().toLowerCase())
                     .collect(Collectors.toUnmodifiableSet());
 

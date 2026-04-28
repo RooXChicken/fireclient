@@ -5,21 +5,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.modules.ModuleBase;
 import org.loveroo.fireclient.screen.base.ConfigScreenBase;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
 
 public class ModuleConfigScreen extends ConfigScreenBase {
 
     private final List<ModuleBase> modules;
-    private final Text about;
+    private final Component about;
 
     private boolean reloading = false;
 
@@ -32,8 +33,8 @@ public class ModuleConfigScreen extends ConfigScreenBase {
         this(module.getData().getShownName(), module.getData().getDescription(), List.of(module));
     }
 
-    public ModuleConfigScreen(Text title, Text about, List<ModuleBase> module) {
-        super(Text.translatable("fireclient.module.generic.config_text", title));
+    public ModuleConfigScreen(Component title, Component about, List<ModuleBase> module) {
+        super(Component.translatable("fireclient.module.generic.config_text", title));
 
         this.modules = module;
         this.about = about;
@@ -47,19 +48,19 @@ public class ModuleConfigScreen extends ConfigScreenBase {
 
     @Override
     public void init() {
-        var widgets = new ArrayList<ClickableWidget>();
+        var widgets = new ArrayList<AbstractWidget>();
 
         for(var module : modules) {
             widgets.addAll(module.getConfigScreen(this));
         }
 
         for(var widget : widgets) {
-            addDrawableChild(widget);
+            addRenderableWidget(widget);
         }
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("fireclient.module.generic.back.name"), (button) -> escapePressed())
-                .dimensions(width - 85, height - 25, 80, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.back.tooltip")))
+        addRenderableWidget(Button.builder(Component.translatable("fireclient.module.generic.back.name"), (button) -> escapePressed())
+                .bounds(width - 85, height - 25, 80, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.generic.back.tooltip")))
                 .build());
 
         openScreen();
@@ -100,37 +101,37 @@ public class ModuleConfigScreen extends ConfigScreenBase {
     @Override
     protected boolean escapePressed() {
         onExit();
-        MinecraftClient.getInstance().setScreen(new ModuleSelectScreen());
+        Minecraft.getInstance().setScreen(new ModuleSelectScreen());
         return true;
     }
 
     @Override
-    public void onFilesDropped(List<Path> paths) {
+    public void onFilesDrop(List<Path> paths) {
         for(var module : modules) {
             module.onFilesDropped(paths);
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
 
         if(selectedModule != null) {
             selectedModule.handleTransformation(mouseState, oldTransform, this.mouseX, this.mouseY, oldMouseX, oldMouseY, doSnap());
         }
 
         for(var module : modules) {
-            module.drawOutline(context);
-            module.drawScreen(this, context, delta);
+            module.drawOutline(graphics);
+            module.drawScreen(this, graphics, delta);
 
             module.setDrawingOverwritten(false);
-            module.draw(context, RenderTickCounter.ZERO);
+            module.draw(graphics, DeltaTracker.ZERO);
             module.setDrawingOverwritten(true);
         }
 
         for(var module : modules) {
             if(module.isPointInside(mouseX, mouseY)) {
-                context.drawTooltip(Tooltip.wrapLines(client, (module.getData().getTooltip(showTransform()))), mouseX, mouseY);
+                graphics.setTooltipForNextFrame(Tooltip.splitTooltip(minecraft, (module.getData().getTooltip(showTransform()))), mouseX, mouseY);
                 break;
             }
         }

@@ -7,14 +7,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Gui;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public abstract class HideItemNameMixin {
     
-    @Inject(method = "renderHeldItemTooltip", at = @At("HEAD"), cancellable = true)
-    private void hideTooltip(DrawContext context, CallbackInfo info) {
+    @Inject(method = "extractSelectedItemName", at = @At("HEAD"), cancellable = true)
+    private void hideTooltip(GuiGraphicsExtractor graphics, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.HIDE_ITEM_NAMES) == 0) {
             return;
         }

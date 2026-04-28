@@ -1,8 +1,8 @@
 package org.loveroo.fireclient.mixin.modules.indicators;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.resources.Identifier;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.indicators.FrostIndicator;
 import org.spongepowered.asm.mixin.Final;
@@ -12,15 +12,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public abstract class HideFrostOverlayMixin {
 
     @Shadow @Final
-    private static Identifier POWDER_SNOW_OUTLINE;
+    private static Identifier POWDER_SNOW_OUTLINE_LOCATION;
 
-    @Inject(method = "renderOverlay", at = @At("HEAD"), cancellable = true)
-    private void hideFrost(DrawContext context, Identifier texture, float opacity, CallbackInfo info) {
-        if(texture != POWDER_SNOW_OUTLINE) {
+    @Inject(method = "extractTextureOverlay", at = @At("HEAD"), cancellable = true)
+    private void hideFrost(GuiGraphicsExtractor graphics, Identifier texture, float alpha, CallbackInfo info) {
+        if(texture != POWDER_SNOW_OUTLINE_LOCATION) {
             return;
         }
 

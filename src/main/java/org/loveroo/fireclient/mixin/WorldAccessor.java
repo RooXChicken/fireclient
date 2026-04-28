@@ -1,18 +1,18 @@
 package org.loveroo.fireclient.mixin;
 
+import net.minecraft.client.renderer.state.level.LevelRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.state.WorldRenderState;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.multiplayer.ClientLevel;
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 public interface WorldAccessor {
 
-    @Accessor("world")
-    public ClientWorld getWorld();
+    @Accessor("level")
+    public ClientLevel getLevel();
 
-    @Accessor("worldRenderState")
-    public WorldRenderState getworldRenderState();
+    @Accessor("levelRenderState")
+    public LevelRenderState getLevelRenderState();
 }

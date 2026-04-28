@@ -11,10 +11,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
-import net.minecraft.command.DefaultPermissions;
-import net.minecraft.command.permission.Permission;
-import net.minecraft.command.permission.PermissionLevel;
-import net.minecraft.command.permission.Permissions;
+import net.minecraft.server.permissions.Permissions;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.server.permissions.PermissionTypes;
 import org.json.JSONObject;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
@@ -25,19 +25,19 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Dynamic;
 
 import net.minecraft.SharedConstants;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.datafixer.TypeReferences;
-import net.minecraft.entity.EntityEquipment;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.nbt.NbtInt;
-import net.minecraft.nbt.NbtList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.datafix.fixes.References;
+import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.NbtString;
-import net.minecraft.nbt.visitor.StringNbtWriter;
+import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.StringTagVisitor;
 
 public class KitManager {
 
@@ -121,7 +121,7 @@ public class KitManager {
     // saving and loading
 
     public static String getPlayerInventoryString() {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return DEFAULT_KIT;
         }
@@ -129,32 +129,32 @@ public class KitManager {
         return getInventoryAsString(client.player.getInventory());
     }
 
-    public static String getInventoryAsString(PlayerInventory inv) {
-        var client = MinecraftClient.getInstance();
+    public static String getInventoryAsString(Inventory inv) {
+        var client = Minecraft.getInstance();
 
-        var nbt = new NbtCompound();
-        nbt.put("data_version", NbtInt.of(SharedConstants.getGameVersion().dataVersion().id()));
-        nbt.put("mc_version", NbtString.of(SharedConstants.getGameVersion().name()));
-        nbt.put("creator", NbtString.of(client.player.getName().getString()));
+        var nbt = new CompoundTag();
+        nbt.put("data_version", IntTag.valueOf(SharedConstants.getCurrentVersion().dataVersion().version()));
+        nbt.put("mc_version", StringTag.valueOf(SharedConstants.getCurrentVersion().name()));
+        nbt.put("creator", StringTag.valueOf(client.player.getName().getString()));
         
-        var kitNbt = new NbtList();
-        var ops = MinecraftClient.getInstance().player.getRegistryManager().getOps(NbtOps.INSTANCE);
+        var kitNbt = new ListTag();
+        var ops = Minecraft.getInstance().player.registryAccess().createSerializationContext(NbtOps.INSTANCE);
 
         var writeIndex = 0;
-        for(var i = 0; i < inv.size(); i++) {
-            var slot = new NbtCompound();
+        for(var i = 0; i < inv.getContainerSize(); i++) {
+            var slot = new CompoundTag();
             var slotIndex = i;
 
-            if(slotIndex >= PlayerInventory.MAIN_SIZE && slotIndex < PlayerInventory.OFF_HAND_SLOT) {
-                slotIndex += 100-PlayerInventory.MAIN_SIZE;
+            if(slotIndex >= Inventory.INVENTORY_SIZE && slotIndex < Inventory.SLOT_OFFHAND) {
+                slotIndex += 100- Inventory.INVENTORY_SIZE;
             }
-            else if(slotIndex == PlayerInventory.OFF_HAND_SLOT) {
+            else if(slotIndex == Inventory.SLOT_OFFHAND) {
                 slotIndex = 150;
             }
 
             slot.putByte("Slot", (byte) slotIndex);
 
-            var element = ItemStack.CODEC.encode(inv.getStack(i), ops, slot).result().orElse(null);
+            var element = ItemStack.CODEC.encode(inv.getItem(i), ops, slot).result().orElse(null);
             if(element == null) {
                 continue;
             }
@@ -164,10 +164,10 @@ public class KitManager {
 
         nbt.put("inv", kitNbt);
 
-        var writer = new StringNbtWriter();
+        var writer = new StringTagVisitor();
         writer.visitCompound(nbt);
 
-        return writer.getString();
+        return writer.build();
     }
 
     public static KitLoadStatus loadKit(String kitName) {
@@ -180,13 +180,13 @@ public class KitManager {
             return KitLoadStatus.INVALID_KIT;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return KitLoadStatus.INVALID_PLAYER;
         }
 
-        if(!client.player.isInCreativeMode()) {
-            if(client.player.getPermissions().hasPermission(DefaultPermissions.GAMEMASTERS)) {
+        if(!client.player.hasInfiniteMaterials()) {
+            if(client.player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 return KitLoadStatus.NEEDS_GMC;
             }
 
@@ -197,21 +197,21 @@ public class KitManager {
             var loadedInv = getInventoryFromKit(kit);
             var playerInv = client.player.getInventory();
 
-            var slots = client.player.playerScreenHandler.slots;
+            var slots = client.player.inventoryMenu.slots;
 
             for(var i = 0; i < slots.size(); i++) {
                 var slot = slots.get(i);
-                if(slot.inventory != playerInv) {
+                if(slot.container != playerInv) {
                     continue;
                 }
 
-                var item = loadedInv.getStack(slot.getIndex());
+                var item = loadedInv.getItem(slot.getContainerSlot());
 
-                playerInv.setStack(slot.getIndex(), item);
-                client.interactionManager.clickCreativeStack(item, i);
+                playerInv.setItem(slot.getContainerSlot(), item);
+                client.gameMode.handleCreativeModeItemAdd(item, i);
             }
 
-            client.player.playerScreenHandler.sendContentUpdates();
+            client.player.inventoryMenu.broadcastChanges();
         }
         catch(Exception e) {
             FireClient.LOGGER.error("Failed to load kit!", e);
@@ -221,19 +221,19 @@ public class KitManager {
         return KitLoadStatus.SUCCESS;
     }
 
-    private static PlayerInventory getInventoryFromKit(String kit) throws CommandSyntaxException {
-        var client = MinecraftClient.getInstance();
-        var nbt = NbtHelper.fromNbtProviderString(kit);
+    private static Inventory getInventoryFromKit(String kit) throws CommandSyntaxException {
+        var client = Minecraft.getInstance();
+        var nbt = NbtUtils.snbtToStructure(kit);
 
-        var version = SharedConstants.getGameVersion().dataVersion().id();
+        var version = SharedConstants.getCurrentVersion().dataVersion().version();
         var kitVersion = nbt.getInt("data_version").orElse(version);
 
-        var kitInventory = (NbtList)nbt.get("inv");
+        var kitInventory = (ListTag)nbt.get("inv");
 
-        var loadedInv = new PlayerInventory(client.player, new EntityEquipment());
-        loadedInv.clear();
+        var loadedInv = new Inventory(client.player, new EntityEquipment());
+        loadedInv.clearContent();
 
-        var ops = client.player.getRegistryManager().getOps(NbtOps.INSTANCE);
+        var ops = client.player.registryAccess().createSerializationContext(NbtOps.INSTANCE);
 
         for(var i = 0; i < kitInventory.size(); i++) {
             var itemNbt = kitInventory.getCompound(i).get();
@@ -245,25 +245,25 @@ public class KitManager {
 
                 // how mc does it :/
                 if(slot >= 100 && slot < 150) {
-                    slot -= 100 - PlayerInventory.MAIN_SIZE;
+                    slot -= 100 - Inventory.INVENTORY_SIZE;
                 }
                 else if(slot >= 150) {
-                    slot = PlayerInventory.OFF_HAND_SLOT;
+                    slot = Inventory.SLOT_OFFHAND;
                 }
             }
 
-            NbtElement fix;
+            Tag fix;
 
             // data fixer upper!!
             if(version == kitVersion) {
                 fix = itemNbt;
             }
             else {
-                fix = client.getDataFixer().update(TypeReferences.ITEM_STACK, new Dynamic<NbtElement>(NbtOps.INSTANCE, itemNbt), kitVersion, version).getValue();
+                fix = client.getFixerUpper().update(References.ITEM_STACK, new Dynamic<Tag>(NbtOps.INSTANCE, itemNbt), kitVersion, version).getValue();
             }
 
             var item = ItemStack.CODEC.parse(ops, fix).result().orElse(ItemStack.EMPTY);
-            loadedInv.setStack(slot, item);
+            loadedInv.setItem(slot, item);
         }
 
         return loadedInv;
@@ -279,14 +279,14 @@ public class KitManager {
             return KitViewStatus.INVALID_KIT;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return KitViewStatus.INVALID_PLAYER;
         }
 
         try {
             var loadedInv = getInventoryFromKit(kit);
-            client.send(() -> client.setScreen(new KitPreviewScreen(client.player, loadedInv, kitName, fromCommand)));
+            client.schedule(() -> client.setScreen(new KitPreviewScreen(client.player, loadedInv, kitName, fromCommand)));
         }
         catch(Exception e) {
             FireClient.LOGGER.info("Failed to preview kit!", e);
@@ -306,14 +306,14 @@ public class KitManager {
             return KitViewStatus.INVALID_KIT;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return KitViewStatus.INVALID_PLAYER;
         }
 
         try {
             var loadedInv = getInventoryFromKit(kit);
-            client.send(() -> client.setScreen(new KitEditScreen(client.player, loadedInv, kitName, fromCommand)));
+            client.schedule(() -> client.setScreen(new KitEditScreen(client.player, loadedInv, kitName, fromCommand)));
         }
         catch(Exception e) {
             FireClient.LOGGER.info("Failed to edit kit!", e);
@@ -361,7 +361,7 @@ public class KitManager {
         }
 
         try {
-            var nbt = NbtHelper.fromNbtProviderString(kit);
+            var nbt = NbtUtils.snbtToStructure(kit);
             if(nbt.contains("inv")) {
                 return KitValidationStatus.SUCCESS;
             }

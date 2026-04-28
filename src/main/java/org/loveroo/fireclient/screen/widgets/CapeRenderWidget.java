@@ -1,22 +1,22 @@
 package org.loveroo.fireclient.screen.widgets;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-public class CapeRenderWidget extends ClickableWidget {
+public class CapeRenderWidget extends AbstractWidget {
 
     private final String capeName;
-    private Identifier texture = Identifier.ofVanilla("");
+    private Identifier texture = Identifier.withDefaultNamespace("");
     
     private float scale;
 
     public CapeRenderWidget(String name, Identifier texture, int x, int y, float scale) {
-        super(x, y, 12, 17, Text.literal(name));
+        super(x, y, 12, 17, Component.literal(name));
         this.scale = scale;
         this.capeName = name;
 
@@ -24,19 +24,19 @@ public class CapeRenderWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        var matrix = context.getMatrices();
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        var matrix = graphics.pose();
         matrix.pushMatrix();
         matrix.translate(getX(), getY());
         matrix.scale(scale);
         
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, 12, 17, 64, 32);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0, 0, 12, 17, 64, 32);
 
         matrix.popMatrix();
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, capeName);
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
+        builder.add(NarratedElementType.TITLE, capeName);
     }
 }

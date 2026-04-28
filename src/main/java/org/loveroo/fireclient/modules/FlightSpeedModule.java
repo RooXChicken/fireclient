@@ -1,12 +1,12 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
@@ -36,8 +36,8 @@ public class FlightSpeedModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_flight_speed",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
                 () -> getData().setEnabled(!getData().isEnabled()), null);
 
@@ -45,12 +45,12 @@ public class FlightSpeedModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
+    public void update(Minecraft client) {
         if(!toggleWithSneak || client.player == null || !client.player.getAbilities().flying) {
             return;
         }
 
-        if(client.player.isSneaking()) {
+        if(client.player.isShiftKeyDown()) {
             sneakTicks++;
         }
         else {
@@ -63,19 +63,19 @@ public class FlightSpeedModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
+    public List<AbstractWidget> getConfigScreen(Screen base) {
         var widgets = super.getConfigScreen(base);
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_flight_speed").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.flight_speed.toggle_with_sneak.name"))
             .getValue(() -> { return toggleWithSneak; })
             .setValue((value) -> { toggleWithSneak = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.flight_speed.toggle_with_sneak.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.flight_speed.toggle_with_sneak.tooltip")))
             .build());
 
-        var slider = new SliderWidget(base.width / 2 - 50, base.height / 2 + 45, 100, 20, getSpeedText(), (speed - 0.05f)*5) {
+        var slider = new AbstractSliderButton(base.width / 2 - 50, base.height / 2 + 45, 100, 20, getSpeedText(), (speed - 0.05f)*5) {
 
             @Override
             protected void updateMessage() {
@@ -92,8 +92,8 @@ public class FlightSpeedModule extends ModuleBase {
         return widgets;
     }
 
-    private Text getSpeedText() {
-        return Text.translatable("fireclient.module.flight_speed.display", String.format("%.2f", speed));
+    private Component getSpeedText() {
+        return Component.translatable("fireclient.module.flight_speed.display", String.format("%.2f", speed));
     }
 
     public float getSpeed() {

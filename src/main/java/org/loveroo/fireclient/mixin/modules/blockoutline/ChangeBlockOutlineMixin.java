@@ -1,8 +1,10 @@
 package org.loveroo.fireclient.mixin.modules.blockoutline;
 
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.state.WorldRenderState;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import com.mojang.blaze3d.vertex.PoseStack;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.BlockOutlineModule;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,35 +14,35 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(WorldRenderer.class)
+@Mixin(LevelRenderer.class)
 public class ChangeBlockOutlineMixin {
 
     @Unique
-    private VertexConsumerProvider.Immediate consumer;
+    private MultiBufferSource.BufferSource consumer;
 
-    @Inject(method = "renderTargetBlockOutline", at = @At("HEAD"))
-    private void getConsumer(VertexConsumerProvider.Immediate immediate, MatrixStack matrices, boolean renderBlockOutline, WorldRenderState renderStates, CallbackInfo ci) {
-        consumer = immediate;
+    @Inject(method = "renderBlockOutline", at = @At("HEAD"))
+    private void getConsumer(MultiBufferSource.BufferSource bufferSource, PoseStack poseStack, boolean onlyTranslucentBlocks, net.minecraft.client.renderer.state.level.LevelRenderState levelRenderState, CallbackInfo ci) {
+        consumer = bufferSource;
     }
 
-    @ModifyVariable(method = "drawBlockOutline", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private int changeColor(int original) {
+    @ModifyVariable(method = "renderHitOutline", at = @At("HEAD"), argsOnly = true, name = "color")
+    private int changeColor(int color) {
         var outline = (BlockOutlineModule) FireClientside.getModule("block_outline");
         if(outline == null || !outline.getData().isEnabled()) {
-            return original;
+            return color;
         }
 
         return outline.getOutline();
     }
 
-    @ModifyVariable(method = "drawBlockOutline", at = @At("HEAD"), ordinal = 0, argsOnly = true)
-    private VertexConsumer changeColor(VertexConsumer original) {
+    @ModifyVariable(method = "renderHitOutline", at = @At("HEAD"), argsOnly = true, name = "builder")
+    private VertexConsumer changeColor(VertexConsumer builder) {
         var outline = (BlockOutlineModule) FireClientside.getModule("block_outline");
         if(outline == null || !outline.getData().isEnabled()) {
-            return original;
+            return builder;
         }
 
-        var layer = (outline.isThick()) ? RenderLayers.secondaryBlockOutline() : RenderLayers.lines();
+        var layer = (outline.isThick()) ? RenderTypes.secondaryBlockOutline() : RenderTypes.lines();
         return consumer.getBuffer(layer);
     }
 }

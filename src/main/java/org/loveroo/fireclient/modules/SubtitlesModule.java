@@ -1,11 +1,11 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
@@ -27,8 +27,8 @@ public class SubtitlesModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_subtitles",
-            Text.translatable("fireclient.keybind.generic.toggle.name"),
-            Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.toggle.name"),
+            Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
             true, null,
             this::subtitlesToggled, null);
 
@@ -36,27 +36,27 @@ public class SubtitlesModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_subtitles").getRebindButton(5, base.height - 25, 120,20));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.subtitles.visible.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.subtitles.visible.name"))
             .getValue(getData()::isEnabled)
             .setValue(getData()::setEnabled)
             .dimensions(base.width/2 - 60, base.height/2 - 10, 120, 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.subtitles.visible.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.subtitles.visible.tooltip")))
             .build());
 
         return widgets;
     }
 
     private void subtitlesToggled() {
-        var client = MinecraftClient.getInstance();
-        client.options.getShowSubtitles().setValue(!isEnabled());
+        var client = Minecraft.getInstance();
+        client.options.showSubtitles().set(!isEnabled());
     }
 
     private boolean isEnabled() {
-        return MinecraftClient.getInstance().options.getShowSubtitles().getValue();
+        return Minecraft.getInstance().options.showSubtitles().get();
     }
 }

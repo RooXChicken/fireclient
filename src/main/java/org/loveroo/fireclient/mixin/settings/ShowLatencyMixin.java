@@ -1,15 +1,13 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.PlayerListHud;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.PlayerTabOverlay;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
@@ -22,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PlayerListHud.class)
+@Mixin(PlayerTabOverlay.class)
 public class ShowLatencyMixin {
 
     @Shadow @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
     @Unique
     private final int unknownColor = 0x787878;
@@ -40,8 +38,8 @@ public class ShowLatencyMixin {
     @Unique
     private final int badColor = 0xBD2222;
 
-    @Inject(method = "renderLatencyIcon", at = @At("HEAD"), cancellable = true)
-    private void renderLatency(DrawContext context, int width, int x, int y, PlayerListEntry entry, CallbackInfo info) {
+    @Inject(method = "extractPingIcon", at = @At("HEAD"), cancellable = true)
+    private void renderLatency(GuiGraphicsExtractor graphics, int slotWidth, int xo, int yo, PlayerInfo entry, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.SHOW_PING_NUMBER) == 0) {
             return;
         }
@@ -49,8 +47,8 @@ public class ShowLatencyMixin {
         info.cancel();
     }
 
-    @Inject(method = "getPlayerName", at = @At("RETURN"), cancellable = true)
-    private void getPlayerWithMs(PlayerListEntry entry, CallbackInfoReturnable<Text> info) {
+    @Inject(method = "getNameForDisplay", at = @At("RETURN"), cancellable = true)
+    private void getPlayerWithMs(PlayerInfo entry, CallbackInfoReturnable<Component> info) {
         if(FireClientside.getSetting(FireClientOption.SHOW_PING_NUMBER) == 0) {
             return;
         }
@@ -60,12 +58,12 @@ public class ShowLatencyMixin {
             return;
         }
 
-        var pingText = MutableText.of(new PlainTextContent.Literal(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
+        var pingText = MutableComponent.create(new PlainTextContents.LiteralContents(" " + entry.getLatency() + "ms")).setStyle(Style.EMPTY.withColor(pingColor));
         info.setReturnValue(info.getReturnValue().copy().append(pingText));
     }
 
     @Unique
-    private int getColor(PlayerListEntry entry) {
+    private int getColor(PlayerInfo entry) {
         var ping = entry.getLatency();
         if(ping < 0 || ping > 9999) {
             return 0;

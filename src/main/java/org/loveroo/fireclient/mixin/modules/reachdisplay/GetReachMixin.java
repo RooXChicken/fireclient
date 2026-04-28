@@ -7,23 +7,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 public abstract class GetReachMixin {
 
-    @Inject(method = "attackEntity", at = @At("HEAD"))
-    private void getReach(PlayerEntity player, Entity target, CallbackInfo info) {
+    @Inject(method = "attack", at = @At("HEAD"))
+    private void getReach(Player player, Entity entity, CallbackInfo info) {
         var reachDisplay = (ReachDisplayModule) FireClientside.getModule("reach_display");
         if(reachDisplay == null || !reachDisplay.isHitOnly()) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
-        reachDisplay.calculateReach(client.crosshairTarget);
+        var client = Minecraft.getInstance();
+        reachDisplay.calculateReach(client.hitResult);
     }
     
 }

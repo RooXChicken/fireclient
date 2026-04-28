@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,19 +34,19 @@ import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.text.Text;
-import net.minecraft.util.AssetInfo;
-import net.minecraft.util.AssetInfo.TextureAssetInfo;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.network.chat.Component;
+import net.minecraft.core.ClientAsset;
+import net.minecraft.core.ClientAsset.ResourceTexture;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 
 public class LocalSkinModule extends ModuleBase {
@@ -63,8 +64,8 @@ public class LocalSkinModule extends ModuleBase {
     @JsonOption(name = "cape")
     private String cape = "";
 
-    private Optional<AssetInfo.TextureAsset> skinAsset = Optional.empty();
-    private Optional<AssetInfo.TextureAsset> capeAsset = Optional.empty();
+    private Optional<ClientAsset.Texture> skinAsset = Optional.empty();
+    private Optional<ClientAsset.Texture> capeAsset = Optional.empty();
 
     // @JsonOption(name = "elytra")
     // private String elytra = "";
@@ -131,7 +132,7 @@ public class LocalSkinModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
+    public void update(Minecraft client) {
         if(!getData().isEnabled()) {
             return;
         }
@@ -234,13 +235,13 @@ public class LocalSkinModule extends ModuleBase {
                 var image = NativeImage.read(data);
 
                 if(type == TextureType.SKIN) {
-                    image = RemapTextureAccessor.invokeRemapTexture(image, path);
+                    image = RemapTextureAccessor.invokeProcessLegacySkin(image, path);
                 }
 
-                var texture = new NativeImageBackedTexture(() -> { return path; }, image);
+                var texture = new DynamicTexture(() -> { return path; }, image);
 
-                var client = MinecraftClient.getInstance();
-                client.getTextureManager().registerTexture(id, texture);
+                var client = Minecraft.getInstance();
+                client.getTextureManager().register(id, texture);
 
                 cache.get(type).add(path);
                 applyTexture(type, path);
@@ -297,21 +298,21 @@ public class LocalSkinModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        widgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.local_skin.open_folder.name"), this::folderButtonPressed)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.open_folder.tooltip")))
-            .dimensions(base.width/2 - 147, base.height/2 - 30, 20, 15)
+        widgets.add(new Button.Builder(Component.translatable("fireclient.module.local_skin.open_folder.name"), this::folderButtonPressed)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.local_skin.open_folder.tooltip")))
+            .bounds(base.width/2 - 147, base.height/2 - 30, 20, 15)
             .build());
 
         var index = 0;
         for(var type : TextureType.values()) {
-            var selectButton = new ButtonWidget.Builder(Text.translatable(String.format("fireclient.module.local_skin.select_%s.name", type.name().toLowerCase())), (button) -> setSubMenu(type))
-                .tooltip(Tooltip.of(Text.translatable(String.format("fireclient.module.local_skin.select_%s.tooltip", type.name().toLowerCase()))))
-                .dimensions(base.width/2 - 122 + (index * 45), base.height/2 - 30, 40, 15)
+            var selectButton = new Button.Builder(Component.translatable(String.format("fireclient.module.local_skin.select_%s.name", type.name().toLowerCase())), (button) -> setSubMenu(type))
+                .tooltip(Tooltip.create(Component.translatable(String.format("fireclient.module.local_skin.select_%s.tooltip", type.name().toLowerCase()))))
+                .bounds(base.width/2 - 122 + (index * 45), base.height/2 - 30, 40, 15)
                 .build();
             
             if(type == selectedMenu) {
@@ -327,7 +328,7 @@ public class LocalSkinModule extends ModuleBase {
         var textures = getTextures(selectedMenu);
         
         for(var texture : textures) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
             if(!cache.get(selectedMenu).contains(texture)) {
                 uploadTexture(selectedMenu, texture);
@@ -363,22 +364,22 @@ public class LocalSkinModule extends ModuleBase {
                 }
             }
 
-            var text = new TextWidget(Text.literal(texture), base.getTextRenderer());
+            var text = new StringWidget(Component.literal(texture), base.getFont());
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);
 
-            entryWidgets.add(new ButtonWidget.Builder(Text.translatable("fireclient.module.local_skin.apply.name"), (button) -> applyTexture(selectedMenu, texture))
-                .dimensions(base.width/2 + 115, 0, 20, 16)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.apply.tooltip", texture)))
+            entryWidgets.add(new Button.Builder(Component.translatable("fireclient.module.local_skin.apply.name"), (button) -> applyTexture(selectedMenu, texture))
+                .bounds(base.width/2 + 115, 0, 20, 16)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.local_skin.apply.tooltip", texture)))
                 .build());
 
             if(selectedMenu == TextureType.SKIN) {
-                entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.local_skin.slim.name"))
+                entryWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.local_skin.slim.name"))
                     .getValue(() -> { return slimSkins.getOrDefault(texture, false); })
                     .setValue((value) -> { slimSkins.put(texture, value); })
                     .dimensions(base.width/2 + 70, 0, 40, 16)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.local_skin.slim.tooltip", texture)))
+                    .tooltip(Tooltip.create(Component.translatable("fireclient.module.local_skin.slim.tooltip", texture)))
                     .build());
             }
 
@@ -392,8 +393,8 @@ public class LocalSkinModule extends ModuleBase {
         return widgets;
     }
 
-    private void folderButtonPressed(ButtonWidget button) {
-        Util.getOperatingSystem().open(new File(TEXTURE_PATHS.get(selectedMenu)));
+    private void folderButtonPressed(Button button) {
+        Util.getPlatform().openFile(new File(TEXTURE_PATHS.get(selectedMenu)));
     }
 
     private void setSubMenu(TextureType type) {
@@ -415,7 +416,7 @@ public class LocalSkinModule extends ModuleBase {
                     skin = texture;
 
                     var id = getIdentifier(type, texture);
-                    skinAsset = Optional.of(new TextureAssetInfo(
+                    skinAsset = Optional.of(new ResourceTexture(
                         id,
                         id
                     ));
@@ -425,7 +426,7 @@ public class LocalSkinModule extends ModuleBase {
                     cape = texture;
 
                     var id = getIdentifier(type, texture);
-                    capeAsset = Optional.of(new TextureAssetInfo(
+                    capeAsset = Optional.of(new ResourceTexture(
                         id,
                         id
                     ));
@@ -439,14 +440,14 @@ public class LocalSkinModule extends ModuleBase {
             return null;
         }
 
-        return Identifier.of(FireClient.MOD_ID, pathToTexture(type, filePath));
+        return Identifier.fromNamespaceAndPath(FireClient.MOD_ID, pathToTexture(type, filePath));
     }
 
     public static String pathToTexture(TextureType type, String filePath) {
         return TEXTURE_IDS.get(type) + RooHelper.filterIdInput(filePath.toLowerCase());
     }
 
-    public Optional<AssetInfo.TextureAsset> getAsset(TextureType type) {
+    public Optional<ClientAsset.Texture> getAsset(TextureType type) {
         return switch(type) {
             case SKIN -> skinAsset;
             case CAPE -> capeAsset;
@@ -472,10 +473,10 @@ public class LocalSkinModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }

@@ -1,22 +1,24 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public abstract class ForceCursorCenterMixin {
 
+    @Unique
     private boolean center = false;
 /*
 GLFW.glfwSetCursorPos(client.getWindow().getHandle(), 100, client.getWindow().getHeight()/2.0);
             FireClient.LOGGER.info("save me");
  */
-    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("HEAD"))
+    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("HEAD"))
     public void setScreen(@Nullable Screen screen, CallbackInfo info) {
 //        if(FireClientside.getSetting(FireClientOption.FORCE_CENTER_CURSOR) == 0) {
 //            return;
@@ -28,7 +30,7 @@ GLFW.glfwSetCursorPos(client.getWindow().getHandle(), 100, client.getWindow().ge
 //        }
     }
 
-    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screen/Screen;)V", at = @At("TAIL"))
+    @Inject(method = "setScreen(Lnet/minecraft/client/gui/screens/Screen;)V", at = @At("TAIL"))
     public void setScreenEnd(@Nullable Screen screen, CallbackInfo info) {
 //        if(FireClientside.getSetting(FireClientOption.FORCE_CENTER_CURSOR) == 0) {
 //            return;

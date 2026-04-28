@@ -15,15 +15,15 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.protocol.game.ServerboundPlayerCommandPacket;
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 abstract class FixSprintSwimMixin {
     
     @Unique
@@ -31,10 +31,10 @@ abstract class FixSprintSwimMixin {
         "XeBungee", "ClubSpigot", "ClubPaper"
     );
 
-    @Inject(method = "attackEntity", at = @At("TAIL"))
-    private void resetSprint(PlayerEntity player, Entity target, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(FireClientside.getSetting(FireClientOption.FIX_SPRINT_SWIM) == 0 || !client.player.isSubmergedInWater()) {
+    @Inject(method = "attack", at = @At("TAIL"))
+    private void resetSprint(Player player, Entity target, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(FireClientside.getSetting(FireClientOption.FIX_SPRINT_SWIM) == 0 || !client.player.isUnderWater()) {
             return;
         }
 
@@ -43,7 +43,7 @@ abstract class FixSprintSwimMixin {
         }
 
         client.player.setSprinting(false);
-        var sprintInvoker = (SprintPacketAccessor)(ClientPlayerEntity)client.player;
+        var sprintInvoker = (SprintPacketAccessor)(LocalPlayer)client.player;
         sprintInvoker.sendSprintingPacketInvoker();
     }
 
@@ -56,9 +56,9 @@ abstract class FixSprintSwimMixin {
     }
 }
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 abstract interface SprintPacketAccessor {
 
-    @Invoker("sendSprintingPacket")
+    @Invoker("sendIsSprintingIfNeeded")
     void sendSprintingPacketInvoker();
 }

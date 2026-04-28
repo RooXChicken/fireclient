@@ -18,20 +18,20 @@ import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.CustomDrawWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class SoundsModule extends ModuleBase {
 
@@ -50,18 +50,18 @@ public class SoundsModule extends ModuleBase {
     private ScrollableWidget scroll;
 
     @Nullable
-    private TextFieldWidget soundField;
+    private EditBox soundField;
 
     @Nullable
-    private TextWidget suggestionField;
+    private StringWidget suggestionField;
 
     private static final HashMap<String, String> idToHuman = new HashMap<>();
     private static final HashMap<String, String> humanToId = new HashMap<>();
 
     static {
         // makes sound ids into human understandable names
-        for(var sound : Registries.SOUND_EVENT) {
-            var path = sound.id().getPath();
+        for(var sound : BuiltInRegistries.SOUND_EVENT) {
+            var path = sound.location().getPath();
             var spaced = path.replaceAll("[\\s.-_]", " ");
 
             // var firstSpaceIndex = spaced.indexOf(" ");
@@ -95,8 +95,8 @@ public class SoundsModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_sounds",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
                 () -> getData().setEnabled(!getData().isEnabled()), null);
 
@@ -148,23 +148,23 @@ public class SoundsModule extends ModuleBase {
     }
 
     @Override
-    public void moduleConfigPressed(ButtonWidget button) {
+    public void moduleConfigPressed(Button button) {
         scrollPos = 0.0;
         super.moduleConfigPressed(button);
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var client = MinecraftClient.getInstance();
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var client = Minecraft.getInstance();
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_sounds").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
         if(soundField == null) {
-            soundField = new TextFieldWidget(client.textRenderer, 0, 0, soundsWidgetWidth - 50, 15, Text.of(""));
+            soundField = new EditBox(client.font, 0, 0, soundsWidgetWidth - 50, 15, Component.nullToEmpty(""));
             soundField.setMaxLength(128);
-            soundField.setChangedListener((text) -> soundTextChanged(soundField, text));
+            soundField.setResponder((text) -> soundTextChanged(soundField, text));
         }
 
         soundField.setPosition(base.width/2 - 140, base.height/2 - 40);
@@ -181,7 +181,7 @@ public class SoundsModule extends ModuleBase {
         widgets.add(background);
 
         if(suggestionField == null) {
-            suggestionField = new TextWidget(Text.literal(""), client.textRenderer);
+            suggestionField = new StringWidget(Component.literal(""), client.font);
             // TODO: fix
             // suggestionField.alignLeft();
             suggestionField.setWidth(240);
@@ -191,9 +191,9 @@ public class SoundsModule extends ModuleBase {
         
         widgets.add(suggestionField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
-            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.add_sound.tooltip")))
+        widgets.add(Button.builder(Component.translatable("fireclient.module.sounds.add_sound.name"), (button) -> addSoundButtonPressed(soundField))
+            .bounds(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.sounds.add_sound.tooltip")))
             .build());
 
         widgets.add(new ToggleButtonBuilder(null)
@@ -201,27 +201,27 @@ public class SoundsModule extends ModuleBase {
             .setValue((value) -> {
                 useHumanNames = value;
 
-                soundField.setText("");
-                suggestionField.setMessage(Text.literal(""));
+                soundField.setValue("");
+                suggestionField.setMessage(Component.literal(""));
 
                 reloadScreen();
             })
-            .trueText(Text.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0x57D647)))
-            .falseText(Text.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0xD63C3C)))
+            .trueText(Component.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0x57D647)))
+            .falseText(Component.translatable("fireclient.module.sounds.technical_names.name").setStyle(Style.EMPTY.withColor(0xD63C3C)))
             .dimensions(base.width/2 + 115, base.height/2 - 60, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.technical_names.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.sounds.technical_names.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var sound : mutedSounds) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
-            var text = new TextWidget(Text.literal(toHuman(sound.getSound())), base.getTextRenderer());
+            var text = new StringWidget(Component.literal(toHuman(sound.getSound())), base.getFont());
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
 
-            var slider = new SliderWidget(base.width / 2 + 60, 0, 50, 15, getVolumeText(sound.volume), (sound.volume)/2) {
+            var slider = new AbstractSliderButton(base.width / 2 + 60, 0, 50, 15, getVolumeText(sound.volume), (sound.volume)/2) {
                 @Override
                 protected void updateMessage() {
                     setMessage(getVolumeText(sound.volume));
@@ -235,16 +235,16 @@ public class SoundsModule extends ModuleBase {
 
             entryWidgets.add(slider);
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
-                .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.sounds.remove_sound.tooltip", sound.getSound())))
+            entryWidgets.add(Button.builder(Component.translatable("fireclient.module.sounds.remove_sound.name").withColor(0xD63C3C), (button) -> removeSound(sound))
+                .bounds(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.sounds.remove_sound.tooltip", sound.getSound())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -256,21 +256,21 @@ public class SoundsModule extends ModuleBase {
         base.setFocused(soundField);
     }
 
-    private Text getVolumeText(double volume) {
-        return Text.translatable("fireclient.module.sounds.volume.message", (int)Math.round(volume*100) + "%");
+    private Component getVolumeText(double volume) {
+        return Component.translatable("fireclient.module.sounds.volume.message", (int)Math.round(volume*100) + "%");
     }
 
-    private void soundTextChanged(TextFieldWidget widget, String text) {
+    private void soundTextChanged(EditBox widget, String text) {
         if(!text.isEmpty()) {
             var check = text.substring(text.length()-1);
             if(",|".contains(check)) {
-                widget.setText(text.substring(0, text.length()-1));
+                widget.setValue(text.substring(0, text.length()-1));
                 addSoundButtonPressed(widget);
                 return;
             }
         }
 
-        suggestionField.setMessage(Text.literal(getSuggestion(text)));
+        suggestionField.setMessage(Component.literal(getSuggestion(text)));
     }
 
     private String getSuggestion(String text) {
@@ -281,8 +281,8 @@ public class SoundsModule extends ModuleBase {
         var id = toId(RooHelper.filterIdInput(text));
 
         if(mutedSounds.stream().noneMatch((mutedSound) -> { return mutedSound.getSound().equalsIgnoreCase(id); })) {
-            var soundId = Identifier.ofVanilla(id);
-            if(Registries.SOUND_EVENT.containsId(soundId)) {
+            var soundId = Identifier.withDefaultNamespace(id);
+            if(BuiltInRegistries.SOUND_EVENT.containsKey(soundId)) {
                 return "";
             }
         }
@@ -302,7 +302,7 @@ public class SoundsModule extends ModuleBase {
         return sound;
     }
 
-    private void addSoundButtonPressed(TextFieldWidget text) {
+    private void addSoundButtonPressed(EditBox text) {
         var suggestion = suggestionField.getMessage().getString();
         var sound = RooHelper.filterIdInput(toId(suggestion));
 
@@ -312,8 +312,8 @@ public class SoundsModule extends ModuleBase {
 
         if(mutedSounds.stream().anyMatch((mutedSound -> mutedSound.getSound().equalsIgnoreCase(sound)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.sounds.add_sound.failure.title"),
-                Text.translatable("fireclient.module.sounds.add_sound.already_exists.contents")
+                Component.translatable("fireclient.module.sounds.add_sound.failure.title"),
+                Component.translatable("fireclient.module.sounds.add_sound.already_exists.contents")
             );
 
             return;
@@ -330,7 +330,7 @@ public class SoundsModule extends ModuleBase {
             return idToHuman.values().stream();
         }
         else {
-            return Registries.SOUND_EVENT.getIds().stream().map(sound -> sound.getPath());
+            return BuiltInRegistries.SOUND_EVENT.keySet().stream().map(sound -> sound.getPath());
         }
     }
 
@@ -352,9 +352,9 @@ public class SoundsModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.scrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
@@ -370,7 +370,7 @@ public class SoundsModule extends ModuleBase {
 
     public double getVolume(SoundEvent sound) {
         for(var muted : mutedSounds) {
-            if(muted.getSoundEvent() != null && muted.getSoundEvent().id().equals(sound.id())) {
+            if(muted.getSoundEvent() != null && muted.getSoundEvent().location().equals(sound.location())) {
                 return muted.volume;
             }
         }
@@ -390,7 +390,7 @@ public class SoundsModule extends ModuleBase {
             this.sound = sound;
             this.volume = volume;
 
-            this.soundEvent = SoundEvent.of(Identifier.ofVanilla(this.sound));
+            this.soundEvent = SoundEvent.createVariableRangeEvent(Identifier.withDefaultNamespace(this.sound));
         }
 
         public String getSound() {

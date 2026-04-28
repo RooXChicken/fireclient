@@ -2,7 +2,7 @@ package org.loveroo.fireclient.data;
 
 import org.loveroo.fireclient.client.FireClientside;
 
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public enum FireClientOption {
     FIX_TRIDENT_RIPTIDE(new ToggleOptionData(1)),
@@ -30,14 +30,14 @@ public enum FireClientOption {
     // EXTRA_SCREENSHOT_OPTIONS(new ToggleOptionData(1)),
     FOG_MODE(new ToggleOptionData(0));
 
-    private final Text name;
-    private final Text description;
+    private final Component name;
+    private final Component description;
 
     private final OptionData data;
 
     FireClientOption(OptionData data) {
-        this.name = Text.translatable("fireclient.settings." + name().toLowerCase() + ".name");
-        this.description = Text.translatable("fireclient.settings." + name().toLowerCase() + ".description");
+        this.name = Component.translatable("fireclient.settings." + name().toLowerCase() + ".name");
+        this.description = Component.translatable("fireclient.settings." + name().toLowerCase() + ".description");
 
         this.data = data;
     }
@@ -50,11 +50,11 @@ public enum FireClientOption {
         return data.getDefaultValue();
     }
 
-    public Text getName() {
+    public Component getName() {
         return name;
     }
 
-    public Text getDescription() {
+    public Component getDescription() {
         return description;
     }
 
@@ -113,8 +113,8 @@ public enum FireClientOption {
             this.maxValue = maxValue;
         }
 
-        public Text updateMessage(FireClientOption option, int amount) {
-            return Text.translatable("fireclient.settings." + option.name().toLowerCase() + ".name", amount);
+        public Component updateMessage(FireClientOption option, int amount) {
+            return Component.translatable("fireclient.settings." + option.name().toLowerCase() + ".name", amount);
         }
 
         public int getMinValue() {

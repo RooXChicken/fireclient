@@ -3,19 +3,20 @@ package org.loveroo.fireclient.screen.base;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.ElementListWidget;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.KeyMapping;
+import org.jspecify.annotations.NonNull;
 
-public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> {
+public class ScrollableWidget extends ContainerObjectSelectionList<ScrollableWidget.Entry> {
 
     public ScrollableWidget(Screen base, int width, int contentHeight, int y, int itemHeight, List<ElementEntry> entries) {
-        super(MinecraftClient.getInstance(), width, contentHeight, y, itemHeight);
+        super(Minecraft.getInstance(), width, contentHeight, y, itemHeight);
         // FireClient.LOGGER.info("{}", getScrollY());
         
         for(var entry : entries) {
@@ -36,7 +37,7 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
     }
 
     public void update() {
-        KeyBinding.updateKeysByCode();
+        KeyMapping.resetMapping();
         this.updateChildren();
     }
 
@@ -52,19 +53,19 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
     @Override
     public void setPosition(int x, int y) {
         super.setPosition(x, y);
-        setScrollY(getScrollY());
+        setScrollAmount(scrollAmount());
     }
 
-    public abstract static class Entry extends ElementListWidget.Entry<ScrollableWidget.Entry> {
+    public abstract static class Entry extends ContainerObjectSelectionList.Entry<ScrollableWidget.Entry> {
         abstract void update();
     }
 
     public static class ElementEntry extends ScrollableWidget.Entry {
 
-        private final List<ClickableWidget> widgets;
-        private final HashMap<ClickableWidget, Integer> heightOffset = new HashMap<>();
+        private final List<AbstractWidget> widgets;
+        private final HashMap<AbstractWidget, Integer> heightOffset = new HashMap<>();
 
-        public ElementEntry(List<ClickableWidget> widgets) {
+        public ElementEntry(List<AbstractWidget> widgets) {
             this.widgets = widgets;
 
             for(var widget : widgets) {
@@ -76,21 +77,21 @@ public class ScrollableWidget extends ElementListWidget<ScrollableWidget.Entry> 
         void update() { }
 
         @Override
-        public List<? extends Element> children() {
+        public @NonNull List<? extends GuiEventListener> children() {
             return widgets;
         }
 
         @Override
-        public List<? extends Selectable> selectableChildren() {
+        public @NonNull List<? extends NarratableEntry> narratables() {
             return widgets;
         }
 
         @Override
-        public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        public void extractContent(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
             // TODO: might be this#getContentY
             for(var widget : widgets) {
                 widget.setPosition(widget.getX(), getY() + heightOffset.getOrDefault(widget, 0));
-                widget.render(context, mouseX, mouseY, deltaTicks);
+                widget.extractRenderState(graphics, mouseX, mouseY, deltaTicks);
             }
         }
     }

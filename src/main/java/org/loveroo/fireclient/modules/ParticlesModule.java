@@ -15,18 +15,18 @@ import org.loveroo.fireclient.mixin.modules.mutesounds.GetSuggestionAccessor;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.particle.ParticleType;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class ParticlesModule extends ModuleBase {
 
@@ -42,7 +42,7 @@ public class ParticlesModule extends ModuleBase {
     private ScrollableWidget scroll;
 
     @Nullable
-    private TextFieldWidget particleField;
+    private EditBox particleField;
 
     public ParticlesModule() {
         super(new ModuleData("particles", "\uD83C\uDF1F", color));
@@ -51,8 +51,8 @@ public class ParticlesModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_particles",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
                 () -> getData().setEnabled(!getData().isEnabled()), null);
 
@@ -99,36 +99,36 @@ public class ParticlesModule extends ModuleBase {
     }
 
     @Override
-    public void moduleConfigPressed(ButtonWidget button) {
+    public void moduleConfigPressed(Button button) {
         scrollPos = 0.0;
         super.moduleConfigPressed(button);
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var client = MinecraftClient.getInstance();
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var client = Minecraft.getInstance();
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_particles").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        particleField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
+        particleField = new EditBox(client.font, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Component.nullToEmpty(""));
         particleField.setMaxLength(128);
-        particleField.setChangedListener((text) -> particleTextChanged(particleField, text));
+        particleField.setResponder((text) -> particleTextChanged(particleField, text));
 
         widgets.add(particleField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.particles.add_particle.name"), (button) -> addParticleButton(particleField))
-            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.add_particle.tooltip")))
+        widgets.add(Button.builder(Component.translatable("fireclient.module.particles.add_particle.name"), (button) -> addParticleButton(particleField))
+            .bounds(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.particles.add_particle.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
         for(var particle : hiddenParticles) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
-            var text = new TextWidget(Text.literal(particle.getParticle()), base.getTextRenderer());
+            var text = new StringWidget(Component.literal(particle.getParticle()), base.getFont());
             text.setPosition(base.width/2 - 140, 4);
 
             entryWidgets.add(text);
@@ -137,19 +137,19 @@ public class ParticlesModule extends ModuleBase {
                 .getValue(particle::isEnabled)
                 .setValue(particle::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.toggle_particle.tooltip", particle.getParticle())))
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.particles.toggle_particle.tooltip", particle.getParticle())))
                 .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.particles.remove_particle.name").withColor(0xD63C3C), (button) -> removeParticle(particle))
-                .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.particles.remove_particle.tooltip", particle.getParticle())))
+            entryWidgets.add(Button.builder(Component.translatable("fireclient.module.particles.remove_particle.name").withColor(0xD63C3C), (button) -> removeParticle(particle))
+                .bounds(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.particles.remove_particle.tooltip", particle.getParticle())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight, 0, 20, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
 
         widgets.add(scroll);
@@ -161,11 +161,11 @@ public class ParticlesModule extends ModuleBase {
         base.setFocused(particleField);
     }
 
-    private void particleTextChanged(TextFieldWidget widget, String text) {
+    private void particleTextChanged(EditBox widget, String text) {
         if(!text.isEmpty()) {
             var check = text.substring(text.length()-1);
             if(" ,|".contains(check)) {
-                widget.setText(text.substring(0, text.length()-1));
+                widget.setValue(text.substring(0, text.length()-1));
                 addParticleButton(widget);
                 return;
             }
@@ -182,13 +182,13 @@ public class ParticlesModule extends ModuleBase {
         var input = RooHelper.filterIdInput(text);
 
         if(hiddenParticles.stream().noneMatch((hiddenParticle) -> { return hiddenParticle.getParticle().equalsIgnoreCase(input); })) {
-            var particleId = Identifier.ofVanilla(input);
-            if(Registries.PARTICLE_TYPE.containsId(particleId)) {
+            var particleId = Identifier.withDefaultNamespace(input);
+            if(BuiltInRegistries.PARTICLE_TYPE.containsKey(particleId)) {
                 return "";
             }
         }
 
-        var filteredParticles = Registries.PARTICLE_TYPE.getIds().stream()
+        var filteredParticles = BuiltInRegistries.PARTICLE_TYPE.keySet().stream()
         .filter((id) -> {
             var startsWith = id.getPath().startsWith(input);
             var exists = hiddenParticles.stream()
@@ -206,21 +206,21 @@ public class ParticlesModule extends ModuleBase {
         return sound.substring(input.length());
     }
 
-    private void addParticleButton(TextFieldWidget text) {
+    private void addParticleButton(EditBox text) {
         var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
         if(suggestion == null) {
             suggestion = "";
         }
 
-        var particle = RooHelper.filterIdInput(text.getText()) + suggestion;
+        var particle = RooHelper.filterIdInput(text.getValue()) + suggestion;
         if(particle.isEmpty()) {
             return;
         }
 
         if(hiddenParticles.stream().anyMatch((hiddenParticle -> hiddenParticle.getParticle().equalsIgnoreCase(particle)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.particles.add_particle.failure.title"),
-                Text.translatable("fireclient.module.particles.add_particle.already_exists.contents")
+                Component.translatable("fireclient.module.particles.add_particle.failure.title"),
+                Component.translatable("fireclient.module.particles.add_particle.already_exists.contents")
             );
 
             return;
@@ -238,9 +238,9 @@ public class ParticlesModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.scrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
@@ -268,7 +268,7 @@ public class ParticlesModule extends ModuleBase {
             this.particle = particle;
             this.enabled = enabled;
 
-            this.particleType = Registries.PARTICLE_TYPE.get(Identifier.ofVanilla(this.particle));
+            this.particleType = BuiltInRegistries.PARTICLE_TYPE.getValue(Identifier.withDefaultNamespace(this.particle));
         }
 
         public String getParticle() {

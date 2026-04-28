@@ -1,5 +1,7 @@
 package org.loveroo.fireclient;
 
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -8,30 +10,29 @@ import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.FireClientOption;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Overlay;
-import net.minecraft.client.gui.screen.SplashOverlay;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.toast.SystemToast;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Style;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Overlay;
+import net.minecraft.client.gui.screens.LoadingOverlay;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.mixin.DrawEntityAccessor;
 
 public class RooHelper {
 
     private static final String colorCodeCharacter = "§";
 
-    public static MutableText gradientText(String msg, Color color1, Color color2) {
+    public static MutableComponent gradientText(String msg, Color color1, Color color2) {
 //        if(FireClientside.getSetting(FireClientOption.DISABLE_GRADIENT) == 1) {
 //            return Text.literal(msg).withColor(color1.toInt());
 //        }
 
-        var text = MutableText.of(new PlainTextContent.Literal(""));
+        var text = MutableComponent.create(new PlainTextContents.LiteralContents(""));
 
         for(var i = 0; i < msg.length();) {
             var progress = ((double)i / msg.length());
@@ -50,7 +51,7 @@ public class RooHelper {
                 continue;
             }
 
-            text.append(MutableText.of(new PlainTextContent.Literal(letter)).setStyle(style));
+            text.append(MutableComponent.create(new PlainTextContents.LiteralContents(letter)).setStyle(style));
 
             i += Character.charCount(codePont);
         }
@@ -59,8 +60,8 @@ public class RooHelper {
     }
 
     @Nullable
-    public static ClientPlayNetworkHandler getNetworkHandler() {
-        return MinecraftClient.getInstance().getNetworkHandler();
+    public static ClientPacketListener getNetworkHandler() {
+        return Minecraft.getInstance().getConnection();
     }
 
     public static void sendChatCommand(String msg) {
@@ -70,7 +71,7 @@ public class RooHelper {
         }
 
         var command = (msg.startsWith("/")) ? msg.substring(1) : msg;
-        handler.sendChatCommand(command);
+        handler.sendCommand(command);
     }
 
     public static void sendChatMessage(String msg) {
@@ -79,12 +80,12 @@ public class RooHelper {
             return;
         }
 
-        handler.sendChatMessage(msg);
+        handler.sendChat(msg);
     }
 
-    public static void sendNotification(Text name, Text description) {
-        var client = MinecraftClient.getInstance();
-        client.getToastManager().add(new SystemToast(SystemToast.Type.PACK_LOAD_FAILURE, name, description));
+    public static void sendNotification(Component name, Component description) {
+        var client = Minecraft.getInstance();
+        client.getToastManager().addToast(new SystemToast(SystemToast.SystemToastId.PACK_LOAD_FAILURE, name, description));
     }
 
     public static JSONObject jsonFromStringSafe(String message) {
@@ -96,8 +97,8 @@ public class RooHelper {
         }
     }
 
-    public static Overlay getOverlay(MinecraftClient client) {
-        if(FireClientside.getSetting(FireClientOption.NO_RELOAD_OVERLAY) != 0 && client.getOverlay() instanceof SplashOverlay) {
+    public static Overlay getOverlay(Minecraft client) {
+        if(FireClientside.getSetting(FireClientOption.NO_RELOAD_OVERLAY) != 0 && client.getOverlay() instanceof LoadingOverlay) {
             return null;
         }
 
@@ -113,9 +114,9 @@ public class RooHelper {
     }
 
     public static String getIp() {
-        var client = MinecraftClient.getInstance();
-        if(client.getCurrentServerEntry() != null) {
-            return client.getCurrentServerEntry().address;
+        var client = Minecraft.getInstance();
+        if(client.getCurrentServer() != null) {
+            return client.getCurrentServer().ip;
         }
         else {
             return "__local";
@@ -123,43 +124,43 @@ public class RooHelper {
     }
 
     public static String getServerBrand() {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         var handler = getNetworkHandler();
-        if(handler == null || client.getServer() != null) {
+        if(handler == null || client.getSingleplayerServer() != null) {
             return "Integrated Server";
         }
         else {
-            return handler.getBrand();
+            return handler.serverBrand();
         }
     }
 
     /**
-     * Modified from {@link net.minecraft.client.gui.screen.ingame.InventoryScreen#drawEntity(DrawContext, int, int, int, int, int, float, float, float, net.minecraft.entity.LivingEntity)}
+     * Modified from {@link net.minecraft.client.gui.screens.inventory.InventoryScreen#extractEntityInInventoryFollowsMouse(GuiGraphicsExtractor, int, int, int, int, int, float, float, float, LivingEntity)}
      */
-    public static void drawPlayer(DrawContext context, int x, int y, float scale, float mouseX, float mouseY) {
+    public static void drawPlayer(GuiGraphicsExtractor context, int x, int y, float scale, float mouseX, float mouseY) {
         drawPlayer(context, x, y, scale, mouseX, mouseY, 0, 0, (player) -> {});
 	}
 
-    public static void drawPlayer(DrawContext context, int x, int y, float scale, float mouseX, float mouseY, float yawOffset, float pitchOffset) {
+    public static void drawPlayer(GuiGraphicsExtractor context, int x, int y, float scale, float mouseX, float mouseY, float yawOffset, float pitchOffset) {
         drawPlayer(context, x, y, scale, mouseX, mouseY, yawOffset, pitchOffset, (player) -> {});
 	}
 
-    public static void drawPlayer(DrawContext context, int x, int y, float scale, float mouseX, float mouseY, PlayerRenderModifier mod) {
+    public static void drawPlayer(GuiGraphicsExtractor context, int x, int y, float scale, float mouseX, float mouseY, PlayerRenderModifier mod) {
         drawPlayer(context, x, y, scale, mouseX, mouseY, 0, 0, mod);
 	}
 
     public static void drawPlayer(
-        DrawContext context, 
-        int x, 
-        int y, 
-        float scale, 
-        float mouseX, 
-        float mouseY, 
-        float yawOffset, 
-        float pitchOffset,
-        PlayerRenderModifier mod) {
+            GuiGraphicsExtractor context,
+            int x,
+            int y,
+            float scale,
+            float mouseX,
+            float mouseY,
+            float yawOffset,
+            float pitchOffset,
+            PlayerRenderModifier mod) {
             
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         var entity = client.player;
 
         if(entity == null) {
@@ -184,32 +185,32 @@ public class RooHelper {
 		Quaternionf quaternionf = new Quaternionf().rotateZ((float) Math.PI);
 		Quaternionf quaternionf2 = new Quaternionf().rotateX(i * 20.0F * (float) (Math.PI / 180.0));
 		quaternionf.mul(quaternionf2);
-		float j = entity.bodyYaw;
-		float k = entity.getYaw();
-		float l = entity.getPitch();
-		float m = entity.lastHeadYaw;
-		float n = entity.headYaw;
-		entity.bodyYaw = 180.0F + h * 20.0F + yawOffset;
-		entity.setYaw(180.0F + h * 40.0F + yawOffset);
-		entity.setPitch(-i * 20.0F + pitchOffset);
-		entity.headYaw = entity.getYaw();
-		entity.lastHeadYaw = entity.getYaw();
+		float j = entity.yBodyRot;
+		float k = entity.getYRot();
+		float l = entity.getXRot();
+		float m = entity.yHeadRotO;
+		float n = entity.yHeadRot;
+		entity.yBodyRot = 180.0F + h * 20.0F + yawOffset;
+		entity.setYRot(180.0F + h * 40.0F + yawOffset);
+		entity.setXRot(-i * 20.0F + pitchOffset);
+		entity.yHeadRot = entity.getYRot();
+		entity.yHeadRotO = entity.getYRot();
 		float o = entity.getScale();
-		Vector3f vector3f = new Vector3f(0.0F, entity.getHeight() / 2.0F + scale * o, 0.0F);
+		Vector3f vector3f = new Vector3f(0.0F, entity.getBbHeight() / 2.0F + scale * o, 0.0F);
 		float p = size / o;
 
         mod.apply(entity);
 
 //        context.addEntity(en, size, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
         var state = DrawEntityAccessor.getEntityRenderState(entity);
-        context.addEntity(state, scale, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
+        context.entity(state, scale, vector3f, quaternionf, quaternionf2, x1, y1, x2, y2);
 //		InventoryScreen.drawEntity(context, x1, y1, x2, y2, size, o, quaternionf, quaternionf2, entity);
 		
-        entity.bodyYaw = j;
-		entity.setYaw(k);
-		entity.setPitch(l);
-		entity.lastHeadYaw = m;
-		entity.headYaw = n;
+        entity.yBodyRot = j;
+		entity.setYRot(k);
+		entity.setXRot(l);
+		entity.yHeadRotO = m;
+		entity.yHeadRot = n;
 		context.disableScissor();
 
         mod.apply(entity);
@@ -217,6 +218,6 @@ public class RooHelper {
 
     interface PlayerRenderModifier {
 
-        public void apply(PlayerEntity player);
+        public void apply(Player player);
     }
 }

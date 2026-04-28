@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Final;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(ParticleS2CPacket.class)
+@Mixin(ClientboundLevelParticlesPacket.class)
 public abstract class LimitParticleCountMixin {
 
     @Shadow @Final

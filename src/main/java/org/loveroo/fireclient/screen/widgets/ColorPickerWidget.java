@@ -1,30 +1,28 @@
 package org.loveroo.fireclient.screen.widgets;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.text.Text;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.mixin.AddWidgetAccessor;
 
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-public class ColorPickerWidget extends ClickableWidget {
+public class ColorPickerWidget extends AbstractWidget {
 
     private final int fillColor = 0xAA4D4D4D;
     private final int outlineColor = 0xFFFFFFFF;
 
     private final int[] currentLocation;
 
-    private final TextFieldWidget colorField;
+    private final EditBox colorField;
     private final ColorSlider rSlider;
     private final ColorSlider gSlider;
     private final ColorSlider bSlider;
@@ -33,9 +31,9 @@ public class ColorPickerWidget extends ClickableWidget {
     private final Consumer<Integer> colorChanged;
 
     public ColorPickerWidget(int x, int y, int color, Consumer<Integer> colorChanged) {
-        super(0, 0, 88, 100, Text.translatable("fireclient.widget.color_picker.name"));
+        super(0, 0, 88, 100, Component.translatable("fireclient.widget.color_picker.name"));
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         var inputColor = Color.fromARGB(color);
 
         this.colorChanged = colorChanged;
@@ -45,11 +43,11 @@ public class ColorPickerWidget extends ClickableWidget {
         bSlider = new ColorSlider("B", inputColor.b()/255.0, this::setColors);
         aSlider = new ColorSlider("A", inputColor.a()/255.0, this::setColors);
 
-        colorField = new ColorTextField(client.textRenderer, x, y);
-        colorField.setChangedListener(this::colorFieldChanged);
+        colorField = new ColorTextField(client.font, x, y);
+        colorField.setResponder(this::colorFieldChanged);
         colorField.setMaxLength(8);
 
-        colorField.setText(inputColor.toARGBHex());
+        colorField.setValue(inputColor.toARGBHex());
 
         currentLocation = getDimensions(colorField.getX() + colorField.getWidth() - 1, colorField.getY());
 
@@ -91,7 +89,7 @@ public class ColorPickerWidget extends ClickableWidget {
     }
 
     private void setColors() {
-        colorField.setText(getColor().toARGBHex());
+        colorField.setValue(getColor().toARGBHex());
     }
 
     private Color getColor() {
@@ -104,7 +102,7 @@ public class ColorPickerWidget extends ClickableWidget {
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    protected void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         var visible = (colorField.isFocused() || sliderFocused());
         rSlider.active = visible;
         gSlider.active = visible;
@@ -115,18 +113,18 @@ public class ColorPickerWidget extends ClickableWidget {
             return;
         }
 
-        context.fill(currentLocation[0], currentLocation[2], currentLocation[1], currentLocation[3], fillColor);
+        graphics.fill(currentLocation[0], currentLocation[2], currentLocation[1], currentLocation[3], fillColor);
 
-        context.drawHorizontalLine(currentLocation[0], currentLocation[1], currentLocation[2], outlineColor);
-        context.drawHorizontalLine(currentLocation[0], currentLocation[1], currentLocation[3], outlineColor);
+        graphics.horizontalLine(currentLocation[0], currentLocation[1], currentLocation[2], outlineColor);
+        graphics.horizontalLine(currentLocation[0], currentLocation[1], currentLocation[3], outlineColor);
 
-        context.drawVerticalLine(currentLocation[0], currentLocation[2], currentLocation[3], outlineColor);
-        context.drawVerticalLine(currentLocation[1], currentLocation[2], currentLocation[3], outlineColor);
+        graphics.verticalLine(currentLocation[0], currentLocation[2], currentLocation[3], outlineColor);
+        graphics.verticalLine(currentLocation[1], currentLocation[2], currentLocation[3], outlineColor);
 
-        rSlider.render(context, mouseX, mouseY, delta);
-        gSlider.render(context, mouseX, mouseY, delta);
-        bSlider.render(context, mouseX, mouseY, delta);
-        aSlider.render(context, mouseX, mouseY, delta);
+        rSlider.extractRenderState(graphics, mouseX, mouseY, delta);
+        gSlider.extractRenderState(graphics, mouseX, mouseY, delta);
+        bSlider.extractRenderState(graphics, mouseX, mouseY, delta);
+        aSlider.extractRenderState(graphics, mouseX, mouseY, delta);
     }
 
     private boolean sliderFocused() {
@@ -138,11 +136,11 @@ public class ColorPickerWidget extends ClickableWidget {
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
+    protected void updateWidgetNarration(@NonNull NarrationElementOutput builder) {
 
     }
 
-    protected static class ColorSlider extends SliderWidget {
+    protected static class ColorSlider extends AbstractSliderButton {
 
         private final String colorText;
         private int color = 0;
@@ -150,7 +148,7 @@ public class ColorPickerWidget extends ClickableWidget {
         private final Runnable onChanged;
 
         public ColorSlider(String colorText, double value, Runnable onChanged) {
-            super(0, 0, 80, 18, Text.of(""), value);
+            super(0, 0, 80, 18, Component.nullToEmpty(""), value);
 
             this.colorText = colorText + ": ";
             this.visible = true;
@@ -163,7 +161,7 @@ public class ColorPickerWidget extends ClickableWidget {
 
         @Override
         protected void updateMessage() {
-            setMessage(Text.of(colorText + color));
+            setMessage(Component.nullToEmpty(colorText + color));
         }
 
         @Override
@@ -176,8 +174,8 @@ public class ColorPickerWidget extends ClickableWidget {
         }
 
         @Override
-        public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-            super.renderWidget(context, mouseX, mouseY, delta);
+        public void extractWidgetRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+            super.extractWidgetRenderState(graphics, mouseX, mouseY, delta);
         }
 
         public int getColor() {
@@ -192,10 +190,10 @@ public class ColorPickerWidget extends ClickableWidget {
         }
     }
 
-    protected static class ColorTextField extends TextFieldWidget {
+    protected static class ColorTextField extends EditBox {
 
-        public ColorTextField(TextRenderer textRenderer, int x, int y) {
-            super(textRenderer, 64, 15, Text.of(""));
+        public ColorTextField(Font textRenderer, int x, int y) {
+            super(textRenderer, 64, 15, Component.nullToEmpty(""));
 
             setPosition(x, y);
         }

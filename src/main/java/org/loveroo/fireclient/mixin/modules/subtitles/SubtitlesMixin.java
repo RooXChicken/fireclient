@@ -1,9 +1,9 @@
 package org.loveroo.fireclient.mixin.modules.subtitles;
 
-import net.minecraft.client.gui.hud.SubtitlesHud;
+import net.minecraft.client.gui.components.SubtitleOverlay;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(SubtitlesHud.class)
+@Mixin(SubtitleOverlay.class)
 public class SubtitlesMixin {
 
 //    @Shadow @Final

@@ -1,10 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
@@ -32,21 +32,21 @@ public class SignModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_gui.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.sign.disable_gui.name"))
             .getValue(() -> { return disableGui; })
             .setValue((value) -> { disableGui = value; })
             .position(base.width/2 - 60, base.height/2 - 10)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_gui.description")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.sign.disable_gui.description")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.sign.disable_rendering.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.sign.disable_rendering.name"))
             .getValue(() -> { return renderingDisabled; })
             .setValue((value) -> { renderingDisabled = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.sign.disable_rendering.description")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.sign.disable_rendering.description")))
             .build());
 
         return widgets;

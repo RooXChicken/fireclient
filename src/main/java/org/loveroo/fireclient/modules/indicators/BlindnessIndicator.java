@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.modules.indicators;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffects;
 import org.loveroo.fireclient.data.Color;
 
 public class BlindnessIndicator extends Indicator {
@@ -11,7 +11,7 @@ public class BlindnessIndicator extends Indicator {
     }
 
     @Override
-    protected boolean doesDraw(MinecraftClient client) {
-        return (client.player != null && client.player.hasStatusEffect(StatusEffects.BLINDNESS));
+    protected boolean doesDraw(Minecraft client) {
+        return (client.player != null && client.player.hasEffect(MobEffects.BLINDNESS));
     }
 }

@@ -8,11 +8,11 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.ModuleBase;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
 
 public abstract class Indicator extends ModuleBase {
 
@@ -34,34 +34,34 @@ public abstract class Indicator extends ModuleBase {
         FireClientside.registerModule(this);
     }
 
-    protected abstract boolean doesDraw(MinecraftClient client);
+    protected abstract boolean doesDraw(Minecraft client);
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw()) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null || !doesDraw(client)) {
             return;
         }
 
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
-        var text = client.textRenderer;
-        context.drawText(text, getData().getEmoji(), 0, 0, 0xFFFFFFFF, true);
+        var text = client.font;
+        graphics.text(text, getData().getEmoji(), 0, 0, 0xFFFFFFFF, true);
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
+    public List<AbstractWidget> getConfigScreen(Screen base) {
         return List.of();
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) { }
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) { }
 
     public boolean hasOverlay() {
         return hasOverlay;

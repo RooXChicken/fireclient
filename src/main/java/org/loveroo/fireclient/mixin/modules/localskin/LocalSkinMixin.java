@@ -1,3 +1,4 @@
+// TODO(Ravel): Failed to fully resolve file: null cannot be cast to non-null type com.intellij.psi.PsiJavaCodeReferenceElement
 package org.loveroo.fireclient.mixin.modules.localskin;
 
 import java.util.Map;
@@ -12,16 +13,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerLikeEntity;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.entity.PlayerEntityRenderer;
-import net.minecraft.entity.PlayerLikeEntity;
-import net.minecraft.entity.player.PlayerSkinType;
-import net.minecraft.entity.player.SkinTextures;
-import net.minecraft.util.AssetInfo;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.ClientAvatarEntity;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.world.entity.Avatar;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.entity.player.PlayerSkin;
+import net.minecraft.core.ClientAsset;
 
-@Mixin(SkinTextures.class)
+@Mixin(PlayerSkin.class)
 abstract class LocalSkinMixin {
 
     // for a stackoverflow crash fix with essential
@@ -35,7 +36,7 @@ abstract class LocalSkinMixin {
     private boolean verifying = false;
 
     @Inject(method = "body", at = @At("HEAD"), cancellable = true)
-    public void getTexture(CallbackInfoReturnable<AssetInfo.TextureAsset> info) {
+    public void getTexture(CallbackInfoReturnable<ClientAsset.Texture> info) {
         if(checkingSkin) {
             return;
         }
@@ -53,7 +54,7 @@ abstract class LocalSkinMixin {
     }
 
     @Inject(method = "cape", at = @At("HEAD"), cancellable = true)
-    public void getCape(CallbackInfoReturnable<AssetInfo.TextureAsset> info) {
+    public void getCape(CallbackInfoReturnable<ClientAsset.Texture> info) {
         if(checkingCape) {
             return;
         }
@@ -71,7 +72,7 @@ abstract class LocalSkinMixin {
     }
 
     @Nullable
-    private AssetInfo.TextureAsset verifySelf(TextureType type) {
+    private ClientAsset.Texture verifySelf(TextureType type) {
         if(verifying) {
             return null;
         }
@@ -84,7 +85,7 @@ abstract class LocalSkinMixin {
             return null;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null || client.player.getSkin() != (Object) this) {
             verifying = false;
             return null;
@@ -98,12 +99,12 @@ abstract class LocalSkinMixin {
     }
 }
 
-@Mixin(EntityRenderManager.class)
+@Mixin(EntityRenderDispatcher.class)
 abstract class LocalSkinModelMixin {
 
-    @Inject(method = "getPlayerRenderer(Ljava/util/Map;Lnet/minecraft/entity/PlayerLikeEntity;)Lnet/minecraft/client/render/entity/PlayerEntityRenderer;", at = @At("HEAD"), cancellable = true)
-    public <T extends PlayerLikeEntity & ClientPlayerLikeEntity> void fireclient$modifyPlayerModel(Map<PlayerSkinType, PlayerEntityRenderer<T>> skinTypeToRenderer, T player, CallbackInfoReturnable<PlayerEntityRenderer<T>> info) {
-        var client = MinecraftClient.getInstance();
+    @Inject(method = "getAvatarRenderer(Ljava/util/Map;Lnet/minecraft/world/entity/Avatar;)Lnet/minecraft/client/renderer/entity/player/AvatarRenderer;", at = @At("HEAD"), cancellable = true)
+    public <T extends Avatar & ClientAvatarEntity> void fireclient$modifyPlayerModel(Map<PlayerModelType, AvatarRenderer<T>> skinTypeToRenderer, T player, CallbackInfoReturnable<AvatarRenderer<T>> info) {
+        var client = Minecraft.getInstance();
         if(client.player != player) {
             return;
         }
@@ -118,7 +119,7 @@ abstract class LocalSkinModelMixin {
             return;
         }
 
-        var model = PlayerSkinType.valueOf(modelType);
+        var model = PlayerModelType.valueOf(modelType);
         info.setReturnValue(skinTypeToRenderer.get(model));
     }
 }
