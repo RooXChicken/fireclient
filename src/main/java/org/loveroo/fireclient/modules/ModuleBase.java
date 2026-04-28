@@ -64,8 +64,8 @@ public abstract class ModuleBase {
         graphics.horizontalLine(points[0], points[1], points[2], 0xFFFFFFFF);
         graphics.horizontalLine(points[0], points[1], points[3], 0xFFFFFFFF);
 
-        graphics.horizontalLine(points[0], points[2], points[3], 0xFFFFFFFF);
-        graphics.horizontalLine(points[1], points[2], points[3], 0xFFFFFFFF);
+        graphics.verticalLine(points[0], points[2], points[3], 0xFFFFFFFF);
+        graphics.verticalLine(points[1], points[2], points[3], 0xFFFFFFFF);
     }
 
     public void handleTransformation(int mouseState, OldTransform old, int mouseX, int mouseY, int oldMouseX, int oldMouseY, boolean snap) {
