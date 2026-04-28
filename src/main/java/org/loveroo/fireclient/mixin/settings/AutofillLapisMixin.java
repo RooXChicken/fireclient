@@ -1,5 +1,6 @@
 package org.loveroo.fireclient.mixin.settings;
 
+import net.minecraft.world.inventory.ContainerInput;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
@@ -7,24 +8,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.EnchantmentScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.item.Items;
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
-import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.EnchantmentScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public class AutofillLapisMixin {
     
-    @Inject(method = "onOpenScreen", at = @At("TAIL"))
-    private void autoFill(OpenScreenS2CPacket packet, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(client.interactionManager == null || client.player == null) {
+    @Inject(method = "handleOpenScreen", at = @At("TAIL"))
+    private void autoFill(ClientboundOpenScreenPacket packet, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(client.gameMode == null || client.player == null) {
             return;
         }
 
-        if(!(client.currentScreen instanceof EnchantmentScreen)) {
+        if(!(client.screen instanceof EnchantmentScreen)) {
             return;
         }
 
@@ -33,16 +33,16 @@ public class AutofillLapisMixin {
         }
 
 
-        var slots = client.player.currentScreenHandler.slots;
+        var slots = client.player.containerMenu.slots;
 
         var index = -1;
         for(var slot : slots) {
-            var item = slot.inventory.getStack(slot.getIndex());
-            if(item == null || !item.isOf(Items.LAPIS_LAZULI)) {
+            var item = slot.container.getItem(slot.getContainerSlot());
+            if(item == null || !item.is(Items.LAPIS_LAZULI)) {
                 continue;
             }
 
-            index = slot.id;
+            index = slot.index;
             break;
         }
 
@@ -50,19 +50,19 @@ public class AutofillLapisMixin {
             return;
         }
 
-        client.interactionManager.clickSlot(
-            packet.getSyncId(),
+        client.gameMode.handleContainerInput(
+            packet.getContainerId(),
             index,
             0,
-            SlotActionType.PICKUP,
+            ContainerInput.PICKUP,
             client.player
         );
 
-        client.interactionManager.clickSlot(
-            packet.getSyncId(),
-            client.player.currentScreenHandler.getSlot(1).id,
+        client.gameMode.handleContainerInput(
+            packet.getContainerId(),
+            client.player.containerMenu.getSlot(1).index,
             0,
-            SlotActionType.PICKUP,
+                ContainerInput.PICKUP,
             client.player
         );
     }

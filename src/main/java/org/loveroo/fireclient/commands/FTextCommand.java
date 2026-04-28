@@ -3,30 +3,35 @@ package org.loveroo.fireclient.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommands;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.text.*;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 
 public class FTextCommand {
 
-    private static final Text fTextHeader = RooHelper.gradientText("[FTEXT]", FireClientside.mainColor1, FireClientside.mainColor2);
+    private static final Component fTextHeader = RooHelper.gradientText("[FTEXT]", FireClientside.mainColor1, FireClientside.mainColor2);
 
-    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
-        var smallTextSub = ClientCommandManager.literal("to_small")
-                .then(ClientCommandManager.argument("text", StringArgumentType.greedyString())
+    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
+        var smallTextSub = ClientCommands.literal("to_small")
+                .then(ClientCommands.argument("text", StringArgumentType.greedyString())
                         .executes(context -> smallTextCommand(context))
         );
 
-        dispatcher.register(ClientCommandManager.literal("ftext")
+        dispatcher.register(ClientCommands.literal("ftext")
                 .then(smallTextSub)
         );
     }
 
-    private MutableText getResult(String message) {
-        var messageText = MutableText.of(new PlainTextContent.Literal(" " + message)).setStyle(Style.EMPTY).withColor(0xFFFFFFFF);
+    private MutableComponent getResult(String message) {
+        var messageText = MutableComponent.create(new PlainTextContents.LiteralContents(" " + message)).setStyle(Style.EMPTY).withColor(0xFFFFFFFF);
         return fTextHeader.copy().append(messageText);
     }
 
@@ -35,9 +40,9 @@ public class FTextCommand {
         var small = toSmallText(text);
 
         var click = new ClickEvent.CopyToClipboard(small);
-        var hover = new HoverEvent.ShowText(Text.of(small));
+        var hover = new HoverEvent.ShowText(Component.nullToEmpty(small));
 
-        var smallText = MutableText.of(new PlainTextContent.Literal(small)).setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
+        var smallText = MutableComponent.create(new PlainTextContents.LiteralContents(small)).setStyle(Style.EMPTY.withClickEvent(click).withHoverEvent(hover));
         var feedback = getResult("").copy().append(smallText);
         context.getSource().sendFeedback(feedback);
 

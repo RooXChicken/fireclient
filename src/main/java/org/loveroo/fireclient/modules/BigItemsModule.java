@@ -16,18 +16,18 @@ import org.loveroo.fireclient.screen.base.ScrollableWidget;
 import org.loveroo.fireclient.screen.widgets.RenderItemWidget;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class BigItemsModule extends ModuleBase {
 
@@ -43,7 +43,7 @@ public class BigItemsModule extends ModuleBase {
     private ScrollableWidget scroll;
 
     @Nullable
-    private TextFieldWidget itemField;
+    private EditBox itemField;
 
     public BigItemsModule() {
         super(new ModuleData("big_items", "+", color));
@@ -52,8 +52,8 @@ public class BigItemsModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var toggleBind = new Keybind("toggle_big_items",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
                 true, null,
                 () -> getData().setEnabled(!getData().isEnabled()), null);
 
@@ -100,35 +100,35 @@ public class BigItemsModule extends ModuleBase {
     }
 
     @Override
-    public void moduleConfigPressed(ButtonWidget button) {
+    public void moduleConfigPressed(Button button) {
         scrollPos = 0.0;
         super.moduleConfigPressed(button);
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var client = MinecraftClient.getInstance();
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var client = Minecraft.getInstance();
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_big_items").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
-        itemField = new TextFieldWidget(client.textRenderer, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Text.of(""));
+        itemField = new EditBox(client.font, base.width/2 - 140, base.height/2 - 40, soundsWidgetWidth - 50, 15, Component.nullToEmpty(""));
         itemField.setMaxLength(128);
-        itemField.setChangedListener((text) -> itemTextChanged(itemField, text));
+        itemField.setResponder((text) -> itemTextChanged(itemField, text));
 
         widgets.add(itemField);
 
-        widgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(itemField))
-            .dimensions(base.width/2 + 115, base.height/2 - 40, 20, 15)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.add_item.tooltip")))
+        widgets.add(Button.builder(Component.translatable("fireclient.module.big_items.add_item.name"), (button) -> addItemButtonPressed(itemField))
+            .bounds(base.width/2 + 115, base.height/2 - 40, 20, 15)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.big_items.add_item.tooltip")))
             .build());
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
         for(var item : bigItems) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
-            var text = new TextWidget(Text.literal(item.getItem()), base.getTextRenderer());
+            var text = new StringWidget(Component.literal(item.getItem()), base.getFont());
             text.setPosition(base.width/2 - 120, 4);
 
             entryWidgets.add(text);
@@ -139,12 +139,12 @@ public class BigItemsModule extends ModuleBase {
                 .getValue(item::isEnabled)
                 .setValue(item::setEnabled)
                 .dimensions(base.width/2 + 90, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.toggle_item.tooltip", item.getItem())))
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.big_items.toggle_item.tooltip", item.getItem())))
                 .build());
 
-            entryWidgets.add(ButtonWidget.builder(Text.translatable("fireclient.module.big_items.remove_item.name").withColor(0xD63C3C), (button) -> removeSound(item))
-                .dimensions(base.width/2 + 115, 0,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.big_items.remove_item.tooltip", item.getItem())))
+            entryWidgets.add(Button.builder(Component.translatable("fireclient.module.big_items.remove_item.name").withColor(0xD63C3C), (button) -> removeSound(item))
+                .bounds(base.width/2 + 115, 0,20,15)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.big_items.remove_item.tooltip", item.getItem())))
                 .build());
 
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
@@ -152,7 +152,7 @@ public class BigItemsModule extends ModuleBase {
 
         scroll = new ScrollableWidget(base, soundsWidgetWidth, soundsWidgetHeight,  0, 20, entries);
         scroll.setPosition(base.width/2 - (soundsWidgetWidth/2), base.height/2 - 10);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
 
         widgets.add(scroll);
 
@@ -164,11 +164,11 @@ public class BigItemsModule extends ModuleBase {
         base.setFocused(itemField);
     }
 
-    private void itemTextChanged(TextFieldWidget widget, String text) {
+    private void itemTextChanged(EditBox widget, String text) {
         if(!text.isEmpty()) {
             var check = text.substring(text.length()-1);
             if(" ,|".contains(check)) {
-                widget.setText(text.substring(0, text.length()-1));
+                widget.setValue(text.substring(0, text.length()-1));
                 addItemButtonPressed(widget);
                 return;
             }
@@ -185,13 +185,13 @@ public class BigItemsModule extends ModuleBase {
         var input = RooHelper.filterIdInput(text);
 
         if(bigItems.stream().noneMatch((bigItem) -> { return bigItem.getItem().equalsIgnoreCase(input); })) {
-            var itemId = Identifier.ofVanilla(input);
-            if(Registries.ITEM.containsId(itemId)) {
+            var itemId = Identifier.withDefaultNamespace(input);
+            if(BuiltInRegistries.ITEM.containsKey(itemId)) {
                 return "";
             }
         }
 
-        var filteredItems = Registries.ITEM.getIds().stream().filter((id) ->
+        var filteredItems = BuiltInRegistries.ITEM.keySet().stream().filter((id) ->
             id.getPath().startsWith(input) && bigItems.stream().noneMatch((bigItem -> (bigItem.item.equalsIgnoreCase(id.getPath()))))
         ).toList();
 
@@ -203,18 +203,18 @@ public class BigItemsModule extends ModuleBase {
         return item.substring(input.length());
     }
 
-    private void addItemButtonPressed(TextFieldWidget text) {
+    private void addItemButtonPressed(EditBox text) {
         var suggestion = ((GetSuggestionAccessor)text).getSuggestion();
         if(suggestion == null) {
             suggestion = "";
         }
 
-        var item = RooHelper.filterIdInput(text.getText()) + suggestion;
+        var item = RooHelper.filterIdInput(text.getValue()) + suggestion;
 
         if(bigItems.stream().anyMatch((bigItem -> bigItem.getItem().equalsIgnoreCase(item)))) {
             RooHelper.sendNotification(
-                Text.translatable("fireclient.module.big_items.add_item.failure.title"),
-                Text.translatable("fireclient.module.big_items.add_item.already_exists.contents")
+                Component.translatable("fireclient.module.big_items.add_item.failure.title"),
+                Component.translatable("fireclient.module.big_items.add_item.already_exists.contents")
             );
 
             return;
@@ -232,9 +232,9 @@ public class BigItemsModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.scrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);
@@ -259,7 +259,7 @@ public class BigItemsModule extends ModuleBase {
             this.item = item;
             this.enabled = enabled;
 
-            this.itemEntry = Registries.ITEM.get(Identifier.ofVanilla(this.item));
+            this.itemEntry = BuiltInRegistries.ITEM.getValue(Identifier.withDefaultNamespace(this.item));
         }
 
         public String getItem() {

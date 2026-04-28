@@ -1,9 +1,9 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.level.Level;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,9 +15,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(LivingEntity.class)
 public class CleanViewMixin {
 
-    @Inject(method = "tickStatusEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/data/DataTracker;get(Lnet/minecraft/entity/data/TrackedData;)Ljava/lang/Object;"), cancellable = true)
+    @Inject(method = "tickEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/syncher/SynchedEntityData;get(Lnet/minecraft/network/syncher/EntityDataAccessor;)Ljava/lang/Object;"), cancellable = true)
     private void preventParticles(CallbackInfo info) {
-        if(FireClientside.getSetting(FireClientOption.CLEARVIEW) == 0 || MinecraftClient.getInstance().player != (Object)this) {
+        if(FireClientside.getSetting(FireClientOption.CLEARVIEW) == 0 || Minecraft.getInstance().player != (Object)this) {
             return;
         }
 

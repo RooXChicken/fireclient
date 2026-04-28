@@ -1,5 +1,7 @@
 package org.loveroo.fireclient.screen.modules;
 
+import net.minecraft.world.inventory.ContainerInput;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
@@ -9,27 +11,26 @@ import org.loveroo.fireclient.mixin.modules.kit.GetSlotAccessor;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.lwjgl.glfw.GLFW;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.KeyInput;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.RecipeInputInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.PlayerScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
 public class KitEditScreen extends KitViewScreen {
 
-    private final Identifier trashIcon = Identifier.of(FireClient.MOD_ID, "textures/gui/kit/trash_item.png");
+    private final Identifier trashIcon = Identifier.fromNamespaceAndPath(FireClient.MOD_ID, "textures/gui/kit/trash_item.png");
 
     private boolean edited = false;
     private boolean saved = false;
@@ -38,12 +39,12 @@ public class KitEditScreen extends KitViewScreen {
     private final int trashSlotX = 95;
     private final int trashSlotY = 62;
 
-    public KitEditScreen(PlayerEntity player, PlayerInventory inventory, String kitName, boolean fromCommand) {
-        super(player, inventory, Text.translatable("fireclient.screen.edit_kit.title", kitName), kitName, fromCommand);
+    public KitEditScreen(Player player, Inventory inventory, String kitName, boolean fromCommand) {
+        super(player, inventory, Component.translatable("fireclient.screen.edit_kit.title", kitName), kitName, fromCommand);
 
         trashSlot = new Slot(inventory, 255, trashSlotX, trashSlotY);
 
-        var accessor = (AddSlotAccessor)getScreenHandler();
+        var accessor = (AddSlotAccessor) getMenu();
         accessor.addSlotAccessed(trashSlot);
     }
 
@@ -51,22 +52,22 @@ public class KitEditScreen extends KitViewScreen {
     protected void init() {
         super.init();
 
-        var saveButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.save.name"), this::saveButtonPressed)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.save.tooltip", kitName)))
-            .dimensions(width/2 + 10, height/2 + 90,80, 20)
+        var saveButton = Button.builder(Component.translatable("fireclient.screen.edit_kit.save.name"), this::saveButtonPressed)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.screen.edit_kit.save.tooltip", kitName)))
+            .bounds(width/2 + 10, height/2 + 90,80, 20)
             .build();
 
-        addDrawableChild(saveButton);
+        addRenderableWidget(saveButton);
 
-        var undoButton = ButtonWidget.builder(Text.translatable("fireclient.screen.edit_kit.undo.name"), this::undoButtonPressed)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.screen.edit_kit.undo.tooltip", kitName)))
-            .dimensions(width/2 - 90, height/2 + 90,80, 20)
+        var undoButton = Button.builder(Component.translatable("fireclient.screen.edit_kit.undo.name"), this::undoButtonPressed)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.screen.edit_kit.undo.tooltip", kitName)))
+            .bounds(width/2 - 90, height/2 + 90,80, 20)
             .build();
 
-        addDrawableChild(undoButton);
+        addRenderableWidget(undoButton);
     }
 
-    private void saveButtonPressed(ButtonWidget button) {
+    private void saveButtonPressed(Button button) {
         var deleteStatus = KitManager.deleteKit(kitName);
 
         if(!handleDeleteStatus(deleteStatus)) {
@@ -79,7 +80,7 @@ public class KitEditScreen extends KitViewScreen {
         saved = true;
 
         if(isFromCommand()) {
-            close();
+            onClose();
             return;
         }
 
@@ -88,19 +89,19 @@ public class KitEditScreen extends KitViewScreen {
             return;
         }
 
-        MinecraftClient.getInstance().setScreen(new ModuleConfigScreen(kit));
+        Minecraft.getInstance().setScreen(new ModuleConfigScreen(kit));
     }
 
     private boolean handleDeleteStatus(KitManager.KitManageStatus status) {
-        MutableText title = null;
-        MutableText contents = null;
+        MutableComponent title = null;
+        MutableComponent contents = null;
 
         switch(status) {
             case SUCCESS -> { }
 
             case FAILURE -> {
-                title = Text.translatable("fireclient.module.kit.recycle.failure.title", kitName);
-                contents = Text.translatable("fireclient.module.kit.recycle.failure.contents");
+                title = Component.translatable("fireclient.module.kit.recycle.failure.title", kitName);
+                contents = Component.translatable("fireclient.module.kit.recycle.failure.contents");
             }
         }
 
@@ -109,11 +110,11 @@ public class KitEditScreen extends KitViewScreen {
         }
 
         if(isFromCommand()) {
-            if(client == null || client.player == null) {
+            if(minecraft == null || minecraft.player == null) {
                 return false;
             }
 
-            client.player.sendMessage(title.append(" ").append(contents), false);
+            minecraft.player.sendSystemMessage(title.append(" ").append(contents));
         }
         else {
             RooHelper.sendNotification(title, contents);
@@ -123,28 +124,28 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     private boolean handleCreateStatus(KitManager.KitCreateStatus status) {
-        MutableText title = null;
-        MutableText contents = null;
+        MutableComponent title = null;
+        MutableComponent contents = null;
 
         switch(status) {
             case SUCCESS -> {
-                    title = Text.translatable("fireclient.module.kit.edit.success.name", kitName);
-                    contents = Text.translatable("fireclient.module.kit.edit.success.contents");
+                    title = Component.translatable("fireclient.module.kit.edit.success.name", kitName);
+                    contents = Component.translatable("fireclient.module.kit.edit.success.contents");
             }
 
             case INVALID_KIT -> {
-                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
-                    contents = Text.translatable("fireclient.module.kit.edit.invalid_editor_inventory");
+                    title = Component.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Component.translatable("fireclient.module.kit.edit.invalid_editor_inventory");
             }
 
             case ALREADY_EXISTS -> {
-                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
-                    contents = Text.translatable("fireclient.module.kit.generic.already_exists.contents");
+                    title = Component.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Component.translatable("fireclient.module.kit.generic.already_exists.contents");
             }
 
             case WRITE_FAIL -> {
-                    title = Text.translatable("fireclient.module.kit.edit.failure.name", kitName);
-                    contents = Text.translatable("fireclient.module.kit.generic.write_failure.contents");
+                    title = Component.translatable("fireclient.module.kit.edit.failure.name", kitName);
+                    contents = Component.translatable("fireclient.module.kit.generic.write_failure.contents");
             }
         }
 
@@ -153,11 +154,11 @@ public class KitEditScreen extends KitViewScreen {
         }
 
         if(isFromCommand()) {
-            if(client == null || client.player == null) {
+            if(minecraft == null || minecraft.player == null) {
                 return false;
             }
 
-            client.player.sendMessage(title.append(" ").append(contents), false);
+            minecraft.player.sendSystemMessage(title.append(" ").append(contents));
         }
         else {
             RooHelper.sendNotification(title, contents);
@@ -166,17 +167,17 @@ public class KitEditScreen extends KitViewScreen {
         return false;
     }
 
-    private void undoButtonPressed(ButtonWidget button) {
+    private void undoButtonPressed(Button button) {
         if(!isFromCommand()) {
             exitToKit();
         }
         else {
-            close();
+            onClose();
         }
     }
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(@NonNull MouseButtonEvent click, boolean doubled) {
         if(!edited) {
             var slot = ((GetSlotAccessor)this).getSlotAtAccessed(click.x(), click.y());
             if(slot != null) {
@@ -192,7 +193,7 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         if(preventCrafting(click.x(), click.y())) {
             return true;
         }
@@ -201,7 +202,7 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+    public boolean mouseDragged(MouseButtonEvent click, double offsetX, double offsetY) {
         if(preventCrafting(click.x(), click.y())) {
             return true;
         }
@@ -210,8 +211,8 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    public boolean keyPressed(KeyInput input) {
-        if(!edited && (input.key() != GLFW.GLFW_KEY_ESCAPE && !client.options.inventoryKey.matchesKey(input))) {
+    public boolean keyPressed(KeyEvent input) {
+        if(!edited && (input.key() != GLFW.GLFW_KEY_ESCAPE && !minecraft.options.keyInventory.matches(input))) {
             edited = true;
         }
 
@@ -219,37 +220,37 @@ public class KitEditScreen extends KitViewScreen {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        if(trashSlot.hasStack() && !trashSlot.getStack().isEmpty()) {
-            trashSlot.setStack(ItemStack.EMPTY);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        if(trashSlot.hasItem() && !trashSlot.getItem().isEmpty()) {
+            trashSlot.setByPlayer(ItemStack.EMPTY);
         }
 
-        super.render(context, mouseX, mouseY, delta);
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
     }
 
     @Override
-    protected boolean handleHotbarKeyPressed(KeyInput input) {
-        if(!handler.getCursorStack().isEmpty() || focusedSlot == null) {
+    protected boolean checkHotbarKeyPressed(@NonNull KeyEvent input) {
+        if(!menu.getCarried().isEmpty() || hoveredSlot == null) {
             return false;
         }
 
-        if(client.options.swapHandsKey.matchesKey(input)) {
-            onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
+        if(minecraft.options.keySwapOffhand.matches(input)) {
+            slotClicked(hoveredSlot, hoveredSlot.index, 0, ContainerInput.PICKUP);
 
-            var offhandSlot = getScreenHandler().slots.get(PlayerScreenHandler.OFFHAND_ID);
-            onMouseClick(offhandSlot, offhandSlot.id, 0, SlotActionType.PICKUP);
-            onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
+            var offhandSlot = getMenu().slots.get(InventoryMenu.SHIELD_SLOT);
+            slotClicked(offhandSlot, offhandSlot.index, 0, ContainerInput.PICKUP);
+            slotClicked(hoveredSlot, hoveredSlot.index, 0, ContainerInput.PICKUP);
 
             return true;
         }
 
         for(int i = 0; i < 9; i++) {
-            if(client.options.hotbarKeys[i].matchesKey(input)) {
-                onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
+            if(minecraft.options.keyHotbarSlots[i].matches(input)) {
+                slotClicked(hoveredSlot, hoveredSlot.index, 0, ContainerInput.PICKUP);
 
-                var hotbarSlot = getScreenHandler().slots.get(PlayerScreenHandler.HOTBAR_START + i);
-                onMouseClick(hotbarSlot, hotbarSlot.id, 0, SlotActionType.PICKUP);
-                onMouseClick(focusedSlot, focusedSlot.id, 0, SlotActionType.PICKUP);
+                var hotbarSlot = getMenu().slots.get(InventoryMenu.USE_ROW_SLOT_START + i);
+                slotClicked(hotbarSlot, hotbarSlot.index, 0, ContainerInput.PICKUP);
+                slotClicked(hoveredSlot, hoveredSlot.index, 0, ContainerInput.PICKUP);
 
                 return true;
             }
@@ -264,28 +265,28 @@ public class KitEditScreen extends KitViewScreen {
             return false;
         }
 
-        return (slot.inventory instanceof RecipeInputInventory);
+        return (slot.container instanceof CraftingContainer);
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
+    public void extractBackground(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractBackground(graphics, mouseX, mouseY, delta);
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, trashIcon, x + trashSlotX - 1, y + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, trashIcon, leftPos + trashSlotX - 1, topPos + trashSlotY - 1, 0, 0, 18, 18, 18, 18, 0xFFFFFFFF);
     }
 
     @Override
-    protected void onClose() {
+    public void onClose() {
         if(edited && !saved) {
-            var title = Text.translatable("fireclient.module.kit.edit.revert.name", kitName);
-            var contents = Text.translatable("fireclient.module.kit.edit.revert.contents");
+            var title = Component.translatable("fireclient.module.kit.edit.revert.name", kitName);
+            var contents = Component.translatable("fireclient.module.kit.edit.revert.contents");
 
             if(isFromCommand()) {
-                if(client == null || client.player == null) {
+                if(minecraft == null || minecraft.player == null) {
                     return;
                 }
 
-                client.player.sendMessage(title.append(" ").append(contents), false);
+                minecraft.player.sendSystemMessage(title.append(" ").append(contents));
             }
             else {
                 RooHelper.sendNotification(title, contents);

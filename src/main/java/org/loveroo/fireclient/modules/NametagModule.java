@@ -9,10 +9,10 @@ import org.loveroo.fireclient.data.JsonOption;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 
 public class NametagModule extends ModuleBase {
 
@@ -37,35 +37,35 @@ public class NametagModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.darker_background.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.nametag.darker_background.name"))
             .getValue(() -> { return darkerBackground; })
             .setValue((value) -> { darkerBackground = value; })
             .position(base.width/2 - 130, base.height/2 - 10)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.darker_background.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.nametag.darker_background.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.show_own.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.nametag.show_own.name"))
             .getValue(() -> { return showOwn; })
             .setValue((value) -> { showOwn = value; })
             .position(base.width/2 + 10, base.height/2 - 10)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.show_own.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.nametag.show_own.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.text_shadow.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.nametag.text_shadow.name"))
             .getValue(() -> { return textShadow; })
             .setValue((value) -> { textShadow = value; })
             .position(base.width/2 - 130, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.text_shadow.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.nametag.text_shadow.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.nametag.unlimit_nametag.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.nametag.unlimit_nametag.name"))
             .getValue(() -> { return unlimitBelowName; })
             .setValue((value) -> { unlimitBelowName = value; })
             .position(base.width/2 + 10, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.nametag.unlimit_nametag.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.nametag.unlimit_nametag.tooltip")))
             .build());
 
         return widgets;

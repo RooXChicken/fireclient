@@ -1,26 +1,28 @@
 package org.loveroo.fireclient.mixin.modules.fullbright;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.render.LightmapTextureManager;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.renderer.LightmapRenderStateExtractor;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.FullbrightModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(LightmapTextureManager.class)
+@Mixin(LightmapRenderStateExtractor.class)
 public abstract class EnableFullbrightMixin {
 
-    @Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/SimpleOption;getValue()Ljava/lang/Object;"))
-    private Object increaseGamma(SimpleOption instance) {
-        if(instance != MinecraftClient.getInstance().options.getGamma()) {
-            return instance.getValue();
+    @WrapOperation(method = "extract", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;", ordinal = 1))
+    private Object increaseGamma(OptionInstance<?> instance, Operation<Object> original) {
+        if(instance != Minecraft.getInstance().options.gamma()) {
+            return instance.get();
         }
 
         var fullbright = (FullbrightModule) FireClientside.getModule("fullbright");
         if(fullbright == null || !fullbright.getData().isEnabled()) {
-            return instance.getValue();
+            return instance.get();
         }
 
         return 1000.0;

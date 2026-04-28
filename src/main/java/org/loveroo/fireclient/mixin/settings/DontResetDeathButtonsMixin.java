@@ -9,23 +9,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.client.gui.screens.DeathScreen;
 
 @Mixin(DeathScreen.class)
 public abstract class DontResetDeathButtonsMixin {
 
     @Shadow
-    private int ticksSinceDeath;
+    private int delayTicker;
 
     @Shadow
-    protected abstract void setButtonsActive(boolean active);
+    protected abstract void setButtonsActive(boolean isActive);
 
     @Unique
     private int realTicksSinceDeath = 0;
 
     @Inject(method = "init", at = @At("HEAD"))
     public void storeCurrentTicks(CallbackInfo ci) {
-        realTicksSinceDeath = ticksSinceDeath;
+        realTicksSinceDeath = delayTicker;
     }
 
     @Inject(method = "init", at = @At("TAIL"))
@@ -34,7 +34,7 @@ public abstract class DontResetDeathButtonsMixin {
             return;
         }
 
-        ticksSinceDeath = realTicksSinceDeath;
+        delayTicker = realTicksSinceDeath;
         if(realTicksSinceDeath >= 20) {
             setButtonsActive(true);
         }

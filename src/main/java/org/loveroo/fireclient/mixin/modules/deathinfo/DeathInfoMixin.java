@@ -10,16 +10,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.DeathScreen;
-import net.minecraft.text.MutableText;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.DeathScreen;
+import net.minecraft.network.chat.MutableComponent;
 
 @Mixin(DeathScreen.class)
 public abstract class DeathInfoMixin {
 
     @Unique
-    private MutableText positionText;
+    private MutableComponent positionText;
 
     @Unique
     private int textWidth = 0;
@@ -35,8 +35,8 @@ public abstract class DeathInfoMixin {
 
         createdText = true;
 
-        var client = MinecraftClient.getInstance();
-        var text = client.textRenderer;
+        var client = Minecraft.getInstance();
+        var text = client.font;
 
         var xPos = String.format("%.2f ", client.player.getX());
         var yPos = String.format("%.2f ", client.player.getY());
@@ -51,11 +51,11 @@ public abstract class DeathInfoMixin {
         var z = RooHelper.gradientText(zText, CoordinatesModule.zColor1, CoordinatesModule.zColor2);
 
         positionText = x.append(y).append(z);
-        textWidth = text.getWidth(positionText) / 2;
+        textWidth = text.width(positionText) / 2;
     }
 
-    @Inject(method = "render", at = @At("TAIL"))
-    private void showLocation(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
+    @Inject(method = "extractRenderState", at = @At("TAIL"))
+    private void showLocation(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo info) {
         var deathInfo = (DeathInfoModule) FireClientside.getModule("death_info");
         if(deathInfo == null || !deathInfo.getData().isEnabled()) {
             return;
@@ -63,9 +63,9 @@ public abstract class DeathInfoMixin {
 
         var screen = (DeathScreen)(Object)this;
 
-        var client = MinecraftClient.getInstance();
-        var text = client.textRenderer;
+        var client = Minecraft.getInstance();
+        var text = client.font;
 
-        context.drawText(text, positionText, screen.width/2 - textWidth, 114, 0xFFFFFFFF, true);
+        graphics.text(text, positionText, screen.width/2 - textWidth, 114, 0xFFFFFFFF, true);
     }
 }

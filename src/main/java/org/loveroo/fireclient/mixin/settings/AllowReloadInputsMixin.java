@@ -1,13 +1,16 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.Keyboard;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
-import net.minecraft.client.gui.screen.Overlay;
-import net.minecraft.client.gui.screen.SplashOverlay;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.KeyboardHandler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import net.minecraft.client.gui.screens.Overlay;
+import net.minecraft.client.gui.screens.LoadingOverlay;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,39 +18,39 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 abstract class AllowReloadInputsClientMixin {
 
-    @Redirect(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;overlay:Lnet/minecraft/client/gui/screen/Overlay;"))
-    private Overlay returnNoOverlay(MinecraftClient instance) {
+    @WrapOperation(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;overlay:Lnet/minecraft/client/gui/screens/Overlay;", opcode = Opcodes.GETFIELD))
+    private Overlay returnNoOverlay(Minecraft instance, Operation<Overlay> original) {
         return RooHelper.getOverlay(instance);
     }
 
-    @Redirect(method = "handleInputEvents", at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;overlay:Lnet/minecraft/client/gui/screen/Overlay;"))
-    private Overlay returnNoOverlayInput(MinecraftClient instance) {
-        return RooHelper.getOverlay(instance);
-    }
-}
-
-@Mixin(Mouse.class)
-abstract class AllowReloadInputsMouseMixin {
-
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getOverlay()Lnet/minecraft/client/gui/screen/Overlay;"))
-    private Overlay returnNoOverlay(MinecraftClient instance) {
-        return RooHelper.getOverlay(instance);
-    }
-
-    @Redirect(method = "onMouseButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getOverlay()Lnet/minecraft/client/gui/screen/Overlay;"))
-    private Overlay returnNoOverlayInput(MinecraftClient instance) {
+    @WrapOperation(method = "handleKeybinds", at = @At(value = "FIELD", target = "Lnet/minecraft/client/Minecraft;overlay:Lnet/minecraft/client/gui/screens/Overlay;", opcode = Opcodes.GETFIELD))
+    private Overlay returnNoOverlayInput(Minecraft instance, Operation<Overlay> original) {
         return RooHelper.getOverlay(instance);
     }
 }
 
-@Mixin(Keyboard.class)
-abstract class AllowReloadInputsKeyboardMixin {
+@Mixin(MouseHandler.class)
+abstract class AllowReloadInputsMouseHandlerMixin {
 
-    @Redirect(method = "onChar", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MinecraftClient;getOverlay()Lnet/minecraft/client/gui/screen/Overlay;"))
-    private Overlay returnNoOverlay(MinecraftClient instance) {
+    @WrapOperation(method = "handleAccumulatedMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;"))
+    private Overlay returnNoOverlay(Minecraft instance, Operation<Overlay> original) {
+        return RooHelper.getOverlay(instance);
+    }
+
+    @WrapOperation(method = "onButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;"))
+    private Overlay returnNoOverlayInput(Minecraft instance, Operation<Overlay> original) {
+        return RooHelper.getOverlay(instance);
+    }
+}
+
+@Mixin(KeyboardHandler.class)
+abstract class AllowReloadInputsKeyboardHandlerMixin {
+
+    @WrapOperation(method = "charTyped", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;getOverlay()Lnet/minecraft/client/gui/screens/Overlay;"))
+    private Overlay returnNoOverlay(Minecraft instance, Operation<Overlay> original) {
         return RooHelper.getOverlay(instance);
     }
 }

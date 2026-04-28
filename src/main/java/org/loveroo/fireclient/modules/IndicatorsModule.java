@@ -1,12 +1,12 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.modules.indicators.*;
@@ -41,48 +41,48 @@ public class IndicatorsModule extends ModuleBase {
 //        indicators.add(new InWallIndicator(index++));
     }
 
-    public void moduleConfigPressed(ButtonWidget button) {
-        var client = MinecraftClient.getInstance();
+    public void moduleConfigPressed(Button button) {
+        var client = Minecraft.getInstance();
 
         var indicatorModules = new ArrayList<ModuleBase>(indicators);
         indicatorModules.add(this);
 
-        client.setScreen(new ModuleConfigScreen(Text.translatable("fireclient.module.indicators.name"), Text.translatable("fireclient.module.indicators.description"), indicatorModules));
+        client.setScreen(new ModuleConfigScreen(Component.translatable("fireclient.module.indicators.name"), Component.translatable("fireclient.module.indicators.description"), indicatorModules));
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
         for(var i = 0; i < indicators.size(); i++) {
-            var indicatorWidgets = new ArrayList<ClickableWidget>();
+            var indicatorWidgets = new ArrayList<AbstractWidget>();
             var indicator = indicators.get(i);
 
             var x = base.width/2 - 60;
 
             if(indicator.hasOverlay()) {
-                indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.overlay.name"))
+                indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.indicators.overlay.name"))
                     .getValue(indicator::doesShowOverlay)
                     .setValue(indicator::setShowOverlay)
                     .dimensions(x + 100, 0, 80, 20)
-                    .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.overlay.tooltip", indicator.getData().getShownName())))
+                    .tooltip(Tooltip.create(Component.translatable("fireclient.module.indicators.overlay.tooltip", indicator.getData().getShownName())))
                     .build()
                 );
             }
 
-            var text = new TextWidget(indicator.getData().getShownName(), base.getTextRenderer());
+            var text = new StringWidget(indicator.getData().getShownName(), base.getFont());
             text.setX(x - 70);
             text.setY(8);
 
             indicatorWidgets.add(text);
 
-            indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.indicators.indicator.name"))
+            indicatorWidgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.indicators.indicator.name"))
                 .getValue(indicator.getData()::isVisible)
                 .setValue(indicator.getData()::setVisible)
                 .dimensions(x, 0, 80, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.indicators.indicator.tooltip", indicator.getData().getShownName())))
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.indicators.indicator.tooltip", indicator.getData().getShownName())))
                 .build()
             );
 

@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.modules.indicators;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffects;
 import org.loveroo.fireclient.data.Color;
 
 public class PortalIndicator extends Indicator {
@@ -11,11 +11,11 @@ public class PortalIndicator extends Indicator {
     }
 
     @Override
-    protected boolean doesDraw(MinecraftClient client) {
-        if(client.player == null || client.player.portalManager == null) {
+    protected boolean doesDraw(Minecraft client) {
+        if(client.player == null || client.player.portalProcess == null) {
             return false;
         }
 
-        return (client.player.portalManager.isInPortal());
+        return (client.player.portalProcess.isInsidePortalThisTick());
     }
 }

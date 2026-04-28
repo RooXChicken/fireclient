@@ -1,11 +1,11 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.SplashOverlay;
-import net.minecraft.resource.ResourceReload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.LoadingOverlay;
+import net.minecraft.server.packs.resources.ReloadInstance;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Final;
@@ -19,83 +19,83 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-@Mixin(SplashOverlay.class)
+@Mixin(LoadingOverlay.class)
 public abstract class SpeedupReloadMixin {
 
     @Shadow
-    private long reloadCompleteTime;
+    private long fadeOutStart;
 
     @Shadow @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
+
+    @Shadow @Final
+    private ReloadInstance reload;
+
+    @Shadow @Final
+    private Consumer<Optional<Throwable>> onFinish;
+
+    @Shadow @Final
+    private boolean fadeIn;
 
     @Shadow
-    protected abstract void renderProgressBar(DrawContext context, int minX, int minY, int maxX, int maxY, float opacity);
+    private long fadeInStart;
 
-    @Shadow @Final
-    private ResourceReload reload;
-
-    @Shadow @Final
-    private Consumer<Optional<Throwable>> exceptionHandler;
-
-    @Shadow @Final
-    private boolean reloading;
+    @Shadow private float currentProgress;
 
     @Shadow
-    private long reloadStartTime;
+    protected abstract void extractProgressBar(GuiGraphicsExtractor graphics, int x0, int y0, int x1, int y1, float fade);
 
-    @Shadow private float progress;
-
-    @Inject(method = "render", at = @At("HEAD"), cancellable = true)
-    private void closeIfFinished(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo info) {
+    @Inject(method = "extractRenderState", at = @At("HEAD"), cancellable = true)
+    private void closeIfFinished(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.NO_RELOAD_OVERLAY) == 0) {
             return;
         }
 
-        long l = Util.getMeasuringTimeMs();
-        float f = this.reloadCompleteTime > -1L ? (float)(l - reloadCompleteTime) / 1000.0F : -1.0F;
-        float g = reloadStartTime > -1L ? (float)(l - reloadStartTime) / 500.0F : -1.0F;
+        long l = Util.getMillis();
+        float f = this.fadeOutStart > -1L ? (float)(l - fadeOutStart) / 1000.0F : -1.0F;
+        float g = fadeInStart > -1L ? (float)(l - fadeInStart) / 500.0F : -1.0F;
 
         if (f >= 1.0F) {
-            if (this.client.currentScreen != null) {
-                this.client.currentScreen.render(context, 0, 0, delta);
+            if (this.minecraft.screen != null) {
+                this.minecraft.screen.extractRenderState(graphics, 0, 0, a);
             }
         }
         if (f < 1.0F) {
-            int i = context.getScaledWindowWidth();
-            int j = context.getScaledWindowHeight();
+            int i = graphics.guiWidth();
+            int j = graphics.guiHeight();
 
-            double d = Math.min(context.getScaledWindowWidth() * 0.75, context.getScaledWindowHeight()) * 0.25;
+            double d = Math.min(graphics.guiWidth() * 0.75, graphics.guiHeight()) * 0.25;
             int q = (int)(d * 0.5);
             double e = d * 4.0;
             int r = (int)(e * 0.5);
-            int t = (int)(context.getScaledWindowHeight() * 0.8325);
+            int t = (int)(graphics.guiHeight() * 0.8325);
 
-            float u = this.reload.getProgress();
-            progress = MathHelper.clamp(progress * 0.95F + u * 0.050000012F, 0.0F, 1.0F);
+            float u = this.reload.getActualProgress();
+            currentProgress = Mth.clamp(currentProgress * 0.95F + u * 0.050000012F, 0.0F, 1.0F);
 
-            renderProgressBar(context, i / 2 - r, t - 5, i / 2 + r, t + 5, 1.0F - MathHelper.clamp(f, 0.0F, 1.0F));
+            extractProgressBar(graphics, i / 2 - r, t - 5, i / 2 + r, t + 5, 1.0F - Mth.clamp(f, 0.0F, 1.0F));
         }
 
-        if (this.reloadCompleteTime == -1L && reload.isComplete()) {
-            client.setOverlay(null);
+        if (this.fadeOutStart == -1L && reload.isDone()) {
+            minecraft.setOverlay(null);
 
             try {
-                reload.throwException();
-                exceptionHandler.accept(Optional.empty());
+                reload.checkExceptions();
+                onFinish.accept(Optional.empty());
             } catch (Throwable var24) {
-                exceptionHandler.accept(Optional.of(var24));
+                onFinish.accept(Optional.of(var24));
             }
 
-            this.reloadCompleteTime = Util.getMeasuringTimeMs();
-            if (this.client.currentScreen != null) {
-                this.client.currentScreen.init(context.getScaledWindowWidth(), context.getScaledWindowHeight());
+            this.fadeOutStart = Util.getMillis();
+            if (this.minecraft.screen != null) {
+                this.minecraft.screen.init(graphics.guiWidth(), graphics.guiHeight());
             }
         }
 
         info.cancel();
     }
 
-    @Inject(method = "pausesGame", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isPauseScreen", at = @At("HEAD"), cancellable = true)
     private void removePause(CallbackInfoReturnable<Boolean> info) {
         if(FireClientside.getSetting(FireClientOption.NO_RELOAD_OVERLAY) == 0) {
             return;

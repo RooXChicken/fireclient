@@ -3,21 +3,21 @@ package org.loveroo.fireclient.screen.widgets;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder.GetFavoriteStatus;
 import org.loveroo.fireclient.screen.widgets.FavoriteButtonWidget.FavoriteButtonBuilder.SetFavoriteStatus;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.input.MouseInput;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.input.MouseButtonInfo;
 
-public class FavoriteButtonWidget extends ButtonWidget.Text {
+public class FavoriteButtonWidget extends Button.Plain {
 
-    private static final net.minecraft.text.Text favoriteIcon = net.minecraft.text.Text.literal("⭐");
+    private static final net.minecraft.network.chat.Component favoriteIcon = net.minecraft.network.chat.Component.literal("⭐");
 
     private static final Color enabledColor = Color.fromRGB(0xF2EF8D);
     private static final Color hoveredColor = Color.fromRGB(0xD9D768);
@@ -29,8 +29,8 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
 
     private int lastButton = -1;
 
-    protected FavoriteButtonWidget(int x, int y, int width, int height, net.minecraft.text.Text message, Tooltip tooltip, Consumer<ButtonWidget> onPress, GetFavoriteStatus getFavoriteStatus, SetFavoriteStatus setFavoriteStatus) {
-        super(x, y, width, height, message, (button) -> onPress.accept(button), ButtonWidget.DEFAULT_NARRATION_SUPPLIER);
+    protected FavoriteButtonWidget(int x, int y, int width, int height, net.minecraft.network.chat.Component message, Tooltip tooltip, Consumer<Button> onPress, GetFavoriteStatus getFavoriteStatus, SetFavoriteStatus setFavoriteStatus) {
+        super(x, y, width, height, message, onPress::accept, Button.DEFAULT_NARRATION);
 
         setTooltip(tooltip);
 
@@ -41,7 +41,7 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
     }
 
     @Override
-	public void onClick(Click click, boolean doubled) {
+	public void onClick(MouseButtonEvent click, boolean doubled) {
         if(lastButton == 0) {
             this.onPress(click);
             return;
@@ -52,30 +52,30 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
 	}
 
     @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
+    public boolean mouseClicked(MouseButtonEvent click, boolean doubled) {
         lastButton = click.button();
         return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean mouseReleased(Click click) {
+    public boolean mouseReleased(MouseButtonEvent click) {
         lastButton = click.button();
         return super.mouseReleased(click);
     }
 
     @Override
-    protected boolean isValidClickButton(MouseInput input) {
+    protected boolean isValidClickButton(MouseButtonInfo input) {
 		return input.button() == 0 || input.button() == 1;
 	}
 
     @Override
-    protected void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        super.drawIcon(context, mouseX, mouseY, deltaTicks);
+    protected void extractContents(@NonNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float deltaTicks) {
+        super.extractContents(graphics, mouseX, mouseY, deltaTicks);
 
         if(favorited) {
-            var textRenderer = MinecraftClient.getInstance().textRenderer;
+            var textRenderer = Minecraft.getInstance().font;
 
-            var matricies = context.getMatrices();
+            var matricies = graphics.pose();
             matricies.pushMatrix();
 
             matricies.translate(this.getX() + this.getWidth() - 1, this.getY() + 2);
@@ -83,7 +83,7 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
                 matricies.scale(1.35f, 1.35f);
             }
 
-            context.drawText(textRenderer, favoriteIcon, -4, -4, enabledColor.toInt(), true);
+            graphics.text(textRenderer, favoriteIcon, -4, -4, enabledColor.toInt(), true);
 
             matricies.popMatrix();
         }
@@ -92,13 +92,13 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
     public static class FavoriteButtonBuilder {
 
         @Nullable
-        private final net.minecraft.text.Text text;
+        private final net.minecraft.network.chat.Component text;
     
         private GetFavoriteStatus getFavoriteStatus;
         private SetFavoriteStatus setFavoriteStatus;
     
         @Nullable
-        private Consumer<ButtonWidget> onPress = null;
+        private Consumer<Button> onPress = null;
     
         private Tooltip tooltip;
     
@@ -108,7 +108,7 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
         private int width = 120;
         private int height = 20;
     
-        public FavoriteButtonBuilder(@Nullable net.minecraft.text.Text text) {
+        public FavoriteButtonBuilder(@Nullable net.minecraft.network.chat.Component text) {
             this.text = text;
         }
     
@@ -158,7 +158,7 @@ public class FavoriteButtonWidget extends ButtonWidget.Text {
             return this;
         }
     
-        public FavoriteButtonBuilder onPress(Consumer<ButtonWidget> onPress) {
+        public FavoriteButtonBuilder onPress(Consumer<Button> onPress) {
             this.onPress = onPress;
     
             return this;

@@ -14,9 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.client.option.SimpleOption;
+import net.minecraft.client.OptionInstance;
 
-@Mixin(SimpleOption.class)
+@Mixin(OptionInstance.class)
 public abstract class ZoomLevelMixin<T> {
 
     @Shadow
@@ -25,12 +25,12 @@ public abstract class ZoomLevelMixin<T> {
     @Unique
     private String key;
 
-    @Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/option/SimpleOption$TooltipFactory;Lnet/minecraft/client/option/SimpleOption$ValueTextGetter;Lnet/minecraft/client/option/SimpleOption$Callbacks;Lcom/mojang/serialization/Codec;Ljava/lang/Object;Ljava/util/function/Consumer;)V", at = @At("TAIL"))
-    private void storeKey(String key, SimpleOption.TooltipFactory<T> tooltipFactory, SimpleOption.ValueTextGetter<T> valueTextGetter, SimpleOption.Callbacks<T> callbacks, Codec<T> codec, Object defaultValue, Consumer<T> changeCallback, CallbackInfo info) {
-        this.key = key;
+    @Inject(method = "<init>(Ljava/lang/String;Lnet/minecraft/client/OptionInstance$TooltipSupplier;Lnet/minecraft/client/OptionInstance$CaptionBasedToString;Lnet/minecraft/client/OptionInstance$ValueSet;Lcom/mojang/serialization/Codec;Ljava/lang/Object;Ljava/util/function/Consumer;)V", at = @At("TAIL"))
+    private void storeKey(String captionId, OptionInstance.TooltipSupplier<T> tooltip, OptionInstance.CaptionBasedToString<T> toString, OptionInstance.ValueSet<T> values, Codec<T> codec, Object initialValue, Consumer<T> onValueUpdate, CallbackInfo info) {
+        this.key = captionId;
     }
 
-    @Inject(method = "getValue", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "get", at = @At("HEAD"), cancellable = true)
     private void modifyFov(CallbackInfoReturnable<Object> info) {
         if(!key.equals("options.fov")) {
             return;

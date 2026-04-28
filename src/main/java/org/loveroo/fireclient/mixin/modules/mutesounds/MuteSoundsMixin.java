@@ -8,20 +8,20 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.sounds.SoundEvent;
 
-@Mixin(ClientWorld.class)
+@Mixin(ClientLevel.class)
 public abstract class MuteSoundsMixin {
 
-    @ModifyVariable(method = "playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZJ)V", at = @At("HEAD"), ordinal = 0)
-    private float decreaseVolume(float volume, @Local(ordinal = 0, argsOnly = true) SoundEvent event) {
+    @ModifyVariable(method = "playSound(DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZJ)V", at = @At("HEAD"), argsOnly = true, name = "volume")
+    private float decreaseVolume(float volume, @Local(argsOnly = true, name = "sound") SoundEvent sound) {
         var muteSounds = (SoundsModule) FireClientside.getModule("sounds");
         if(muteSounds == null || !muteSounds.getData().isEnabled()) {
             return volume;
         }
 
-        var volumeMult = muteSounds.getVolume(event);
+        var volumeMult = muteSounds.getVolume(sound);
         return (float)(volume * volumeMult);
     }
 }

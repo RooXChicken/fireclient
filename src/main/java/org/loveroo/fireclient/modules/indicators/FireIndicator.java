@@ -1,6 +1,6 @@
 package org.loveroo.fireclient.modules.indicators;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 
@@ -11,7 +11,7 @@ public class FireIndicator extends Indicator {
     }
 
     @Override
-    protected boolean doesDraw(MinecraftClient client) {
+    protected boolean doesDraw(Minecraft client) {
         return (client.player != null && client.player.isOnFire());
     }
 }

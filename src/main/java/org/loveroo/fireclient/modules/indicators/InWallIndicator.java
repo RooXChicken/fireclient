@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.modules.indicators;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffects;
 import org.loveroo.fireclient.data.Color;
 
 public class InWallIndicator extends Indicator {
@@ -13,7 +13,7 @@ public class InWallIndicator extends Indicator {
     }
 
     @Override
-    protected boolean doesDraw(MinecraftClient client) {
+    protected boolean doesDraw(Minecraft client) {
         var inWall = isInWall;
 
         if(inWall) {

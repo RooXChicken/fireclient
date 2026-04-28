@@ -12,13 +12,13 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.scrollclick.BoundKeyAccessor;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.network.chat.Component;
 
 public class ScrollClickModule extends ModuleBase {
 
@@ -53,8 +53,8 @@ public class ScrollClickModule extends ModuleBase {
         });
 
         var toggleBind = new Keybind("toggle_scroll_click",
-            Text.translatable("fireclient.keybind.generic.toggle.name"),
-            Text.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.toggle.name"),
+            Component.translatable("fireclient.keybind.generic.toggle.description", getData().getShownName()),
             true, null,
             () -> getData().setEnabled(!getData().isEnabled()), null);
 
@@ -62,8 +62,8 @@ public class ScrollClickModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
-        if(!getData().isEnabled() || client.player == null || client.currentScreen != null) {
+    public void update(Minecraft client) {
+        if(!getData().isEnabled() || client.player == null || client.screen != null) {
             rightClicks = 0;
             leftClicks = 0;
 
@@ -79,16 +79,16 @@ public class ScrollClickModule extends ModuleBase {
             detectUsage();
             rightClicks = Math.min(3, rightClicks - 1);
 
-            var keyAccessor = (BoundKeyAccessor)client.options.useKey;
-            KeyBinding.onKeyPressed(keyAccessor.getBoundKey());
+            var keyAccessor = (BoundKeyAccessor)client.options.keyUse;
+            KeyMapping.click(keyAccessor.getKey());
         }
 
         if(leftClicks > 0) {
             detectUsage();
             leftClicks = Math.min(3, leftClicks - 1);
 
-            var keyAccessor = (BoundKeyAccessor)client.options.attackKey;
-            KeyBinding.onKeyPressed(keyAccessor.getBoundKey());
+            var keyAccessor = (BoundKeyAccessor)client.options.keyAttack;
+            KeyMapping.click(keyAccessor.getKey());
         }
     }
 
@@ -100,35 +100,35 @@ public class ScrollClickModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_scroll_click").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(ButtonWidget.builder(getScrollModeText(), this::scrollModeChanged)
-                .dimensions(base.width/2 - 130, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.scroll_type.tooltip")))
+        widgets.add(Button.builder(getScrollModeText(), this::scrollModeChanged)
+                .bounds(base.width/2 - 130, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.scroll_click.scroll_type.tooltip")))
                 .build());
 
-        widgets.add(ButtonWidget.builder(getClickTypeText(), this::clickTypeChanged)
-                .dimensions(base.width/2 + 10, base.height/2 + 20, 120, 20)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.scroll_click.click_type.tooltip")))
+        widgets.add(Button.builder(getClickTypeText(), this::clickTypeChanged)
+                .bounds(base.width/2 + 10, base.height/2 + 20, 120, 20)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.scroll_click.click_type.tooltip")))
                 .build());
 
         return widgets;
     }
 
-    private void scrollModeChanged(ButtonWidget button) {
+    private void scrollModeChanged(Button button) {
         mode = (mode == ScrollMode.SINGLE) ? ScrollMode.DUAL : ScrollMode.SINGLE;
         reloadScreen();
     }
 
-    private Text getScrollModeText() {
-        return Text.translatable("fireclient.module.scroll_click.click_type.name", mode.getName());
+    private Component getScrollModeText() {
+        return Component.translatable("fireclient.module.scroll_click.click_type.name", mode.getName());
     }
 
-    private void clickTypeChanged(ButtonWidget button) {
+    private void clickTypeChanged(Button button) {
         switch(mode) {
             case SINGLE -> {
                 singleClickType = (singleClickType == SingleClickType.USE) ? SingleClickType.ATTACK : SingleClickType.USE;
@@ -142,13 +142,13 @@ public class ScrollClickModule extends ModuleBase {
         button.setMessage(getClickTypeText());
     }
 
-    private Text getClickTypeText() {
+    private Component getClickTypeText() {
         switch(mode) {
             case SINGLE -> { return singleClickType.getName(); }
-            case DUAL -> { return Text.translatable("fireclient.module.scroll_click.dual_click_type.direction", dualClickType.getName()); }
+            case DUAL -> { return Component.translatable("fireclient.module.scroll_click.dual_click_type.direction", dualClickType.getName()); }
         }
 
-        return Text.of("");
+        return Component.nullToEmpty("");
     }
 
     public void incrementClicks(double direction) {
@@ -190,8 +190,8 @@ public class ScrollClickModule extends ModuleBase {
             this.name = name;
         }
 
-        public Text getName() {
-            return Text.translatable("fireclient.module.scroll_click.click_type." + name.toLowerCase());
+        public Component getName() {
+            return Component.translatable("fireclient.module.scroll_click.click_type." + name.toLowerCase());
         }
     }
 
@@ -205,8 +205,8 @@ public class ScrollClickModule extends ModuleBase {
             this.name = name;
         }
 
-        public Text getName() {
-            return Text.translatable("fireclient.module.scroll_click.single_click_type." + name.toLowerCase());
+        public Component getName() {
+            return Component.translatable("fireclient.module.scroll_click.single_click_type." + name.toLowerCase());
         }
     }
 

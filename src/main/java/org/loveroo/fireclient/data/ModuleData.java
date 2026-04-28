@@ -2,18 +2,18 @@ package org.loveroo.fireclient.data;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.PlainTextContent;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.contents.PlainTextContents;
+import net.minecraft.network.chat.Component;
 
 public class ModuleData {
     private final String id;
 
-    private final MutableText emoji;
-    private final MutableText name;
-    private final MutableText shownName;
-    private final MutableText description;
+    private final MutableComponent emoji;
+    private final MutableComponent name;
+    private final MutableComponent shownName;
+    private final MutableComponent description;
 
     private boolean favorited = false;
 
@@ -45,26 +45,26 @@ public class ModuleData {
 
     public ModuleData(String id, String emoji, Color color) {
         this.id = id;
-        this.emoji = Text.literal(emoji + " ").withColor(color.toInt());
+        this.emoji = Component.literal(emoji + " ").withColor(color.toInt());
 
-        name = Text.translatable("fireclient.module." + id + ".name");
+        name = Component.translatable("fireclient.module." + id + ".name");
         this.shownName = this.emoji.copy().append(getName().withColor(0xFFFFFFFF));
-        this.description = Text.translatable("fireclient.module." + id + ".description");
+        this.description = Component.translatable("fireclient.module." + id + ".description");
     }
 
-    public MutableText getName() {
+    public MutableComponent getName() {
         return name;
     }
 
-    public MutableText getShownName() {
+    public MutableComponent getShownName() {
         return shownName;
     }
 
-    public MutableText getEmoji() {
+    public MutableComponent getEmoji() {
         return emoji;
     }
 
-    public MutableText getTooltip(boolean showTransformation) {
+    public MutableComponent getTooltip(boolean showTransformation) {
         var transform = new StringBuilder();
 
         if(showTransformation) {
@@ -75,7 +75,7 @@ public class ModuleData {
             transform.append(getPosY());
 
             transform.append("\n");
-            transform.append(Text.translatable("fireclient.screen.generic.scale_label").getString());
+            transform.append(Component.translatable("fireclient.screen.generic.scale_label").getString());
             transform.append(": ");
 
             transform.append(String.format("%.2f", getScale()));
@@ -85,15 +85,15 @@ public class ModuleData {
     }
 
     public int getPosX() {
-        var client = MinecraftClient.getInstance();
-        var width = client.getWindow().getScaledWidth();
+        var client = Minecraft.getInstance();
+        var width = client.getWindow().getGuiScaledWidth();
 
         return (int)Math.round(posX * width);
     }
 
     public void setPosX(int x) {
-        var client = MinecraftClient.getInstance();
-        var width = client.getWindow().getScaledWidth();
+        var client = Minecraft.getInstance();
+        var width = client.getWindow().getGuiScaledWidth();
 
         setPosX(x, width);
     }
@@ -103,15 +103,15 @@ public class ModuleData {
     }
 
     public int getPosY() {
-        var client = MinecraftClient.getInstance();
-        var height = client.getWindow().getScaledHeight();
+        var client = Minecraft.getInstance();
+        var height = client.getWindow().getGuiScaledHeight();
 
         return (int)Math.round(posY * height);
     }
 
     public void setPosY(int y) {
-        var client = MinecraftClient.getInstance();
-        var height = client.getWindow().getScaledHeight();
+        var client = Minecraft.getInstance();
+        var height = client.getWindow().getGuiScaledHeight();
 
         setPosY(y, height);
     }
@@ -204,7 +204,7 @@ public class ModuleData {
         this.guiElement = guiElement;
     }
 
-    public Text getDescription() {
+    public Component getDescription() {
         return description;
     }
 

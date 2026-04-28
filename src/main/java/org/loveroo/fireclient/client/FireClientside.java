@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -62,15 +63,14 @@ import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.resources.Identifier;
 
 public class FireClientside implements ClientModInitializer {
 
@@ -89,8 +89,8 @@ public class FireClientside implements ClientModInitializer {
     private static final Affiliates affiliates = new Affiliates();
 
     private static final KeybindManager keybindManager = new KeybindManager();
-    private final KeyBinding moduleConfigKey = KeyBindingHelper.registerKeyBinding(
-            new KeyBinding("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
+    private final KeyMapping moduleConfigKey = KeyMappingHelper.registerKeyMapping(
+            new KeyMapping("key.fireclient.module_config", GLFW.GLFW_KEY_RIGHT_SHIFT, FireClient.KEYBIND_CATEGORY));
 
     @Override
     public void onInitializeClient() {
@@ -303,8 +303,8 @@ public class FireClientside implements ClientModInitializer {
         Files.copy(Path.of(FIRECLIENT_PATH + FIRECLIENT_CONFIG_FILE), Path.of(FIRECLIENT_PATH + FIRECLIENT_CONFIG_BACKUP_FILE), StandardCopyOption.REPLACE_EXISTING);
     }
 
-    private void update(MinecraftClient client) {
-        if(moduleConfigKey.wasPressed()) {
+    private void update(Minecraft client) {
+        if(moduleConfigKey.consumeClick()) {
             client.setScreen(new MainConfigScreen());
         }
 
@@ -345,10 +345,10 @@ public class FireClientside implements ClientModInitializer {
     static class GuiDrawer {
 
         public GuiDrawer() {
-            HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, Identifier.of(FireClient.MOD_ID, "gui"), this::draw);
+            HudElementRegistry.attachElementAfter(VanillaHudElements.HOTBAR, Identifier.fromNamespaceAndPath(FireClient.MOD_ID, "gui"), this::draw);
         }
 
-        public void draw(DrawContext context, RenderTickCounter ticks) {
+        public void draw(GuiGraphicsExtractor context, DeltaTracker ticks) {
             for(var module : FireClientside.getModules()) {
                 if(!module.getData().isGuiElement()) {
                     continue;

@@ -14,14 +14,14 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
 
 public abstract class ModuleBase {
 
@@ -40,11 +40,11 @@ public abstract class ModuleBase {
         return data;
     }
 
-    public void update(MinecraftClient client) { }
+    public void update(Minecraft client) { }
 
     protected boolean canDraw() {
         if(FireClientside.getSetting(FireClientOption.SHOW_MODULES_DEBUG) == 0) {
-            if(MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud()) {
+            if(Minecraft.getInstance().getDebugOverlay().showDebugScreen()) {
                 return false;
             }
         }
@@ -52,20 +52,20 @@ public abstract class ModuleBase {
         return !drawingOverwritten && getData().isVisible();
     }
 
-    public void draw(DrawContext context, RenderTickCounter ticks) { }
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) { }
 
-    public void drawOutline(DrawContext context) {
+    public void drawOutline(GuiGraphicsExtractor graphics) {
         if(!getData().isGuiElement()) {
             return;
         }
 
         var points = getPoints();
 
-        context.drawHorizontalLine(points[0], points[1], points[2], 0xFFFFFFFF);
-        context.drawHorizontalLine(points[0], points[1], points[3], 0xFFFFFFFF);
+        graphics.horizontalLine(points[0], points[1], points[2], 0xFFFFFFFF);
+        graphics.horizontalLine(points[0], points[1], points[3], 0xFFFFFFFF);
 
-        context.drawVerticalLine(points[0], points[2], points[3], 0xFFFFFFFF);
-        context.drawVerticalLine(points[1], points[2], points[3], 0xFFFFFFFF);
+        graphics.horizontalLine(points[0], points[2], points[3], 0xFFFFFFFF);
+        graphics.horizontalLine(points[1], points[2], points[3], 0xFFFFFFFF);
     }
 
     public void handleTransformation(int mouseState, OldTransform old, int mouseX, int mouseY, int oldMouseX, int oldMouseY, boolean snap) {
@@ -218,53 +218,53 @@ public abstract class ModuleBase {
         return field.get(this);
     }
 
-    public void moduleConfigPressed(ButtonWidget button) {
-        var client = MinecraftClient.getInstance();
+    public void moduleConfigPressed(Button button) {
+        var client = Minecraft.getInstance();
         client.setScreen(new ModuleConfigScreen(this));
     }
 
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
         return widgets;
     }
 
-    public ButtonWidget getToggleVisibleButton(int x, int y) {
-        return new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_visible"))
+    public Button getToggleVisibleButton(int x, int y) {
+        return new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.generic.toggle_visible"))
             .getValue(getData()::isVisible)
             .setValue(getData()::setVisible)
             .position(x, y)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.visibility_toggle")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.generic.visibility_toggle")))
             .build();
     }
 
-    public ButtonWidget getToggleEnableButton(int x, int y) {
-        return new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.generic.toggle_enabled"))
+    public Button getToggleEnableButton(int x, int y) {
+        return new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.generic.toggle_enabled"))
             .getValue(getData()::isEnabled)
             .setValue(getData()::setEnabled)
             .position(x, y)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.generic.enabled_toggle")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.generic.enabled_toggle")))
             .build();
     }
 
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         drawScreenHeader(context, base.width/2, base.height/2 - 40);
     }
 
-    protected void drawScreenHeader(DrawContext context, int x, int y) {
-        var text = MinecraftClient.getInstance().textRenderer;
+    protected void drawScreenHeader(GuiGraphicsExtractor context, int x, int y) {
+        var text = Minecraft.getInstance().font;
 
-        var configText = Text.translatable("fireclient.module.generic.config_text", getData().getShownName());
-        context.drawCenteredTextWithShadow(text, configText, x, y, 0xFFFFFFFF);
+        var configText = Component.translatable("fireclient.module.generic.config_text", getData().getShownName());
+        context.centeredText(text, configText, x, y, 0xFFFFFFFF);
     }
 
     public void openScreen(Screen screen) { }
 
     protected void reloadScreen() {
-        var client = MinecraftClient.getInstance();
-        if(client.currentScreen instanceof ModuleConfigScreen screen) {
+        var client = Minecraft.getInstance();
+        if(client.screen instanceof ModuleConfigScreen screen) {
             screen.setReloading();
         }
 

@@ -3,6 +3,7 @@ package org.loveroo.fireclient.modules;
 import java.util.List;
 import java.util.function.Predicate;
 
+import net.minecraft.world.inventory.ContainerInput;
 import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
@@ -10,14 +11,13 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.network.chat.Component;
 
 public class ElytraSwapModule extends ModuleBase {
 
@@ -39,8 +39,8 @@ public class ElytraSwapModule extends ModuleBase {
         });
 
         var useBind = new Keybind("use_elytra_swap",
-            Text.translatable("fireclient.keybind.generic.use.name"),
-            Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.use.name"),
+            Component.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
             true, null,
             this::useKey, null);
 
@@ -48,7 +48,7 @@ public class ElytraSwapModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
+    public void update(Minecraft client) {
         if(!activeSinceJoined && getData().isEnabled()) {
             activeSinceJoined = true;
             FireClient.LOGGER.info("ElytraSwap is enabled!");
@@ -60,13 +60,13 @@ public class ElytraSwapModule extends ModuleBase {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
 
-        var hasElytra = client.player.getInventory().getStack(38).isOf(Items.ELYTRA);
-        var slot = (hasElytra) ? firstOf((item) -> item.isIn(ItemTags.CHEST_ARMOR)) : firstOf((item) -> item.isOf(Items.ELYTRA));
+        var hasElytra = client.player.getInventory().getItem(38).is(Items.ELYTRA);
+        var slot = (hasElytra) ? firstOf((item) -> item.is(ItemTags.CHEST_ARMOR)) : firstOf((item) -> item.is(Items.ELYTRA));
 
         if(slot == -1) {
             return;
@@ -81,15 +81,15 @@ public class ElytraSwapModule extends ModuleBase {
     }
 
     private int firstOf(Predicate<ItemStack> itemCheck) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return -1;
         }
 
         var slot = -1;
 
-        for(var i = 0; i < client.player.getInventory().size(); i++) {
-            var item = client.player.getInventory().getStack(i);
+        for(var i = 0; i < client.player.getInventory().getContainerSize(); i++) {
+            var item = client.player.getInventory().getItem(i);
             if(!itemCheck.test(item)) {
                 continue;
             }
@@ -102,8 +102,8 @@ public class ElytraSwapModule extends ModuleBase {
     }
 
     private void swapArmor(int sourceSlot, int destSlot) {
-        var client = MinecraftClient.getInstance();
-        if(client.player == null || client.interactionManager == null) {
+        var client = Minecraft.getInstance();
+        if(client.player == null || client.gameMode == null) {
             return;
         }
 
@@ -111,33 +111,33 @@ public class ElytraSwapModule extends ModuleBase {
             sourceSlot += 36;
         }
 
-        client.interactionManager.clickSlot(
-                client.player.playerScreenHandler.syncId,
+        client.gameMode.handleContainerInput(
+                client.player.inventoryMenu.containerId,
                 sourceSlot,
                 0,
-                SlotActionType.PICKUP,
+                ContainerInput.PICKUP,
                 client.player
         );
 
-        client.interactionManager.clickSlot(
-                client.player.playerScreenHandler.syncId,
+        client.gameMode.handleContainerInput(
+                client.player.inventoryMenu.containerId,
                 destSlot,
                 0,
-                SlotActionType.PICKUP,
+                ContainerInput.PICKUP,
                 client.player
         );
 
-        client.interactionManager.clickSlot(
-                client.player.playerScreenHandler.syncId,
+        client.gameMode.handleContainerInput(
+                client.player.inventoryMenu.containerId,
                 sourceSlot,
                 0,
-                SlotActionType.PICKUP,
+                ContainerInput.PICKUP,
                 client.player
         );
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
+    public List<AbstractWidget> getConfigScreen(Screen base) {
         var widgets = super.getConfigScreen(base);
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_elytra_swap").getRebindButton(5, base.height - 25, 120,20));

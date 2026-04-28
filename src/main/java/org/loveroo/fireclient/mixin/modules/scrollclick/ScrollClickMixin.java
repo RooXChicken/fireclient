@@ -9,16 +9,16 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.Mouse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 
-@Mixin(Mouse.class)
+@Mixin(MouseHandler.class)
 public abstract class ScrollClickMixin {
 
-    @Inject(method = "onMouseScroll(JDD)V", at = @At("HEAD"), cancellable = true)
-    private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(window != client.getWindow().getHandle() || client.player == null || client.currentScreen != null) {
+    @Inject(method = "onScroll(JDD)V", at = @At("HEAD"), cancellable = true)
+    private void onMouseScroll(long handle, double xoffset, double yoffset, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(handle != client.getWindow().handle() || client.player == null || client.screen != null) {
             return;
         }
 
@@ -37,7 +37,7 @@ public abstract class ScrollClickMixin {
             return;
         }
 
-        scrollClick.incrementClicks(vertical);
+        scrollClick.incrementClicks(yoffset);
         info.cancel();
     }
 }

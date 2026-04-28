@@ -3,16 +3,16 @@ package org.loveroo.fireclient.modules;
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
-import net.minecraft.util.Colors;
-import net.minecraft.util.math.ColorHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.CommonColors;
+import net.minecraft.util.ARGB;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
@@ -52,8 +52,8 @@ public class HitColorModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 30));
 
@@ -66,7 +66,7 @@ public class HitColorModule extends ModuleBase {
 
     @Override
     public void closeScreen(Screen screen) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player != null) {
             client.player.hurtTime = 0;
         }
@@ -75,10 +75,10 @@ public class HitColorModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         super.drawScreenHeader(context, base.width/2, base.height/2 - 100);
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
@@ -91,7 +91,7 @@ public class HitColorModule extends ModuleBase {
         float scale = 1.4f;
         int off = 50;
 
-        InventoryScreen.drawEntity(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
+        InventoryScreen.extractEntityInInventoryFollowsMouse(context, (i+26-off)*2, (j-8-off)*2, (i+75-off)*2, (j+78-off)*2, (int)(30*scale), 0.0625F, ((ConfigScreenBase)base).getMouseX(), ((ConfigScreenBase)base).getMouseY(), client.player);
     }
 
     private void hitColorChanged(int color) {
@@ -111,18 +111,18 @@ public class HitColorModule extends ModuleBase {
     }
 
     public void changeColor(int color) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
 
-        var overlayTexture = ((OverlayTextureAccessor)client.gameRenderer.getOverlayTexture()).getTexture();
-        var nativeImage = overlayTexture.getImage();
+        var overlayTexture = ((OverlayTextureAccessor)client.gameRenderer.overlayTexture()).getTexture();
+        var nativeImage = overlayTexture.getPixels();
 
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
                 if (i < 8) {
-                    nativeImage.setColorArgb(j, i, color);
+                    nativeImage.setPixel(j, i, color);
                 } else {
                     int k = (int)((1.0F - j / 15.0F * 0.75F) * 255.0F);
-                    nativeImage.setColorArgb(j, i, ColorHelper.withAlpha(k, Colors.WHITE));
+                    nativeImage.setPixel(j, i, ARGB.color(k, CommonColors.WHITE));
                 }
             }
         }

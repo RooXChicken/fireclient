@@ -12,14 +12,14 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.mixin.modules.reachdisplay.FindCrosshairTargetAccessor;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.HitResult;
 
 public class ReachDisplayModule extends ModuleBase {
 
@@ -52,8 +52,8 @@ public class ReachDisplayModule extends ModuleBase {
         getData().setVisible(false);
 
         var toggleBind = new Keybind("toggle_reach_display",
-            Text.translatable("fireclient.keybind.generic.toggle.name"),
-            Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.toggle.name"),
+            Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
             true, null,
             () -> getData().setVisible(!getData().isVisible()), null);
 
@@ -61,40 +61,40 @@ public class ReachDisplayModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_reach_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.reach_display.hit_only.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.reach_display.hit_only.name"))
             .getValue(() -> { return hitOnly; })
             .setValue((value) -> { hitOnly = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.reach_display.hit_only.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.reach_display.hit_only.tooltip")))
             .build());
 
         return widgets;
     }
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw()) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null || client.getCameraEntity() == null) {
             return;
         }
 
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
-        var text = client.textRenderer;
+        var text = client.font;
         
         if(!hitOnly) {
             var crosshairAccessor = (FindCrosshairTargetAccessor) client.player;
-            var result = crosshairAccessor.findCrosshairTargetInvoker(client.getCameraEntity(), 100, 100, ticks.getTickProgress(false));
+            var result = crosshairAccessor.findCrosshairTargetInvoker(client.getCameraEntity(), 100, 100, ticks.getGameTimeDeltaPartialTick(false));
 
             calculateReach(result);
         }
@@ -102,11 +102,11 @@ public class ReachDisplayModule extends ModuleBase {
         var msg = String.format("🗡 %.2f", reach);
         var reachText = RooHelper.gradientText(msg, reachColor1, reachColor2);
 
-        getData().setWidth(text.getWidth(reachText));
+        getData().setWidth(text.width(reachText));
 
-        context.drawText(text, reachText, 0, 0, 0xFFFFFFFF, true);
+        graphics.text(text, reachText, 0, 0, 0xFFFFFFFF, true);
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 
     public boolean isHitOnly() {
@@ -114,12 +114,12 @@ public class ReachDisplayModule extends ModuleBase {
     }
 
     public void calculateReach(HitResult result) {
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
 
         if(result != null && result.getType() == HitResult.Type.ENTITY) {
-            reach = client.player.getEyePos().distanceTo(result.getPos());
+            reach = client.player.getEyePosition().distanceTo(result.getLocation());
 
-            double maxReach = client.player.getEntityInteractionRange();
+            double maxReach = client.player.entityInteractionRange();
             if(reach < maxReach) {
                 reachColor1 = hitColor1;
                 reachColor2 = hitColor2;

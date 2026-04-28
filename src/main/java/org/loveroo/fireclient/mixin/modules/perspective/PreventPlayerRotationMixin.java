@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.mixin.modules.perspective;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.PerspectiveModule;
 import org.spongepowered.asm.mixin.Mixin;
@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Entity.class)
 public abstract class PreventPlayerRotationMixin {
 
-    @Inject(method = "changeLookDirection", at = @At("HEAD"), cancellable = true)
-    private void preventLook(double cursorDeltaX, double cursorDeltaY, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
+    @Inject(method = "turn", at = @At("HEAD"), cancellable = true)
+    private void preventLook(double xo, double yo, CallbackInfo info) {
+        var client = Minecraft.getInstance();
         if(client.player != (Object)this) {
             return;
         }
@@ -24,8 +24,8 @@ public abstract class PreventPlayerRotationMixin {
             return;
         }
 
-        float pitchDelta = (float)cursorDeltaY * 0.15F;
-        float yawDelta = (float)cursorDeltaX * 0.15F;
+        float pitchDelta = (float) yo * 0.15F;
+        float yawDelta = (float) xo * 0.15F;
 
         perspective.addDelta(yawDelta, pitchDelta);
 

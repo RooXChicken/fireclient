@@ -10,10 +10,10 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 
 public class ZoomModule extends ModuleBase {
 
@@ -31,8 +31,8 @@ public class ZoomModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_zoom",
-            Text.translatable("fireclient.keybind.generic.use.name"),
-            Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.use.name"),
+            Component.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
             true, null,
             this::useKey, () -> { zooming = false; });
 
@@ -49,17 +49,17 @@ public class ZoomModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_zoom").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.zoom.scroll_zoom.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.zoom.scroll_zoom.name"))
             .getValue(this::doesScrollToZoom)
             .setValue((value) -> { scrollToZoom = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.zoom.scroll_zoom.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.zoom.scroll_zoom.tooltip")))
             .build());
 
         return widgets;

@@ -1,9 +1,9 @@
 package org.loveroo.fireclient.mixin.modules.kit;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
 import org.loveroo.fireclient.RooHelper;
 import org.loveroo.fireclient.commands.FKitCommand;
 import org.loveroo.fireclient.data.KitManager;
@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Screen.class)
 public class OverrideKitCommandMixin {
 
-    @Inject(method = "handleRunCommand", at = @At("HEAD"), cancellable = true)
-    private static void downloadKit(ClientPlayerEntity player, String command, Screen screenAfterRun, CallbackInfo info) {
+    @Inject(method = "clickCommandAction", at = @At("HEAD"), cancellable = true)
+    private static void downloadKit(LocalPlayer player, String command, Screen screenAfterRun, CallbackInfo info) {
         final var prefix = "/fkit download_kit ";
         if(!command.startsWith(prefix)) {
             return;
@@ -30,7 +30,7 @@ public class OverrideKitCommandMixin {
         var kitId = json.optString("id", "");
 
         KitManager.downloadKit(kitName, kitId, (status) -> {
-            var client = MinecraftClient.getInstance();
+            var client = Minecraft.getInstance();
             if(client.player == null) {
                 return;
             }
@@ -40,51 +40,51 @@ public class OverrideKitCommandMixin {
 
             switch(status) {
                 case SUCCESS -> {
-                    message = Text.translatable("fireclient.module.kit.download.success", kitName).getString();
+                    message = Component.translatable("fireclient.module.kit.download.success", kitName).getString();
                 }
 
                 case NO_KIT -> {
-                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                    message = Component.translatable("fireclient.module.kit.download.failure.generic", kitName)
                                     .append(" ")
-                                    .append(Text.translatable("fireclient.module.kit.download.failure.no_kit")).getString();
+                                    .append(Component.translatable("fireclient.module.kit.download.failure.no_kit")).getString();
 
                     code = 0;
                 }
 
                 case INVALID_KIT -> {
-                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                    message = Component.translatable("fireclient.module.kit.download.failure.generic", kitName)
                             .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
+                            .append(Component.translatable("fireclient.module.kit.generic.invalid_kit.contents")).getString();
 
                     code = 0;
                 }
 
                 case ALREADY_EXISTS -> {
-                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                    message = Component.translatable("fireclient.module.kit.download.failure.generic", kitName)
                             .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.generic.already_exists.contents")).getString();
+                            .append(Component.translatable("fireclient.module.kit.generic.already_exists.contents")).getString();
 
                     code = 0;
                 }
 
                 case FAILURE -> {
-                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                    message = Component.translatable("fireclient.module.kit.download.failure.generic", kitName)
                             .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.failure.generic_fail")).getString();
+                            .append(Component.translatable("fireclient.module.kit.failure.generic_fail")).getString();
 
                     code = 0;
                 }
 
                 case RATE_LIMITED -> {
-                    message = Text.translatable("fireclient.module.kit.download.failure.generic", kitName)
+                    message = Component.translatable("fireclient.module.kit.download.failure.generic", kitName)
                             .append(" ")
-                            .append(Text.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
+                            .append(Component.translatable("fireclient.module.kit.server.fail.rate_limit")).getString();
 
                     code = 0;
                 }
             }
 
-            client.player.sendMessage(FKitCommand.getResult(message, code), false);
+            client.player.sendSystemMessage(FKitCommand.getResult(message, code));
         });
 
         info.cancel();

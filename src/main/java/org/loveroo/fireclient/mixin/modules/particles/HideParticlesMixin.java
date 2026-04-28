@@ -9,16 +9,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleType;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 
-@Mixin(ParticleManager.class)
+@Mixin(ParticleEngine.class)
 public class HideParticlesMixin {
     
-    @Inject(method = "createParticle", at = @At("HEAD"), cancellable = true)
-    private void hideParticles(ParticleEffect particle, double x, double y, double z, double velX, double velY, double velZ, CallbackInfoReturnable<Particle> info) {
-        if(!isHidden(particle.getType())) {
+    @Inject(method = "makeParticle", at = @At("HEAD"), cancellable = true)
+    private void hideParticles(ParticleOptions options, double x, double y, double z, double xa, double ya, double za, CallbackInfoReturnable<Particle> info) {
+        if(!isHidden(options.getType())) {
             return;
         }
 

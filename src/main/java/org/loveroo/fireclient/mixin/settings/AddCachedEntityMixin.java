@@ -1,7 +1,7 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientCommandSource;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientSuggestionProvider;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.settings.CachedEntityUUID;
@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Collection;
 import java.util.Collections;
 
-@Mixin(ClientCommandSource.class)
+@Mixin(ClientSuggestionProvider.class)
 public abstract class AddCachedEntityMixin {
 
-    @Inject(method = "getEntitySuggestions", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "getSelectedEntities", at = @At("HEAD"), cancellable = true)
     private void returnCachedSuggestion(CallbackInfoReturnable<Collection<String>> info) {
         if(FireClientside.getSetting(FireClientOption.CACHE_UUID) == 0) {
             return;

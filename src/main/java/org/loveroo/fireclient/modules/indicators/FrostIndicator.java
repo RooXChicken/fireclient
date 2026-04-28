@@ -1,6 +1,6 @@
 package org.loveroo.fireclient.modules.indicators;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.loveroo.fireclient.data.Color;
 
 public class FrostIndicator extends Indicator {
@@ -10,7 +10,7 @@ public class FrostIndicator extends Indicator {
     }
 
     @Override
-    protected boolean doesDraw(MinecraftClient client) {
-        return (client.player != null && client.player.getFrozenTicks() > 0);
+    protected boolean doesDraw(Minecraft client) {
+        return (client.player != null && client.player.getTicksFrozen() > 0);
     }
 }

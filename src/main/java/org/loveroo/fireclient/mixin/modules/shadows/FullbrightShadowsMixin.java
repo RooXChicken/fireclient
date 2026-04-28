@@ -3,8 +3,8 @@ package org.loveroo.fireclient.mixin.modules.shadows;
 import org.loveroo.fireclient.settings.FullbrightShadows;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
-@Mixin(World.class)
+@Mixin(Level.class)
 public abstract class FullbrightShadowsMixin implements FullbrightShadows {
 }

@@ -9,12 +9,12 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
 
 public class TPSModule extends ModuleBase {
 
@@ -35,8 +35,8 @@ public class TPSModule extends ModuleBase {
         getData().setDefaultPosY(68, 360);
 
         var toggleBind = new Keybind("toggle_tps_display",
-            Text.translatable("fireclient.keybind.generic.toggle.name"),
-            Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+            Component.translatable("fireclient.keybind.generic.toggle.name"),
+            Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
             true, null,
             () -> getData().setVisible(!getData().isVisible()), null);
 
@@ -46,8 +46,8 @@ public class TPSModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_tps_display").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
@@ -56,7 +56,7 @@ public class TPSModule extends ModuleBase {
     }
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw()) {
             return;
         }
@@ -64,19 +64,19 @@ public class TPSModule extends ModuleBase {
         var newSystemTime = System.currentTimeMillis();
         var calcTps = calcTps(newSystemTime, oldSystemTime);
         
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
-        var client = MinecraftClient.getInstance();
-        var text = client.textRenderer;
+        var client = Minecraft.getInstance();
+        var text = client.font;
 
         var msg = "⏳ " + String.format("%.2f", (calcTps < tps) ? calcTps : tps);
         var tpsText = RooHelper.gradientText(msg, color1, color2);
 
-        getData().setWidth(text.getWidth(tpsText));
+        getData().setWidth(text.width(tpsText));
 
-        context.drawText(text, tpsText, 0, 0, 0xFFFFFFFF, true);
+        graphics.text(text, tpsText, 0, 0, 0xFFFFFFFF, true);
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 
     public void setTps() {

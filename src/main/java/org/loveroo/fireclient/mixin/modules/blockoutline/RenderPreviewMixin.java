@@ -1,16 +1,19 @@
 package org.loveroo.fireclient.mixin.modules.blockoutline;
 
-import com.mojang.blaze3d.systems.ProjectionType;
+import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.Projection;
+import net.minecraft.client.renderer.ProjectionMatrixBuffer;
+import net.minecraft.client.renderer.ShapeRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.world.phys.shapes.Shapes;
 import org.joml.Quaternionf;
-import org.loveroo.fireclient.FireClient;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.BlockOutlineModule;
-import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.config.ModuleConfigScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,12 +28,13 @@ public class RenderPreviewMixin {
     private float rot = 180.0f;
 
     @Unique
-    private ProjectionMatrix2 proj = null;
+    private ProjectionMatrixBuffer proj = null;
+    private final Projection projection = new Projection();
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;incrementFrame()V"))
-    private void renderOutline(RenderTickCounter tickCounter, boolean tick, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(!(client.currentScreen instanceof ModuleConfigScreen)) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/render/GuiRenderer;endFrame()V"))
+    private void renderOutline(DeltaTracker deltaTracker, boolean advanceGameTime, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(!(client.screen instanceof ModuleConfigScreen)) {
             return;
         }
 
@@ -39,25 +43,25 @@ public class RenderPreviewMixin {
             return;
         }
 
-        var shape = VoxelShapes.cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+        var shape = Shapes.box(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
         final var scale = 25.0f;
 
-        var window = MinecraftClient.getInstance().getWindow();
+        var window = Minecraft.getInstance().getWindow();
+        var width = (float)(window.getWidth() / window.getGuiScale());
+        var height = (float)(window.getHeight() / window.getGuiScale());
 
         if(proj == null) {
-            proj = new ProjectionMatrix2("outline_proj", 0.0f, 210000.0F, true);
+            proj = new ProjectionMatrixBuffer("outline_proj");
+            projection.setupOrtho(0.0f, 210000.0F, width, height, true);
         }
 
-        var width = (float)(window.getFramebufferWidth() / window.getScaleFactor());
-        var height = (float)(window.getFramebufferHeight() / window.getScaleFactor());
-
-        var slice = proj.set(width, height);
+        var slice = proj.getBuffer(projection);
         RenderSystem.setProjectionMatrix(slice, ProjectionType.ORTHOGRAPHIC);
 
-        var matrix = new MatrixStack();
-        matrix.push();
+        var matrix = new PoseStack();
+        matrix.pushPose();
 
-        rot -= tickCounter.getDynamicDeltaTicks()*2.0f;
+        rot -= deltaTracker.getGameTimeDeltaTicks()*2.0f;
 
         while(rot < 180) {
             rot += 360;
@@ -65,16 +69,16 @@ public class RenderPreviewMixin {
 
         matrix.translate(width/2.0f, height/2.0f - 40, -11000.0F);
         matrix.scale(scale, scale, scale);
-        matrix.multiply(new Quaternionf().rotateXYZ(0.130f, (float)Math.toRadians(rot), 0.0f));
+        matrix.mulPose(new Quaternionf().rotateXYZ(0.130f, (float)Math.toRadians(rot), 0.0f));
 
         var color = (outline.getData().isEnabled()) ? outline.getOutline() : outline.getDefaultOutline();
 
-        var layer = (outline.getData().isEnabled() && outline.isThick()) ? RenderLayers.secondaryBlockOutline() : RenderLayers.lines();
-        var vertex = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+        var layer = (outline.getData().isEnabled() && outline.isThick()) ? RenderTypes.secondaryBlockOutline() : RenderTypes.lines();
+        var vertex = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        VertexRendering.drawOutline(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color, 1.0f);
-        vertex.drawCurrentLayer();
+        ShapeRenderer.renderShape(matrix, vertex.getBuffer(layer), shape, 0, 0, 0, color, 1.0f);
+        vertex.endLastBatch();
 
-        matrix.pop();
+        matrix.popPose();
     }
 }

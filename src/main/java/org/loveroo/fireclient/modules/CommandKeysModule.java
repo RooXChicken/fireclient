@@ -14,14 +14,14 @@ import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.base.ScrollableWidget;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 
 public class CommandKeysModule extends ModuleBase {
 
@@ -89,26 +89,26 @@ public class CommandKeysModule extends ModuleBase {
     }
 
     @Override
-    public void moduleConfigPressed(ButtonWidget button) {
+    public void moduleConfigPressed(Button button) {
         scrollPos = 0.0;
         super.moduleConfigPressed(button);
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var client = MinecraftClient.getInstance();
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var client = Minecraft.getInstance();
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 + 95));
 
         var entries = new ArrayList<ScrollableWidget.ElementEntry>();
 
         for(var command : commandKeys) {
-            var entryWidgets = new ArrayList<ClickableWidget>();
+            var entryWidgets = new ArrayList<AbstractWidget>();
 
-            var removeButton = ButtonWidget.builder(Text.translatable("fireclient.module.command_keys.remove_command.name").withColor(0xD63C3C), (button) -> removeCommand(command))
-                .dimensions(base.width/2 + 115, 2,20,15)
-                .tooltip(Tooltip.of(Text.translatable("fireclient.module.command_keys.remove_command.tooltip", command.getCommand())))
+            var removeButton = Button.builder(Component.translatable("fireclient.module.command_keys.remove_command.name").withColor(0xD63C3C), (button) -> removeCommand(command))
+                .bounds(base.width/2 + 115, 2,20,15)
+                .tooltip(Tooltip.create(Component.translatable("fireclient.module.command_keys.remove_command.tooltip", command.getCommand())))
                 .build();
             
             createCommandKeybind(command);
@@ -116,15 +116,15 @@ public class CommandKeysModule extends ModuleBase {
             var keybind =  FireClientside.getKeybindManager().getKeybind(getCommandKeyName(command));
             var keybindButton = keybind.getRebindButton(base.width/2 + 30, 0, 80, 20);
 
-            var text = new TextFieldWidget(client.textRenderer, 160, 15, Text.literal(""));
-            text.setText(command.getCommand());
+            var text = new EditBox(client.font, 160, 15, Component.literal(""));
+            text.setValue(command.getCommand());
             text.setPosition(base.width/2 - 140, 2);
-            text.setChangedListener((input) -> {
+            text.setResponder((input) -> {
                 command.setCommand(input);
-                removeButton.setTooltip(Tooltip.of(Text.translatable("fireclient.module.command_keys.remove_command.tooltip", command.getCommand())));
+                removeButton.setTooltip(Tooltip.create(Component.translatable("fireclient.module.command_keys.remove_command.tooltip", command.getCommand())));
 
-                keybind.setDescription(Text.translatable("fireclient.module.command_keys.run_command.tooltip", command.getCommand()));
-                keybindButton.setTooltip(Tooltip.of(keybind.getDescription()));
+                keybind.setDescription(Component.translatable("fireclient.module.command_keys.run_command.tooltip", command.getCommand()));
+                keybindButton.setTooltip(Tooltip.create(keybind.getDescription()));
             });
 
             entryWidgets.add(text);
@@ -134,15 +134,15 @@ public class CommandKeysModule extends ModuleBase {
             entries.add(new ScrollableWidget.ElementEntry(entryWidgets));
         }
 
-        var addButton = ButtonWidget.builder(Text.translatable("fireclient.module.command_keys.add_command.name"), (button) -> addCommand())
-            .dimensions(base.width/2 - 60, 0, 120, 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.command_keys.add_command.tooltip")))
+        var addButton = Button.builder(Component.translatable("fireclient.module.command_keys.add_command.name"), (button) -> addCommand())
+            .bounds(base.width/2 - 60, 0, 120, 20)
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.command_keys.add_command.tooltip")))
             .build();
 
         entries.add(new ScrollableWidget.ElementEntry(List.of(addButton)));
 
         scroll = new ScrollableWidget(base, commandsWidgetWidth, commandsWidgetHeight, 0, 25, entries);
-        scroll.setScrollY(scrollPos);
+        scroll.setScrollAmount(scrollPos);
         scroll.setPosition(base.width/2 - (commandsWidgetWidth/2), base.height/2 - 50);
 
         widgets.add(scroll);
@@ -171,8 +171,8 @@ public class CommandKeysModule extends ModuleBase {
         }
         
         var keybind = new Keybind(keyId,
-            Text.translatable("fireclient.module.command_keys.run_command.name"),
-            Text.translatable("fireclient.module.command_keys.run_command.tooltip", command.getCommand()),
+            Component.translatable("fireclient.module.command_keys.run_command.name"),
+            Component.translatable("fireclient.module.command_keys.run_command.tooltip", command.getCommand()),
         true, null,
         () -> useCommandKey(command), null);
         
@@ -193,9 +193,9 @@ public class CommandKeysModule extends ModuleBase {
     }
 
     @Override
-    public void drawScreen(Screen base, DrawContext context, float delta) {
+    public void drawScreen(Screen base, GuiGraphicsExtractor context, float delta) {
         if(scroll != null) {
-            scrollPos = scroll.getScrollY();
+            scrollPos = scroll.scrollAmount();
         }
 
         drawScreenHeader(context, base.width/2, base.height/2 - 70);

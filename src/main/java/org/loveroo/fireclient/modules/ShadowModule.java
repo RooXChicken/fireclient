@@ -1,10 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.data.Color;
@@ -40,35 +40,35 @@ public class ShadowModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.shadow.distance_effect.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.shadow.distance_effect.name"))
             .getValue(() -> { return distanceEffect; })
             .setValue((value) -> { distanceEffect = value; })
             .position(base.width/2 - 130, base.height/2 - 10)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.distance_effect.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.shadow.distance_effect.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.shadow.increase_height.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.shadow.increase_height.name"))
             .getValue(() -> { return increaseHeight; })
             .setValue((value) -> { increaseHeight = value; })
             .position(base.width/2 + 10, base.height/2 - 10)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.increase_height.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.shadow.increase_height.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.shadow.fullbright.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.shadow.fullbright.name"))
             .getValue(() -> { return fullbright; })
             .setValue((value) -> { fullbright = value; })
             .position(base.width/2 - 130, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.fullbright.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.shadow.fullbright.tooltip")))
             .build());
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.shadow.render_on_all.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.shadow.render_on_all.name"))
             .getValue(() -> { return renderOnAll; })
             .setValue((value) -> { renderOnAll = value; })
             .position(base.width/2 + 10, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.shadow.render_on_all.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.shadow.render_on_all.tooltip")))
             .build());
 
         return widgets;

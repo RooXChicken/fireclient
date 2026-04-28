@@ -1,44 +1,44 @@
 package org.loveroo.fireclient.screen.widgets;
 
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.jetbrains.annotations.Nullable;
 import org.loveroo.fireclient.screen.config.FireClientSettingsScreen;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder.GetValue;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget.ToggleButtonBuilder.SetValue;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
-import net.minecraft.client.gui.screen.narration.NarrationPart;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
-public class CustomDrawWidget extends ClickableWidget {
+public class CustomDrawWidget extends AbstractWidget {
     
     private final Draw draw;
 
     protected CustomDrawWidget(int x, int y, Draw draw) {
-        super(x, y, 1, 1, Text.literal(""));
+        super(x, y, 1, 1, Component.literal(""));
 
         this.draw = draw;
     }
 
     @Override
-    protected void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
-        var matrix = context.getMatrices();
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        var matrix = graphics.pose();
         matrix.pushMatrix();
 
         matrix.translate(getX(), getY());
-        draw.draw(context, mouseX, mouseY, delta);
+        draw.draw(graphics, mouseX, mouseY, delta);
 
         matrix.popMatrix();
     }
 
     @Override
-    protected void appendClickableNarrations(NarrationMessageBuilder builder) {
-        builder.put(NarrationPart.TITLE, Text.literal(""));
+    protected void updateWidgetNarration(NarrationElementOutput builder) {
+        builder.add(NarratedElementType.TITLE, Component.literal(""));
     }
 
     public static class CustomDrawBuilder {
@@ -68,6 +68,6 @@ public class CustomDrawWidget extends ClickableWidget {
 
     public interface Draw {
     
-        void draw(DrawContext context, int mouseX, int mouseY, float delta);
+        void draw(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta);
     }
 }

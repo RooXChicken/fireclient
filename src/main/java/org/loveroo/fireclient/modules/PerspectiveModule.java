@@ -1,10 +1,10 @@
 package org.loveroo.fireclient.modules;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.loveroo.fireclient.client.FireClientside;
@@ -36,8 +36,8 @@ public class PerspectiveModule extends ModuleBase {
         getData().setGuiElement(false);
 
         var useBind = new Keybind("use_perspective",
-                Text.translatable("fireclient.keybind.generic.use.name"),
-                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.use.name"),
+                Component.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
                 true, null,
                 this::usePerspectiveKey, () -> using = false);
 
@@ -58,17 +58,17 @@ public class PerspectiveModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_perspective").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));
 
-        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.perspective.zoom.name"))
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Component.translatable("fireclient.module.perspective.zoom.name"))
             .getValue(() -> { return zoomEnabled; })
             .setValue((value) -> { zoomEnabled = value; })
             .position(base.width/2 - 60, base.height/2 + 20)
-            .tooltip(Tooltip.of(Text.translatable("fireclient.module.perspective.zoom.tooltip")))
+            .tooltip(Tooltip.create(Component.translatable("fireclient.module.perspective.zoom.tooltip")))
             .build());
 
         return widgets;

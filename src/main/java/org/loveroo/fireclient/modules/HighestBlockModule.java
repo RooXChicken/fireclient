@@ -9,13 +9,13 @@ import org.loveroo.fireclient.data.Color;
 import org.loveroo.fireclient.data.ModuleData;
 import org.loveroo.fireclient.keybind.Keybind;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.text.Text;
-import net.minecraft.world.Heightmap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.levelgen.Heightmap;
 
 public class HighestBlockModule extends ModuleBase {
 
@@ -34,8 +34,8 @@ public class HighestBlockModule extends ModuleBase {
         getData().setVisible(false);
 
         var toggleBind = new Keybind("toggle_highest_block",
-                Text.translatable("fireclient.keybind.generic.toggle.name"),
-                Text.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.toggle.name"),
+                Component.translatable("fireclient.keybind.generic.toggle_visibility.description", getData().getShownName()),
                 true, null,
                 () -> getData().setVisible(!getData().isVisible()), null);
 
@@ -43,8 +43,8 @@ public class HighestBlockModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("toggle_highest_block").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleVisibleButton(base.width/2 - 60, base.height/2 - 10));
@@ -53,34 +53,34 @@ public class HighestBlockModule extends ModuleBase {
     }
 
     @Override
-    public void draw(DrawContext context, RenderTickCounter ticks) {
+    public void draw(GuiGraphicsExtractor graphics, DeltaTracker ticks) {
         if(!canDraw()) {
             return;
         }
 
-        var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getEntityWorld() == null) {
+        var client = Minecraft.getInstance();
+        if(client.player == null || client.player.level() == null) {
             return;
         }
 
         
-        var text = client.textRenderer;
+        var text = client.font;
 
-        var pos = client.player.getBlockPos();
-        var chunk = client.player.getEntityWorld().getChunk(pos);
+        var pos = client.player.blockPosition();
+        var chunk = client.player.level().getChunk(pos);
         if(chunk == null) {
             return;
         
         }
-        transform(context.getMatrices());
+        transform(graphics.pose());
 
-        var msg = "Height: " + chunk.sampleHeightmap(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ());
+        var msg = "Height: " + chunk.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ());
         var heightText = RooHelper.gradientText(msg, color1, color2);
 
-        getData().setWidth(text.getWidth(heightText));
+        getData().setWidth(text.width(heightText));
 
-        context.drawText(text, heightText, 0, 0, 0xFFFFFFFF, true);
+        graphics.text(text, heightText, 0, 0, 0xFFFFFFFF, true);
 
-        endTransform(context.getMatrices());
+        endTransform(graphics.pose());
     }
 }

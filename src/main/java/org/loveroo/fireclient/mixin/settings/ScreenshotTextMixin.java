@@ -1,33 +1,20 @@
 package org.loveroo.fireclient.mixin.settings;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.function.Consumer;
 
-import org.loveroo.fireclient.RooHelper;
-import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.Color;
-import org.loveroo.fireclient.data.FireClientOption;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.client.Screenshot;
 
-import net.minecraft.client.util.ScreenshotRecorder;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.HoverEvent;
-import net.minecraft.text.Text;
-
-@Mixin(ScreenshotRecorder.class)
+@Mixin(Screenshot.class)
 public abstract class ScreenshotTextMixin {
 
     @Shadow
-    private static File getScreenshotFilename(File directory) {
-        return directory;
+    private static File getFile(File picDir) {
+        return picDir;
     }
 
     @Unique

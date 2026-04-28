@@ -1,17 +1,19 @@
 package org.loveroo.fireclient.mixin.modules.kit;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.network.ClientPlayerInteractionManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.c2s.play.CreativeInventoryActionC2SPacket;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.world.GameMode;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.protocol.game.ServerboundSetCreativeModeSlotPacket;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.level.GameType;
 import org.loveroo.fireclient.screen.modules.KitViewScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,94 +23,94 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(HandledScreen.class)
+@Mixin(AbstractContainerScreen.class)
 abstract class FixKitClicks {
 
-    @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerInteractionManager;clickSlot(IIILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V"), cancellable = true)
-    private void cancelServerClick(Slot slot, int slotId, int button, SlotActionType actionType, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
-        if(!(((HandledScreen<?>)(Object)this) instanceof KitViewScreen screen)) {
+    @Inject(method = "slotClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;handleContainerInput(IIILnet/minecraft/world/inventory/ContainerInput;Lnet/minecraft/world/entity/player/Player;)V"), cancellable = true)
+    private void cancelServerClick(Slot slot, int slotId, int buttonNum, ContainerInput containerInput, CallbackInfo info) {
+        var client = Minecraft.getInstance();
+        if(!(((AbstractContainerScreen<?>)(Object)this) instanceof KitViewScreen screen)) {
             return;
         }
 
-        screen.getScreenHandler().onSlotClick(slotId, button, actionType, client.player);
+        screen.getMenu().clicked(slotId, buttonNum, containerInput, client.player);
         info.cancel();
     }
 
-    @Redirect(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/network/ClientPlayerEntity;isInCreativeMode()Z"))
-    private boolean allowCloning(ClientPlayerEntity instance) {
-        if(!(((HandledScreen<?>)(Object)this) instanceof KitViewScreen screen)) {
-            return instance.isInCreativeMode();
+    @WrapOperation(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;hasInfiniteMaterials()Z"))
+    private boolean allowCloning(LocalPlayer instance, Operation<Boolean> original) {
+        if(!(((AbstractContainerScreen<?>)(Object)this) instanceof KitViewScreen screen)) {
+            return original.call(instance);
         }
 
         return true;
     }
 }
 
-@Mixin(ScreenHandler.class)
+@Mixin(AbstractContainerMenu.class)
 abstract class FixKitHotbarKeys {
 
     @Shadow
-    public abstract ItemStack getCursorStack();
+    public abstract ItemStack getCarried();
 
     @Shadow
-    public abstract void setCursorStack(ItemStack stack);
+    public abstract void setCarried(ItemStack stack);
 
-    @Redirect(method = "internalOnSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInCreativeMode()Z"))
-    private boolean allowCloning(PlayerEntity player) {
-        var client = MinecraftClient.getInstance();
-        if(!(client.currentScreen instanceof KitViewScreen)) {
-            return player.isInCreativeMode();
+    @WrapOperation(method = "doClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;hasInfiniteMaterials()Z"))
+    private boolean allowCloning(Player instance, Operation<Boolean> original) {
+        var client = Minecraft.getInstance();
+        if(!(client.screen instanceof KitViewScreen)) {
+            return original.call(instance);
         }
 
         return true;
     }
 
-    @Redirect(method = "shouldQuickCraftContinue", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isInCreativeMode()Z"))
-    private static boolean allowFinishDrag(PlayerEntity player) {
-        var client = MinecraftClient.getInstance();
-        if(!(client.currentScreen instanceof KitViewScreen)) {
-            return player.isInCreativeMode();
+    @WrapOperation(method = "isValidQuickcraftType", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;hasInfiniteMaterials()Z"))
+    private static boolean allowFinishDrag(Player instance, Operation<Boolean> original) {
+        var client = Minecraft.getInstance();
+        if(!(client.screen instanceof KitViewScreen)) {
+            return original.call(instance);
         }
 
         return true;
     }
 
-    @Inject(method = "internalOnSlotClick", at = @At("HEAD"), cancellable = true)
-    private void dropKitItem(int slotIndex, int button, SlotActionType actionType, PlayerEntity player, CallbackInfo info) {
-        var client = MinecraftClient.getInstance();
+    @Inject(method = "doClick", at = @At("HEAD"), cancellable = true)
+    private void dropKitItem(int slotIndex, int buttonNum, ContainerInput containerInput, Player player, CallbackInfo info) {
+        var client = Minecraft.getInstance();
 
-        if(!(client.currentScreen instanceof KitViewScreen) || slotIndex != -999 || actionType != SlotActionType.PICKUP) {
+        if(!(client.screen instanceof KitViewScreen) || slotIndex != -999 || containerInput != ContainerInput.PICKUP) {
             return;
         }
 
-        client.interactionManager.dropCreativeStack(getCursorStack());
-        setCursorStack(ItemStack.EMPTY);
+        client.gameMode.handleCreativeModeItemDrop(getCarried());
+        setCarried(ItemStack.EMPTY);
 
         info.cancel();
     }
 }
 
-@Mixin(ClientPlayerInteractionManager.class)
+@Mixin(MultiPlayerGameMode.class)
 abstract class FixDropItems {
 
     @Shadow @Final
-    private MinecraftClient client;
+    private Minecraft minecraft;
 
     @Shadow @Final
-    private ClientPlayNetworkHandler networkHandler;
+    private ClientPacketListener connection;
 
     @Shadow
-    private GameMode gameMode;
+    private GameType localPlayerMode;
 
-    @Inject(method = "dropCreativeStack", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "handleCreativeModeItemDrop", at = @At("HEAD"), cancellable = true)
     private void allowDropInKit(ItemStack stack, CallbackInfo info) {
-        if(!(client.currentScreen instanceof KitViewScreen) || !gameMode.isCreative() || stack.isEmpty()) {
+        if(!(minecraft.screen instanceof KitViewScreen) || !localPlayerMode.isCreative() || stack.isEmpty()) {
             return;
         }
 
-        networkHandler.sendPacket(new CreativeInventoryActionC2SPacket(-1, stack));
-        client.player.getItemDropCooldown().increment();
+        connection.send(new ServerboundSetCreativeModeSlotPacket(-1, stack));
+        minecraft.player.getDropSpamThrottler().increment();
 
         info.cancel();
     }

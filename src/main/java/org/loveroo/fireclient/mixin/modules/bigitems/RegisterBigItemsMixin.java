@@ -1,10 +1,10 @@
 package org.loveroo.fireclient.mixin.modules.bigitems;
 
-import net.minecraft.client.item.ItemModelManager;
-import net.minecraft.client.render.entity.state.ItemStackEntityRenderState;
-import net.minecraft.client.render.item.ItemRenderState;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.entity.state.ItemClusterRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import org.loveroo.fireclient.modules.BigItemsModule;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,15 +13,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ItemStackEntityRenderState.class)
+@Mixin(ItemClusterRenderState.class)
 public abstract class RegisterBigItemsMixin {
 
     @Shadow @Final
-    public ItemRenderState itemRenderState;
+    public ItemStackRenderState item;
 
-    @Inject(method = "update", at = @At("TAIL"))
-    private void registerBigItems(Entity entity, ItemStack stack, ItemModelManager itemModelManager, CallbackInfo info) {
-        if(!(itemRenderState instanceof BigItemsModule.ItemTypeStorage state)) {
+    @Inject(method = "extractItemGroupRenderState", at = @At("TAIL"))
+    private void registerBigItems(Entity entity, ItemStack stack, ItemModelResolver itemModelResolver, CallbackInfo info) {
+        if(!(item instanceof BigItemsModule.ItemTypeStorage state)) {
             return;
         }
 

@@ -1,10 +1,7 @@
 package org.loveroo.fireclient.mixin.settings;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
-import org.jetbrains.annotations.Nullable;
-import org.loveroo.fireclient.FireClient;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.repository.PackRepository;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.data.FireClientOption;
 import org.loveroo.fireclient.settings.ActiveResourcePacks;
@@ -15,19 +12,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 public abstract class DisableResourceClearMixin {
 
     @Shadow @Final
-    private ResourcePackManager resourcePackManager;
+    private PackRepository resourcePackRepository;
 
-    @Redirect(method = "onResourceReloadFailure", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))
+    @Redirect(method = "clearResourcePacksOnError", at = @At(value = "INVOKE", target = "Ljava/util/List;clear()V"))
     private void disableClear(List<?> instance) {
         if(FireClientside.getSetting(FireClientOption.PREVENT_PACK_CLEAR) != 0) {
             return;
@@ -36,20 +31,20 @@ public abstract class DisableResourceClearMixin {
         instance.clear();
     }
 
-    @Redirect(method = "onResourceReloadFailure", at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ResourcePackManager;setEnabledProfiles(Ljava/util/Collection;)V"))
-    private void disableClear(ResourcePackManager instance, Collection<String> enabled) {
-        ActiveResourcePacks.setEnabledPacks(instance.getEnabledIds());
+    @Redirect(method = "clearResourcePacksOnError", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/repository/PackRepository;setSelected(Ljava/util/Collection;)V"))
+    private void disableClear(PackRepository instance, Collection<String> packs) {
+        ActiveResourcePacks.setEnabledPacks(instance.getSelectedIds());
 
-        instance.setEnabledProfiles(enabled);
+        instance.setSelected(packs);
     }
 
-    @Inject(method = "onFinishedLoading", at = @At("HEAD"))
-    private void disableClear(MinecraftClient.LoadingContext loadingContext, CallbackInfo info) {
+    @Inject(method = "onResourceLoadFinished", at = @At("HEAD"))
+    private void disableClear(Minecraft.GameLoadCookie loadCookie, CallbackInfo info) {
         if(FireClientside.getSetting(FireClientOption.PREVENT_PACK_CLEAR) == 0 || ActiveResourcePacks.getEnabledPacks() == null) {
             return;
         }
 
-        resourcePackManager.setEnabledProfiles(ActiveResourcePacks.getEnabledPacks());
+        resourcePackRepository.setSelected(ActiveResourcePacks.getEnabledPacks());
         ActiveResourcePacks.setEnabledPacks(null);
     }
 }

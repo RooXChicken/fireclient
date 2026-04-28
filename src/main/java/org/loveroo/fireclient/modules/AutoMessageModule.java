@@ -12,11 +12,11 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.fabric.api.client.message.v1.ClientSendMessageEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.network.chat.Component;
 
 public class AutoMessageModule extends ModuleBase {
 
@@ -36,8 +36,8 @@ public class AutoMessageModule extends ModuleBase {
         ClientSendMessageEvents.COMMAND.register(this::onChat);
 
         var useKey = new Keybind("use_auto_message",
-                Text.translatable("fireclient.keybind.generic.use.name"),
-                Text.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
+                Component.translatable("fireclient.keybind.generic.use.name"),
+                Component.translatable("fireclient.keybind.generic.use.description", getData().getShownName()),
                 true, List.of(new Key(GLFW.GLFW_KEY_Y, Key.KeyType.KEY_CODE)),
                 this::useKey, null);
 
@@ -66,7 +66,7 @@ public class AutoMessageModule extends ModuleBase {
     }
 
     @Override
-    public void update(MinecraftClient client) {
+    public void update(Minecraft client) {
         if(!getData().isEnabled() || !openGui) {
             return;
         }
@@ -79,8 +79,8 @@ public class AutoMessageModule extends ModuleBase {
     }
 
     @Override
-    public List<ClickableWidget> getConfigScreen(Screen base) {
-        var widgets = new ArrayList<ClickableWidget>();
+    public List<AbstractWidget> getConfigScreen(Screen base) {
+        var widgets = new ArrayList<AbstractWidget>();
 
         widgets.add(FireClientside.getKeybindManager().getKeybind("use_auto_message").getRebindButton(5, base.height - 25, 120,20));
         widgets.add(getToggleEnableButton(base.width/2 - 60, base.height/2 - 10));

@@ -1,48 +1,50 @@
 package org.loveroo.fireclient.mixin.modules.flightspeed;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.GameMode;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import org.loveroo.fireclient.client.FireClientside;
 import org.loveroo.fireclient.modules.FlightSpeedModule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 abstract class ModifyFlightMoveSpeedMixin {
 
-    @Redirect(method = "getOffGroundSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerAbilities;getFlySpeed()F"))
-    private float modifySpeed(PlayerAbilities abilities) {
-        var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getGameMode() != GameMode.CREATIVE) {
-            return abilities.getFlySpeed();
+    @Redirect(method = "getFlyingSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Abilities;getFlyingSpeed()F"))
+    private float modifySpeed(Abilities abilities) {
+        var client = Minecraft.getInstance();
+        if(client.player == null || client.player.gameMode() != GameType.CREATIVE) {
+            return abilities.getFlyingSpeed();
         }
 
         var flight = (FlightSpeedModule) FireClientside.getModule("flight_speed");
         if(flight == null || !flight.getData().isEnabled()) {
-            return abilities.getFlySpeed();
+            return abilities.getFlyingSpeed();
         }
 
         return flight.getSpeed();
     }
 }
 
-@Mixin(ClientPlayerEntity.class)
+@Mixin(LocalPlayer.class)
 abstract class ModifyFlightVerticalSpeedMixin {
 
-    @Redirect(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerAbilities;getFlySpeed()F"))
-    private float modifySpeed(PlayerAbilities abilities) {
-        var client = MinecraftClient.getInstance();
-        if(client.player == null || client.player.getGameMode() != GameMode.CREATIVE) {
-            return abilities.getFlySpeed();
+    @WrapOperation(method = "aiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Abilities;getFlyingSpeed()F"))
+    private float modifySpeed(Abilities abilities, Operation<Float> original) {
+        var client = Minecraft.getInstance();
+        if(client.player == null || client.player.gameMode() != GameType.CREATIVE) {
+            return original.call(abilities);
         }
 
         var flight = (FlightSpeedModule) FireClientside.getModule("flight_speed");
         if(flight == null || !flight.getData().isEnabled()) {
-            return abilities.getFlySpeed();
+            return original.call(abilities);
         }
 
         return flight.getSpeed();

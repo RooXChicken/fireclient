@@ -8,32 +8,32 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
-@Mixin(ClientWorld.class)
+@Mixin(ClientLevel.class)
 public abstract class DisableExtinguishSpamMixin {
 
     @Unique
     private long lastExtinguish = 0;
 
-    @Inject(method = "playSound(DDDLnet/minecraft/sound/SoundEvent;Lnet/minecraft/sound/SoundCategory;FFZJ)V", at = @At("HEAD"), cancellable = true)
-    private void stopSpam(double x, double y, double z, SoundEvent event, SoundCategory category, float volume, float pitch, boolean useDistance, long seed, CallbackInfo info) {
-        if(event != SoundEvents.ENTITY_GENERIC_EXTINGUISH_FIRE || FireClientside.getSetting(FireClientOption.EXTINGUISH_FIX) == 0) {
+    @Inject(method = "playSound(DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FFZJ)V", at = @At("HEAD"), cancellable = true)
+    private void stopSpam(double x, double y, double z, SoundEvent sound, SoundSource source, float volume, float pitch, boolean distanceDelay, long seed, CallbackInfo info) {
+        if(sound != SoundEvents.GENERIC_EXTINGUISH_FIRE || FireClientside.getSetting(FireClientOption.EXTINGUISH_FIX) == 0) {
             return;
         }
 
         var cancel = false;
 
-        var client = MinecraftClient.getInstance();
+        var client = Minecraft.getInstance();
         if(client.player == null) {
             return;
         }
 
-        var time = client.player.getEntityWorld().getTime();
+        var time = client.player.level().getGameTime();
         var difference = time - lastExtinguish;
 
         if(difference < 10) {
