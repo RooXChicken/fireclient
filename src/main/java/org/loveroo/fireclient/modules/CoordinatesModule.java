@@ -20,10 +20,12 @@ import org.loveroo.fireclient.keybind.Keybind;
 import org.loveroo.fireclient.screen.widgets.ToggleButtonWidget;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -45,11 +47,20 @@ public class CoordinatesModule extends ModuleBase {
     public static final Color netherColor1 = new Color(199, 57, 202, 255);
     public static final Color netherColor2 = new Color(152, 33, 149, 255);
 
+    public static final Color diagonalColor1 = new Color(255, 165, 0, 255);
+    public static final Color diagonalColor2 = new Color(200, 100, 0, 255);
+
     @JsonOption(name = "show_other")
     private boolean showOther = false;
 
     @JsonOption(name = "window_mode")
     private boolean windowMode = false;
+
+    @JsonOption(name = "show_directional_signs")
+    private boolean showDirectionalSigns = true;
+
+    @JsonOption(name = "show_compass_direction")
+    private boolean showCompassDirection = true;
 
     private final int windowSizeX = 480;
     private final int windowSizeY = 80;
@@ -112,7 +123,7 @@ public class CoordinatesModule extends ModuleBase {
 
         if(windowMode && (window == null || !window.isVisible())) {
             if(windowModeButton != null) {
-                windowModeButton.onPress();
+                windowModeButton.onPress(new Click(0, 0, new MouseInput(0, 0)));
             }
         }
     }
@@ -144,11 +155,21 @@ public class CoordinatesModule extends ModuleBase {
         var client = MinecraftClient.getInstance();
         var text = client.textRenderer;
 
-        var xText = String.format("X: %.2f ", client.player.getX());
-        var yText = String.format("Y: %.2f ", client.player.getY());
-        var zText = String.format("Z: %.2f", client.player.getZ());
+        var xValue = client.player.getX();
+        var yValue = client.player.getY();
+        var zValue = client.player.getZ();
+        var yaw = client.player.getYaw();
 
-        setCoordinatesText(xText, yText, zText);
+        var xSign = showDirectionalSigns ? getDirectionalSign(yaw, 'X') : "";
+        var zSign = showDirectionalSigns ? getDirectionalSign(yaw, 'Z') : "";
+
+        var xText = showDirectionalSigns ? String.format("X: %.2f (%s) ", xValue, xSign) : String.format("X: %.2f ", xValue);
+        var yText = String.format("Y: %.2f ", yValue);
+        var zText = showDirectionalSigns ? String.format("Z: %.2f (%s)", zValue, zSign) : String.format("Z: %.2f", zValue);
+
+        String directionIndicator = showCompassDirection ? getCompassDirection(yaw) : "";
+
+        setCoordinatesText(xText, yText, zText, directionIndicator);
 
         if(!canDraw()) {
             return;
@@ -159,7 +180,14 @@ public class CoordinatesModule extends ModuleBase {
         var z = RooHelper.gradientText(zText, zColor1, zColor2);
 
         var coordsText = x.append(y).append(z);
-        getData().setWidth(text.getWidth(xText + yText + zText));
+
+        if (showCompassDirection) {
+            var direction = RooHelper.gradientText(" " + directionIndicator, diagonalColor1, diagonalColor2);
+            coordsText = coordsText.append(direction);
+            getData().setWidth(text.getWidth(xText + yText + zText + " " + directionIndicator));
+        } else {
+            getData().setWidth(text.getWidth(xText + yText + zText));
+        }
 
         context.drawText(text, coordsText, 0, 0, 0xFFFFFFFF, true);
     }
@@ -170,7 +198,7 @@ public class CoordinatesModule extends ModuleBase {
             return;
         }
 
-        var dimensionEntry = client.player.getWorld().getDimensionEntry().getKey();
+        var dimensionEntry = client.player.getEntityWorld().getDimensionEntry().getKey();
         if(dimensionEntry.isEmpty()) {
             return;
         }
@@ -187,10 +215,14 @@ public class CoordinatesModule extends ModuleBase {
         var xPos = client.player.getX();
         var yPos = client.player.getY();
         var zPos = client.player.getZ();
+        var yaw = client.player.getYaw();
 
-        var xText = String.format("X: %.2f ", xPos);
+        var xSign = showDirectionalSigns ? getDirectionalSign(yaw, 'X') : "";
+        var zSign = showDirectionalSigns ? getDirectionalSign(yaw, 'Z') : "";
+
+        var xText = showDirectionalSigns ? String.format("X: %.2f (%s) ", xPos, xSign) : String.format("X: %.2f ", xPos);
         var yText = String.format("Y: %.2f ", yPos);
-        var zText = String.format("Z: %.2f", zPos);
+        var zText = showDirectionalSigns ? String.format("Z: %.2f (%s)", zPos, zSign) : String.format("Z: %.2f", zPos);
 
         var order = false;
 
@@ -202,17 +234,17 @@ public class CoordinatesModule extends ModuleBase {
         else {
             xPos *= 8.0;
             zPos *= 8.0;
-            order = false;
         }
 
-        var otherXText = String.format("X: %.2f ", xPos);
+        var otherXText = showDirectionalSigns ? String.format("X: %.2f (%s) ", xPos, xSign) : String.format("X: %.2f ", xPos);
         var otherYText = String.format("Y: %.2f ", yPos);
-        var otherZText = String.format("Z: %.2f", zPos);
+        var otherZText = showDirectionalSigns ? String.format("Z: %.2f (%s)", zPos, zSign) : String.format("Z: %.2f", zPos);
 
         var finalNormal = xText + yText + zText;
         var finalOther = otherXText + otherYText + otherZText;
+        String directionIndicator = showCompassDirection ? getCompassDirection(yaw) : "";
 
-        setCoordinatesText(finalNormal, finalOther, order);
+        setCoordinatesText(finalNormal, finalOther, order, directionIndicator);
 
         if(!canDraw()) {
             return;
@@ -230,9 +262,17 @@ public class CoordinatesModule extends ModuleBase {
             other = RooHelper.gradientText(finalOther, yColor1, yColor2);
         }
 
-        getData().setWidth(Math.max(text.getWidth(finalNormal), text.getWidth(finalOther)));
+        if (showCompassDirection) {
+            var direction = RooHelper.gradientText(" " + directionIndicator, diagonalColor1, diagonalColor2);
+            var normalWidth = text.getWidth(finalNormal + " " + directionIndicator);
+            var otherWidth = text.getWidth(finalOther + " " + directionIndicator);
+            getData().setWidth(Math.max(normalWidth, otherWidth));
+            context.drawText(text, normal.append(direction), 0, 0, 0xFFFFFFFF, true);
+        } else {
+            getData().setWidth(Math.max(text.getWidth(finalNormal), text.getWidth(finalOther)));
+            context.drawText(text, normal, 0, 0, 0xFFFFFFFF, true);
+        }
 
-        context.drawText(text, normal, 0, 0, 0xFFFFFFFF, true);
         context.drawText(text, other, 0, 10, 0xFFFFFFFF, true);
     }
 
@@ -250,10 +290,24 @@ public class CoordinatesModule extends ModuleBase {
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.other_dimension.tooltip")))
             .build());
 
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.literal("Show Directional Signs"))
+            .getValue(() -> { return showDirectionalSigns; })
+            .setValue((value) -> { showDirectionalSigns = value; })
+            .position(base.width/2 - 60, base.height / 2 + 50)
+            .tooltip(Tooltip.of(Text.literal("Show +/- signs next to coordinates")))
+            .build());
+
+        widgets.add(new ToggleButtonWidget.ToggleButtonBuilder(Text.literal("Show Compass Direction"))
+            .getValue(() -> { return showCompassDirection; })
+            .setValue((value) -> { showCompassDirection = value; })
+            .position(base.width/2 - 60, base.height / 2 + 80)
+            .tooltip(Tooltip.of(Text.literal("Show N/S/E/W direction indicator")))
+            .build());
+
         windowModeButton = new ToggleButtonWidget.ToggleButtonBuilder(Text.translatable("fireclient.module.coordinates.windowed_mode.name"))
             .getValue(() -> { return windowMode; })
             .setValue(this::windowModeChanged)
-            .position(base.width/2 - 60,base.height / 2 + 50)
+            .position(base.width/2 - 60,base.height / 2 + 110)
             .tooltip(Tooltip.of(Text.translatable("fireclient.module.coordinates.windowed_mode.tooltip")))
             .build();
 
@@ -342,7 +396,7 @@ public class CoordinatesModule extends ModuleBase {
 
     // (kinda cool tho :P)
 
-    private void setCoordinatesText(String normal, String other, boolean order) {
+    private void setCoordinatesText(String normal, String other, boolean order, String directionIndicator) {
         if(coordinatesText == null || window == null || !window.isVisible()) {
             return;
         }
@@ -376,7 +430,7 @@ public class CoordinatesModule extends ModuleBase {
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void setCoordinatesText(String x, String y, String z) {
+    private void setCoordinatesText(String x, String y, String z, String directionIndicator) {
         if(coordinatesText == null || window == null || !window.isVisible()) {
             return;
         }
@@ -395,10 +449,56 @@ public class CoordinatesModule extends ModuleBase {
         text.append(z);
         text.append("</span>");
 
+        text.append("<span style=\"color: rgb(255, 165, 0);\">");
+        text.append(" ").append(directionIndicator);
+        text.append("</span>");
+
         text.append("</p> </body> </html>");
         coordinatesText.setBounds(4, -30, windowSizeX, windowSizeY);
         coordinatesText.setText(text.toString());
 
         Toolkit.getDefaultToolkit().sync();
+    }
+
+
+    private String getCompassDirection(float yaw) {
+        float normalizedYaw = (yaw % 360 + 360) % 360;
+
+        if (normalizedYaw >= 337.5 || normalizedYaw < 22.5) {
+            return "S";  // +Z
+        } else if (normalizedYaw >= 22.5 && normalizedYaw < 67.5) {
+            return "SW";
+        } else if (normalizedYaw >= 67.5 && normalizedYaw < 112.5) {
+            return "W";  // -X
+        } else if (normalizedYaw >= 112.5 && normalizedYaw < 157.5) {
+            return "NW";
+        } else if (normalizedYaw >= 157.5 && normalizedYaw < 202.5) {
+            return "N";  // -Z
+        } else if (normalizedYaw >= 202.5 && normalizedYaw < 247.5) {
+            return "NE";
+        } else if (normalizedYaw >= 247.5 && normalizedYaw < 292.5) {
+            return "E";  // +X
+        } else {
+            return "SE";
+        }
+    }
+
+    private String getDirectionalSign(float yaw, char axis) {
+        float normalizedYaw = (yaw % 360 + 360) % 360;
+
+        if (axis == 'X') {
+            if (normalizedYaw >= 202.5 && normalizedYaw < 337.5) {
+                return "+"; // east or positive x
+            } else {
+                return "-"; // west or negative x
+            }
+        } else if (axis == 'Z') {
+            if (normalizedYaw >= 22.5 && normalizedYaw < 202.5) {
+                return "-"; // north or negative z
+            } else {
+                return "+"; // south or positive z
+            }
+        }
+        return "";
     }
 }
